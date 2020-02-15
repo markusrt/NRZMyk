@@ -8,8 +8,9 @@ jobs:
     - name: Publish to Registry
       uses: HurricanKai/Publish-Docker-Github-Action@master
       with:
-        name: NRZMyk/repository
+        name: nrzmyk
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         dockerfile: NRZMyk.Server/Dockerfile
         registry: sivregistrymr.azurecr.io
+        extra_build_params: .
