@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -48,6 +49,36 @@ namespace NRZMyk.Server
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+
+            services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme,
+                options =>
+                {
+                    var redirectToIdpHandler = options.Events.OnRedirectToIdentityProvider;
+                    options.Events.OnRedirectToIdentityProvider = async context =>
+                    {
+                        // Call what Microsoft.Identity.Web is doing
+                        await redirectToIdpHandler(context);
+
+                        // Override the redirect URI to be what you want
+                        if (context.ProtocolMessage?.RedirectUri?.StartsWith("http://") ?? false)
+                        {
+                            context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("http://", "https://");
+                        }
+                    };
+
+                    var redirectToIdpForSignOutHandler = options.Events.OnRedirectToIdentityProviderForSignOut;
+                    options.Events.OnRedirectToIdentityProviderForSignOut = async context =>
+                    {
+                        // Call what Microsoft.Identity.Web is doing
+                        await redirectToIdpForSignOutHandler(context);
+
+                        // Override the redirect URI to be what you want
+                        if (context.ProtocolMessage?.PostLogoutRedirectUri?.StartsWith("http://") ?? false)
+                        {
+                            context.ProtocolMessage.PostLogoutRedirectUri = context.ProtocolMessage.PostLogoutRedirectUri.Replace("http://", "https://");
+                        }
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
