@@ -28,3 +28,14 @@ This app authenticates with Azure AD. In order to run it locally you need to con
 - `AzureAd__Domain`: Your domain
 - `AzureAd__TenantId`: Your tenant ID
 - `AzureAd__ClientId`: Your apps client ID
+
+## Deployment setup
+
+### Fix Azure AD redirect issues
+
+There are cases where RedirectUri is needed, for instance when you use a reverse proxy that transforms HTTPS
+URLs (external world) to HTTP URLs (inside the protected area). This can also be useful for Web apps running
+in containers (for the same reasons). I.e. in case that AAD tries to redirect to <http://your.host.name/signin-oidc>
+you would need to override the following config value:
+
+- `AzureAd__RedirectUri`: `<https://your.host.name/signin-oidc>`
