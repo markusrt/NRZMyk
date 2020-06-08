@@ -26,7 +26,7 @@ namespace NRZMyk.Components.Pages
             await base.OnInitializedAsync();
         }
 
-        public async Task IncrementCount()
+        public void IncrementCount()
         {
             CurrentCount++;
         }
