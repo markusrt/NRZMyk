@@ -32,8 +32,6 @@ namespace NRZMyk.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSignIn(Configuration);
-            //services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
-            //    .AddAzureAD(options => Configuration.Bind("AzureAd", options));
 
             services.AddControllersWithViews(options =>
             {
@@ -43,56 +41,17 @@ namespace NRZMyk.Server
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
 
-            //https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-web-app-sign-user-app-configuration?tabs=aspnetcore
-            services.AddRazorPages().AddMvcOptions(options =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            }).AddMicrosoftIdentityUI();
-
-
-
             services.AddMvc().AddRazorPagesOptions(options => { options.RootDirectory = "/"; });
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddRazorPages();
+            services.AddRazorPages().AddMicrosoftIdentityUI();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
 
-            services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme,
-                options =>
-                {
-                    var redirectToIdpHandler = options.Events.OnRedirectToIdentityProvider;
-                    options.Events.OnRedirectToIdentityProvider = async context =>
-                    {
-                        // Call what Microsoft.Identity.Web is doing
-                        await redirectToIdpHandler(context);
-
-                        // Override the redirect URI to be what you want
-                        if (context.ProtocolMessage?.RedirectUri?.StartsWith("http://") ?? false)
-                        {
-                            context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("http://", "https://");
-                        }
-                    };
-
-                    var redirectToIdpForSignOutHandler = options.Events.OnRedirectToIdentityProviderForSignOut;
-                    options.Events.OnRedirectToIdentityProviderForSignOut = async context =>
-                    {
-                        // Call what Microsoft.Identity.Web is doing
-                        await redirectToIdpForSignOutHandler(context);
-
-                        // Override the redirect URI to be what you want
-                        if (context.ProtocolMessage?.PostLogoutRedirectUri?.StartsWith("http://") ?? false)
-                        {
-                            context.ProtocolMessage.PostLogoutRedirectUri = context.ProtocolMessage.PostLogoutRedirectUri.Replace("http://", "https://");
-                        }
-                    };
-                });
             services.AddApplicationInsightsTelemetry();
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
