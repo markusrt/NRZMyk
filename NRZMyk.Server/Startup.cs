@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -13,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 using NRZMyk.Services.Data;
 using NRZMyk.Services.Service;
 
@@ -31,8 +31,7 @@ namespace NRZMyk.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSignIn(Configuration, "AzureAd");
-
+            services.AddSignIn(Configuration);
             //services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
             //    .AddAzureAD(options => Configuration.Bind("AzureAd", options));
 
@@ -43,6 +42,16 @@ namespace NRZMyk.Server
                     .Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
+
+            //https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-web-app-sign-user-app-configuration?tabs=aspnetcore
+            services.AddRazorPages().AddMvcOptions(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            }).AddMicrosoftIdentityUI();
+
 
 
             services.AddMvc().AddRazorPagesOptions(options => { options.RootDirectory = "/"; });
