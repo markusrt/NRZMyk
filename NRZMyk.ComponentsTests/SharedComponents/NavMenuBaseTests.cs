@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
-using NRZMyk.Components.Shared;
+using NRZMyk.Components.SharedComponents;
 using NUnit.Framework;
 
-namespace NRZMyk.ComponentsTests.Shared
+namespace NRZMyk.ComponentsTests.SharedComponents
 {
-    class NavMenuBaseTests
+    public class NavMenuBaseTests
     {
         [Test]
         public void WhenCreated_ThenMenuIsCollapsed()
