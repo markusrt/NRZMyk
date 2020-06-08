@@ -17,4 +17,4 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Build with dotnet
-      run: dotnet test -p:FROM_GITHUB_ACTION=true --configuration Release NRZMyk.sln
+      run: dotnet test --configuration Release NRZMyk.sln
