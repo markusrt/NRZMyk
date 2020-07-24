@@ -1,4 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -11,8 +17,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
+using Microsoft.IdentityModel.Logging;
+using NRZMyk.Server.Model;
 using NRZMyk.Services.Data;
 using NRZMyk.Services.Service;
 
@@ -31,21 +37,81 @@ namespace NRZMyk.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSignIn(Configuration);
+            services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
+                .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options))
+                .AddJwtBearer(o =>
+                {
+                    //Additional config snipped
+                    o.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = async ctx =>
+                        {
+                            //Get the calling app client id that came from the token produced by Azure AD
+                            string clientId = ctx.Principal.FindFirstValue("appid");
 
-            services.AddControllersWithViews(options =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            });
+
+                        }
+                    };
+                }); ;
+            //services.AddSignIn(Configuration);
+
+            services.AddControllersWithViews();
+            services.AddRazorPages();
+
+            services.Configure<JwtBearerOptions>(
+                AzureADB2CDefaults.JwtBearerAuthenticationScheme, options =>
+                {
+                    options.TokenValidationParameters.NameClaimType = "name";
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = async ctx =>
+                        {
+                            //Get the calling app client id that came from the token produced by Azure AD
+                            string clientId = ctx.Principal.FindFirstValue("appid");
+                            var roleGroups = new Dictionary<string, string>();
+                            Configuration.Bind("AuthorizationGroups", roleGroups);
+                            var roles = ctx.Principal.Claims.Where(c => c.Type == "extension_Role").ToList();
+                            var singleRole = roles.FirstOrDefault()?.Value;
+                            if (!string.IsNullOrEmpty(singleRole) && Enum.TryParse<Role>(singleRole, out var role))
+                            {
+                                var claims = new List<Claim>();
+                                if (role.HasFlag(Role.Guest))
+                                {
+                                    claims.Add(new Claim(ClaimTypes.Role, "User"));
+                                }
+                                if (role.HasFlag(Role.User))
+                                {
+                                    claims.Add(new Claim(ClaimTypes.Role, "User"));
+                                }
+                                if (role.HasFlag(Role.Admin))
+                                {
+                                    claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                                }
+                                if (role.HasFlag(Role.SuperUser))
+                                {
+                                    claims.Add(new Claim(ClaimTypes.Role, "SuperUser"));
+                                }
+                                var appIdentity = new ClaimsIdentity(claims);
+                                ctx.Principal.AddIdentity(appIdentity);
+                            }
+                            //var jwtToken = ctx.SecurityToken as JwtSecurityToken;
+                            //var graphService = await GraphService.CreateOnBehalfOfUserAsync(jwtToken.RawData, Configuration);
+                            //var memberGroups = await graphService.CheckMemberGroupsAsync(roleGroups.Keys);
+
+                            ////var claims = memberGroups.Select(groupGuid => new Claim(ClaimTypes.Role, roleGroups[groupGuid]));
+                            ////var appIdentity = new ClaimsIdentity(claims);
+                            //ctx.Principal.AddIdentity(appIdentity);
+
+
+                        }
+                    };
+                });
 
             services.AddMvc().AddRazorPagesOptions(options => { options.RootDirectory = "/"; });
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddRazorPages().AddMicrosoftIdentityUI();
+            //services.AddRazorPages().AddMicrosoftIdentityUI();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
 
@@ -58,7 +124,9 @@ namespace NRZMyk.Server
         {
             if (env.IsDevelopment())
             {
+                IdentityModelEventSource.ShowPII = true;
                 app.UseDeveloperExceptionPage();
+                app.UseWebAssemblyDebugging();
                 app.UseDatabaseErrorPage();
             }
             else
@@ -69,6 +137,7 @@ namespace NRZMyk.Server
             }
 
             app.UseHttpsRedirection();
+            app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -78,9 +147,9 @@ namespace NRZMyk.Server
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 endpoints.MapControllers();
-                endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapFallbackToFile("index.html");
             });
         }
     }
