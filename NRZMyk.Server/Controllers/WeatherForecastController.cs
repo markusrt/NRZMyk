@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using NRZMyk.Services.Model;
+using NRZMyk.Services.Models;
 
 namespace NRZMyk.Server.Controllers
 {

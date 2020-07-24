@@ -5,22 +5,19 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.OpenApi.Models;
 using NRZMyk.Server.Model;
+using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data;
-using NRZMyk.Services.Service;
+using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Services;
 
 namespace NRZMyk.Server
 {
@@ -37,86 +34,24 @@ namespace NRZMyk.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
-                .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options))
-                .AddJwtBearer(o =>
-                {
-                    //Additional config snipped
-                    o.Events = new JwtBearerEvents
-                    {
-                        OnTokenValidated = async ctx =>
-                        {
-                            //Get the calling app client id that came from the token produced by Azure AD
-                            string clientId = ctx.Principal.FindFirstValue("appid");
-
-
-                        }
-                    };
-                }); ;
-            //services.AddSignIn(Configuration);
+            ConfigureAzureAdB2C(services);
+            ConfigureSwagger(services);
 
             services.AddControllersWithViews();
             services.AddRazorPages();
-
-            services.Configure<JwtBearerOptions>(
-                AzureADB2CDefaults.JwtBearerAuthenticationScheme, options =>
-                {
-                    options.TokenValidationParameters.NameClaimType = "name";
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnTokenValidated = async ctx =>
-                        {
-                            //Get the calling app client id that came from the token produced by Azure AD
-                            string clientId = ctx.Principal.FindFirstValue("appid");
-                            var roleGroups = new Dictionary<string, string>();
-                            Configuration.Bind("AuthorizationGroups", roleGroups);
-                            var roles = ctx.Principal.Claims.Where(c => c.Type == "extension_Role").ToList();
-                            var singleRole = roles.FirstOrDefault()?.Value;
-                            if (!string.IsNullOrEmpty(singleRole) && Enum.TryParse<Role>(singleRole, out var role))
-                            {
-                                var claims = new List<Claim>();
-                                if (role.HasFlag(Role.Guest))
-                                {
-                                    claims.Add(new Claim(ClaimTypes.Role, "User"));
-                                }
-                                if (role.HasFlag(Role.User))
-                                {
-                                    claims.Add(new Claim(ClaimTypes.Role, "User"));
-                                }
-                                if (role.HasFlag(Role.Admin))
-                                {
-                                    claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-                                }
-                                if (role.HasFlag(Role.SuperUser))
-                                {
-                                    claims.Add(new Claim(ClaimTypes.Role, "SuperUser"));
-                                }
-                                var appIdentity = new ClaimsIdentity(claims);
-                                ctx.Principal.AddIdentity(appIdentity);
-                            }
-                            //var jwtToken = ctx.SecurityToken as JwtSecurityToken;
-                            //var graphService = await GraphService.CreateOnBehalfOfUserAsync(jwtToken.RawData, Configuration);
-                            //var memberGroups = await graphService.CheckMemberGroupsAsync(roleGroups.Keys);
-
-                            ////var claims = memberGroups.Select(groupGuid => new Claim(ClaimTypes.Role, roleGroups[groupGuid]));
-                            ////var appIdentity = new ClaimsIdentity(claims);
-                            //ctx.Principal.AddIdentity(appIdentity);
-
-
-                        }
-                    };
-                });
 
             services.AddMvc().AddRazorPagesOptions(options => { options.RootDirectory = "/"; });
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            //services.AddRazorPages().AddMicrosoftIdentityUI();
-            services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
-
             services.AddApplicationInsightsTelemetry();
+
+            services.AddSingleton<WeatherForecastService>();
+            services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+            services.Configure<CatalogSettings>(Configuration);
+            services.AddSingleton<IUriComposer>(new UriComposer(Configuration.Get<CatalogSettings>()));
         }
+
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -145,11 +80,107 @@ namespace NRZMyk.Server
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
+            });
+        }
+
+        private void ConfigureAzureAdB2C(IServiceCollection services)
+        {
+            services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
+                .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
+            services.Configure<JwtBearerOptions>(
+                AzureADB2CDefaults.JwtBearerAuthenticationScheme, options =>
+                {
+                    options.TokenValidationParameters.NameClaimType = "name";
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = async ctx =>
+                        {
+                            //Get the calling app client id that came from the token produced by Azure AD
+                            var roleGroups = new Dictionary<string, string>();
+                            Configuration.Bind("AuthorizationGroups", roleGroups);
+                            var roles = ctx.Principal.Claims.Where(c => c.Type == "extension_Role").ToList();
+                            var singleRole = roles.FirstOrDefault()?.Value;
+                            if (!string.IsNullOrEmpty(singleRole) && Enum.TryParse<Role>(singleRole, out var role))
+                            {
+                                var claims = new List<Claim>();
+                                if (role.HasFlag(Role.Guest))
+                                {
+                                    claims.Add(new Claim(ClaimTypes.Role, "User"));
+                                }
+
+                                if (role.HasFlag(Role.User))
+                                {
+                                    claims.Add(new Claim(ClaimTypes.Role, "User"));
+                                }
+
+                                if (role.HasFlag(Role.Admin))
+                                {
+                                    claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                                }
+
+                                if (role.HasFlag(Role.SuperUser))
+                                {
+                                    claims.Add(new Claim(ClaimTypes.Role, "SuperUser"));
+                                }
+
+                                var appIdentity = new ClaimsIdentity(claims);
+                                ctx.Principal.AddIdentity(appIdentity);
+                            }
+                        }
+                    };
+                }
+            );
+        }
+
+
+        private static void ConfigureSwagger(IServiceCollection services)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "My API", Version = "v1"});
+                c.EnableAnnotations();
+                c.SchemaFilter<CustomSchemaFilters>();
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme.
+                      Enter 'Bearer' [space] and then your token in the text input below.",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                    }
+                });
             });
         }
     }

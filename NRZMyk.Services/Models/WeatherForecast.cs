@@ -1,6 +1,6 @@
 using System;
 
-namespace NRZMyk.Services.Model
+namespace NRZMyk.Services.Models
 {
     public class WeatherForecast
     {
