@@ -1,0 +1,16 @@
+﻿<div class="alert alert-secondary mt-4 mr-5 ml-5" role="alert">
+    <span class="oi oi-transfer mr-2" aria-hidden="true"></span>
+    <strong>@Title</strong>
+    <p>
+        <span>
+            Bitte lesen Sie die
+            <a target="_blank" class="font-weight-bold" href="https://www.nrz-myk.de/hinweise-fuer-einsender.html">Hinweise für Einsender</a>
+        </span>
+        vor der Einsendung.
+    </p>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+}
