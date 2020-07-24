@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using NRZMyk.Services.Model;
+using NRZMyk.Services.Models;
 
-namespace NRZMyk.Services.Service
+namespace NRZMyk.Services.Services
 {
     public class WeatherForecastService
     {
