@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Data.Entities;
@@ -33,7 +31,7 @@ namespace NRZMyk.Server.Controllers.CatalogItems
         {
             var response = new CreateCatalogItemResponse(request.CorrelationId());
 
-            CatalogItem newItem = new CatalogItem(request.CatalogTypeId, request.CatalogBrandId, request.Description, request.Name, request.Price, request.PictureUri);
+            var newItem = new CatalogItem(request.CatalogTypeId, request.CatalogBrandId, request.Description, request.Name, request.Price, request.PictureUri);
 
             newItem = await _itemRepository.AddAsync(newItem);
 
