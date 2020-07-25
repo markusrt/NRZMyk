@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +18,7 @@ using Microsoft.OpenApi.Models;
 using NRZMyk.Server.Model;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data;
+using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
 
@@ -36,6 +39,9 @@ namespace NRZMyk.Server
         {
             ConfigureAzureAdB2C(services);
             ConfigureSwagger(services);
+
+            services.AddMediatR(typeof(CatalogItem).Assembly);
+            services.AddAutoMapper(typeof(Startup).Assembly);
 
             services.AddControllersWithViews();
             services.AddRazorPages();
