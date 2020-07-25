@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components;
+using NRZMyk.Components.Services;
 
 namespace NRZMyk.Client
 {
@@ -24,6 +25,8 @@ namespace NRZMyk.Client
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("NRZMyk.ServerAPI"));
+
+            builder.Services.AddTransient<CatalogBrandService>();
 
             builder.Services.AddMsalAuthentication(options =>
             {
