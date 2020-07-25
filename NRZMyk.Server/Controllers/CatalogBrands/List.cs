@@ -30,11 +30,9 @@ namespace NRZMyk.Server.Controllers.CatalogBrands
         ]
         public override async Task<ActionResult<ListCatalogBrandsResponse>> HandleAsync()
         {
-            var response = new ListCatalogBrandsResponse();
-
             var items = await _catalogBrandRepository.ListAllAsync();
 
-            response.CatalogBrands.AddRange(items.Select(_mapper.Map<CatalogBrandDto>));
+            var response = items.Select(_mapper.Map<CatalogBrandDto>);
 
             return Ok(response);
         }
