@@ -1,6 +1,6 @@
-﻿namespace NRZMyk.Components.Model
+﻿namespace NRZMyk.Services.Models
 {
-    public class CatalogBrand
+    public class CatalogBrandDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

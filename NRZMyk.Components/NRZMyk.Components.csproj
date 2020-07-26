@@ -22,6 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Watch Include="..\**\*.razor" />
+    <Watch Include="..\**\*.scss" />
+    <Watch Include="..\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="Pages\FetchData.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
