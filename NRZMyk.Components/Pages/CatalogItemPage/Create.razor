@@ -3,9 +3,9 @@
 
 @using System.Net
 @using Microsoft.Extensions.Logging
-@using NRZMyk.Components.Model
 @using NRZMyk.Components.Services.CatalogItemService
 @using NRZMyk.Components.Services.CatalogTypeService
+@using NRZMyk.Services.Models
 @inherits NRZMyk.Components.Helpers.BlazorComponent
 
 @namespace NRZMyk.Components.Pages.CatalogItemPage
@@ -90,7 +90,7 @@
 @code {
 
     [Parameter]
-    public IEnumerable<CatalogBrand> Brands { get; set; }
+    public IEnumerable<CatalogBrandDto> Brands { get; set; }
     [Parameter]
     public IEnumerable<CatalogType> Types { get; set; }
 

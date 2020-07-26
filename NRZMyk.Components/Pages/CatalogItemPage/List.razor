@@ -2,11 +2,10 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject CatalogBrandService CatalogBrandService
-
-@using NRZMyk.Components.Model
 @using NRZMyk.Components.Services
 @using NRZMyk.Components.Services.CatalogItemService
 @using NRZMyk.Components.Services.CatalogTypeService
+@using NRZMyk.Services.Models
 @inherits NRZMyk.Components.Helpers.BlazorComponent
 @namespace NRZMyk.Components.Pages.CatalogItemPage
 
@@ -91,7 +90,7 @@ else
 {
     private List<CatalogItem> catalogItems = new List<CatalogItem>();
     private List<CatalogType> catalogTypes = new List<CatalogType>();
-    private List<CatalogBrand> catalogBrands = new List<CatalogBrand>();
+    private List<CatalogBrandDto> catalogBrands = new List<CatalogBrandDto>();
     private bool showCreate;
     private bool showDetails;
     private bool showEdit;
