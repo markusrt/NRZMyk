@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using NRZMyk.Components.Model;
+using NRZMyk.Services.Models;
 
 namespace NRZMyk.Components.Services
 {
@@ -17,20 +17,20 @@ namespace NRZMyk.Components.Services
             _httpClient = httpClient;
         }
 
-        public async Task<List<CatalogBrand>> List()
+        public async Task<List<CatalogBrandDto>> List()
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<CatalogBrand>>("api/catalog-brands");
+                return await _httpClient.GetFromJsonAsync<List<CatalogBrandDto>>("api/catalog-brands");
             }
             catch (AccessTokenNotAvailableException exception)
             {
                 exception.Redirect();
             }
-            return new List<CatalogBrand>();
+            return new List<CatalogBrandDto>();
         }
 
-        public static string GetBrandName(IEnumerable<CatalogBrand> brands, int brandId)
+        public static string GetBrandName(IEnumerable<CatalogBrandDto> brands, int brandId)
         {
             var type = brands.FirstOrDefault(t => t.Id == brandId);
 

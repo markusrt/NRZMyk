@@ -1,15 +1,17 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.CatalogBrands
 {
-    public class List : BaseAsyncEndpoint<ListCatalogBrandsResponse>
+    public class List : BaseAsyncEndpoint<IList<CatalogBrandDto>>
     {
         private readonly IAsyncRepository<CatalogBrand> _catalogBrandRepository;
         private readonly IMapper _mapper;
@@ -28,7 +30,7 @@ namespace NRZMyk.Server.Controllers.CatalogBrands
             OperationId = "catalog-brands.List",
             Tags = new[] { "CatalogBrandEndpoints" })
         ]
-        public override async Task<ActionResult<ListCatalogBrandsResponse>> HandleAsync()
+        public override async Task<ActionResult<IList<CatalogBrandDto>>> HandleAsync()
         {
             var items = await _catalogBrandRepository.ListAllAsync();
 
