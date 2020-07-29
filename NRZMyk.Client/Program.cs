@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NRZMyk.Components;
 using NRZMyk.Components.Services;
+using NRZMyk.Services.Services;
 
 namespace NRZMyk.Client
 {
@@ -26,6 +27,7 @@ namespace NRZMyk.Client
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("NRZMyk.ServerAPI"));
 
             builder.Services.AddTransient<CatalogBrandService>();
+            builder.Services.AddTransient<SentinelEntryService>();
 
             builder.Services.AddMsalAuthentication(options =>
             {

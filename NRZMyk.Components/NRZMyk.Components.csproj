@@ -28,6 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Watch Remove="Pages\SentinelEntryPage\List.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="Pages\FetchData.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
