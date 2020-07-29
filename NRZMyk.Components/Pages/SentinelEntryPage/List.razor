@@ -1,0 +1,161 @@
+﻿@page "/sentinel-entries"
+@attribute [Authorize]
+@inject SentinelEntryService SentinelEntryService
+@using NRZMyk.Services.Data.Entities
+@using NRZMyk.Services.Models
+@using NRZMyk.Services.Services
+@using CatalogItem = NRZMyk.Components.Services.CatalogItemService.CatalogItem
+@using CatalogType = NRZMyk.Components.Services.CatalogTypeService.CatalogType
+@inherits NRZMyk.Components.Helpers.BlazorComponent
+@namespace NRZMyk.Components.Pages.SentinelEntryPage
+
+<h1>Manage Sentinel Entries Catalog</h1>
+
+@if (sentinelEntries == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (!showCreate && !showDetails && !showEdit && !showDelete)
+    {
+        <p class="esh-link-wrapper">
+            <button class="btn btn-primary" @onclick="@(() => CreateClick())">
+                Create New
+            </button>
+        </p>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>SenderLaboratoryNumber</th>
+                    <th>IdentifiedSpecies</th>
+                    <th>Remark</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody class="cursor-pointer">
+                @foreach (var item in sentinelEntries)
+                {
+                    <tr @onclick="@(() => DetailsClick(item.Id))">
+                        <td>@item.Id</td>
+                        <td>@item.SenderLaboratoryNumber</td>
+                        <td>@item.IdentifiedSpecies</td>
+                        <td>@item.Remark</td>
+                        <td>
+                            <a href="" @onclick="@(() => EditClick(item.Id))" @onclick:preventDefault class="btn btn-primary">
+                                Edit
+                            </a>
+
+                            <a href="" @onclick="@(() => DeleteClick(item.Id))" @onclick:preventDefault class="btn btn-primary">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    @if (showDetails)
+    {
+        @*<Details Id="@selectedId" Brands="@catalogBrands" Types="@catalogTypes" OnCloseClick="CloseDetailsHandler" OnEditClick="EditDetailsHandler"></Details>*@
+    }
+
+    @if (showEdit)
+    {
+        @*<Edit Id="@selectedId" Brands="@catalogBrands" Types="@catalogTypes" OnCloseClick="CloseEditHandler"></Edit>*@
+    }
+
+    @if (showCreate)
+    {
+        @*<Create Brands="@catalogBrands" Types="@catalogTypes" OnCloseClick="CloseCreateHandler"></Create>*@
+    }
+
+    @if (showDelete)
+    {
+        @*<Delete Id="@selectedId" Brands="@catalogBrands" Types="@catalogTypes" OnCloseClick="CloseDeleteHandler"></Delete>*@
+    }
+}
+
+@code
+{
+    private List<SentinelEntry> sentinelEntries = new List<SentinelEntry>();
+    private bool showCreate;
+    private bool showDetails;
+    private bool showEdit;
+    private bool showDelete;
+    private int selectedId = 0;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            sentinelEntries = await SentinelEntryService.ListPaged(50);
+
+            CallRequestRefresh();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void DetailsClick(int id)
+    {
+        selectedId = id;
+        showDetails = true;
+    }
+
+    private void CreateClick()
+    {
+        showCreate = true;
+    }
+
+    private void EditClick(int id)
+    {
+        selectedId = id;
+        showEdit = true;
+    }
+
+    private void DeleteClick(int id)
+    {
+        selectedId = id;
+        showDelete = true;
+    }
+
+    private async Task CloseDetailsHandler(string action)
+    {
+        showDetails = false;
+        await ReloadCatalogItems();
+    }
+
+    private void EditDetailsHandler(int id)
+    {
+        showDetails = false;
+        selectedId = id;
+        showEdit = true;
+    }
+
+    private async Task CloseEditHandler(string action)
+    {
+        showEdit = false;
+        await ReloadCatalogItems();
+    }
+
+    private async Task CloseDeleteHandler(string action)
+    {
+        showDelete = false;
+        await ReloadCatalogItems();
+    }
+
+    private async Task CloseCreateHandler(string action)
+    {
+        showCreate = false;
+        await ReloadCatalogItems();
+    }
+
+    private async Task ReloadCatalogItems()
+    {
+        //catalogItems = await new BlazorAdmin.Services.CatalogItemService.ListPaged(Auth).HandleAsync(50);
+        StateHasChanged();
+    }
+}
