@@ -34,9 +34,7 @@ namespace NRZMyk.Components.Services.CatalogItemService
 
             var catalogItemResult = new CatalogItem();
 
-            var content = new StringContent(JsonConvert.SerializeObject(catalogItem), Encoding.UTF8, "application/json");
-
-            var result = await _httpClient.PostAsync($"{Constants.API_URL}catalog-items", content);
+            var result = await _httpClient.PostAsJsonAsync($"{Constants.API_URL}catalog-items", catalogItem);
             if (result.StatusCode != HttpStatusCode.OK)
             {
                 return catalogItemResult;
