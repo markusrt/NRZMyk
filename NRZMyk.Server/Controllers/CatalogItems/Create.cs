@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Data.Entities;
@@ -8,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.CatalogItems
 {
 
-    //[Authorize]
+    [Authorize]
     public class Create : BaseAsyncEndpoint<CreateCatalogItemRequest, CreateCatalogItemResponse>
     {
         private readonly IAsyncRepository<CatalogItem> _itemRepository;

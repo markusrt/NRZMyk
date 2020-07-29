@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
@@ -11,6 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.CatalogItems
 {
+    [Authorize]
     public class ListPaged : BaseAsyncEndpoint<ListPagedCatalogItemRequest, ListPagedCatalogItemResponse>
     {
         private readonly IAsyncRepository<CatalogItem> _itemRepository;

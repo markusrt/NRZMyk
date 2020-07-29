@@ -1,20 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Models;
 
-namespace NRZMyk.Components.Services
+namespace NRZMyk.Services.Services
 {
     public class CatalogBrandService
     {
         private readonly HttpClient _httpClient;
+        private readonly ILogger<CatalogBrandService> _logger;
 
-        public CatalogBrandService(HttpClient httpClient)
+        public CatalogBrandService(HttpClient httpClient, ILogger<CatalogBrandService> logger)
         {
             _httpClient = httpClient;
+            _logger = logger;
         }
 
         public async Task<List<CatalogBrandDto>> List()
@@ -23,11 +26,11 @@ namespace NRZMyk.Components.Services
             {
                 return await _httpClient.GetFromJsonAsync<List<CatalogBrandDto>>("api/catalog-brands");
             }
-            catch (AccessTokenNotAvailableException exception)
+            catch (Exception exception)
             {
-                exception.Redirect();
+                _logger.LogError(exception, "Failed to load catalog brands from backend");
+                return new List<CatalogBrandDto> {new CatalogBrandDto {Id=-1, Name = "Failed to load brands"}};
             }
-            return new List<CatalogBrandDto>();
         }
 
         public static string GetBrandName(IEnumerable<CatalogBrandDto> brands, int brandId)
@@ -36,6 +39,5 @@ namespace NRZMyk.Components.Services
 
             return type == null ? "None" : type.Name;
         }
-
     }
 }
