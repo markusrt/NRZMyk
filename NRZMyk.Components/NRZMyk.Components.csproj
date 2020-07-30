@@ -28,6 +28,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Services\**" />
+    <Watch Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="SharedComponents\Input\RadioInput.razor" />
   </ItemGroup>
 
