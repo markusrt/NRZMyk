@@ -1,15 +1,13 @@
 @using System.Linq.Expressions;
   
 <div class="form-group row">
-    <label class="control-label col-md-2">@FieldName</label>
-    <div class="col-md-3">
+    <label class="col-form-label col-sm-4">@FieldName</label>
+    <div class="col-sm-6">
         <InputText class="form-control" @bind-Value="Value" @oninput="OnValueChanged" />
         <ValidationMessage For="@For" />
-    </div>
-    <div class="col-md-3">  
-        <i>@TextLength/@LengthString</i>  
-    </div>  
+    </div> 
 </div>
+
 
 @* https://www.c-sharpcorner.com/article/share-data-between-child-and-parent-components-in-blazor/ *@
 
@@ -24,24 +22,13 @@
     public string FieldName { get; set; }  
 
     [Parameter]  
-    public int MaxLength { get; set; } = -1;  
-
-    [Parameter]  
     public EventCallback<string> ValueChanged { get; set; }  
 
     string LengthString;  
-    int TextLength;  
-
-    protected override void OnInitialized()  
-    {  
-        TextLength = Value.Length;  
-        LengthString = (MaxLength == -1) ? "Unlimited" : MaxLength.ToString();  
-    }  
 
     private Task OnValueChanged(ChangeEventArgs e)  
     {  
         Value = e.Value.ToString();  
-        TextLength = Value.Length;  
         return ValueChanged.InvokeAsync(Value);  
     }  
 }  

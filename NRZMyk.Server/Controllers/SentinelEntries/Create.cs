@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NRZMyk.Server.Controllers.CatalogItems;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,10 +13,12 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
     public class Create : BaseAsyncEndpoint<CreateSentinelEntryRequest, SentinelEntry>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
+        private readonly IMapper _mapper;
 
-        public Create(IAsyncRepository<SentinelEntry> sentinelEntryRepository)
+        public Create(IAsyncRepository<SentinelEntry> sentinelEntryRepository, IMapper mapper)
         {
             _sentinelEntryRepository = sentinelEntryRepository;
+            _mapper = mapper;
         }
 
         [HttpPost("api/sentinel-entries")]
@@ -27,21 +29,8 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<SentinelEntry>> HandleAsync(CreateSentinelEntryRequest request)
         {
-            var newItem = new SentinelEntry
-            {
-                SamplingDate = request.SamplingDate,
-                SenderLaboratoryNumber = request.SenderLaboratoryNumber,
-                Material = request.Material,
-                ResidentialTreatment = request.ResidentialTreatment,
-                IdentifiedSpecies = request.IdentifiedSpecies,
-                SpeciesTestingMethod = request.SpeciesTestingMethod,
-                AgeGroup = request.AgeGroup,
-                Remark = request.Remark
-            };
-
-            newItem = await _sentinelEntryRepository.AddAsync(newItem);
-
-            return newItem;
+            var newEntry = _mapper.Map<SentinelEntry>(request);
+            return await _sentinelEntryRepository.AddAsync(newEntry);
         }
     }
 }

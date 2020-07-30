@@ -1,0 +1,124 @@
+﻿@inject ILogger<Create> Logger
+@inject SentinelEntryService SentinelEntryService
+@using HaemophilusWeb.Utils
+@using Microsoft.Extensions.Logging
+@using NRZMyk.Services.Data.Entities
+@using NRZMyk.Services.Services
+@using NRZMyk.Components.SharedComponents.Input;
+@inherits NRZMyk.Components.Helpers.BlazorComponent
+
+@namespace NRZMyk.Components.Pages.SentinelEntryPage
+
+<h2>Neu anlegen</h2>
+
+<div>
+    <EditForm Model="_item" OnValidSubmit="@CreateClick">
+
+        <DataAnnotationsValidator/>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-4">Material</label>
+            <div class="col-sm-6">
+                <InputSelect class="form-control" @bind-Value="_item.Material">
+                    @foreach (var material in EnumUtils.AllEnumValues<Material>())
+                    {
+                        <option value="@material">@EnumUtils.GetEnumDescription(material)</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => _item.Material"/>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-4">Alter des Patienten</label>
+            <div class="col-sm-6">
+                <InputSelect class="form-control" @bind-Value="_item.AgeGroup">
+                    @foreach (var ageGroup in EnumUtils.AllEnumValues<AgeGroup>())
+                    {
+                        <option value="@ageGroup">@EnumUtils.GetEnumDescription(ageGroup)</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => _item.AgeGroup"/>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="control-label col-sm-4">Probentnahme</label>
+            <div class="col-sm-6">
+                <InputDate class="form-control" @bind-Value="_item.SamplingDate"/>
+                <ValidationMessage For="(() => _item.SamplingDate)"/>
+            </div>
+        </div>
+
+        <InputTextWithValidation FieldName="Labornummer Einsender" @bind-Value="_item.SenderLaboratoryNumber" For="() => _item.SenderLaboratoryNumber"/>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-4">Art der stationären Betreuung</label>
+            <div class="col-sm-6">
+                <InputSelect class="form-control" @bind-Value="_item.ResidentialTreatment">
+                    @foreach (var residentialTreatment in EnumUtils.AllEnumValues<ResidentialTreatment>())
+                    {
+                        <option value="@residentialTreatment">@EnumUtils.GetEnumDescription(residentialTreatment)</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => _item.ResidentialTreatment"/>
+            </div>
+        </div>
+
+        <InputTextWithValidation FieldName="Spezies" @bind-Value="_item.IdentifiedSpecies" For="() => _item.IdentifiedSpecies"/>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-4">Testmethode</label>
+            <div class="col-sm-6">
+                <InputSelect class="form-control" @bind-Value="_item.SpeciesTestingMethod">
+
+                    @foreach (var testingMethod in EnumUtils.AllEnumValues<SpeciesTestingMethod>())
+                    {
+                        <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => _item.SpeciesTestingMethod"/>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-4">Anmerkungen</label>
+            <div class="col-sm-6">
+                <InputTextArea class="form-control" @bind-Value="_item.Remark"/>
+                <ValidationMessage For="() => _item.Remark"/>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="offset-4 col-sm-6 text-right">
+                <a href="" @onclick="() => OnCloseClick.InvokeAsync(null)" @onclick:preventDefault class="btn btn-secondary">
+                    Abbrechen
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    Anlegen
+                </button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+
+    [Parameter]
+    public EventCallback<string> OnCloseClick { get; set; }
+
+    private readonly CreateSentinelEntryRequest _item = new CreateSentinelEntryRequest();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Logger.LogInformation("Now loading... /Catalog/Create");
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task CreateClick()
+    {
+        await SentinelEntryService.Create(_item);
+        await OnCloseClick.InvokeAsync(null);
+    }
+}
