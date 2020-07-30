@@ -1,0 +1,34 @@
+@using System.Linq.Expressions;
+  
+<div class="form-group row">
+    <label class="col-form-label col-sm-4">@FieldName</label>
+    <div class="col-sm-6">
+        <InputText class="form-control" @bind-Value="Value" @oninput="OnValueChanged" />
+        <ValidationMessage For="@For" />
+    </div> 
+</div>
+
+
+@* https://www.c-sharpcorner.com/article/share-data-between-child-and-parent-components-in-blazor/ *@
+
+@code {  
+    [Parameter]  
+    public string Value { get; set; }  
+
+    [Parameter]
+    public Expression<Func<string>>? For { get; set; }
+
+    [Parameter]  
+    public string FieldName { get; set; }  
+
+    [Parameter]  
+    public EventCallback<string> ValueChanged { get; set; }  
+
+    string LengthString;  
+
+    private Task OnValueChanged(ChangeEventArgs e)  
+    {  
+        Value = e.Value.ToString();  
+        return ValueChanged.InvokeAsync(Value);  
+    }  
+}  
