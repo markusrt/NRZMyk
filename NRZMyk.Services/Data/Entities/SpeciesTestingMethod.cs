@@ -7,8 +7,10 @@ namespace NRZMyk.Services.Data.Entities
         Vitek,
         [Description("Mikrodilution")]
         Microdilution,
+        [Description("Yeast One")]
         YeastOne,
         Micronaut,
+        [Description("E-Test")]
         ETest
     }
 }

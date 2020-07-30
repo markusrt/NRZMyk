@@ -56,7 +56,13 @@ Flag based authentication on client side is still WIP.
 
 ## Deployment setup
 
-Make sure above mentioned environment variables are also set correctly in your deployment environmen
+Make sure above mentioned environment variables are also set correctly in your deployment environment
+
+## Base tools to install
+
+```
+dotnet tool install --global dotnet-ef
+```
 
 ## Reference to third party licenses
 

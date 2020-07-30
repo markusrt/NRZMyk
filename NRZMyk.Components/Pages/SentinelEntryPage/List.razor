@@ -1,19 +1,17 @@
 ﻿@page "/sentinel-entries"
 @attribute [Authorize]
 @inject SentinelEntryService SentinelEntryService
+@using HaemophilusWeb.Utils
 @using NRZMyk.Services.Data.Entities
-@using NRZMyk.Services.Models
 @using NRZMyk.Services.Services
-@using CatalogItem = NRZMyk.Components.Services.CatalogItemService.CatalogItem
-@using CatalogType = NRZMyk.Components.Services.CatalogTypeService.CatalogType
 @inherits NRZMyk.Components.Helpers.BlazorComponent
 @namespace NRZMyk.Components.Pages.SentinelEntryPage
 
-<h1>Manage Sentinel Entries Catalog</h1>
+<h1>Sentinel Daten</h1>
 
 @if (sentinelEntries == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Lädt...</em></p>
 }
 else
 {
@@ -21,38 +19,47 @@ else
     {
         <p class="esh-link-wrapper">
             <button class="btn btn-primary" @onclick="@(() => CreateClick())">
-                Create New
+                Neu anlegen
             </button>
         </p>
 
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>SenderLaboratoryNumber</th>
-                    <th>IdentifiedSpecies</th>
-                    <th>Remark</th>
-                    <th>Actions</th>
+                    <th>Material</th>
+                    <th>Alter</th>
+                    <th>Probennahme</th>
+                    <th>Labornummer</th>
+                    <th>Betreuung</th>
+                    <th>Spezies</th>
+                    <th></th>
                 </tr>
             </thead>
-            <tbody class="cursor-pointer">
+            <tbody>
                 @foreach (var item in sentinelEntries)
                 {
-                    <tr @onclick="@(() => DetailsClick(item.Id))">
-                        <td>@item.Id</td>
-                        <td>@item.SenderLaboratoryNumber</td>
-                        <td>@item.IdentifiedSpecies</td>
-                        <td>@item.Remark</td>
-                        <td>
-                            <a href="" @onclick="@(() => EditClick(item.Id))" @onclick:preventDefault class="btn btn-primary">
-                                Edit
-                            </a>
+                <tr @onclick="() => DetailsClick(item.Id)">
+                    <td>@EnumUtils.GetEnumDescription(item.Material)</td>
+                    <td>@EnumUtils.GetEnumDescription(item.AgeGroup)</td>
+                    <td>
+                        @if (item.SamplingDate.HasValue)
+                        {
+                            @item.SamplingDate.Value.ToShortDateString();
+                        }
+                    </td>
+                    <td>@item.SenderLaboratoryNumber</td>
+                    <td>@EnumUtils.GetEnumDescription(item.ResidentialTreatment)</td>
+                    <td>@item.IdentifiedSpecies</td>
+                    <td>
+                        <a href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary disabled">
+                            Bearbeiten
+                        </a>
 
-                            <a href="" @onclick="@(() => DeleteClick(item.Id))" @onclick:preventDefault class="btn btn-primary">
-                                Delete
-                            </a>
-                        </td>
-                    </tr>
+                        @*<a href="" @onclick="@(() => DeleteClick(item.Id))" @onclick:preventDefault class="btn btn-primary">
+                            Delete
+                        </a>*@
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>
@@ -69,7 +76,7 @@ else
 
     @if (showCreate)
     {
-        @*<Create Brands="@catalogBrands" Types="@catalogTypes" OnCloseClick="CloseCreateHandler"></Create>*@
+       <Create OnCloseClick="CloseCreateHandler"></Create>
     }
 
     @if (showDelete)
@@ -80,7 +87,7 @@ else
 
 @code
 {
-    private List<SentinelEntry> sentinelEntries = new List<SentinelEntry>();
+    private List<SentinelEntry> sentinelEntries;
     private bool showCreate;
     private bool showDetails;
     private bool showEdit;
@@ -102,7 +109,7 @@ else
     private void DetailsClick(int id)
     {
         selectedId = id;
-        showDetails = true;
+        //showDetails = true;
     }
 
     private void CreateClick()
@@ -155,7 +162,7 @@ else
 
     private async Task ReloadCatalogItems()
     {
-        //catalogItems = await new BlazorAdmin.Services.CatalogItemService.ListPaged(Auth).HandleAsync(50);
+        sentinelEntries = await SentinelEntryService.ListPaged(50);
         StateHasChanged();
     }
 }

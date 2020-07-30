@@ -11,9 +11,6 @@ namespace NRZMyk.Services.Data
         {
         }
 
-        public DbSet<CatalogItem> CatalogItems { get; set; }
-        public DbSet<CatalogBrand> CatalogBrands { get; set; }
-        public DbSet<CatalogType> CatalogTypes { get; set; }
         public DbSet<SentinelEntry> SentinelEntries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
