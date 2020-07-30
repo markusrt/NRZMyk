@@ -18,7 +18,6 @@ using Microsoft.OpenApi.Models;
 using NRZMyk.Server.Model;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data;
-using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
 
@@ -40,7 +39,6 @@ namespace NRZMyk.Server
             ConfigureAzureAdB2C(services);
             ConfigureSwagger(services);
 
-            services.AddMediatR(typeof(CatalogItem).Assembly);
             services.AddAutoMapper(typeof(Startup).Assembly);
 
             services.AddControllersWithViews();
@@ -55,7 +53,6 @@ namespace NRZMyk.Server
             services.AddSingleton<WeatherForecastService>();
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.Configure<CatalogSettings>(Configuration);
-            services.AddSingleton<IUriComposer>(new UriComposer(Configuration.Get<CatalogSettings>()));
         }
 
 

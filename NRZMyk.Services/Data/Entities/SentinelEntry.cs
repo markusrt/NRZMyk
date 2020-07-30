@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using NRZMyk.Services.Interfaces;
 
 namespace NRZMyk.Services.Data.Entities
