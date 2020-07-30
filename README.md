@@ -21,21 +21,51 @@ be possible to apply entity framework migrations.
 
 ## Development setup
 
-### Azure AD
+### Azure ADB2C
 
-This app authenticates with Azure AD. In order to run it locally you need to configure the following environment variables:
+This app authenticates with Azure ADB2C. In order to run it locally you need 
+to setup client and server apps according to this documentation:
 
-- `AzureAd__Domain`: Your domain
+<https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant>
+
+### Server App
+
+Configure the following environment variables for the server project:
+
+- `AzureAdB2C__Domain`: Your ADB2C domain
 - `AzureAd__TenantId`: Your tenant ID
-- `AzureAd__ClientId`: Your apps client ID
+- `AzureAdB2C__ClientId`: Your server app client ID
+- `AzureAdB2C__SignUpSignInPolicyId`: Your signin policy name
+
+See also `appsettings.json` in server project.
+
+### Client App
+
+- Configure `wwwroot/appsettings.json` with corresponding values for the client app.
+- Configure `Program.cs` with corresponding API access key.
+
+### Role support
+
+Roles are currently supported by adding a custom attribute to the ADB2C users.
+
+- Attribute name: `Role`
+- Type: `int`
+- Value: Flag enum integer representation for `Role` enum in server project
+
+Flag based authentication on client side is still WIP.
 
 ## Deployment setup
 
-### Fix Azure AD redirect issues
+Make sure above mentioned environment variables are also set correctly in your deployment environment
 
-There are cases where RedirectUri is needed, for instance when you use a reverse proxy that transforms HTTPS
-URLs (external world) to HTTP URLs (inside the protected area). This can also be useful for Web apps running
-in containers (for the same reasons). I.e. in case that AAD tries to redirect to <http://your.host.name/signin-oidc>
-you would need to override the following config value:
+## Base tools to install
 
-- `AzureAd__RedirectUri`: `<https://your.host.name/signin-oidc>`
+```
+dotnet tool install --global dotnet-ef
+```
+
+## Reference to third party licenses
+
+- Used architecutral patters based on <https://github.com/dotnet-architecture/eShopOnWeb>
+  - MIT License: https://github.com/dotnet-architecture/eShopOnWeb/blob/master/LICENSE
+  - Last checked 2020-07-25

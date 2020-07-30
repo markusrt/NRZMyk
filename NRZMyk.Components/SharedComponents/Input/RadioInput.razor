@@ -1,0 +1,35 @@
+﻿@* TODO Fix not working due to missing JavaScript *@
+
+<div class="btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-secondary active">
+        <input type="checkbox" checked autocomplete="off"> Checked
+    </label>
+</div>
+
+<div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-secondary active">
+        <input type="radio" name="options" id="option1" autocomplete="off" checked> Active
+    </label>
+    <label class="btn btn-secondary">
+        <input type="radio" name="options" id="option2" autocomplete="off"> Radio
+    </label>
+    <label class="btn btn-secondary">
+        <input type="radio" name="options" id="option3" autocomplete="off"> Radio
+    </label>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-4 col-form-label" for="Sending_Material">Material</label>
+    <div class="col-sm-8">
+        <div>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-secondary active"><input checked="checked" data-val="true" data-val-required="'Material' darf keinen Null-Wert aufweisen." id="Material_VitalStem" name="Sending.Material" type="radio" value="VitalStem"> Vitaler Stamm</label>
+                <label class="btn btn-secondary "><input id="Material_NoGrowth" name="Sending.Material" type="radio" value="NoGrowth"> Nicht angewachsen</label>
+                <label class="btn btn-secondary "><input id="Material_NativeMaterial" name="Sending.Material" type="radio" value="NativeMaterial"> Nativmaterial</label>
+                <label class="btn btn-secondary "><input id="Material_IsolatedDna" name="Sending.Material" type="radio" value="IsolatedDna"> Isolierte DNA</label>
+            </div>
+        </div>
+        <span class="field-validation-valid" data-valmsg-for="Sending.Material" data-valmsg-replace="true"></span>
+    </div>
+</div>
+

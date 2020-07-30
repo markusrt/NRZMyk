@@ -1,14 +1,12 @@
 using System;
 using System.Net.Http;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NRZMyk.Components;
+using NRZMyk.Services.Services;
 
 namespace NRZMyk.Client
 {
@@ -24,6 +22,8 @@ namespace NRZMyk.Client
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("NRZMyk.ServerAPI"));
+
+            builder.Services.AddTransient<SentinelEntryService>();
 
             builder.Services.AddMsalAuthentication(options =>
             {
