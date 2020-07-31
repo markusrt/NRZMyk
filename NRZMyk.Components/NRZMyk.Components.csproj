@@ -27,36 +27,4 @@
     <Watch Include="..\**\*.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Services\**" />
-    <Content Remove="Services\**" />
-    <EmbeddedResource Remove="Services\**" />
-    <None Remove="Services\**" />
-    <Watch Remove="Services\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="SharedComponents\Input\RadioInput.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Watch Remove="Pages\SentinelEntryPage\Create.razor" />
-    <Watch Remove="Pages\SentinelEntryPage\List.razor" />
-    <Watch Remove="SharedComponents\Input\RadioInput.razor" />
-    <Watch Remove="Utils\EnumUtils.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="Pages\FetchData.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Index.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="SharedComponents\Input\RadioInput.razor" />
-  </ItemGroup>
-
 </Project>
