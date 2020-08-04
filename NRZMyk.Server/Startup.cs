@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
@@ -25,12 +26,15 @@ namespace NRZMyk.Server
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -41,7 +45,12 @@ namespace NRZMyk.Server
 
             services.AddAutoMapper(typeof(Startup).Assembly);
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddJsonOptions(x =>
+                {
+                    x.JsonSerializerOptions.WriteIndented = !Environment.IsProduction();
+                    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
             services.AddRazorPages();
 
             services.AddMvc().AddRazorPagesOptions(options => { options.RootDirectory = "/"; });
@@ -90,7 +99,7 @@ namespace NRZMyk.Server
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "NRZMyk API V1");
             });
 
             app.UseEndpoints(endpoints =>
