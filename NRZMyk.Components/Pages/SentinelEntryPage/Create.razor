@@ -1,9 +1,12 @@
 ﻿@inject ILogger<Create> Logger
 @inject SentinelEntryService SentinelEntryService
+@inject ClinicalBreakpointService ClinicalBreakpointService
 @using HaemophilusWeb.Utils
 @using Microsoft.Extensions.Logging
 @using NRZMyk.Services.Data.Entities
 @using NRZMyk.Services.Services
+@using NRZMyk.Components.SharedComponents.Input
+@using NRZMyk.Services.Models
 @inherits NRZMyk.Components.Helpers.BlazorComponent
 
 @namespace NRZMyk.Components.Pages.SentinelEntryPage
@@ -13,7 +16,7 @@
 <div>
     <EditForm Model="_item" OnValidSubmit="@CreateClick">
 
-        <DataAnnotationsValidator/>
+        <DataAnnotationsValidator />
 
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Material</label>
@@ -24,7 +27,7 @@
                         <option value="@material">@EnumUtils.GetEnumDescription(material)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.Material"/>
+                <ValidationMessage For="() => _item.Material" />
             </div>
         </div>
 
@@ -37,19 +40,19 @@
                         <option value="@ageGroup">@EnumUtils.GetEnumDescription(ageGroup)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.AgeGroup"/>
+                <ValidationMessage For="() => _item.AgeGroup" />
             </div>
         </div>
 
         <div class="form-group row">
             <label class="control-label col-sm-4">Probentnahme</label>
             <div class="col-sm-6">
-                <InputDate class="form-control" @bind-Value="_item.SamplingDate"/>
-                <ValidationMessage For="(() => _item.SamplingDate)"/>
+                <InputDate class="form-control" @bind-Value="_item.SamplingDate" />
+                <ValidationMessage For="(() => _item.SamplingDate)" />
             </div>
         </div>
 
-        <InputTextWithValidation FieldName="Labornummer Einsender" @bind-Value="_item.SenderLaboratoryNumber" For="() => _item.SenderLaboratoryNumber"/>
+        <InputTextWithValidation FieldName="Labornummer Einsender" @bind-Value="_item.SenderLaboratoryNumber" For="() => _item.SenderLaboratoryNumber" />
 
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Art der stationären Betreuung</label>
@@ -60,11 +63,11 @@
                         <option value="@residentialTreatment">@EnumUtils.GetEnumDescription(residentialTreatment)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.ResidentialTreatment"/>
+                <ValidationMessage For="() => _item.ResidentialTreatment" />
             </div>
         </div>
 
-        <InputTextWithValidation FieldName="Spezies" @bind-Value="_item.IdentifiedSpecies" For="() => _item.IdentifiedSpecies"/>
+        <InputTextWithValidation FieldName="Spezies" @bind-Value="_item.IdentifiedSpecies" For="() => _item.IdentifiedSpecies" />
 
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Testmethode</label>
@@ -76,15 +79,28 @@
                         <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.SpeciesTestingMethod"/>
+                <ValidationMessage For="() => _item.SpeciesTestingMethod" />
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Anmerkungen</label>
             <div class="col-sm-6">
-                <InputTextArea class="form-control" @bind-Value="_item.Remark"/>
-                <ValidationMessage For="() => _item.Remark"/>
+                <InputTextArea class="form-control" @bind-Value="_item.Remark" />
+                <ValidationMessage For="() => _item.Remark" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-4">Breakpoints</label>
+            <div class="col-md-6">
+                <InputSelectNumber @bind-Value="_item.ClinicalBreakpointId" class="form-control">
+                    @foreach (var breakpoint in _clinicalBreakpoints)
+                    {
+                        <option value="@breakpoint.Id">@breakpoint.Title</option>
+                    }
+                </InputSelectNumber>
+                <ValidationMessage For="(() => _item.ClinicalBreakpointId)" />
             </div>
         </div>
 
@@ -98,6 +114,7 @@
                 </button>
             </div>
         </div>
+
     </EditForm>
 </div>
 
@@ -107,10 +124,18 @@
     public EventCallback<string> OnCloseClick { get; set; }
 
     private readonly CreateSentinelEntryRequest _item = new CreateSentinelEntryRequest();
+    private List<ClinicalBreakpointReference> _clinicalBreakpoints = new List<ClinicalBreakpointReference>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Logger.LogInformation("Now loading... /Catalog/Create");
+        if (firstRender)
+        {
+            _clinicalBreakpoints = await ClinicalBreakpointService.List();
+            
+            CallRequestRefresh();
+        }
+
 
         await base.OnAfterRenderAsync(firstRender);
     }

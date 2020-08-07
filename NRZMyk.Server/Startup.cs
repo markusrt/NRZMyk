@@ -43,14 +43,16 @@ namespace NRZMyk.Server
             ConfigureAzureAdB2C(services);
             ConfigureSwagger(services);
 
-            services.AddAutoMapper(typeof(Startup).Assembly);
+            services.AddAutoMapper(typeof(Startup).Assembly, typeof(SentinelEntryService).Assembly);
 
-            services.AddControllersWithViews()
-                .AddJsonOptions(x =>
-                {
-                    x.JsonSerializerOptions.WriteIndented = !Environment.IsProduction();
-                    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                });
+            services.AddControllersWithViews();
+                // TODO looks nice in swagger but need to find a way on how to make JsonStringEnumConverter
+                //      working correctly in WebAssembly... i.e. how to configure it via DI there
+                //.AddJsonOptions(x =>
+                //{
+                //    x.JsonSerializerOptions.WriteIndented = !Environment.IsProduction();
+                //    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                //});
             services.AddRazorPages();
 
             services.AddMvc().AddRazorPagesOptions(options => { options.RootDirectory = "/"; });
@@ -63,8 +65,6 @@ namespace NRZMyk.Server
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.Configure<DatabaseSeedSettings>(Configuration);
         }
-
-
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
