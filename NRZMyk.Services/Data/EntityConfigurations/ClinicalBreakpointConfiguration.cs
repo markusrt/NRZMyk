@@ -14,7 +14,7 @@ namespace NRZMyk.Services.Data.EntityConfigurations
             builder.Property(b => b.Version).IsRequired();
             builder.Property(b => b.AntifungalAgentDetails).IsRequired();
 
-            builder.HasIndex(b => new { b.Standard, b.Version, b.AntifungalAgentDetails}).IsUnique();
+            builder.HasIndex(b => new { b.Standard, b.Version, b.Species, b.AntifungalAgentDetails}).IsUnique();
         }
     }
 }
