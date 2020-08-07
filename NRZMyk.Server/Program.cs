@@ -1,9 +1,12 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data;
 
 namespace NRZMyk.Server
@@ -18,10 +21,13 @@ namespace NRZMyk.Server
             {
                 var services = scope.ServiceProvider;
                 var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                var configuration = services.GetRequiredService<IConfiguration>();
+                var seedSettings = configuration.Get<DatabaseSeedSettings>();
+
                 try
                 {
                     var catalogContext = services.GetRequiredService<ApplicationDbContext>();
-                    await ApplicationDbContextSeed.SeedAsync(catalogContext, loggerFactory);
+                    await ApplicationDbContextSeed.SeedAsync(catalogContext, loggerFactory, seedSettings.DatabaseSeed);
                 }
                 catch (Exception ex)
                 {

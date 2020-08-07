@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -9,12 +8,18 @@ using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Services
 {
-    public class SentinelEntryService
+    public interface SentinelEntryService
+    {
+        Task<SentinelEntry> Create(CreateSentinelEntryRequest createRequest);
+        Task<List<SentinelEntry>> ListPaged(int pageSize);
+    }
+
+    public class SentinelEntryServiceImpl : SentinelEntryService
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<SentinelEntryService> _logger;
+        private readonly ILogger<SentinelEntryServiceImpl> _logger;
 
-        public SentinelEntryService(HttpClient httpClient, ILogger<SentinelEntryService> logger)
+        public SentinelEntryServiceImpl(HttpClient httpClient, ILogger<SentinelEntryServiceImpl> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
@@ -47,32 +52,5 @@ namespace NRZMyk.Services.Services
                 return new List<SentinelEntry>();
             }
         }
-    }
-
-    public class CreateSentinelEntryRequest
-    {
-        public DateTime? SamplingDate { get; set; }
-
-        [Required(ErrorMessage = "Das Feld Labornummer Einsender ist erforderlich")]
-        public string SenderLaboratoryNumber { get; set; }
-
-        public Material Material { get; set; }
-
-        public ResidentialTreatment ResidentialTreatment { get; set; }
-
-        [Required(ErrorMessage = "Das Feld Spezies ist erforderlich")]
-        public string IdentifiedSpecies { get; set; }
-
-        public SpeciesTestingMethod SpeciesTestingMethod { get; set; }
-
-        public AgeGroup AgeGroup { get; set; }
-
-        public string Remark { get; set; }
-    }
-
-    public class PagedSentinelEntryResult
-    {
-        public List<SentinelEntry> SentinelEntries { get; set; } = new List<SentinelEntry>();
-        public int PageCount { get; set; } = 0;
     }
 }

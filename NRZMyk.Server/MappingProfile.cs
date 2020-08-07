@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using NRZMyk.Server.Controllers.SentinelEntries;
+using NRZMyk.Server.Controllers.ClinicalBreakpoints;
 using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Server
@@ -8,7 +8,7 @@ namespace NRZMyk.Server
     {
         public MappingProfile()
         {
-            CreateMap<CreateSentinelEntryRequest, SentinelEntry>();
+            CreateMap<CreateClinicalBreakpointRequest, ClinicalBreakpoint>();
         }
     }
 }

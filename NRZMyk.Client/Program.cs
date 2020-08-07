@@ -23,7 +23,8 @@ namespace NRZMyk.Client
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("NRZMyk.ServerAPI"));
 
-            builder.Services.AddTransient<SentinelEntryService>();
+            builder.Services.AddTransient<SentinelEntryService, SentinelEntryServiceImpl>();
+            builder.Services.AddTransient<ClinicalBreakpointService, ClinicalBreakpointServiceImpl>();
 
             builder.Services.AddMsalAuthentication(options =>
             {

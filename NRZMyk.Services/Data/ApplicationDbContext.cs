@@ -13,6 +13,8 @@ namespace NRZMyk.Services.Data
 
         public DbSet<SentinelEntry> SentinelEntries { get; set; }
 
+        public DbSet<ClinicalBreakpoint> ClinicalBreakpoints { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
