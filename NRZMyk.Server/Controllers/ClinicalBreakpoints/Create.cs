@@ -10,6 +10,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
 {
+    [Authorize]
     public class Create : BaseAsyncEndpoint<CreateClinicalBreakpointRequest, ClinicalBreakpoint>
     {
         private readonly IAsyncRepository<ClinicalBreakpoint> _clinicalBreakpointRepository;
