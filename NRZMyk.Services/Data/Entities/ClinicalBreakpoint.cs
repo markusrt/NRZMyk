@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using NRZMyk.Services.Interfaces;
 
 namespace NRZMyk.Services.Data.Entities
@@ -11,7 +10,7 @@ namespace NRZMyk.Services.Data.Entities
         public string AntifungalAgentDetails { get; set; }
         
         public Species Species { get; set; }
-        
+
         public BrothMicrodilutionStandard Standard { get; set; }
         
         public string Version { get; set; }
@@ -21,6 +20,11 @@ namespace NRZMyk.Services.Data.Entities
         public float? MicBreakpointSusceptible { get; set; }
 
         public float? MicBreakpointResistent { get; set; }
+        
+        /// <summary>
+        /// ATU or SSD for EUCAST or CSLI respectively
+        /// </summary>
+        public float? TechnicalUncertainty { get; set; }
 
         public string Title 
             => NotAvailable 
