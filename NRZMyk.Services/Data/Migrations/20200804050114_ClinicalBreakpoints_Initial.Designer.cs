@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NRZMyk.Services.Data;
 
 namespace NRZMyk.Services.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200804050114_ClinicalBreakpoints_Initial")]
+    partial class ClinicalBreakpoints_Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,9 +47,6 @@ namespace NRZMyk.Services.Data.Migrations
                     b.Property<int>("Standard")
                         .HasColumnType("int");
 
-                    b.Property<float?>("TechnicalUncertainty")
-                        .HasColumnType("real");
-
                     b.Property<DateTime>("ValidFrom")
                         .HasColumnType("datetime2");
 
@@ -57,7 +56,7 @@ namespace NRZMyk.Services.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Standard", "Version", "Species", "AntifungalAgentDetails")
+                    b.HasIndex("Standard", "Version", "AntifungalAgentDetails")
                         .IsUnique();
 
                     b.ToTable("ClinicalBreakpoints");
