@@ -54,15 +54,32 @@ Roles are currently supported by adding a custom attribute to the ADB2C users.
 
 Flag based authentication on client side is still WIP.
 
-## Deployment setup
+### Deployment setup
 
 Make sure above mentioned environment variables are also set correctly in your deployment environment
 
-## Base tools to install
+### Base tools to install
 
 ```
 dotnet tool install --global dotnet-ef
 ```
+
+## Development tasks
+
+### Entity framework migrations
+
+List migrations in project `NRZMyk.Services` using
+
+```
+dotnet ef migrations --startup-project ../NRZMyk.Server/NRZMyk.Server.csproj list 
+```
+
+Add a new migration using
+
+```
+dotnet ef migrations --startup-project ../NRZMyk.Server/NRZMyk.Server.csproj add Entity_MigrationDetails 
+```
+
 
 ## Reference to third party licenses
 
