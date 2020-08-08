@@ -7,7 +7,7 @@ namespace NRZMyk.Services.Data.Entities
         None = 0,
         [Description("EUCAST")]
         Eucast = 1,
-        [Description("CSLI")]
-        Csli = 2
+        [Description("CLSI")]
+        Clsi = 2
     }
 }

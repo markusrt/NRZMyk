@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.SentinelEntries
