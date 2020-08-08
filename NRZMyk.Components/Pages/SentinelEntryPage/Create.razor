@@ -55,31 +55,50 @@
         <InputTextWithValidation FieldName="Labornummer Einsender" @bind-Value="_item.SenderLaboratoryNumber" For="() => _item.SenderLaboratoryNumber" />
 
         <div class="form-group row">
-            <label class="col-form-label col-sm-4">Art der stationären Betreuung</label>
-            <div class="col-sm-6">
-                <InputSelect class="form-control" @bind-Value="_item.ResidentialTreatment">
-                    @foreach (var residentialTreatment in EnumUtils.AllEnumValues<ResidentialTreatment>())
+            <label class="col-form-label col-sm-4">Station</label>
+            <div class="col-sm-3">
+                <InputSelect class="form-control" @bind-Value="_item.HospitalDepartmentType">
+                    @foreach (var departmentType in EnumUtils.AllEnumValues<HospitalDepartmentType>())
                     {
-                        <option value="@residentialTreatment">@EnumUtils.GetEnumDescription(residentialTreatment)</option>
+                        <option value="@departmentType">@EnumUtils.GetEnumDescription(departmentType)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.ResidentialTreatment" />
+                <ValidationMessage For="() => _item.HospitalDepartmentType" />
+            </div>
+            <div class="col-sm-3">
+                <InputSelect class="form-control" @bind-Value="_item.HospitalDepartment">
+                    @foreach (var department in EnumUtils.AllEnumValues<HospitalDepartment>())
+                    {
+                        <option value="@department">@EnumUtils.GetEnumDescription(department)</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => _item.HospitalDepartment" />
             </div>
         </div>
 
-        <InputTextWithValidation FieldName="Spezies" @bind-Value="_item.IdentifiedSpecies" For="() => _item.IdentifiedSpecies" />
-
         <div class="form-group row">
-            <label class="col-form-label col-sm-4">Testmethode</label>
+            <label class="col-form-label col-sm-4">Spezies</label>
             <div class="col-sm-6">
-                <InputSelect class="form-control" @bind-Value="_item.SpeciesTestingMethod">
-
-                    @foreach (var testingMethod in EnumUtils.AllEnumValues<SpeciesTestingMethod>())
+                <InputSelect class="form-control" @bind-Value="_item.IdentifiedSpecies">
+                    @foreach (var species in EnumUtils.AllEnumValues<Species>())
                     {
-                        <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
+                        <option value="@species">@EnumUtils.GetEnumDescription(species)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.SpeciesTestingMethod" />
+                <ValidationMessage For="() => _item.IdentifiedSpecies" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-4">Methode Speziesidentifikation</label>
+            <div class="col-sm-6">
+                <InputSelect class="form-control" @bind-Value="_item.SpeciesIdentificationMethod">
+                    @foreach (var identificationMethod in EnumUtils.AllEnumValues<SpeciesIdentificationMethod>())
+                    {
+                        <option value="@identificationMethod">@EnumUtils.GetEnumDescription(identificationMethod)</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => _item.SpeciesIdentificationMethod" />
             </div>
         </div>
 
@@ -128,7 +147,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Logger.LogInformation("Now loading... /Catalog/Create");
+        Logger.LogInformation("Now loading... /SentinelEntry/Create");
         if (firstRender)
         {
             _clinicalBreakpoints = await ClinicalBreakpointService.List();

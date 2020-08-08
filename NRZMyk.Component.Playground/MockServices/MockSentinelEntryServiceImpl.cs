@@ -23,13 +23,13 @@ namespace NRZMyk.Components.Playground.MockServices
             _repository.Add(new SentinelEntry
             {
                 AgeGroup = AgeGroup.ElevenToFifteen,
-                IdentifiedSpecies = "Identified species",
+                IdentifiedSpecies = Species.CandidaDubliniensis,
                 Material = Material.Isolate,
                 Remark = "Some notes",
-                ResidentialTreatment = ResidentialTreatment.MixedIntensiveCareUnit,
+                HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
+                HospitalDepartment =  HospitalDepartment.Neurology,
                 SamplingDate = new DateTime(2020,5,1),
                 SenderLaboratoryNumber = "SLN-123456",
-                SpeciesTestingMethod = SpeciesTestingMethod.Vitek,
             });
         }
 

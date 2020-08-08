@@ -13,12 +13,14 @@ namespace NRZMyk.Services.Services
 
         public Material Material { get; set; }
 
-        public ResidentialTreatment ResidentialTreatment { get; set; }
+        public HospitalDepartmentType HospitalDepartmentType { get; set; }
+
+        public HospitalDepartment HospitalDepartment { get; set; }
 
         [Required(ErrorMessage = "Das Feld Spezies ist erforderlich")]
         public string IdentifiedSpecies { get; set; }
 
-        public SpeciesTestingMethod SpeciesTestingMethod { get; set; }
+        public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }
 
         public AgeGroup AgeGroup { get; set; }
 

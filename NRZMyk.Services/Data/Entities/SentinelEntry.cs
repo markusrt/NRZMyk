@@ -15,14 +15,17 @@ namespace NRZMyk.Services.Data.Entities
         [Display(Name = "Material")]
         public Material Material { get; set; }
 
-        [Display(Name = "Art der stationären Betreuung")]
-        public ResidentialTreatment ResidentialTreatment { get; set; }
+        [Display(Name = "Stationstyp")]
+        public HospitalDepartmentType HospitalDepartmentType { get; set; }
 
-        [Display(Name = "Speziesidentifizierung")]
-        public string IdentifiedSpecies { get; set; }
+        [Display(Name = "Station")]
+        public HospitalDepartment HospitalDepartment { get; set; }
 
-        [Display(Name = "Methodik der Testung")]
-        public SpeciesTestingMethod SpeciesTestingMethod { get; set; }
+        [Display(Name = "Methode Speziesidentifikation")]
+        public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }
+
+        [Display(Name = "Spezies")]
+        public Species IdentifiedSpecies { get; set; }
 
         [Display(Name = "Altersgruppe")]
         public AgeGroup AgeGroup { get; set; }

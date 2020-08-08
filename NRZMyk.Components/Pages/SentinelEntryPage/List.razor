@@ -30,7 +30,7 @@ else
                     <th>Alter</th>
                     <th>Probennahme</th>
                     <th>Labornummer</th>
-                    <th>Betreuung</th>
+                    <th>Station </th>
                     <th>Spezies</th>
                     <th></th>
                 </tr>
@@ -48,8 +48,8 @@ else
                         }
                     </td>
                     <td>@item.SenderLaboratoryNumber</td>
-                    <td>@EnumUtils.GetEnumDescription(item.ResidentialTreatment)</td>
-                    <td>@item.IdentifiedSpecies</td>
+                    <td>@EnumUtils.GetEnumDescription(item.HospitalDepartmentType), @EnumUtils.GetEnumDescription(item.HospitalDepartment)</td>
+                    <td>@EnumUtils.GetEnumDescription(item.IdentifiedSpecies)</td>
                     <td>
                         <a href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary disabled">
                             Bearbeiten
