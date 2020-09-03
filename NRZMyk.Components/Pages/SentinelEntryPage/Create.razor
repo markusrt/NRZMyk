@@ -135,7 +135,7 @@
                     </InputSelectNumber>
                     <ValidationMessage For="(() => _item.ClinicalBreakpointId)" />
                 </div>
-                <div class="col-sm-4 col-xs-2 etest-labels">
+                <div class="col-sm-4">
                     @foreach (var resistance in EnumUtils.AllEnumValues<Resistance>())
                     {
                         <span class="badge @(ResistenceBadge(resistance))" style="@(sensitivityTest.Resistance == resistance ? "" : "display:none")">
