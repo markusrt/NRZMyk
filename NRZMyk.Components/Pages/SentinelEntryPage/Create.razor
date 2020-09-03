@@ -110,6 +110,51 @@
             </div>
         </div>
 
+        <h3>Tests</h3>
+        @foreach (var sensitivityTest in _item.SensitivityTests)
+        {
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <InputSelect class="form-control" @bind-Value="sensitivityTest.TestingMethod">
+                        @foreach (var testingMethod in EnumUtils.AllEnumValues<SpeciesTestingMethod>())
+                        {
+                            <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="col-sm-2">
+                    <InputNumber class="form-control" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration"/>
+                </div>
+                <div class="col-sm-4">
+                    <InputSelectNumber @bind-Value="sensitivityTest.EucastClinicalBreakpoint.Id" class="form-control">
+                        @foreach (var breakpoint in _clinicalBreakpoints)
+                        {
+                            <option value="@breakpoint.Id">@breakpoint.Title</option>
+                        }
+                    </InputSelectNumber>
+                    <ValidationMessage For="(() => _item.ClinicalBreakpointId)" />
+                </div>
+                <div class="col-sm-4 col-xs-2 etest-labels">
+                    @foreach (var resistance in EnumUtils.AllEnumValues<Resistance>())
+                    {
+                        <span class="badge @(ResistenceBadge(resistance))" style="@(sensitivityTest.Resistance == resistance ? "" : "display:none")">
+                            @EnumUtils.GetEnumDescription(resistance)
+                        </span>
+                    }
+                </div>
+            </div>
+        }
+
+        <select class="form-control" @bind="testingMethod">
+            @foreach (var testingMethod in EnumUtils.AllEnumValues<SpeciesTestingMethod>())
+            {
+                <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
+            }
+        </select>
+
+        <button @onclick="AddAntimicrobialSensitivityTest">Neuer MHK Eintrag</button>
+
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Breakpoints</label>
             <div class="col-md-6">
@@ -145,13 +190,38 @@
     private readonly CreateSentinelEntryRequest _item = new CreateSentinelEntryRequest();
     private List<ClinicalBreakpointReference> _clinicalBreakpoints = new List<ClinicalBreakpointReference>();
 
+    private SpeciesTestingMethod testingMethod;
+
+    private void AddAntimicrobialSensitivityTest()
+    {
+        _item.SensitivityTests.Add(
+            new AntimicrobialSensitivityTest { TestingMethod = testingMethod, EucastClinicalBreakpoint = _clinicalBreakpoints.First()});
+    }
+
+    private string ResistenceBadge(Resistance resistance)
+    {
+        if (resistance == Resistance.Resistant)
+        {
+            return "badge-danger";
+        }
+        if (resistance == Resistance.Intermediate)
+        {
+            return "badge-warning";
+        }
+        if (resistance == Resistance.Susceptible)
+        {
+            return "badge-success";
+        }
+        return "badge-info";
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Logger.LogInformation("Now loading... /SentinelEntry/Create");
         if (firstRender)
         {
             _clinicalBreakpoints = await ClinicalBreakpointService.List();
-            
+
             CallRequestRefresh();
         }
 
