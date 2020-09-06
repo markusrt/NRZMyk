@@ -5,7 +5,7 @@ namespace NRZMyk.Services.Data.Entities
 {
     public class ClinicalBreakpoint : BaseEntity, IAggregateRoot
     {
-        public AntifungalAgent  AntifungalAgent { get; set; }
+        public AntifungalAgent AntifungalAgent { get; set; }
 
         public string AntifungalAgentDetails { get; set; }
         

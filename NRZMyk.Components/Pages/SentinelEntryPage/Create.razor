@@ -1,15 +1,11 @@
-﻿@inject ILogger<Create> Logger
-@inject SentinelEntryService SentinelEntryService
-@inject ClinicalBreakpointService ClinicalBreakpointService
+﻿
 @using HaemophilusWeb.Utils
 @using Microsoft.Extensions.Logging
 @using NRZMyk.Services.Data.Entities
 @using NRZMyk.Services.Services
 @using NRZMyk.Components.SharedComponents.Input
 @using NRZMyk.Services.Models
-@inherits NRZMyk.Components.Helpers.BlazorComponent
-
-@namespace NRZMyk.Components.Pages.SentinelEntryPage
+@inherits CreateBase
 
 <h2>Neu anlegen</h2>
 
@@ -48,7 +44,7 @@
             <label class="control-label col-sm-4">Probentnahme</label>
             <div class="col-sm-6">
                 <InputDate class="form-control" @bind-Value="_item.SamplingDate" />
-                <ValidationMessage For="(() => _item.SamplingDate)" />
+                <ValidationMessage For="() => _item.SamplingDate" />
             </div>
         </div>
 
@@ -111,62 +107,74 @@
         </div>
 
         <h3>Tests</h3>
-        @foreach (var sensitivityTest in _item.SensitivityTests)
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <select class="form-control" @bind="_testingMethod">
+                    @foreach (var testingMethod in EnumUtils.AllEnumValues<SpeciesTestingMethod>().Where(t => t == SpeciesTestingMethod.Vitek))
+                    {
+                        <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <select class="form-control" @bind="_antifungalAgent">
+                    @foreach (var antifungalAgent in EnumUtils.AllEnumValues<AntifungalAgent>().Where(t =>
+
+                        new List<AntifungalAgent> {AntifungalAgent.Micafungin, AntifungalAgent.Caspofungin, AntifungalAgent.Voriconazole, AntifungalAgent.Fluconazole, AntifungalAgent.AmphotericinB}.Contains(t)))
+                    {
+                        <option value="@antifungalAgent">@EnumUtils.GetEnumDescription(antifungalAgent)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <button class="btn btn-outline-secondary" @onclick="AddAntimicrobialSensitivityTest">Neuer MHK Eintrag</button>
+            </div>
+        </div>
+
+        @foreach (var sensitivityTest in RecalculateResistance())
         {
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <InputSelect class="form-control" @bind-Value="sensitivityTest.TestingMethod">
-                        @foreach (var testingMethod in EnumUtils.AllEnumValues<SpeciesTestingMethod>())
-                        {
-                            <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
-                        }
-                    </InputSelect>
+                    <p class="form-control-plaintext">
+                        <b>@sensitivityTest.TestingMethod</b> - @sensitivityTest.AntifungalAgent
+                    </p>
                 </div>
 
                 <div class="col-sm-2">
-                    <InputNumber class="form-control" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration"/>
+                    <div class="input-group mb-2 mr-sm-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">MHK</div>
+                        </div>
+                        <InputSelect class="form-control" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration">
+                            <option value="0.06">≤0.06</option>
+                            <option value="0.12">0.12</option>
+                            <option value="0.25">0.25</option>
+                            <option value="0.5">0.5</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="4">4</option>
+                            <option value="8">≥8</option>
+                        </InputSelect>
+                    </div>
+
                 </div>
                 <div class="col-sm-4">
-                    <InputSelectNumber @bind-Value="sensitivityTest.EucastClinicalBreakpoint.Id" class="form-control">
+                    <InputSelectNumber class="form-control" @bind-Value="sensitivityTest.EucastClinicalBreakpointId">
                         @foreach (var breakpoint in _clinicalBreakpoints)
-                        {
+                            {
                             <option value="@breakpoint.Id">@breakpoint.Title</option>
-                        }
+                            }
                     </InputSelectNumber>
-                    <ValidationMessage For="(() => _item.ClinicalBreakpointId)" />
                 </div>
                 <div class="col-sm-4">
-                    @foreach (var resistance in EnumUtils.AllEnumValues<Resistance>())
-                    {
-                        <span class="badge @(ResistenceBadge(resistance))" style="@(sensitivityTest.Resistance == resistance ? "" : "display:none")">
-                            @EnumUtils.GetEnumDescription(resistance)
+                    <p class="form-control-plaintext">
+                        <span class="badge @(ResistenceBadge(sensitivityTest))">
+                            @EnumUtils.GetEnumDescription(sensitivityTest.Resistance)
                         </span>
-                    }
+                    </p>
                 </div>
             </div>
         }
-
-        <select class="form-control" @bind="testingMethod">
-            @foreach (var testingMethod in EnumUtils.AllEnumValues<SpeciesTestingMethod>())
-            {
-                <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
-            }
-        </select>
-
-        <button @onclick="AddAntimicrobialSensitivityTest">Neuer MHK Eintrag</button>
-
-        <div class="form-group row">
-            <label class="col-form-label col-sm-4">Breakpoints</label>
-            <div class="col-md-6">
-                <InputSelectNumber @bind-Value="_item.ClinicalBreakpointId" class="form-control">
-                    @foreach (var breakpoint in _clinicalBreakpoints)
-                    {
-                        <option value="@breakpoint.Id">@breakpoint.Title</option>
-                    }
-                </InputSelectNumber>
-                <ValidationMessage For="(() => _item.ClinicalBreakpointId)" />
-            </div>
-        </div>
 
         <div class="form-group row">
             <div class="offset-4 col-sm-6 text-right">
@@ -178,60 +186,5 @@
                 </button>
             </div>
         </div>
-
     </EditForm>
 </div>
-
-@code {
-
-    [Parameter]
-    public EventCallback<string> OnCloseClick { get; set; }
-
-    private readonly CreateSentinelEntryRequest _item = new CreateSentinelEntryRequest();
-    private List<ClinicalBreakpointReference> _clinicalBreakpoints = new List<ClinicalBreakpointReference>();
-
-    private SpeciesTestingMethod testingMethod;
-
-    private void AddAntimicrobialSensitivityTest()
-    {
-        _item.SensitivityTests.Add(
-            new AntimicrobialSensitivityTest { TestingMethod = testingMethod, EucastClinicalBreakpoint = _clinicalBreakpoints.First()});
-    }
-
-    private string ResistenceBadge(Resistance resistance)
-    {
-        if (resistance == Resistance.Resistant)
-        {
-            return "badge-danger";
-        }
-        if (resistance == Resistance.Intermediate)
-        {
-            return "badge-warning";
-        }
-        if (resistance == Resistance.Susceptible)
-        {
-            return "badge-success";
-        }
-        return "badge-info";
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        Logger.LogInformation("Now loading... /SentinelEntry/Create");
-        if (firstRender)
-        {
-            _clinicalBreakpoints = await ClinicalBreakpointService.List();
-
-            CallRequestRefresh();
-        }
-
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    private async Task CreateClick()
-    {
-        await SentinelEntryService.Create(_item);
-        await OnCloseClick.InvokeAsync(null);
-    }
-}
