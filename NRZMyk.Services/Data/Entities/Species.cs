@@ -12,7 +12,6 @@ namespace NRZMyk.Services.Data.Entities
         [Description("Candida parapsilosis")] CandidaParapsilosis = 500,
         [Description("Candida tropicalis")] CandidaTropicalis = 600,
         [Description("Candida guilliermondii")] CandidaGuilliermondii = 700,
-        [Description("Cryptococcus neoformans")] CryptococcusNeoformans = 800,
         [Description("Andere")] Other = 10000,
     }
 }
