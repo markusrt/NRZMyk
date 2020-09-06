@@ -8,9 +8,11 @@ namespace NRZMyk.Services.Models
     {
         public SpeciesTestingMethod TestingMethod { get; set; }
 
-        public ClinicalBreakpointReference EucastClinicalBreakpoint { get; set; }
+        public AntifungalAgent AntifungalAgent { get; set; }
 
-        public float  MinimumInhibitoryConcentration  { get; set; }
+        public int EucastClinicalBreakpointId { get; set; }
+
+        public float MinimumInhibitoryConcentration { get; set; } = 0.06f;
 
         public Resistance Resistance { get; set; }
     }

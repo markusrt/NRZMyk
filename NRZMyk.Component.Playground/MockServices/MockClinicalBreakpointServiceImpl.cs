@@ -1,34 +1,46 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using NRZMyk.Services.Data.Entities;
-using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
 
 namespace NRZMyk.Components.Playground.MockServices
 {
     public class MockClinicalBreakpointServiceImpl : ClinicalBreakpointService
     {
-        private readonly List<ClinicalBreakpointReference> _repository = new List<ClinicalBreakpointReference>();
+        private readonly List<ClinicalBreakpoint> _repository = new List<ClinicalBreakpoint>();
 
         public MockClinicalBreakpointServiceImpl()
         {
-            _repository.Add(new ClinicalBreakpointReference
+            _repository.Add(new MockClinicalBreakPoint(1)
             {
-                Id = 1,
-                Title = "Breakpoint reference 1"
+                AntifungalAgent = AntifungalAgent.Fluconazole,
+                AntifungalAgentDetails = "Fluconazole - 0.25",
+                Version = "1.0",
+                MicBreakpointResistent = 0.25f,
+                MicBreakpointSusceptible = 0.25f,
             });
-            _repository.Add(new ClinicalBreakpointReference
+            _repository.Add(new MockClinicalBreakPoint(2)
             {
-                Id = 2,
-                Title = "Breakpoint reference 2"
+                AntifungalAgent = AntifungalAgent.AmphotericinB,
+                AntifungalAgentDetails = "AmphotericinB - 0.5",
+                Version = "2.0",
+                MicBreakpointResistent = 0.5f,
+                MicBreakpointSusceptible = 0.5f,
             });
         }
 
-        public Task<List<ClinicalBreakpointReference>> List()
+        public Task<List<ClinicalBreakpoint>> List()
         {
             return Task.FromResult(_repository);
+        }
+
+        private sealed class MockClinicalBreakPoint : ClinicalBreakpoint
+        {
+            public MockClinicalBreakPoint(int id)
+            {
+                Id = id;
+            }
         }
     }
 }
