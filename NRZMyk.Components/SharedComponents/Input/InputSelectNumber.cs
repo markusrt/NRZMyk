@@ -6,25 +6,23 @@ namespace NRZMyk.Components.SharedComponents.Input
     {
         protected override bool TryParseValueFromString(string value, out T result, out string validationErrorMessage)
         {
-            if (typeof(T) == typeof(int))
+            if (typeof(T) == typeof(int) && int.TryParse(value, out var resultInt))
             {
-                if (int.TryParse(value, out var resultInt))
-                {
-                    result = (T)(object)resultInt;
-                    validationErrorMessage = null;
-                    return true;
-                }
-                else
-                {
-                    result = default;
-                    validationErrorMessage = "The chosen value is not a valid number.";
-                    return false;
-                }
+                result = (T)(object)resultInt;
+                validationErrorMessage = null;
+                return true;
             }
-            else
+            if (typeof(T) == typeof(float) && float.TryParse(value, out var resultFloat))
             {
-                return base.TryParseValueFromString(value, out result, out validationErrorMessage);
+                result = (T)(object)resultFloat;
+                validationErrorMessage = null;
+                return true;
             }
+
+            result = default;
+            validationErrorMessage = $"The field '{FieldIdentifier.FieldName}' does not contain a valid number.";
+            return false;
         }
     }
+
 }
