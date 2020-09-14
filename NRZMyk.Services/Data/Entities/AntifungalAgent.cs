@@ -7,11 +7,12 @@
         Anidulafungin=200,
         Caspofungin=300,
         Fluconazole=400,
-        Isavuconazole=500,
-        Itraconazole=600,
-        Micafungin=700,
-        Posaconazole=800,
-        Voriconazole=900,
+        Fluorouracil=500,
+        Isavuconazole=600,
+        Itraconazole=700,
+        Micafungin=800,
+        Posaconazole=900,
+        Voriconazole=1000,
         Other=10000
     }
 }

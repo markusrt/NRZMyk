@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Services;
 
-namespace NRZMyk.Components.Playground.MockServices
+namespace NRZMyk.Mocks.MockServices
 {
     public class MockSentinelEntryServiceImpl : SentinelEntryService
     {

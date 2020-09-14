@@ -10,7 +10,7 @@ namespace NRZMyk.Services.Models
 
         public AntifungalAgent AntifungalAgent { get; set; }
 
-        public int EucastClinicalBreakpointId { get; set; }
+        public int ClinicalBreakpointId { get; set; }
 
         public float MinimumInhibitoryConcentration { get; set; } = 0.06f;
 
