@@ -20,70 +20,79 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         [Parameter]
         public EventCallback<ChangeEventArgs> ValueChanged { get; set; }
 
-        [Inject] 
+        [Inject]
         private ILogger<CreateBase> Logger { get; set; }
-        
-        [Inject] 
+
+        [Inject]
         private SentinelEntryService SentinelEntryService { get; set; }
 
-        [Inject] 
+        [Inject]
+        private MicStepsService MicStepsService { get; set; }
+
+        [Inject]
         private ClinicalBreakpointService ClinicalBreakpointService { get; set; }
 
-        protected readonly CreateSentinelEntryRequest _item = new CreateSentinelEntryRequest();
-        
-        protected List<ClinicalBreakpoint> _clinicalBreakpoints = new List<ClinicalBreakpoint>();
+        public CreateSentinelEntryRequest NewSentinelEntry { get; } = new CreateSentinelEntryRequest();
 
-        protected SpeciesTestingMethod _testingMethod;
-        
-        protected AntifungalAgent _antifungalAgent;
+        public List<ClinicalBreakpoint> AllBreakpoints { get; private set; } = new List<ClinicalBreakpoint>();
+
+        public SpeciesTestingMethod TestingMethod { get; set; } = SpeciesTestingMethod.Vitek;
+
+        public AntifungalAgent AntifungalAgent { get; set; } = AntifungalAgent.Micafungin;
 
         public void AddAntimicrobialSensitivityTest()
         {
-            _item.SensitivityTests.Add(
+            NewSentinelEntry.SensitivityTests.Add(
                 new AntimicrobialSensitivityTest
                 {
-                    TestingMethod = _testingMethod, 
-                    AntifungalAgent = _antifungalAgent, 
-                    EucastClinicalBreakpointId = _clinicalBreakpoints.First().Id
+                    TestingMethod = TestingMethod,
+                    AntifungalAgent = AntifungalAgent,
+                    ClinicalBreakpointId = AllBreakpoints.First().Id
                 });
         }
 
         protected IEnumerable<AntimicrobialSensitivityTest> RecalculateResistance()
         {
-            return _item.SensitivityTests;
+            return NewSentinelEntry.SensitivityTests;
+        }
+
+        public List<MicStep> MicSteps(SpeciesTestingMethod testingMethod, AntifungalAgent antifungalAgent)
+        {
+            return MicStepsService.StepsByTestingMethodAndAgent(testingMethod, antifungalAgent);
+        }
+
+        public IEnumerable<ClinicalBreakpoint> ApplicableBreakpoints(AntifungalAgent antifungalAgent)
+        {
+            return AllBreakpoints.Where(b => b.AntifungalAgent == antifungalAgent && b.Species == NewSentinelEntry.IdentifiedSpecies);
         }
 
         public string ResistenceBadge(AntimicrobialSensitivityTest sensitivityTest)
         {
-            if (sensitivityTest.Resistance == Resistance.Susceptible)
+            var breakpoint = AllBreakpoints.FirstOrDefault(b => b.Id == sensitivityTest.ClinicalBreakpointId);
+            if (breakpoint == null || !breakpoint.MicBreakpointResistent.HasValue || !breakpoint.MicBreakpointSusceptible.HasValue)
+            {
+                sensitivityTest.Resistance = Resistance.NotDetermined;
+                return "badge-info";
+            }
+
+            var mic = sensitivityTest.MinimumInhibitoryConcentration;
+            if (mic > breakpoint.MicBreakpointResistent)
             {
                 sensitivityTest.Resistance = Resistance.Resistant;
-            }
-            else
-            {
-                sensitivityTest.Resistance = Resistance.Susceptible;
-            }
-
-
-            var resistance = sensitivityTest.Resistance;
-            if (resistance == Resistance.Resistant)
-            {
                 return "badge-danger";
             }
-            if (resistance == Resistance.Intermediate)
+            if (mic <= breakpoint.MicBreakpointSusceptible)
             {
-                return "badge-warning";
-            }
-            if (resistance == Resistance.Susceptible)
-            {
+                sensitivityTest.Resistance = Resistance.Susceptible;
                 return "badge-success";
             }
-            return "badge-info";
+            sensitivityTest.Resistance = Resistance.Intermediate;
+            return "badge-warning";
         }
 
         public async Task CreateClick()
         {
-            await SentinelEntryService.Create(_item);
+            await SentinelEntryService.Create(NewSentinelEntry);
             await OnCloseClick.InvokeAsync(null);
         }
 
@@ -92,7 +101,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             Logger.LogInformation("Now loading... /SentinelEntry/Create");
             if (firstRender)
             {
-                _clinicalBreakpoints = await ClinicalBreakpointService.List();
+                AllBreakpoints = await ClinicalBreakpointService.List();
 
                 CallRequestRefresh();
             }

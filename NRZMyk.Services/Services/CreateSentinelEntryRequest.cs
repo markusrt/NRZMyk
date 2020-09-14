@@ -20,7 +20,7 @@ namespace NRZMyk.Services.Services
         public HospitalDepartment HospitalDepartment { get; set; }
 
         [Required(ErrorMessage = "Das Feld Spezies ist erforderlich")]
-        public string IdentifiedSpecies { get; set; }
+        public Species IdentifiedSpecies { get; set; }
 
         public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }
 
