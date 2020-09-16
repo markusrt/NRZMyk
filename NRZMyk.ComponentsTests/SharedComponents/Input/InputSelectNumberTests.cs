@@ -25,9 +25,10 @@ namespace NRZMyk.ComponentsTests.SharedComponents.Input
         }
 
         [TestCase("-100.000")]
-        [TestCase("123.111.230")]
+        [TestCase("123.111")]
         [TestCase("0,0001")]
-        [TestCase("1000000")]
+        [TestCase("0.0001")]
+        [TestCase("100,000")]
         [TestCase("0")]
         public void WhenNumberSelected_FloatValueIsParsed(string valueAsString)
         {
