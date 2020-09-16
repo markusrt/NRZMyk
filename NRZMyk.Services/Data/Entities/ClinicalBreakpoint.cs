@@ -1,11 +1,12 @@
 ﻿using System;
 using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Services.Data.Entities
 {
     public class ClinicalBreakpoint : BaseEntity, IAggregateRoot
     {
-        public AntifungalAgent  AntifungalAgent { get; set; }
+        public AntifungalAgent AntifungalAgent { get; set; }
 
         public string AntifungalAgentDetails { get; set; }
         
@@ -28,8 +29,8 @@ namespace NRZMyk.Services.Data.Entities
 
         public string Title 
             => NotAvailable 
-                ? $"{AntifungalAgentDetails} - ohne {Standard} Grenzwerte"
-                : $"{AntifungalAgentDetails} - v{Version} vom {ValidFrom:dd. MMM. yy}";
+                ? $"{AntifungalAgentDetails} - {EnumUtils.GetEnumDescription(Species)} - ohne {Standard} Grenzwerte"
+                : $"{AntifungalAgentDetails} - {EnumUtils.GetEnumDescription(Species)} - v{Version} vom {ValidFrom:dd. MMM. yy}";
 
         public bool NotAvailable
             => Version == null && ValidFrom == null && MicBreakpointResistent == null && MicBreakpointSusceptible == null;

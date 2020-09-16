@@ -1,0 +1,1168 @@
+[
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaAlbicans",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "1",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaDubliniensis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "1",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaGlabrata",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "1",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaKrusei",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "1",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaParapsilosis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "1",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaTropicalis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "1",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaAlbicans",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.03",
+    "MicBreakpointResistent": "0.03",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaDubliniensis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaGlabrata",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.06",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaKrusei",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.06",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaParapsilosis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "4",
+    "MicBreakpointResistent": "4",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaTropicalis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.06",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaAlbicans",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaDubliniensis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaGlabrata",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaKrusei",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaParapsilosis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaTropicalis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaAlbicans",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.016",
+    "TechnicalUncertainty": "0.03",
+    "MicBreakpointResistent": "0.016",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaDubliniensis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaGlabrata",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.03",
+    "MicBreakpointResistent": "0.03",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaKrusei",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaParapsilosis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointResistent": "2",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaTropicalis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaAlbicans",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.25",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaDubliniensis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.25",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaGlabrata",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaKrusei",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaParapsilosis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.125",
+    "MicBreakpointResistent": "0.25",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaTropicalis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.125",
+    "MicBreakpointResistent": "0.25",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaAlbicans",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointResistent": "4",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaDubliniensis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointResistent": "4",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaGlabrata",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.001",
+    "MicBreakpointResistent": "16",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaKrusei",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaParapsilosis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointResistent": "4",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaTropicalis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointResistent": "4",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "None",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointResistent": "4",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaAlbicans",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaDubliniensis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaGlabrata",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaKrusei",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaParapsilosis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaTropicalis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaAlbicans",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.06",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaDubliniensis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.06",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaGlabrata",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaKrusei",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaParapsilosis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.125",
+    "MicBreakpointResistent": "0.125",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaTropicalis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.125",
+    "MicBreakpointResistent": "0.125",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaAlbicans",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.06",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaDubliniensis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.06",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaGlabrata",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaKrusei",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaParapsilosis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.06",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaTropicalis",
+    "Standard": "EUCAST",
+    "Version": "10.0",
+    "ValidFrom": "2020-02-04",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointResistent": "0.06",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaAlbicans",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaDubliniensis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaGlabrata",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaKrusei",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaParapsilosis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "AmphotericinB",
+    "Species": "CandidaTropicalis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Amphotericin B"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaAlbicans",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.25",
+    "MicBreakpointIntermediate": "0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaDubliniensis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaGlabrata",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.12",
+    "MicBreakpointIntermediate": "0.25",
+    "MicBreakpointResistent": "0.5",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointIntermediate": "4",
+    "MicBreakpointResistent": "8",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaKrusei",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.25",
+    "MicBreakpointIntermediate": "0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaParapsilosis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointIntermediate": "4",
+    "MicBreakpointResistent": "8",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Anidulafungin",
+    "Species": "CandidaTropicalis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.25",
+    "MicBreakpointIntermediate": "0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Anidulafungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaAlbicans",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.25",
+    "MicBreakpointIntermediate": "0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaDubliniensis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaGlabrata",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.12",
+    "MicBreakpointIntermediate": "0.25",
+    "MicBreakpointResistent": "0.5",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointIntermediate": "4",
+    "MicBreakpointResistent": "8",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaKrusei",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.25",
+    "MicBreakpointIntermediate": "0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaParapsilosis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointIntermediate": "4",
+    "MicBreakpointResistent": "8",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Caspofungin",
+    "Species": "CandidaTropicalis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.25",
+    "MicBreakpointIntermediate": "0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Caspofungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaAlbicans",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.25",
+    "MicBreakpointIntermediate": "0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaDubliniensis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaGlabrata",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.06",
+    "MicBreakpointIntermediate": "0.12",
+    "MicBreakpointResistent": "0.25",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointIntermediate": "4",
+    "MicBreakpointResistent": "8",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaKrusei",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.25",
+    "MicBreakpointIntermediate": "0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaParapsilosis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "2",
+    "MicBreakpointIntermediate": "4",
+    "MicBreakpointResistent": "8",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Micafungin",
+    "Species": "CandidaTropicalis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.25",
+    "MicBreakpointIntermediate": "0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Micafungin"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaAlbicans",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.12",
+    "MicBreakpointIntermediate": "0.25–0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaDubliniensis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaGlabrata",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaKrusei",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.5",
+    "MicBreakpointIntermediate": "1",
+    "MicBreakpointResistent": "2",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaParapsilosis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.12",
+    "MicBreakpointIntermediate": "0.25–0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Voriconazole",
+    "Species": "CandidaTropicalis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "0.12",
+    "MicBreakpointIntermediate": "0.25–0.5",
+    "MicBreakpointResistent": "1",
+    "AntifungalAgentDetails": "Voriconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaAlbicans",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "2",
+    "TechnicalUncertainty": "4",
+    "MicBreakpointResistent": "8",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaDubliniensis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaGlabrata",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "TechnicalUncertainty": "32",
+    "MicBreakpointResistent": "64",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaKrusei",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaParapsilosis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "2",
+    "TechnicalUncertainty": "4",
+    "MicBreakpointResistent": "8",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "CandidaTropicalis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "MicBreakpointSusceptible": "2",
+    "TechnicalUncertainty": "4",
+    "MicBreakpointResistent": "8",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Fluconazole",
+    "Species": "None",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Fluconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaAlbicans",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaDubliniensis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaGlabrata",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaKrusei",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaParapsilosis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Isavuconazole",
+    "Species": "CandidaTropicalis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Isavuconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaAlbicans",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaDubliniensis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaGlabrata",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaKrusei",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaParapsilosis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Itraconazole",
+    "Species": "CandidaTropicalis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Itraconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaAlbicans",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaDubliniensis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaGlabrata",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaGuilliermondii",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaKrusei",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaParapsilosis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Posaconazole"
+  },
+  {
+    "AntifungalAgent": "Posaconazole",
+    "Species": "CandidaTropicalis",
+    "Standard": "CLSI",
+    "Version": "M60 2019",
+    "ValidFrom": "2019-11-01",
+    "AntifungalAgentDetails": "Posaconazole"
+  }
+]

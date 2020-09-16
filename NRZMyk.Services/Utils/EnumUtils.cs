@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
-namespace HaemophilusWeb.Utils
+namespace NRZMyk.Services.Utils
 {
     /// <summary>
     ///     Contains utility and extension methods to deal with enums.
@@ -15,7 +15,7 @@ namespace HaemophilusWeb.Utils
         public static TEnum ParseCommaSeperatedListOfNamesAsFlagsEnum<TEnum>(string commaSeperatedList)
             where TEnum : struct, IConvertible
         {
-            commaSeperatedList = commaSeperatedList ?? string.Empty;
+            commaSeperatedList ??= string.Empty;
             var enabledFlagNames = commaSeperatedList.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
             return (TEnum) (object)
                 enabledFlagNames.Aggregate(0, (acc, v) => acc | (int) Enum.Parse(typeof (TEnum), v), acc => acc);
@@ -24,7 +24,7 @@ namespace HaemophilusWeb.Utils
         public static List<TEnum> ParseCommaSeperatedListOfNames<TEnum>(string commaSeperatedList)
             where TEnum : struct, IConvertible
         {
-            commaSeperatedList = commaSeperatedList ?? string.Empty;
+            commaSeperatedList ??= string.Empty;
             var enumEntries = commaSeperatedList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             return enumEntries.Where(v => !string.IsNullOrEmpty(v.Trim())).Select(e => (TEnum)Enum.Parse(typeof(TEnum), e)).ToList();
         }
@@ -51,7 +51,7 @@ namespace HaemophilusWeb.Utils
         {
             var allEnumValues = AllEnumValues<TEnum>();
             var enumStrings =
-                allEnumValues.Select(e => string.Format("{0} ({1})", e, e.ToInt32(CultureInfo.InvariantCulture)));
+                allEnumValues.Select(e => $"{e} ({e.ToInt32(CultureInfo.InvariantCulture)})");
 
             return string.Join(", ", enumStrings);
         }

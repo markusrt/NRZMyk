@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace NRZMyk.Components.Playground.MockServices
+namespace NRZMyk.Mocks.MockServices
 {
     public class MockAuthStateProvider : AuthenticationStateProvider
     {
