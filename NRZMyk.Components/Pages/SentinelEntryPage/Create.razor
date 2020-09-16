@@ -1,7 +1,6 @@
-﻿
-@using HaemophilusWeb.Utils
-@using NRZMyk.Services.Data.Entities
+﻿@using NRZMyk.Services.Data.Entities
 @using NRZMyk.Components.SharedComponents.Input
+@using NRZMyk.Services.Utils
 @inherits CreateBase
 
 <h2>Neu anlegen</h2>
@@ -105,16 +104,16 @@
 
         <h3>Tests</h3>
         <div class="form-group row">
-            <div class="col-sm-2">
-                <select class="form-control" @bind="TestingMethod">
+            <div class="col-sm-3">
+                <select class="form-control custom-select-sm" @bind="TestingMethod">
                     @foreach (var testingMethod in EnumUtils.AllEnumValues<SpeciesTestingMethod>().Where(t => t == SpeciesTestingMethod.Vitek))
                     {
                         <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
                     }
                 </select>
             </div>
-            <div class="col-sm-2">
-                <select class="form-control" @bind="AntifungalAgent">
+            <div class="col-sm-3">
+                <select class="form-control custom-select-sm" @bind="AntifungalAgent">
                     @foreach (var antifungalAgent in EnumUtils.AllEnumValues<AntifungalAgent>().Where(t =>
 
                         new List<AntifungalAgent> {AntifungalAgent.Micafungin, AntifungalAgent.Caspofungin, AntifungalAgent.Voriconazole, AntifungalAgent.Fluconazole, AntifungalAgent.AmphotericinB}.Contains(t)))
@@ -123,8 +122,8 @@
                     }
                 </select>
             </div>
-            <div class="col-sm-2">
-                <button id="addAntimicrobialSensitivityTest" class="btn btn-outline-secondary" @onclick="AddAntimicrobialSensitivityTest">Neuer MHK Eintrag</button>
+            <div class="col-sm-4">
+                <button type="button" id="addAntimicrobialSensitivityTest" class="btn btn-sm btn-outline-secondary" @onclick="AddAntimicrobialSensitivityTest">Neuer MHK Eintrag</button>
             </div>
         </div>
 
@@ -142,7 +141,7 @@
                         <div class="input-group-prepend">
                             <div class="input-group-text">MHK</div>
                         </div>
-                        @if (ApplicableBreakpoints(sensitivityTest.AntifungalAgent).Any())
+                        @if (MicSteps(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent).Any())
                         {
                             <InputSelectNumber class="form-control" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration">
                                 @foreach (var micStep in MicSteps(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent))

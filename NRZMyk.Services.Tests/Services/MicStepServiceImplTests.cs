@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data.Entities;
@@ -96,7 +97,7 @@ namespace NRZMyk.Services.Tests.Services
 
         private MicStepsServiceImpl CreateSut(IOptions<BreakpointSettings> option)
         {
-            return new MicStepsServiceImpl(option);
+            return new MicStepsServiceImpl(option, new NullLogger<MicStepsServiceImpl>());
         }
     }
 }

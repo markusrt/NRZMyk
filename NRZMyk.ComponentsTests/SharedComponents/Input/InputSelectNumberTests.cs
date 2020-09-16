@@ -24,19 +24,19 @@ namespace NRZMyk.ComponentsTests.SharedComponents.Input
             errorMessage.Should().BeNull();
         }
 
-        [TestCase("-100.000", -100000.0f)]
-        [TestCase("123.111.230", 123111230f)]
-        [TestCase("0,0001", 0.0001f)]
-        [TestCase("1000000", 1000000.0f)]
-        [TestCase("0", 0.0f)]
-        public void WhenNumberSelected_FloatValueIsParsed(string valueAsString, float expectedValue)
+        [TestCase("-100.000")]
+        [TestCase("123.111.230")]
+        [TestCase("0,0001")]
+        [TestCase("1000000")]
+        [TestCase("0")]
+        public void WhenNumberSelected_FloatValueIsParsed(string valueAsString)
         {
             var sut = CreateSut<float>("Measurement");
 
             sut.InvokeTryParseValueFromString(valueAsString, out var actualValue, out var errorMessage)
                 .Should().BeTrue();
 
-            actualValue.Should().Be(expectedValue);
+            actualValue.Should().Be(float.Parse(valueAsString));
             errorMessage.Should().BeNull();
         }
 

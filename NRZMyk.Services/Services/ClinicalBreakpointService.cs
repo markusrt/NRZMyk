@@ -29,10 +29,7 @@ namespace NRZMyk.Services.Services
             try
             {
                 var response = await _httpClient.GetFromJsonAsync<List<ClinicalBreakpoint>>("api/clinical-breakpoints");
-                foreach (var clinicalBreakpoint in response)
-                {
-                    _logger.LogInformation(clinicalBreakpoint.Title);
-                }
+                _logger.LogInformation($"API returned {response.Count} clinical breakpoints");
                 return response;
             }
             catch (Exception exception)
