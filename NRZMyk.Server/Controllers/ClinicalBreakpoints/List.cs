@@ -13,15 +13,13 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
 {
     [Authorize]
-    public class List : BaseAsyncEndpoint<ListClinicalBreakpointsRequest, List<ClinicalBreakpointReference>>
+    public class List : BaseAsyncEndpoint<ListClinicalBreakpointsRequest, List<ClinicalBreakpoint>>
     {
         private readonly IAsyncRepository<ClinicalBreakpoint> _clinicalBreakpointRepository;
-        private readonly IMapper _mapper;
 
-        public List(IAsyncRepository<ClinicalBreakpoint> clinicalBreakpointRepository, IMapper mapper)
+        public List(IAsyncRepository<ClinicalBreakpoint> clinicalBreakpointRepository)
         {
             _clinicalBreakpointRepository = clinicalBreakpointRepository;
-            _mapper = mapper;
         }
 
         [HttpGet("api/clinical-breakpoints")]
@@ -30,12 +28,11 @@ namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
             OperationId = "clinical-breakpoints.list",
             Tags = new[] { "SharedEndpoints" })
         ]
-        public override async Task<ActionResult<List<ClinicalBreakpointReference>>> HandleAsync([FromQuery]ListClinicalBreakpointsRequest request)
+        public override async Task<ActionResult<List<ClinicalBreakpoint>>> HandleAsync([FromQuery]ListClinicalBreakpointsRequest request)
         {
             var filter = new ClinicalBreakpointFilterSpecification(request.Species);
             var items = await _clinicalBreakpointRepository.ListAsync(filter);
-            var referenceItems = _mapper.Map<List<ClinicalBreakpointReference>>(items);
-            return Ok(referenceItems);
+            return Ok(items);
         }
     }
 }

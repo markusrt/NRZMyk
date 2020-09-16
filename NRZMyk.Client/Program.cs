@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using NRZMyk.Components;
+using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Services;
 
 namespace NRZMyk.Client
@@ -16,7 +18,6 @@ namespace NRZMyk.Client
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
-
             builder.Services.AddHttpClient("NRZMyk.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
@@ -25,7 +26,12 @@ namespace NRZMyk.Client
 
             builder.Services.AddTransient<SentinelEntryService, SentinelEntryServiceImpl>();
             builder.Services.AddTransient<ClinicalBreakpointService, ClinicalBreakpointServiceImpl>();
+            builder.Services.AddTransient<MicStepsService, MicStepsServiceImpl>();
 
+            builder.Services.Configure<BreakpointSettings>(options =>
+            {
+                builder.Configuration.Bind(options);
+            });
             builder.Services.AddMsalAuthentication(options =>
             {
                 builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NRZMyk.Components\NRZMyk.Components.csproj" />
+    <ProjectReference Include="..\NRZMyk.Mocks\NRZMyk.Mocks.csproj" />
   </ItemGroup>
 
 </Project>

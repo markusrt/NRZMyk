@@ -1,127 +1,190 @@
-﻿@inject ILogger<Create> Logger
-@inject SentinelEntryService SentinelEntryService
-@inject ClinicalBreakpointService ClinicalBreakpointService
-@using HaemophilusWeb.Utils
-@using Microsoft.Extensions.Logging
-@using NRZMyk.Services.Data.Entities
-@using NRZMyk.Services.Services
+﻿@using NRZMyk.Services.Data.Entities
 @using NRZMyk.Components.SharedComponents.Input
-@using NRZMyk.Services.Models
-@inherits NRZMyk.Components.Helpers.BlazorComponent
-
-@namespace NRZMyk.Components.Pages.SentinelEntryPage
+@using NRZMyk.Services.Utils
+@inherits CreateBase
 
 <h2>Neu anlegen</h2>
 
 <div>
-    <EditForm Model="_item" OnValidSubmit="@CreateClick">
+    <EditForm Model="NewSentinelEntry" OnValidSubmit="@CreateClick">
 
         <DataAnnotationsValidator />
 
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Material</label>
             <div class="col-sm-6">
-                <InputSelect class="form-control" @bind-Value="_item.Material">
+                <InputSelect class="form-control" @bind-Value="NewSentinelEntry.Material">
                     @foreach (var material in EnumUtils.AllEnumValues<Material>())
                     {
                         <option value="@material">@EnumUtils.GetEnumDescription(material)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.Material" />
+                <ValidationMessage For="() => NewSentinelEntry.Material" />
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Alter des Patienten</label>
             <div class="col-sm-6">
-                <InputSelect class="form-control" @bind-Value="_item.AgeGroup">
+                <InputSelect class="form-control" @bind-Value="NewSentinelEntry.AgeGroup">
                     @foreach (var ageGroup in EnumUtils.AllEnumValues<AgeGroup>())
                     {
                         <option value="@ageGroup">@EnumUtils.GetEnumDescription(ageGroup)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.AgeGroup" />
+                <ValidationMessage For="() => NewSentinelEntry.AgeGroup" />
             </div>
         </div>
 
         <div class="form-group row">
-            <label class="control-label col-sm-4">Probentnahme</label>
+            <label class="control-label col-sm-4">Probenentnahme</label>
             <div class="col-sm-6">
-                <InputDate class="form-control" @bind-Value="_item.SamplingDate" />
-                <ValidationMessage For="(() => _item.SamplingDate)" />
+                <InputDate class="form-control" @bind-Value="NewSentinelEntry.SamplingDate" />
+                <ValidationMessage For="() => NewSentinelEntry.SamplingDate" />
             </div>
         </div>
 
-        <InputTextWithValidation FieldName="Labornummer Einsender" @bind-Value="_item.SenderLaboratoryNumber" For="() => _item.SenderLaboratoryNumber" />
+        <InputTextWithValidation FieldName="Labornummer Einsender" @bind-Value="NewSentinelEntry.SenderLaboratoryNumber" For="() => NewSentinelEntry.SenderLaboratoryNumber" />
 
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Station</label>
             <div class="col-sm-3">
-                <InputSelect class="form-control" @bind-Value="_item.HospitalDepartmentType">
+                <InputSelect class="form-control" @bind-Value="NewSentinelEntry.HospitalDepartmentType">
                     @foreach (var departmentType in EnumUtils.AllEnumValues<HospitalDepartmentType>())
                     {
                         <option value="@departmentType">@EnumUtils.GetEnumDescription(departmentType)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.HospitalDepartmentType" />
+                <ValidationMessage For="() => NewSentinelEntry.HospitalDepartmentType" />
             </div>
             <div class="col-sm-3">
-                <InputSelect class="form-control" @bind-Value="_item.HospitalDepartment">
+                <InputSelect class="form-control" @bind-Value="NewSentinelEntry.HospitalDepartment">
                     @foreach (var department in EnumUtils.AllEnumValues<HospitalDepartment>())
                     {
                         <option value="@department">@EnumUtils.GetEnumDescription(department)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.HospitalDepartment" />
+                <ValidationMessage For="() => NewSentinelEntry.HospitalDepartment" />
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Spezies</label>
             <div class="col-sm-6">
-                <InputSelect class="form-control" @bind-Value="_item.IdentifiedSpecies">
+                <InputSelect class="form-control" @bind-Value="NewSentinelEntry.IdentifiedSpecies">
                     @foreach (var species in EnumUtils.AllEnumValues<Species>())
                     {
                         <option value="@species">@EnumUtils.GetEnumDescription(species)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.IdentifiedSpecies" />
+                <ValidationMessage For="() => NewSentinelEntry.IdentifiedSpecies" />
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Methode Speziesidentifikation</label>
             <div class="col-sm-6">
-                <InputSelect class="form-control" @bind-Value="_item.SpeciesIdentificationMethod">
+                <InputSelect class="form-control" @bind-Value="NewSentinelEntry.SpeciesIdentificationMethod">
                     @foreach (var identificationMethod in EnumUtils.AllEnumValues<SpeciesIdentificationMethod>())
                     {
                         <option value="@identificationMethod">@EnumUtils.GetEnumDescription(identificationMethod)</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="() => _item.SpeciesIdentificationMethod" />
+                <ValidationMessage For="() => NewSentinelEntry.SpeciesIdentificationMethod" />
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-form-label col-sm-4">Anmerkungen</label>
             <div class="col-sm-6">
-                <InputTextArea class="form-control" @bind-Value="_item.Remark" />
-                <ValidationMessage For="() => _item.Remark" />
+                <InputTextArea class="form-control" @bind-Value="NewSentinelEntry.Remark" />
+                <ValidationMessage For="() => NewSentinelEntry.Remark" />
             </div>
         </div>
 
+        <h3>Tests</h3>
         <div class="form-group row">
-            <label class="col-form-label col-sm-4">Breakpoints</label>
-            <div class="col-md-6">
-                <InputSelectNumber @bind-Value="_item.ClinicalBreakpointId" class="form-control">
-                    @foreach (var breakpoint in _clinicalBreakpoints)
+            <div class="col-sm-3">
+                <select class="form-control custom-select-sm" @bind="TestingMethod">
+                    @foreach (var testingMethod in EnumUtils.AllEnumValues<SpeciesTestingMethod>().Where(t => t == SpeciesTestingMethod.Vitek))
                     {
-                        <option value="@breakpoint.Id">@breakpoint.Title</option>
+                        <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
                     }
-                </InputSelectNumber>
-                <ValidationMessage For="(() => _item.ClinicalBreakpointId)" />
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <select class="form-control custom-select-sm" @bind="AntifungalAgent">
+                    @foreach (var antifungalAgent in EnumUtils.AllEnumValues<AntifungalAgent>().Where(t =>
+
+                        new List<AntifungalAgent> {AntifungalAgent.Micafungin, AntifungalAgent.Caspofungin, AntifungalAgent.Voriconazole, AntifungalAgent.Fluconazole, AntifungalAgent.AmphotericinB}.Contains(t)))
+                    {
+                        <option value="@antifungalAgent">@EnumUtils.GetEnumDescription(antifungalAgent)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <button type="button" id="addAntimicrobialSensitivityTest" class="btn btn-sm btn-outline-secondary" @onclick="AddAntimicrobialSensitivityTest">Neuer MHK Eintrag</button>
             </div>
         </div>
+
+        @foreach (var sensitivityTest in RecalculateResistance())
+        {
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <p class="form-control-plaintext">
+                        <b>@sensitivityTest.TestingMethod</b> - @sensitivityTest.AntifungalAgent
+                    </p>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="input-group mb-2 mr-sm-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">MHK</div>
+                        </div>
+                        @if (MicSteps(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent).Any())
+                        {
+                            <InputSelectNumber class="form-control" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration">
+                                @foreach (var micStep in MicSteps(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent))
+                                {
+                                    <option value="@micStep.Value">@micStep.Title</option>
+                                }
+                            </InputSelectNumber>
+                        }
+                        else
+                        {
+                            <InputNumber class="form-control" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration"></InputNumber>
+                        }
+                    </div>
+                </div>
+                @if (ApplicableBreakpoints(sensitivityTest.AntifungalAgent).Any())
+                {
+                    <div class="col-sm-4">
+                        <InputSelectNumber class="form-control" @bind-Value="sensitivityTest.ClinicalBreakpointId">
+                            @foreach (var breakpoint in ApplicableBreakpoints(sensitivityTest.AntifungalAgent))
+                            {
+                                <option value="@breakpoint.Id">@breakpoint.Title</option>
+                            }
+                        </InputSelectNumber>
+                    </div>
+                    <div class="col-sm-4">
+                        <p class="form-control-plaintext">
+                            <span class="badge @(ResistenceBadge(sensitivityTest))">
+                                @EnumUtils.GetEnumDescription(sensitivityTest.Resistance)
+                            </span>
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-sm-8">
+                        <p class="form-control-plaintext">
+                            Kein Breakpoint für Antimykotikum <i>"@EnumUtils.GetEnumDescription(sensitivityTest.AntifungalAgent)"</i>
+                            und Spezies <i>"@EnumUtils.GetEnumDescription(NewSentinelEntry.IdentifiedSpecies)"</i> verfügbar.
+                        </p>
+                    </div>
+                }
+            </div>
+        }
 
         <div class="form-group row">
             <div class="offset-4 col-sm-6 text-right">
@@ -133,35 +196,5 @@
                 </button>
             </div>
         </div>
-
     </EditForm>
 </div>
-
-@code {
-
-    [Parameter]
-    public EventCallback<string> OnCloseClick { get; set; }
-
-    private readonly CreateSentinelEntryRequest _item = new CreateSentinelEntryRequest();
-    private List<ClinicalBreakpointReference> _clinicalBreakpoints = new List<ClinicalBreakpointReference>();
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        Logger.LogInformation("Now loading... /SentinelEntry/Create");
-        if (firstRender)
-        {
-            _clinicalBreakpoints = await ClinicalBreakpointService.List();
-            
-            CallRequestRefresh();
-        }
-
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    private async Task CreateClick()
-    {
-        await SentinelEntryService.Create(_item);
-        await OnCloseClick.InvokeAsync(null);
-    }
-}

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Models;
 
 namespace NRZMyk.Services.Services
 {
@@ -27,5 +29,7 @@ namespace NRZMyk.Services.Services
         public int ClinicalBreakpointId { get; set; }
 
         public string Remark { get; set; }
+
+        public IList<AntimicrobialSensitivityTest> SensitivityTests { get; } = new List<AntimicrobialSensitivityTest>();
     }
 }
