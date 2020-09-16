@@ -37,6 +37,12 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             _context.Dispose();
         }
 
+        [SetUp]
+        public void Setup()
+        {
+            _renderedComponent.Instance?.NewSentinelEntry.SensitivityTests.Clear();
+        }
+
         [Test]
         public void WhenCreated_DoesInitializeData()
         {
@@ -61,6 +67,37 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
             sensitivityTest.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
             sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.Micafungin);
+        }
+
+        [Test]
+        public void WhenAddAntimicrobialSensitivityTestClickedButNoBreakpoints_NewSensitivityTestIsAdded()
+        {
+            var sut = _renderedComponent.Instance;
+            var storedBreakpoints = new List<ClinicalBreakpoint>(sut.AllBreakpoints);
+            try
+            {
+                sut.AllBreakpoints.Clear();
+
+                var addTestButton = _renderedComponent.Find("#addAntimicrobialSensitivityTest");
+                addTestButton.Click();
+
+                sut.NewSentinelEntry.SensitivityTests.Should().HaveCount(1);
+                var sensitivityTest = sut.NewSentinelEntry.SensitivityTests.First();
+
+                sensitivityTest.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
+                sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.Micafungin);
+                sensitivityTest.ClinicalBreakpointId.Should().Be(0);
+            }
+            catch (Exception e)
+            {
+                Assert.Fail($"Test failed due to exception {e}");
+            }
+            finally
+            {
+                //TODO find a way to create a new SUT for each test
+                //(this failed previously with threading exception in component)
+                sut.AllBreakpoints.AddRange(storedBreakpoints);
+            }
         }
 
         [Test]

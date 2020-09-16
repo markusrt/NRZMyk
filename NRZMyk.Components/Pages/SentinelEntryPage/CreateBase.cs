@@ -47,7 +47,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 {
                     TestingMethod = TestingMethod,
                     AntifungalAgent = AntifungalAgent,
-                    ClinicalBreakpointId = AllBreakpoints.First().Id
+                    ClinicalBreakpointId = AllBreakpoints.FirstOrDefault()?.Id ?? 0
                 });
         }
 

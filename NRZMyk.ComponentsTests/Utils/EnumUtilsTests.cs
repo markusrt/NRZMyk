@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
+using NRZMyk.Services.Utils;
 using NUnit.Framework;
 
 namespace HaemophilusWeb.Utils

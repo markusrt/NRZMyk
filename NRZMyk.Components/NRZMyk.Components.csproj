@@ -26,5 +26,4 @@
     <Watch Include="..\**\*.scss" />
     <Watch Include="..\**\*.cs" />
   </ItemGroup>
-
 </Project>
