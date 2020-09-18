@@ -19,14 +19,12 @@ namespace NRZMyk.Services.Services
 
         public HospitalDepartment HospitalDepartment { get; set; }
 
-        [Required(ErrorMessage = "Das Feld Spezies ist erforderlich")]
+        [Range(1, int.MaxValue, ErrorMessage = "Das Feld Spezies ist erforderlich")]
         public Species IdentifiedSpecies { get; set; }
 
         public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }
 
         public AgeGroup AgeGroup { get; set; }
-
-        public int ClinicalBreakpointId { get; set; }
 
         public string Remark { get; set; }
 
