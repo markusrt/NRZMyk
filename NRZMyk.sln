@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRZMyk.Components.Playgroun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRZMyk.Mocks", "NRZMyk.Mocks\NRZMyk.Mocks.csproj", "{304308F8-8843-4C35-B6D5-B7CD16E2E47A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRZMyk.Services.Tests", "NRZMyk.Services.Tests\NRZMyk.Services.Tests.csproj", "{583D3A86-3C9E-4BC4-B026-37F87DE939A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRZMyk.Services.Tests", "NRZMyk.Services.Tests\NRZMyk.Services.Tests.csproj", "{583D3A86-3C9E-4BC4-B026-37F87DE939A1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRZMyk.Server.Tests", "NRZMyk.Server.Tests\NRZMyk.Server.Tests.csproj", "{83803D33-290B-4B66-8DE2-A9AC49A1F8DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{583D3A86-3C9E-4BC4-B026-37F87DE939A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{583D3A86-3C9E-4BC4-B026-37F87DE939A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{583D3A86-3C9E-4BC4-B026-37F87DE939A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83803D33-290B-4B66-8DE2-A9AC49A1F8DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83803D33-290B-4B66-8DE2-A9AC49A1F8DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83803D33-290B-4B66-8DE2-A9AC49A1F8DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83803D33-290B-4B66-8DE2-A9AC49A1F8DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

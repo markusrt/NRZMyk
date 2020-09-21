@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Utils;
 
@@ -21,6 +23,9 @@ namespace NRZMyk.Services.Data.Entities
         public float? MicBreakpointSusceptible { get; set; }
 
         public float? MicBreakpointResistent { get; set; }
+
+        [JsonIgnore]
+        public ICollection<AntimicrobialSensitivityTest> AntimicrobialSensitivityTests { get; set; }
         
         /// <summary>
         /// ATU or SSD for EUCAST or CSLI respectively

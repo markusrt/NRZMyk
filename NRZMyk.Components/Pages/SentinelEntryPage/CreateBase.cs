@@ -42,8 +42,8 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         public void AddAntimicrobialSensitivityTest()
         {
-            NewSentinelEntry.SensitivityTests.Add(
-                new AntimicrobialSensitivityTest
+            NewSentinelEntry.AntimicrobialSensitivityTests.Add(
+                new AntimicrobialSensitivityTestRequest
                 {
                     TestingMethod = TestingMethod,
                     AntifungalAgent = AntifungalAgent,
@@ -51,9 +51,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 });
         }
 
-        protected IEnumerable<AntimicrobialSensitivityTest> RecalculateResistance()
+        protected IEnumerable<AntimicrobialSensitivityTestRequest> RecalculateResistance()
         {
-            return NewSentinelEntry.SensitivityTests;
+            return NewSentinelEntry.AntimicrobialSensitivityTests;
         }
 
         public List<MicStep> MicSteps(SpeciesTestingMethod testingMethod, AntifungalAgent antifungalAgent)
@@ -66,7 +66,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             return AllBreakpoints.Where(b => b.AntifungalAgent == antifungalAgent && b.Species == NewSentinelEntry.IdentifiedSpecies);
         }
 
-        public string ResistenceBadge(AntimicrobialSensitivityTest sensitivityTest)
+        public string ResistenceBadge(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
             var breakpoint = AllBreakpoints.FirstOrDefault(b => b.Id == sensitivityTest.ClinicalBreakpointId);
             if (breakpoint == null || !breakpoint.MicBreakpointResistent.HasValue || !breakpoint.MicBreakpointSusceptible.HasValue)
