@@ -28,6 +28,6 @@ namespace NRZMyk.Services.Services
 
         public string Remark { get; set; }
 
-        public IList<AntimicrobialSensitivityTest> SensitivityTests { get; } = new List<AntimicrobialSensitivityTest>();
+        public List<AntimicrobialSensitivityTestRequest> AntimicrobialSensitivityTests { get; set;} = new List<AntimicrobialSensitivityTestRequest>();
     }
 }

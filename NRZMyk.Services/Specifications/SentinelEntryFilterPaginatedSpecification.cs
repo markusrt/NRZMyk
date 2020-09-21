@@ -3,7 +3,7 @@ using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Specifications
 {
-    public class SentinelEntryFilterPaginatedSpecification : BaseSpecification<SentinelEntry>
+    public class SentinelEntryFilterPaginatedSpecification : SentinelEntryFilterSpecification
     {
         public SentinelEntryFilterPaginatedSpecification(int skip, int take)
         {

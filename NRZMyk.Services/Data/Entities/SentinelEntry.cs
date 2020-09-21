@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using NRZMyk.Services.Interfaces;
 
@@ -32,5 +33,7 @@ namespace NRZMyk.Services.Data.Entities
 
         [Display(Name = "Bemerkung")]
         public string Remark { get; set; }
+
+        public ICollection<AntimicrobialSensitivityTest> AntimicrobialSensitivityTests { get; set; }
     }
 }
