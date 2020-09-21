@@ -40,7 +40,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [SetUp]
         public void Setup()
         {
-            _renderedComponent.Instance?.NewSentinelEntry.SensitivityTests.Clear();
+            _renderedComponent.Instance?.NewSentinelEntry.AntimicrobialSensitivityTests.Clear();
         }
 
         [Test]
@@ -62,8 +62,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             var addTestButton = _renderedComponent.Find("#addAntimicrobialSensitivityTest");
             addTestButton.Click();
 
-            sut.NewSentinelEntry.SensitivityTests.Should().HaveCount(1);
-            var sensitivityTest = sut.NewSentinelEntry.SensitivityTests.First();
+            sut.NewSentinelEntry.AntimicrobialSensitivityTests.Should().HaveCount(1);
+            var sensitivityTest = sut.NewSentinelEntry.AntimicrobialSensitivityTests.First();
 
             sensitivityTest.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
             sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.Micafungin);
@@ -81,8 +81,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 var addTestButton = _renderedComponent.Find("#addAntimicrobialSensitivityTest");
                 addTestButton.Click();
 
-                sut.NewSentinelEntry.SensitivityTests.Should().HaveCount(1);
-                var sensitivityTest = sut.NewSentinelEntry.SensitivityTests.First();
+                sut.NewSentinelEntry.AntimicrobialSensitivityTests.Should().HaveCount(1);
+                var sensitivityTest = sut.NewSentinelEntry.AntimicrobialSensitivityTests.First();
 
                 sensitivityTest.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
                 sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.Micafungin);
@@ -124,13 +124,13 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                     && b.Species == Species.CandidaDubliniensis
                     && b.Standard == BrothMicrodilutionStandard.Eucast
                     && b.Version == "10.0");
-            var sensitivityTest = new AntimicrobialSensitivityTest()
+            var sensitivityTest = new AntimicrobialSensitivityTestRequest
             {
                 ClinicalBreakpointId = firstBreakpoint.Id,
                 MinimumInhibitoryConcentration = firstBreakpoint.MicBreakpointResistent.Value + deltaToResistance
 
             };
-            sut.NewSentinelEntry.SensitivityTests.Add(sensitivityTest);
+            sut.NewSentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
 
             var badge = sut.ResistenceBadge(sensitivityTest);
 
@@ -145,12 +145,12 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             sut.NewSentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
             var firstBreakpoint = sut.AllBreakpoints.First(b => 
                 !b.MicBreakpointResistent.HasValue && !b.MicBreakpointSusceptible.HasValue);
-            var sensitivityTest = new AntimicrobialSensitivityTest()
+            var sensitivityTest = new AntimicrobialSensitivityTestRequest
             {
                 ClinicalBreakpointId = firstBreakpoint.Id,
                 MinimumInhibitoryConcentration = 0.25f
             };
-            sut.NewSentinelEntry.SensitivityTests.Add(sensitivityTest);
+            sut.NewSentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
 
             var badge = sut.ResistenceBadge(sensitivityTest);
 
@@ -162,13 +162,13 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         public void WhenCalculateResistanceBadgeWhereBreakpointHasNoMics_ResultsInNotDetermined()
         {
             var sut = _renderedComponent.Instance;
-            var sensitivityTest = new AntimicrobialSensitivityTest()
+            var sensitivityTest = new AntimicrobialSensitivityTestRequest
             {
                 ClinicalBreakpointId = 1234567,
                 MinimumInhibitoryConcentration = 0.25f
 
             };
-            sut.NewSentinelEntry.SensitivityTests.Add(sensitivityTest);
+            sut.NewSentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
 
             var badge = sut.ResistenceBadge(sensitivityTest);
 
