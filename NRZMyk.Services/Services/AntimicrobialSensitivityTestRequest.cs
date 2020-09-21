@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using NRZMyk.Services.Data.Entities;
+﻿using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Models;
 
-namespace NRZMyk.Services.Models
+namespace NRZMyk.Services.Services
 {
-    public class AntimicrobialSensitivityTest
+    public class AntimicrobialSensitivityTestRequest
     {
         public SpeciesTestingMethod TestingMethod { get; set; }
 

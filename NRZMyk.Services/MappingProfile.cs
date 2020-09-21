@@ -10,7 +10,7 @@ namespace NRZMyk.Server
         public MappingProfile()
         {
             CreateMap<CreateSentinelEntryRequest, SentinelEntry>();
-            CreateMap<ClinicalBreakpoint, ClinicalBreakpointReference>();
+            CreateMap<AntimicrobialSensitivityTestRequest, AntimicrobialSensitivityTest>();
         }
     }
 }

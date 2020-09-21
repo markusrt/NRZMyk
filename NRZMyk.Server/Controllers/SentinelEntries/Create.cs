@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
@@ -31,7 +33,8 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         public override async Task<ActionResult<SentinelEntry>> HandleAsync(CreateSentinelEntryRequest request)
         {
             var newEntry = _mapper.Map<SentinelEntry>(request);
-            return await _sentinelEntryRepository.AddAsync(newEntry);
+            var storedEntry = await _sentinelEntryRepository.AddAsync(newEntry);
+            return Created(new Uri($"{Request.GetUri()}/{storedEntry.Id}"), storedEntry);
         }
     }
 }

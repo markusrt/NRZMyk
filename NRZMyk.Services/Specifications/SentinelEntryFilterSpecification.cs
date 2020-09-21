@@ -5,8 +5,5 @@ namespace NRZMyk.Services.Specifications
 {
     public class SentinelEntryFilterSpecification : BaseSpecification<SentinelEntry>
     {
-        public SentinelEntryFilterSpecification()
-        {
-        }
     }
 }
