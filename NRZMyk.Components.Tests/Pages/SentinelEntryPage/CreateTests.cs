@@ -86,7 +86,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
                 sensitivityTest.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
                 sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.Micafungin);
-                sensitivityTest.ClinicalBreakpointId.Should().Be(0);
+                sensitivityTest.ClinicalBreakpointId.Should().BeNull();
             }
             catch (Exception e)
             {

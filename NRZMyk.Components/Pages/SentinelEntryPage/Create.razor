@@ -6,7 +6,7 @@
 <h2>@Title</h2>
 
 <div>
-    <EditForm Model="SentinelEntry" OnValidSubmit="@SumbitClick">
+    <EditForm Model="SentinelEntry" OnValidSubmit="@SubmitClick">
 
         <DataAnnotationsValidator />
 
@@ -171,6 +171,7 @@
                             <span class="badge @(ResistanceBadge(sensitivityTest))">
                                 @EnumUtils.GetEnumDescription(sensitivityTest.Resistance)
                             </span>
+                            <span class="badge badge-pill">@sensitivityTest.ClinicalBreakpointId</span>
                         </p>
                     </div>
                 }

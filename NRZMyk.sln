@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRZMyk.Components", "NRZMyk.Components\NRZMyk.Components.csproj", "{45828280-23BD-4C6A-8799-FF5CF7B245C5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRZMyk.ComponentsTests", "NRZMyk.ComponentsTests\NRZMyk.ComponentsTests.csproj", "{9D6F02E8-ABC6-4BF3-B165-66F9E72C35FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRZMyk.Components.Tests", "NRZMyk.Components.Tests\NRZMyk.Components.Tests.csproj", "{9D6F02E8-ABC6-4BF3-B165-66F9E72C35FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRZMyk.Server", "NRZMyk.Server\NRZMyk.Server.csproj", "{48F45A97-4A51-41BF-94A0-19723487A1E6}"
 EndProject
