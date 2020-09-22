@@ -105,15 +105,17 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         {
             var sensitivityTest = new AntimicrobialSensitivityTestRequest()
             {
-                AntifungalAgent = AntifungalAgent.Micafungin
+                AntifungalAgent = AntifungalAgent.Micafungin,
+                Standard = BrothMicrodilutionStandard.Eucast
             };
             var sut = _renderedComponent.Instance;
             sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
 
             var breakpoints = sut.ApplicableBreakpoints(sensitivityTest).ToList();
 
-            breakpoints.Should().HaveCount(2);
-            breakpoints.Should().OnlyContain(b => b.AntifungalAgent == AntifungalAgent.Micafungin);
+            breakpoints.Should().HaveCount(1);
+            breakpoints.Should().OnlyContain(
+                b => b.AntifungalAgent == AntifungalAgent.Micafungin && b.Standard == BrothMicrodilutionStandard.Eucast);
         }
 
         [TestCase(0.01f, "badge-danger", Resistance.Resistant)]

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
 
 namespace NRZMyk.Mocks.MockServices
@@ -30,7 +31,22 @@ namespace NRZMyk.Mocks.MockServices
                 HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
                 HospitalDepartment =  HospitalDepartment.Neurology,
                 SamplingDate = new DateTime(2020,5,1),
-                SenderLaboratoryNumber = "SLN-123456"
+                SenderLaboratoryNumber = "SLN-123456",
+                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>
+                {
+                    new AntimicrobialSensitivityTest
+                    {
+                        AntifungalAgent = AntifungalAgent.Fluconazole,
+                        TestingMethod = SpeciesTestingMethod.Vitek,
+                        ClinicalBreakpoint = new ClinicalBreakpoint()
+                        {
+                            Standard = BrothMicrodilutionStandard.Eucast,
+                            Id = 226
+                        },
+                        Resistance = Resistance.Intermediate,
+                        MinimumInhibitoryConcentration = 0.12f
+                    }
+                }
             });
         }
 
