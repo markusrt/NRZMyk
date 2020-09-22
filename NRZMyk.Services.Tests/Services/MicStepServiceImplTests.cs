@@ -58,6 +58,42 @@ namespace NRZMyk.Services.Tests.Services
                 new MicStep {Title = "<10", Value = 10},
                 new MicStep {Title = "20", Value = 20}
             };
+            var sut = CreateSutWithSteps();
+
+            var steps = sut.StepsByTestingMethodAndAgent(SpeciesTestingMethod.ETest, AntifungalAgent.Caspofungin);
+            
+            steps.Should().HaveCount(2);
+            steps.Should().BeEquivalentTo(expectedSteps);
+        }
+
+        [Test]
+        public void WhenConfiguredWithSteps_ReturnsAllTestingMethods()
+        {
+            var expectedTestingMethods = new List<SpeciesTestingMethod>
+            {
+                SpeciesTestingMethod.ETest, SpeciesTestingMethod.Vitek
+            };
+            var sut = CreateSutWithSteps();
+
+            var testingMethods = sut.TestingMethods();
+            
+            testingMethods.Should().HaveCount(2);
+            testingMethods.Should().BeEquivalentTo(expectedTestingMethods);
+        }
+
+        [Test]
+        public void WhenConfiguredWithSteps_ReturnsAllAntifungalAgents()
+        {
+            var sut = CreateSutWithSteps();
+
+            var antifungalAgents = sut.AntifungalAgents(SpeciesTestingMethod.Vitek);
+            
+            antifungalAgents.Should().HaveCount(1);
+            antifungalAgents.Should().BeEquivalentTo(new List<AntifungalAgent>{AntifungalAgent.Fluconazole});
+        }
+
+        private MicStepsServiceImpl CreateSutWithSteps()
+        {
             var sut = CreateSut(Options.Create(new BreakpointSettings
             {
                 Breakpoint = new Breakpoint
@@ -88,11 +124,7 @@ namespace NRZMyk.Services.Tests.Services
                     }
                 }
             }));
-
-            var steps = sut.StepsByTestingMethodAndAgent(SpeciesTestingMethod.ETest, AntifungalAgent.Caspofungin);
-            
-            steps.Should().HaveCount(2);
-            steps.Should().BeEquivalentTo(expectedSteps);
+            return sut;
         }
 
         private MicStepsServiceImpl CreateSut(IOptions<BreakpointSettings> option)
