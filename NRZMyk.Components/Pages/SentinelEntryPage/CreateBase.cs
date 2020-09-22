@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
 using NRZMyk.Services.Data.Entities;
@@ -47,50 +45,47 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         
         public string PrimaryAction { get; set; }
 
-
-        public void AddAntimicrobialSensitivityTest()
+        internal void AddAntimicrobialSensitivityTest()
         {
             SentinelEntry.AntimicrobialSensitivityTests.Add(
                 new AntimicrobialSensitivityTestRequest
                 {
                     TestingMethod = TestingMethod,
                     AntifungalAgent = AntifungalAgent,
-                    ClinicalBreakpointId = AllBreakpoints.FirstOrDefault()?.Id ?? 0
+                    ClinicalBreakpointId = AllBreakpoints.FirstOrDefault()?.Id
                 });
         }
 
-        protected IEnumerable<AntimicrobialSensitivityTestRequest> RecalculateResistance()
-        {
-            return SentinelEntry.AntimicrobialSensitivityTests;
-        }
-
-        public List<MicStep> MicSteps(AntimicrobialSensitivityTestRequest sensitivityTest)
+        internal IEnumerable<MicStep> MicSteps(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
             var matchingSteps = MicStepsService.StepsByTestingMethodAndAgent(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent);
-            if (!matchingSteps.Any(s => s.Value == sensitivityTest.MinimumInhibitoryConcentration))
+            if (matchingSteps.All(s => !s.Value.Equals(sensitivityTest.MinimumInhibitoryConcentration)))
             {
                 sensitivityTest.MinimumInhibitoryConcentration = matchingSteps.FirstOrDefault()?.Value ?? 0.0f;
             }
             return matchingSteps;
         }
 
-        public IEnumerable<ClinicalBreakpoint> ApplicableBreakpoints(AntimicrobialSensitivityTestRequest sensitivityTest)
+        internal IEnumerable<ClinicalBreakpoint> ApplicableBreakpoints(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
             var antifungalAgent = sensitivityTest.AntifungalAgent;
             var applicableBreakpoints = AllBreakpoints.Where(b => b.AntifungalAgent == antifungalAgent && b.Species == SentinelEntry.IdentifiedSpecies).ToList();
-            if (!applicableBreakpoints.Any(b => b.Id == sensitivityTest.ClinicalBreakpointId))
+            if (applicableBreakpoints.All(b => b.Id != sensitivityTest.ClinicalBreakpointId))
             {
-                sensitivityTest.ClinicalBreakpointId = applicableBreakpoints.FirstOrDefault()?.Id ?? 0;
+                Logger.LogInformation($"Update test {sensitivityTest.AntifungalAgent} to breakpoint id {applicableBreakpoints.FirstOrDefault()?.Id}");
+
+                sensitivityTest.ClinicalBreakpointId = applicableBreakpoints.FirstOrDefault()?.Id;
             }
 
             Logger.LogInformation($"Found {applicableBreakpoints.Count} applicable breakpoints for {antifungalAgent} and {SentinelEntry.IdentifiedSpecies}");
             return applicableBreakpoints;
         }
 
-        public string ResistanceBadge(AntimicrobialSensitivityTestRequest sensitivityTest)
+        internal string ResistanceBadge(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
+            Logger.LogInformation("Resistance update");
             var breakpoint = AllBreakpoints.FirstOrDefault(b => b.Id == sensitivityTest.ClinicalBreakpointId);
-            if (breakpoint == null || !breakpoint.MicBreakpointResistent.HasValue || !breakpoint.MicBreakpointSusceptible.HasValue)
+            if (breakpoint?.MicBreakpointResistent == null || !breakpoint.MicBreakpointSusceptible.HasValue)
             {
                 if (breakpoint == null)
                 {
@@ -98,7 +93,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 }
                 else
                 {
-                    Logger.LogInformation($"Breakpoints {breakpoint.Id} (resistent/suseptible) values are not complete ({breakpoint.MicBreakpointResistent}/{breakpoint.MicBreakpointSusceptible}");
+                    Logger.LogInformation($"Breakpoints {breakpoint.Id} (resistent/suseptible) values are not complete ({breakpoint.MicBreakpointResistent}/{breakpoint.MicBreakpointSusceptible})");
                 }
                 sensitivityTest.Resistance = Resistance.NotDetermined;
                 return "badge-info";
@@ -121,7 +116,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             return "badge-warning";
         }
 
-        public async Task SumbitClick()
+        internal async Task SubmitClick()
         {
             if (IsEdit())
             {
@@ -132,6 +127,11 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 await SentinelEntryService.Create(SentinelEntry);
             }
             await OnCloseClick.InvokeAsync(null);
+        }
+
+        protected IEnumerable<AntimicrobialSensitivityTestRequest> RecalculateResistance()
+        {
+            return SentinelEntry.AntimicrobialSensitivityTests;
         }
 
         protected override async Task OnInitializedAsync()
