@@ -12,6 +12,8 @@ namespace NRZMyk.Services.Services
     public interface MicStepsService
     {
         List<MicStep> StepsByTestingMethodAndAgent(SpeciesTestingMethod testingMethod, AntifungalAgent agent);
+        IEnumerable<SpeciesTestingMethod> TestingMethods();
+        IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod testingMethod);
     }
 
     public class MicStepsServiceImpl : MicStepsService
@@ -39,6 +41,16 @@ namespace NRZMyk.Services.Services
             _logger.LogInformation($"Found {agentSteps.Count} MIC steps for {testingMethod}/{agent} found");
 
             return agentSteps;
+        }
+
+        public IEnumerable<SpeciesTestingMethod> TestingMethods()
+        {
+            return _micSteps.Keys;
+        }
+
+        public IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod speciesTestingMethod)
+        {
+            return _micSteps[speciesTestingMethod].Keys;
         }
     }
 }

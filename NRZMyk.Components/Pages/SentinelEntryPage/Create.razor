@@ -112,7 +112,7 @@ else
             <div class="form-group row">
                 <div class="col-sm-3 col-lg-2">
                     <select class="form-control form-control-sm" @bind="TestingMethod">
-                        @foreach (var testingMethod in EnumUtils.AllEnumValues<SpeciesTestingMethod>().Where(t => t == SpeciesTestingMethod.Vitek))
+                        @foreach (var testingMethod in TestingMethods())
                         {
                             <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
                         }
@@ -120,9 +120,7 @@ else
                 </div>
                 <div class="col-sm-3 col-lg-2">
                     <select class="form-control form-control-sm" @bind="AntifungalAgent">
-                        @foreach (var antifungalAgent in EnumUtils.AllEnumValues<AntifungalAgent>().Where(t =>
-
-                           new List<AntifungalAgent> { AntifungalAgent.Micafungin, AntifungalAgent.Caspofungin, AntifungalAgent.Voriconazole, AntifungalAgent.Fluconazole, AntifungalAgent.AmphotericinB }.Contains(t)))
+                        @foreach (var antifungalAgent in AntifungalAgents())
                         {
                             <option value="@antifungalAgent">@EnumUtils.GetEnumDescription(antifungalAgent)</option>
                         }
