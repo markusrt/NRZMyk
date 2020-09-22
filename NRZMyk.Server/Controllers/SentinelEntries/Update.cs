@@ -14,7 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize]
-    public class Update : BaseAsyncEndpoint<UpdateSentinelEntryRequest, SentinelEntry>
+    public class Update : BaseAsyncEndpoint<SentinelEntryRequest, SentinelEntry>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
         private readonly IAsyncRepository<AntimicrobialSensitivityTest> _sensitivityTestRepository;
@@ -35,7 +35,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.update",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<SentinelEntry>> HandleAsync(UpdateSentinelEntryRequest request)
+        public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request)
         {
             var existingItem = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(request.Id)));

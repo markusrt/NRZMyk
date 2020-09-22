@@ -6,8 +6,10 @@ using NRZMyk.Services.Models;
 
 namespace NRZMyk.Services.Services
 {
-    public class CreateSentinelEntryRequest
+    public class SentinelEntryRequest
     {
+        public int Id { get; set; }
+
         public DateTime? SamplingDate { get; set; }
 
         [Required(ErrorMessage = "Das Feld Labornummer Einsender ist erforderlich")]

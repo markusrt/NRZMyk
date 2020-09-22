@@ -15,6 +15,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
     public class CreateBase : BlazorComponent
     {
         [Parameter]
+        public int? Id { get; set; }
+
+        [Parameter]
         public EventCallback<string> OnCloseClick { get; set; }
 
         [Parameter]
@@ -32,7 +35,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         [Inject]
         private ClinicalBreakpointService ClinicalBreakpointService { get; set; }
 
-        public CreateSentinelEntryRequest NewSentinelEntry { get; } = new CreateSentinelEntryRequest();
+        public SentinelEntryRequest SentinelEntry { get; private set; } = new SentinelEntryRequest();
 
         public List<ClinicalBreakpoint> AllBreakpoints { get; private set; } = new List<ClinicalBreakpoint>();
 
@@ -40,9 +43,14 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         public AntifungalAgent AntifungalAgent { get; set; } = AntifungalAgent.Micafungin;
 
+        public string Title { get; set; }
+        
+        public string PrimaryAction { get; set; }
+
+
         public void AddAntimicrobialSensitivityTest()
         {
-            NewSentinelEntry.AntimicrobialSensitivityTests.Add(
+            SentinelEntry.AntimicrobialSensitivityTests.Add(
                 new AntimicrobialSensitivityTestRequest
                 {
                     TestingMethod = TestingMethod,
@@ -53,27 +61,50 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         protected IEnumerable<AntimicrobialSensitivityTestRequest> RecalculateResistance()
         {
-            return NewSentinelEntry.AntimicrobialSensitivityTests;
+            return SentinelEntry.AntimicrobialSensitivityTests;
         }
 
-        public List<MicStep> MicSteps(SpeciesTestingMethod testingMethod, AntifungalAgent antifungalAgent)
+        public List<MicStep> MicSteps(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
-            return MicStepsService.StepsByTestingMethodAndAgent(testingMethod, antifungalAgent);
+            var matchingSteps = MicStepsService.StepsByTestingMethodAndAgent(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent);
+            if (!matchingSteps.Any(s => s.Value == sensitivityTest.MinimumInhibitoryConcentration))
+            {
+                sensitivityTest.MinimumInhibitoryConcentration = matchingSteps.FirstOrDefault()?.Value ?? 0.0f;
+            }
+            return matchingSteps;
         }
 
-        public IEnumerable<ClinicalBreakpoint> ApplicableBreakpoints(AntifungalAgent antifungalAgent)
+        public IEnumerable<ClinicalBreakpoint> ApplicableBreakpoints(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
-            return AllBreakpoints.Where(b => b.AntifungalAgent == antifungalAgent && b.Species == NewSentinelEntry.IdentifiedSpecies);
+            var antifungalAgent = sensitivityTest.AntifungalAgent;
+            var applicableBreakpoints = AllBreakpoints.Where(b => b.AntifungalAgent == antifungalAgent && b.Species == SentinelEntry.IdentifiedSpecies).ToList();
+            if (!applicableBreakpoints.Any(b => b.Id == sensitivityTest.ClinicalBreakpointId))
+            {
+                sensitivityTest.ClinicalBreakpointId = applicableBreakpoints.FirstOrDefault()?.Id ?? 0;
+            }
+
+            Logger.LogInformation($"Found {applicableBreakpoints.Count} applicable breakpoints for {antifungalAgent} and {SentinelEntry.IdentifiedSpecies}");
+            return applicableBreakpoints;
         }
 
-        public string ResistenceBadge(AntimicrobialSensitivityTestRequest sensitivityTest)
+        public string ResistanceBadge(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
             var breakpoint = AllBreakpoints.FirstOrDefault(b => b.Id == sensitivityTest.ClinicalBreakpointId);
             if (breakpoint == null || !breakpoint.MicBreakpointResistent.HasValue || !breakpoint.MicBreakpointSusceptible.HasValue)
             {
+                if (breakpoint == null)
+                {
+                    Logger.LogWarning($"No breakpoint found for {sensitivityTest.TestingMethod}/{sensitivityTest.AntifungalAgent} where id is {sensitivityTest.ClinicalBreakpointId}");
+                }
+                else
+                {
+                    Logger.LogInformation($"Breakpoints {breakpoint.Id} (resistent/suseptible) values are not complete ({breakpoint.MicBreakpointResistent}/{breakpoint.MicBreakpointSusceptible}");
+                }
                 sensitivityTest.Resistance = Resistance.NotDetermined;
                 return "badge-info";
             }
+
+            Logger.LogInformation($"Found breakpoint for {sensitivityTest.TestingMethod}/{sensitivityTest.AntifungalAgent} where id is {sensitivityTest.ClinicalBreakpointId}: {breakpoint.Title}");
 
             var mic = sensitivityTest.MinimumInhibitoryConcentration;
             if (mic > breakpoint.MicBreakpointResistent)
@@ -90,15 +121,36 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             return "badge-warning";
         }
 
-        public async Task CreateClick()
+        public async Task SumbitClick()
         {
-            await SentinelEntryService.Create(NewSentinelEntry);
+            if (IsEdit())
+            {
+                await SentinelEntryService.Update(SentinelEntry);
+            }
+            else
+            {
+                await SentinelEntryService.Create(SentinelEntry);
+            }
             await OnCloseClick.InvokeAsync(null);
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            Logger.LogInformation($"Now loading... /SentinelEntry/{(IsEdit()?"Edit":"Create")}");
+
+            Title = IsEdit() ? "Bearbeiten" : "Neu anlegen";
+            PrimaryAction = IsEdit() ? "Speichern" : "Anlegen";
+
+            if (Id.HasValue)
+            {
+                SentinelEntry = await SentinelEntryService.GetById(Id.Value);
+            }
+
+            await base.OnInitializedAsync();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            Logger.LogInformation("Now loading... /SentinelEntry/Create");
             if (firstRender)
             {
                 AllBreakpoints = await ClinicalBreakpointService.List();
@@ -107,6 +159,11 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             }
 
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        private bool IsEdit()
+        {
+            return Id.HasValue;
         }
     }
 }
