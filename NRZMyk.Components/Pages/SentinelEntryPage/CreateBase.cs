@@ -7,6 +7,7 @@ using NRZMyk.Components.Helpers;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Models;
+using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Components.Pages.SentinelEntryPage
 {
@@ -67,6 +68,16 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 sensitivityTest.MinimumInhibitoryConcentration = matchingSteps.First().Value;
             }
             return matchingSteps;
+        }
+
+        internal IEnumerable<SpeciesTestingMethod> TestingMethods()
+        {
+            return MicStepsService.TestingMethods();
+        }
+
+        internal IEnumerable<AntifungalAgent> AntifungalAgents()
+        {
+            return MicStepsService.AntifungalAgents(TestingMethod);
         }
 
         internal IEnumerable<ClinicalBreakpoint> ApplicableBreakpoints(AntimicrobialSensitivityTestRequest sensitivityTest)
