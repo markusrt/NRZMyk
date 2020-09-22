@@ -15,5 +15,7 @@ namespace NRZMyk.Services.Services
         public float MinimumInhibitoryConcentration { get; set; }
 
         public Resistance Resistance { get; set; }
+        
+        public BrothMicrodilutionStandard Standard { get; set; }
     }
 }

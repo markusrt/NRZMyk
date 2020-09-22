@@ -12,7 +12,10 @@ namespace NRZMyk.Server
             CreateMap<SentinelEntryRequest, SentinelEntry>();
             CreateMap<SentinelEntry, SentinelEntryRequest>();
             CreateMap<AntimicrobialSensitivityTestRequest, AntimicrobialSensitivityTest>();
-            CreateMap<AntimicrobialSensitivityTest, AntimicrobialSensitivityTestRequest>();
+            CreateMap<AntimicrobialSensitivityTest, AntimicrobialSensitivityTestRequest>().ForMember(
+                dest => dest.Standard,
+                opt => opt.MapFrom((source, dest) => source.ClinicalBreakpoint?.Standard ?? BrothMicrodilutionStandard.Eucast
+            ));
         }
     }
 }
