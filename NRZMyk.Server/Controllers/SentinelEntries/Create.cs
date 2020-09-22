@@ -13,7 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize]
-    public class Create : BaseAsyncEndpoint<CreateSentinelEntryRequest, SentinelEntry>
+    public class Create : BaseAsyncEndpoint<SentinelEntryRequest, SentinelEntry>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
         private readonly IMapper _mapper;
@@ -30,7 +30,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "catalog-entries.create",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<SentinelEntry>> HandleAsync(CreateSentinelEntryRequest request)
+        public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request)
         {
             var newEntry = _mapper.Map<SentinelEntry>(request);
             var storedEntry = await _sentinelEntryRepository.AddAsync(newEntry);

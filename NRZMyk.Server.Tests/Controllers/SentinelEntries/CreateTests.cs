@@ -21,7 +21,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         public async Task WhenCreated_MapsAndStoresToRepository()
         {
             var sut = CreateSut(out var repository, out var mapper);
-            var createSentinelEntryRequest = new CreateSentinelEntryRequest();
+            var createSentinelEntryRequest = new SentinelEntryRequest();
             var sentinelEntry = new SentinelEntry() {Id = 123};
             mapper.Map<SentinelEntry>(createSentinelEntryRequest).Returns(sentinelEntry);
             repository.AddAsync(sentinelEntry).Returns(sentinelEntry);
