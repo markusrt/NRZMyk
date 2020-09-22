@@ -23,7 +23,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 123))
                 .Returns(Task.FromResult((SentinelEntry)null));
 
-            var action = await sut.HandleAsync(new UpdateSentinelEntryRequest {Id = 123});
+            var action = await sut.HandleAsync(new SentinelEntryRequest {Id = 123});
 
             action.Result.Should().BeOfType<NotFoundResult>();
         }
@@ -32,7 +32,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         public async Task WhenFound_ReturnsCorrespondingObject()
         {
             var sut = CreateSut(out var repository, out var sensitivityTestRepository, out var mapper);
-            var updateSentinelEntry = new UpdateSentinelEntryRequest {Id = 567};
+            var updateSentinelEntry = new SentinelEntryRequest {Id = 567};
             var sensitivityTest1 = new AntimicrobialSensitivityTest();
             var sensitivityTest2 = new AntimicrobialSensitivityTest();
             var sentinelEntry = new SentinelEntry

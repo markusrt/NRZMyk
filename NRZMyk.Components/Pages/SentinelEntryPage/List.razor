@@ -51,7 +51,7 @@ else
                     <td>@EnumUtils.GetEnumDescription(item.HospitalDepartmentType), @EnumUtils.GetEnumDescription(item.HospitalDepartment)</td>
                     <td>@EnumUtils.GetEnumDescription(item.IdentifiedSpecies)</td>
                     <td>
-                        <a href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary disabled">
+                        <a href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary">
                             Bearbeiten
                         </a>
 
@@ -71,7 +71,7 @@ else
 
     @if (showEdit)
     {
-        @*<Edit Id="@selectedId" Brands="@catalogBrands" Types="@catalogTypes" OnCloseClick="CloseEditHandler"></Edit>*@
+        <Create Id="@selectedId" OnCloseClick="CloseEditHandler"></Create>
     }
 
     @if (showCreate)
