@@ -11,6 +11,7 @@ namespace NRZMyk.Services.Specifications
         {
             Id = id;
             AddInclude(b => b.AntimicrobialSensitivityTests);
+            AddInclude($"{nameof(SentinelEntry.AntimicrobialSensitivityTests)}.{nameof(AntimicrobialSensitivityTest.ClinicalBreakpoint)}");
         }
     }
 }

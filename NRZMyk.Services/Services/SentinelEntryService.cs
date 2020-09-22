@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Data.Entities;
 
@@ -10,32 +11,50 @@ namespace NRZMyk.Services.Services
 {
     public interface SentinelEntryService
     {
-        Task<SentinelEntry> Create(CreateSentinelEntryRequest createRequest);
+        Task<SentinelEntry> Create(SentinelEntryRequest request);
         Task<List<SentinelEntry>> ListPaged(int pageSize);
+        Task<SentinelEntryRequest> GetById(int id);
+        Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
     }
 
     public class SentinelEntryServiceImpl : SentinelEntryService
     {
         private readonly HttpClient _httpClient;
+        private readonly IMapper _mapper;
         private readonly ILogger<SentinelEntryServiceImpl> _logger;
 
-        public SentinelEntryServiceImpl(HttpClient httpClient, ILogger<SentinelEntryServiceImpl> logger)
+        public SentinelEntryServiceImpl(HttpClient httpClient, IMapper mapper, ILogger<SentinelEntryServiceImpl> logger)
         {
             _httpClient = httpClient;
+            _mapper = mapper;
             _logger = logger;
         }
 
-        public async Task<SentinelEntry> Create(CreateSentinelEntryRequest createRequest)
+        public async Task<SentinelEntry> Create(SentinelEntryRequest request)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/sentinel-entries", createRequest);
+                var response = await _httpClient.PostAsJsonAsync("api/sentinel-entries", request);
                 return await response.Content.ReadFromJsonAsync<SentinelEntry>();
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Failed to create sentinel entry");
                 return new SentinelEntry();
+            }
+        }
+
+        public async Task<SentinelEntry> Update(SentinelEntryRequest updateRequest)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync("api/sentinel-entries", updateRequest);
+                return await response.Content.ReadFromJsonAsync<SentinelEntry>();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Failed to update sentinel entry");
+                throw;
             }
         }
 
@@ -50,6 +69,20 @@ namespace NRZMyk.Services.Services
             {
                 _logger.LogError(exception, "Failed to load paged sentinel entries from backend");
                 return new List<SentinelEntry>();
+            }
+        }
+
+        public async Task<SentinelEntryRequest> GetById(int id)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<SentinelEntry>($"api/sentinel-entries/{id}");
+                return _mapper.Map<SentinelEntryRequest>(response);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Failed to retrieve sentinel entry");
+                throw;
             }
         }
     }

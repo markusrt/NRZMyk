@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
 
 namespace NRZMyk.Mocks.MockServices
@@ -30,13 +32,28 @@ namespace NRZMyk.Mocks.MockServices
                 HospitalDepartment =  HospitalDepartment.Neurology,
                 SamplingDate = new DateTime(2020,5,1),
                 SenderLaboratoryNumber = "SLN-123456",
+                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>
+                {
+                    new AntimicrobialSensitivityTest
+                    {
+                        AntifungalAgent = AntifungalAgent.Fluconazole,
+                        TestingMethod = SpeciesTestingMethod.Vitek,
+                        ClinicalBreakpoint = new ClinicalBreakpoint()
+                        {
+                            Standard = BrothMicrodilutionStandard.Eucast,
+                            Id = 226
+                        },
+                        Resistance = Resistance.Intermediate,
+                        MinimumInhibitoryConcentration = 0.12f
+                    }
+                }
             });
         }
 
-        public Task<SentinelEntry> Create(CreateSentinelEntryRequest createRequest)
+        public Task<SentinelEntry> Create(SentinelEntryRequest request)
         {
-            _logger.LogInformation($"Create sentinel entry: {createRequest}");
-            var sentinelEntry = _mapper.Map<SentinelEntry>(createRequest);
+            _logger.LogInformation($"Create sentinel entry: {request}");
+            var sentinelEntry = _mapper.Map<SentinelEntry>(request);
             _repository.Add(sentinelEntry);
             return Task.FromResult(sentinelEntry);
         }
@@ -44,6 +61,19 @@ namespace NRZMyk.Mocks.MockServices
         public Task<List<SentinelEntry>> ListPaged(int pageSize)
         {
             return Task.FromResult(_repository);
+        }
+
+        public Task<SentinelEntryRequest> GetById(int id)
+        {
+            var entry = _repository.FirstOrDefault(e => e.Id == id);
+            return Task.FromResult(_mapper.Map<SentinelEntryRequest>(entry));
+        }
+
+        public Task<SentinelEntry> Update(SentinelEntryRequest updateRequest)
+        {
+            var entry = _repository.FirstOrDefault(e => e.Id == updateRequest.Id);
+            _mapper.Map(updateRequest, entry);
+            return Task.FromResult(entry);
         }
     }
 }

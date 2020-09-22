@@ -6,16 +6,20 @@ namespace NRZMyk.Components.SharedComponents.Input
     {
         protected override bool TryParseValueFromString(string value, out T result, out string validationErrorMessage)
         {
-            if (typeof(T) == typeof(int) && int.TryParse(value, out var resultInt))
+            validationErrorMessage = null;
+            if ((typeof(T) == typeof(int) || typeof(T) == typeof(int?)) && int.TryParse(value, out var resultInt))
             {
                 result = (T)(object)resultInt;
-                validationErrorMessage = null;
                 return true;
             }
-            if (typeof(T) == typeof(float) && float.TryParse(value, out var resultFloat))
+            if ((typeof(T) == typeof(float) || typeof(T) == typeof(float?)) && float.TryParse(value, out var resultFloat))
             {
                 result = (T)(object)resultFloat;
-                validationErrorMessage = null;
+                return true;
+            }
+            if ((typeof(T) == typeof(int?) || typeof(T) == typeof(float?)) && string.IsNullOrEmpty(value))
+            {
+                result = default;
                 return true;
             }
 

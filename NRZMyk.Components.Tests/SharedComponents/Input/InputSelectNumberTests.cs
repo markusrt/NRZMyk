@@ -24,6 +24,22 @@ namespace NRZMyk.ComponentsTests.SharedComponents.Input
             errorMessage.Should().BeNull();
         }
 
+        [TestCase("-1", -1)]
+        [TestCase("0", 0)]
+        [TestCase("1000000", 1000000)]
+        [TestCase("", null)]
+        [TestCase(null, null)]
+        public void WhenNumberSelected_NullableIntegerValueIsParsed(string valueAsString, int? expectedValue)
+        {
+            var sut = CreateSut<int?>("TeamSize");
+
+            sut.InvokeTryParseValueFromString(valueAsString, out var actualValue, out var errorMessage)
+                .Should().BeTrue();
+
+            actualValue.Should().Be(expectedValue);
+            errorMessage.Should().BeNull();
+        }
+
         [TestCase("-100.000")]
         [TestCase("123.111")]
         [TestCase("0,0001")]
@@ -38,6 +54,36 @@ namespace NRZMyk.ComponentsTests.SharedComponents.Input
                 .Should().BeTrue();
 
             actualValue.Should().Be(float.Parse(valueAsString));
+            errorMessage.Should().BeNull();
+        }
+
+        [TestCase("-100.000")]
+        [TestCase("123.111")]
+        [TestCase("0,0001")]
+        [TestCase("0.0001")]
+        [TestCase("100,000")]
+        [TestCase("0")]
+        public void WhenNumberSelected_NullableFloatValueIsParsed(string valueAsString)
+        {
+            var sut = CreateSut<float?>("Measurement");
+
+            sut.InvokeTryParseValueFromString(valueAsString, out var actualValue, out var errorMessage)
+                .Should().BeTrue();
+
+            actualValue.Should().Be(float.Parse(valueAsString));
+            errorMessage.Should().BeNull();
+        }
+
+        [TestCase("")]
+        [TestCase(null)]
+        public void WhenNumberSelectedIsEmpty_NullableFloatValueIsParsed(string valueAsString)
+        {
+            var sut = CreateSut<float?>("Measurement");
+
+            sut.InvokeTryParseValueFromString(valueAsString, out var actualValue, out var errorMessage)
+                .Should().BeTrue();
+
+            actualValue.Should().BeNull();
             errorMessage.Should().BeNull();
         }
 

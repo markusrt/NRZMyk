@@ -10,10 +10,12 @@ namespace NRZMyk.Services.Services
 
         public AntifungalAgent AntifungalAgent { get; set; }
 
-        public int ClinicalBreakpointId { get; set; }
+        public int? ClinicalBreakpointId { get; set; }
 
         public float MinimumInhibitoryConcentration { get; set; }
 
         public Resistance Resistance { get; set; }
+        
+        public BrothMicrodilutionStandard Standard { get; set; }
     }
 }

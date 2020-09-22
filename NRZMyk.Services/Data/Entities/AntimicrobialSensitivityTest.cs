@@ -13,7 +13,7 @@ namespace NRZMyk.Services.Data.Entities
         [JsonIgnore]
         public SentinelEntry SentinelEntry { get; set; }
 
-        public int ClinicalBreakpointId { get; set; }
+        public int? ClinicalBreakpointId { get; set; }
 
         public ClinicalBreakpoint ClinicalBreakpoint { get; set; }
 
