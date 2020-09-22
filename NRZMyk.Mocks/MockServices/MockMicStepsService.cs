@@ -16,5 +16,15 @@ namespace NRZMyk.Mocks.MockServices
                 new MicStep(){Title = "≥16", Value = 16}
             };
         }
+
+        public IEnumerable<SpeciesTestingMethod> TestingMethods()
+        {
+            return new List<SpeciesTestingMethod> {SpeciesTestingMethod.Vitek};
+        }
+
+        public IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod testingMethod)
+        {
+            return new List<AntifungalAgent> {AntifungalAgent.AmphotericinB};
+        }
     }
 }
