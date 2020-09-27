@@ -6,10 +6,12 @@
 
   <ItemGroup>
     <None Remove="Data\ClinicalBreakpoints.json" />
+    <None Remove="Data\Export.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Data\ClinicalBreakpoints.json" />
+    <EmbeddedResource Include="Data\Export.xlsx" />
   </ItemGroup>
 
   <ItemGroup>

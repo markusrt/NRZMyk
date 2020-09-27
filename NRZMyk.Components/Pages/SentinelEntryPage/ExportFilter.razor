@@ -1,0 +1,23 @@
+﻿@inherits ExportFilterBase
+
+<h2>Excel-Export aller Daten</h2>
+<p>
+
+    @if (IsDownloadStarted == 1)
+    {
+        <button class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Daten werden exportiert...
+        </button>
+    }
+    else
+    {
+        <button class="btn btn-primary" type="button" @onclick="@(async() => await DownloadFile())">Exportieren</button>
+    }
+
+</p>
+
+@if (IsDownloadStarted == 2)
+{
+    <p>Export abgeschlossen.</p>
+}
