@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -74,6 +75,15 @@ namespace NRZMyk.Mocks.MockServices
             var entry = _repository.FirstOrDefault(e => e.Id == updateRequest.Id);
             _mapper.Map(updateRequest, entry);
             return Task.FromResult(entry);
+        }
+
+        public async Task<string> Export()
+        {
+            await Task.Delay(2500);
+            await using var stream = GetType().Assembly.GetManifestResourceStream("NRZMyk.Mocks.Data.Export.xlsx");
+            var data = new byte[stream.Length];
+            await stream.ReadAsync(data, 0, data.Length);
+            return Convert.ToBase64String(data);
         }
     }
 }
