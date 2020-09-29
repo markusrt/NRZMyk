@@ -1,0 +1,16 @@
+﻿@inherits ExportButtonBase
+
+@if (DownloadInProgress)
+{
+    <button class="btn btn-primary" type="button" disabled>
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Daten werden exportiert...
+    </button>
+}
+else
+{
+    <button class="btn btn-primary" type="button" @onclick="@(async () => await DownloadFile())">
+        <span class="oi oi-cloud-download" aria-hidden="true"></span>
+        Export
+    </button>
+}

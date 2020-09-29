@@ -38,7 +38,7 @@ namespace NRZMyk.Services.Utils
         /// </returns>
         public static IEnumerable<TEnum> AllEnumValues<TEnum>()
         {
-            return Enum.GetValues(GetEnumType<TEnum>()).Cast<TEnum>().ToList();
+            return Enum.GetValues(GetTypeOrNullableType<TEnum>()).Cast<TEnum>().ToList();
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace NRZMyk.Services.Utils
         /// <returns>true for flag enums, otherwise false</returns>
         public static bool IsFlagsEnum<TEnum>()
         {
-            return GetEnumType<TEnum>().GetCustomAttribute<FlagsAttribute>() != null;
+            return GetTypeOrNullableType<TEnum>().GetCustomAttribute<FlagsAttribute>() != null;
         }
 
         /// <summary>
@@ -158,13 +158,13 @@ namespace NRZMyk.Services.Utils
         
         public static string GetEnumDescription<TEnum>(TEnum enumValue)
         {
-            var enumType = GetEnumType<TEnum>();
+            var enumType = GetTypeOrNullableType<TEnum>();
             return GetEnumDescription(enumType, enumValue);
         }
 
         public static string GetEnumDescription<TEnum>(object enumValue)
         {
-            var enumType = GetEnumType<TEnum>();
+            var enumType = GetTypeOrNullableType<TEnum>();
             return GetEnumDescription(enumType, enumValue);
         }
 
@@ -173,7 +173,7 @@ namespace NRZMyk.Services.Utils
             var value = enumValue.ToString();
             if (enumType == typeof(object))
             {
-                enumType = GetEnumType(enumValue.GetType());
+                enumType = GetTypeOrNullableType(enumValue.GetType());
             }
 
             if (enumValue is int)
@@ -186,7 +186,7 @@ namespace NRZMyk.Services.Utils
                 return enumValue.ToString();
             }
 
-            var field = GetEnumType(enumType)?.GetField(value);
+            var field = GetTypeOrNullableType(enumType)?.GetField(value);
             if (field == null)
             {
                 return value;
@@ -197,13 +197,13 @@ namespace NRZMyk.Services.Utils
             return (attributes.Length > 0) ? attributes[0].Description : value;
         }
 
-        private static Type GetEnumType<TEnum>()
+        public static Type GetTypeOrNullableType<TEnum>()
         {
             var enumType = typeof (TEnum);
-            return GetEnumType(enumType);
+            return GetTypeOrNullableType(enumType);
         }
 
-        private static Type GetEnumType(Type enumType)
+        public static Type GetTypeOrNullableType(Type enumType)
         {
             return Nullable.GetUnderlyingType(enumType) ?? enumType;
         }

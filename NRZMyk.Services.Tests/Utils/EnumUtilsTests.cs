@@ -5,7 +5,7 @@ using FluentAssertions;
 using NRZMyk.Services.Utils;
 using NUnit.Framework;
 
-namespace NRZMyk.Components.Tests.Utils
+namespace NRZMyk.Services.Tests.Utils
 {
     [TestFixture]
     public class EnumUtilsTests
@@ -15,7 +15,7 @@ namespace NRZMyk.Components.Tests.Utils
         [TestCase("Flag1,,Flag2", ClinicalInformation.Flag2 | ClinicalInformation.Flag1)]
         [TestCase("", ClinicalInformation.None)]
         [TestCase(null, ClinicalInformation.None)]
-        public void ParseCommaSeperatedListOfNamesAsFlagsEnum_ParsesCorrectly(string commaSeperatedList,
+        public void ParseCommaSeparatedListOfNamesAsFlagsEnum_ParsesCorrectly(string commaSeperatedList,
             ClinicalInformation expectedResult)
         {
             var result = EnumUtils.ParseCommaSeperatedListOfNamesAsFlagsEnum<ClinicalInformation>(commaSeperatedList);
@@ -24,7 +24,7 @@ namespace NRZMyk.Components.Tests.Utils
         }
 
         [Test]
-        public void ParseCommaSeperatedListOfNames_ValidList_ParsesCorrectly()
+        public void ParseCommaSeparatedListOfNames_ValidList_ParsesCorrectly()
         {
             var commaSeperatedList = "Two, One";
             var expectedResult = new List<UtilsTest> {UtilsTest.Two, UtilsTest.One};
@@ -35,7 +35,7 @@ namespace NRZMyk.Components.Tests.Utils
         }
 
         [Test]
-        public void ParseCommaSeperatedListOfNames_EmptyList_EmptyResult()
+        public void ParseCommaSeparatedListOfNames_EmptyList_EmptyResult()
         {
             var commaSeperatedList = ", ";
 
@@ -45,7 +45,7 @@ namespace NRZMyk.Components.Tests.Utils
         }
 
         [Test]
-        public void ParseCommaSeperatedListOfNames_InvalidEntry_ThrowsException()
+        public void ParseCommaSeparatedListOfNames_InvalidEntry_ThrowsException()
         {
             Assert.Throws<ArgumentException>(() => EnumUtils.ParseCommaSeperatedListOfNames<UtilsTest>("Zero, Foo, One"));
         }
@@ -87,10 +87,10 @@ namespace NRZMyk.Components.Tests.Utils
         public void IsDefinedEnumValue_WhenPassedACombinationWhichAlsoExistsAsExplicitEnumEntry_ReturnsTrue()
         {
             var definedFlagValueOfCombination = (FileAccess.Read | FileAccess.Write).IsDefinedEnumValue();
-            var definedFlagValueOfequivalentSingleEntry = FileAccess.ReadWrite.IsDefinedEnumValue();
+            var definedFlagValueOfEquivalentSingleEntry = FileAccess.ReadWrite.IsDefinedEnumValue();
 
             definedFlagValueOfCombination.Should().BeTrue();
-            definedFlagValueOfequivalentSingleEntry.Should().BeTrue();
+            definedFlagValueOfEquivalentSingleEntry.Should().BeTrue();
         }
 
         private readonly UtilsTest? ZeroAsNullable = UtilsTest.Zero;

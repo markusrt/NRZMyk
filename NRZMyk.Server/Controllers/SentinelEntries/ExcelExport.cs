@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading.Tasks;
+using HaemophilusWeb.Tools;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Export;
 using NRZMyk.Services.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -29,7 +31,8 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         public async Task<IActionResult> DownloadExcel()
         {
             byte[] reportBytes;
-            using(var package = Utils.CreateExcelPackage(await _sentinelEntryRepository.ListAllAsync()))
+            var export = new SentinelEntryExportDefinition();
+            using(var package = ExcelUtils.CreateExcelPackage(export, await _sentinelEntryRepository.ListAllAsync()))
             {
                 reportBytes = package.GetAsByteArray();
             }
