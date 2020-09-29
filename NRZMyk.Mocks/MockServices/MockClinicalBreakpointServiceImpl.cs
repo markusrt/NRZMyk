@@ -25,12 +25,10 @@ namespace NRZMyk.Mocks.MockServices
 
         private string ReadBreakpointJson()
         {
-            var name = "NRZMyk.Mocks.Data.ClinicalBreakpoints.json";
-            using var stream = this.GetType().Assembly.
-                GetManifestResourceStream(name);
-            using var sr = new StreamReader(stream);                           
-             
-            return sr.ReadToEnd();
+            using var stream = GetType().Assembly.
+                GetManifestResourceStream("NRZMyk.Mocks.Data.ClinicalBreakpoints.json");
+            using var streamReader = new StreamReader(stream);                           
+            return streamReader.ReadToEnd();
         }
 
         public Task<List<ClinicalBreakpoint>> List()

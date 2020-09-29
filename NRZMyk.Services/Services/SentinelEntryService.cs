@@ -15,6 +15,7 @@ namespace NRZMyk.Services.Services
         Task<List<SentinelEntry>> ListPaged(int pageSize);
         Task<SentinelEntryRequest> GetById(int id);
         Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
+        Task<string> Export();
     }
 
     public class SentinelEntryServiceImpl : SentinelEntryService
@@ -55,6 +56,20 @@ namespace NRZMyk.Services.Services
             {
                 _logger.LogError(exception, "Failed to update sentinel entry");
                 throw;
+            }
+        }
+
+        public async Task<string> Export()
+        {
+            try
+            {
+                var data = await _httpClient.GetByteArrayAsync("api/sentinel-entries/export");
+                return Convert.ToBase64String(data);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Failed to export sentinel entries from backend");
+                return string.Empty;
             }
         }
 
