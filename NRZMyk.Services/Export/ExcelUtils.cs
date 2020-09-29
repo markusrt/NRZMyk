@@ -4,7 +4,7 @@ using OfficeOpenXml.Table;
 
 namespace NRZMyk.Services.Export
 {
-    public class ExcelUtils
+    public static class ExcelUtils
     {
         public static ExcelPackage CreateExcelPackage<T>(ExportDefinition<T> exportDefinition, IReadOnlyList<T> entries)
         {
