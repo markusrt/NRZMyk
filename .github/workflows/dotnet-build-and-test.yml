@@ -17,4 +17,4 @@ jobs:
       with:
         dotnet-version: 3.1.x
     - name: Build with dotnet
-      run: dotnet test --configuration Release NRZMyk.sln
+      run: dotnet test NRZMyk.sln
