@@ -7,7 +7,7 @@ using NRZMyk.Services.Services;
 
 namespace NRZMyk.Components.Pages.SentinelEntryPage
 {
-    public class ExportFilterBase : ComponentBase
+    public class ExportButtonBase : ComponentBase
     {
         [Inject]
         internal IJSRuntime JsRuntime { get; set; }   
@@ -15,15 +15,15 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         [Inject]
         internal  SentinelEntryService SentinelEntryService { get; set; }
 
-        internal int IsDownloadStarted { get; private set; }
+        internal bool DownloadInProgress { get; private set; }
         
         protected async Task DownloadFile()
         {
-            IsDownloadStarted = 1;
+            DownloadInProgress = true;
             var fileData = await SentinelEntryService.Export();
             var fileName =  $"Sentinel-Export_{DateTime.Now:yyyyMMdd}.xlsx";
             await JsRuntime.InvokeAsync<object>("saveAsFile", new object[] { fileName, fileData });
-            IsDownloadStarted = 2;
+            DownloadInProgress = false;
         }
     }
 }
