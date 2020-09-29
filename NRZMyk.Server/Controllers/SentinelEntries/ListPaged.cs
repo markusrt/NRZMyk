@@ -23,7 +23,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         [HttpGet("api/sentinel-entries")]
         [SwaggerOperation(
             Summary = "List Sentinel entries (paged)",
-            OperationId = "catalog-entries.ListPaged",
+            OperationId = "sentinel-entries.ListPaged",
             Tags = new[] { "SentinelEndpoints" })
         ]
         public override async Task<ActionResult<ListPagedSentinelEntryResponse>> HandleAsync([FromQuery]ListPagedSentinelEntryRequest request)
