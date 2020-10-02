@@ -34,9 +34,9 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             createdResult.Location.Should().Be("http://localhost/api/sentinel-entries/123");
         }
 
-        private static Create CreateSut(out IAsyncRepository<SentinelEntry> sentinelEntryRepository, out IMapper map)
+        private static Create CreateSut(out ISentinelEntryRepository sentinelEntryRepository, out IMapper map)
         {
-            sentinelEntryRepository = Substitute.For<IAsyncRepository<SentinelEntry>>();
+            sentinelEntryRepository = Substitute.For<ISentinelEntryRepository>();
             map = Substitute.For<IMapper>();
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Host = new HostString("localhost");
