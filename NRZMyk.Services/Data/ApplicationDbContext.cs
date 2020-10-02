@@ -19,6 +19,11 @@ namespace NRZMyk.Services.Data
         {
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            builder.Entity<SentinelEntry>()
+                .HasIndex(p => new {p.CryoBoxNumber , p.CryoBoxSlot}).IsUnique();
+            builder.Entity<SentinelEntry>()
+                .HasIndex(p => new {p.Year , p.YearlySequentialEntryNumber}).IsUnique();
         }
     }
 }

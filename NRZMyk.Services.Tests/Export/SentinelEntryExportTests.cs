@@ -42,7 +42,7 @@ namespace NRZMyk.Services.Tests.Export
 
             var export = sut.ToDataTable(SentinelEntries);
 
-            export.Columns.Count.Should().Be(9);
+            export.Columns.Count.Should().Be(11);
         }
 
         [Test]
@@ -57,10 +57,15 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.IdentifiedSpecies = Species.CandidaDubliniensis;
             SentinelEntry.Material = Material.Isolate;
             SentinelEntry.SenderLaboratoryNumber = "LabNr. 123";
-
+            SentinelEntry.Year = 2020;
+            SentinelEntry.YearlySequentialEntryNumber = 123;
+            SentinelEntry.CryoBoxNumber = 5;
+            SentinelEntry.CryoBoxSlot = 67;
 
             var export = sut.ToDataTable(SentinelEntries);
 
+            export.Rows[0]["Labornummer"].ToString().Should().Match("SN-2020-0123");
+            export.Rows[0]["Kryo-Box"].ToString().Should().Match("2020-005");
             export.Rows[0]["Altersgruppe"].Should().Be("86-90");
             export.Rows[0]["Entnahmedatum"].ToString().Should().Match("??.??.????");
             export.Rows[0]["Stationstyp"].Should().Be("NS");
