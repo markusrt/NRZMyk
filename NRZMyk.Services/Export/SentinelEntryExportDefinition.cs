@@ -9,6 +9,8 @@ namespace HaemophilusWeb.Tools
         public SentinelEntryExportDefinition()
         {
             AddField(s => s.Id);
+            AddField(s => s.LaboratoryNumber);
+            AddField(s => s.CryoBox);
             AddField(s => ExportToString(s.SenderLaboratoryNumber));
             AddField(s => ToReportFormat(s.SamplingDate));
             AddField(s => ExportToString(s.AgeGroup));

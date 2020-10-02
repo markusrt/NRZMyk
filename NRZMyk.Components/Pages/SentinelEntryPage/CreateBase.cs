@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,6 +48,8 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         public string Title { get; set; }
         
         public string PrimaryAction { get; set; }
+        
+        public bool SaveFailed { get; set; }
 
         internal void AddAntimicrobialSensitivityTest()
         {
@@ -135,15 +138,29 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         internal async Task SubmitClick()
         {
-            if (IsEdit())
+            try
             {
-                await SentinelEntryService.Update(SentinelEntry);
+                if (IsEdit())
+                {
+                    await SentinelEntryService.Update(SentinelEntry);
+                }
+                else
+                {
+                    await SentinelEntryService.Create(SentinelEntry);
+                }
+
+                SaveFailed = false;
             }
-            else
+            catch (Exception e)
             {
-                await SentinelEntryService.Create(SentinelEntry);
+                Logger.LogError(e, "Storing failed");
+                SaveFailed = true;
             }
-            await OnCloseClick.InvokeAsync(null);
+
+            if (!SaveFailed)
+            {
+                await OnCloseClick.InvokeAsync(null);
+            }
         }
 
         protected IEnumerable<AntimicrobialSensitivityTestRequest> RecalculateResistance()
@@ -163,14 +180,11 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             if (Id.HasValue)
             {
                 SentinelEntry = await SentinelEntryService.GetById(Id.Value);
-                
             }
             else
             {
                 SentinelEntry = new SentinelEntryRequest();
             }
-
-            
 
             await base.OnInitializedAsync();
         }
