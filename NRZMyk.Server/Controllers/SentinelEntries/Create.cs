@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NRZMyk.Services.Data;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
@@ -15,10 +16,10 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
     [Authorize]
     public class Create : BaseAsyncEndpoint<SentinelEntryRequest, SentinelEntry>
     {
-        private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
+        private readonly ISentinelEntryRepository _sentinelEntryRepository;
         private readonly IMapper _mapper;
 
-        public Create(IAsyncRepository<SentinelEntry> sentinelEntryRepository, IMapper mapper)
+        public Create(ISentinelEntryRepository sentinelEntryRepository, IMapper mapper)
         {
             _sentinelEntryRepository = sentinelEntryRepository;
             _mapper = mapper;
@@ -33,6 +34,8 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request)
         {
             var newEntry = _mapper.Map<SentinelEntry>(request);
+            _sentinelEntryRepository.AssignNextEntryNumber(newEntry);
+            _sentinelEntryRepository.AssignNextCryoBoxNumber(newEntry);
             var storedEntry = await _sentinelEntryRepository.AddAsync(newEntry);
             return Created(new Uri($"{Request.GetUri()}/{storedEntry.Id}"), storedEntry);
         }

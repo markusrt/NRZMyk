@@ -12,6 +12,12 @@
 else
 {
     <div>
+        @if (SaveFailed)
+        {
+            <div class="alert alert-danger" role="alert">
+                Fehler beim Speichern. Bitte versuchen sie es erneut oder wenden sie sich an den Administrator. (UTC-Zeitstempel: @DateTime.UtcNow.ToString("s"))
+            </div>
+        }
         <EditForm Model="SentinelEntry" OnValidSubmit="@SubmitClick">
 
             <DataAnnotationsValidator/>

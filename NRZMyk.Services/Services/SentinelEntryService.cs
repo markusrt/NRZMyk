@@ -41,7 +41,7 @@ namespace NRZMyk.Services.Services
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Failed to create sentinel entry");
-                return new SentinelEntry();
+                throw;
             }
         }
 
