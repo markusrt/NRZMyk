@@ -105,10 +105,14 @@ else
                     <ValidationMessage For="() => SentinelEntry.SpeciesIdentificationMethod"/>
                 </div>
             </div>
-
+            
             <div class="form-group row">
                 <label class="col-form-label col-sm-4">Anmerkungen</label>
                 <div class="col-sm-6">
+                    @if (SentinelEntry.SpeciesIdentificationMethod == SpeciesIdentificationMethod.Other)
+                    {
+                        <span class="badge badge-warning">Bitte Details zur Methode der Speziesidentifikation eintragen </span>
+                    }
                     <InputTextArea class="form-control" @bind-Value="SentinelEntry.Remark"/>
                     <ValidationMessage For="() => SentinelEntry.Remark"/>
                 </div>

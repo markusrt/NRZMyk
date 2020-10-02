@@ -4,7 +4,7 @@ namespace NRZMyk.Services.Data.Entities
 {
     public enum Species
     {
-        [Description("Keine spezifische Spezies")] None = 0,
+        [Description("-")] None = 0,
         [Description("Candida albicans")] CandidaAlbicans = 100,
         [Description("Candida dubliniensis")] CandidaDubliniensis = 200,
         [Description("Candida glabrata")] CandidaGlabrata = 300,
