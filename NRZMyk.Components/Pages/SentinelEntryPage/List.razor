@@ -28,9 +28,11 @@ else
             </div>
         </div>
 
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover table-sm">
             <thead>
                 <tr>
+                    <th>Labornummer</th>
+                    <th>Kryo-Box</th>
                     <th>Material</th>
                     <th>Alter</th>
                     <th>Probennahme</th>
@@ -44,6 +46,8 @@ else
                 @foreach (var item in sentinelEntries)
                 {
                 <tr @onclick="() => DetailsClick(item.Id)">
+                    <td>@item.LaboratoryNumber</td>
+                    <td>@item.CryoBox</td>
                     <td>@EnumUtils.GetEnumDescription(item.Material)</td>
                     <td>@EnumUtils.GetEnumDescription(item.AgeGroup)</td>
                     <td>

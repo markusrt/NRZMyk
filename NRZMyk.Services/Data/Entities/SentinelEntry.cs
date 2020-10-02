@@ -34,6 +34,20 @@ namespace NRZMyk.Services.Data.Entities
         [Display(Name = "Bemerkung")]
         public string Remark { get; set; }
 
+        public int CryoBoxNumber { get; set; }
+        
+        public int CryoBoxSlot { get; set; }
+
+        public int YearlySequentialEntryNumber { get; set; }
+
+        public int Year { get; set; }
+
         public ICollection<AntimicrobialSensitivityTest> AntimicrobialSensitivityTests { get; set; }
+
+        [Display(Name = "Kryo-Box")]
+        public string CryoBox => $"{Year}-{CryoBoxNumber:000}";
+        
+        [Display(Name = "Labornummer")]
+        public string LaboratoryNumber => $"SN-{Year}-{YearlySequentialEntryNumber:0000}";
     }
 }
