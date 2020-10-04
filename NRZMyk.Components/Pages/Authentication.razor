@@ -1,8 +1,51 @@
 @page "/authentication/{action}"
+@inject NavigationManager NavManager
+@inject IConfiguration Configuration
+@inject ILogger<Authentication> Logger
+
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Logging
 
 <RemoteAuthenticatorView Action="@Action" />
 
 @code{
     [Parameter] public string Action { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (Action == "login-failed")
+        {
+            var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("message", out var loginError))
+            {
+                Logger.LogInformation($"Login failed with message: {loginError.Single()}");
+                if (loginError.Single().Contains("AADB2C90118"))
+                {
+                    Logger.LogInformation("Login error code indicates request for password reset");
+                    var clientId = Configuration["AzureAdB2C:ClientId"];
+                    var resetPasswordFlow = Configuration["AzureAdB2C:ResetPasswordFlow"];
+                    var redirectUri = $"{NavManager.BaseUri}authentication/login-callback";
+
+                    var userFlowBuilder = $@"{resetPasswordFlow}
+                    &client_id={clientId}
+                    &redirect_uri={redirectUri}
+                    &nonce=defaultNonce
+                    &scope=openid
+                    &response_type=id_token
+                    &prompt=login";
+
+                    var userFlowUrl = string.Concat(userFlowBuilder.Where(c => !Char.IsWhiteSpace(c)));
+                    NavManager.NavigateTo(userFlowUrl, true);
+                }
+            }
+            else
+            {
+                Logger.LogError($"Login failed with Uri: {uri}");
+                NavManager.NavigateTo(NavManager.BaseUri, true);
+            }
+        }
+    }
 }

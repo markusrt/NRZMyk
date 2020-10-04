@@ -1,12 +1,19 @@
 using System;
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
 using BlazorApplicationInsights;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Authentication.WebAssembly.Msal.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NRZMyk.Components;
 using NRZMyk.Services.Configuration;
@@ -19,6 +26,9 @@ namespace NRZMyk.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+            RedirectToBaseUrlOnCriticalException(builder);
+
             builder.Services.AddBlazorApplicationInsights();
             builder.RootComponents.Add<App>("app");
             builder.Services.AddHttpClient("NRZMyk.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
@@ -37,6 +47,7 @@ namespace NRZMyk.Client
             {
                 builder.Configuration.Bind(options);
             });
+
             builder.Services.AddMsalAuthentication(options =>
             {
                 builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
@@ -45,6 +56,17 @@ namespace NRZMyk.Client
             });
 
             await builder.Build().RunAsync();
+        }
+
+        private static void RedirectToBaseUrlOnCriticalException(WebAssemblyHostBuilder builder)
+        {
+            //TODO check after blazor .net 5.0 release if the issue with password reset (see #35) is eventually adressed
+            //     This would allow to remove this workaround
+            
+            var navigationManager = builder.Services.Single(
+                s => s.ServiceType == typeof(NavigationManager)).ImplementationInstance as NavigationManager;
+            var customLoggerProvider = new ReloadOnCriticalErrorLogProvider(navigationManager);
+            builder.Logging.AddProvider(customLoggerProvider);
         }
     }
 }
