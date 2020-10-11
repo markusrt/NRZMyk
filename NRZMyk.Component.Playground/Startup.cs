@@ -1,4 +1,5 @@
 using AutoMapper;
+using BlazorApplicationInsights;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
@@ -27,10 +28,10 @@ namespace NRZMyk.Components.Playground
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<BreakpointSettings>(Configuration);
-
             services.AddAutoMapper(typeof(Startup).Assembly, typeof(SentinelEntryService).Assembly);
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddSingleton<IApplicationInsights, NullApplicationInsights>();
             services.AddSingleton<SentinelEntryService, MockSentinelEntryServiceImpl>();
             services.AddSingleton<ClinicalBreakpointService, MockClinicalBreakpointServiceImpl>();
             services.AddSingleton<MicStepsService, MicStepsServiceImpl>();

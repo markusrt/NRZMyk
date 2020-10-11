@@ -1,7 +1,8 @@
 ﻿@page "/sentinel-entries"
-@attribute [Authorize]
+@attribute [Authorize] @*TODO: specify roles here*@
 @inject SentinelEntryService SentinelEntryService
 @using NRZMyk.Services.Data.Entities
+@using NRZMyk.Services.Models
 @using NRZMyk.Services.Services
 @using NRZMyk.Services.Utils
 @inherits NRZMyk.Components.Helpers.BlazorComponent

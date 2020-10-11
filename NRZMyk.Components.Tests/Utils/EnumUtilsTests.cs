@@ -11,6 +11,14 @@ namespace NRZMyk.Components.Tests.Utils
     public class EnumUtilsTests
     {
         [Test]
+        public void ToCommaSeperatedList_ConvertsCorrectly()
+        {
+            var result = EnumUtils.ToCommaSeparatedList(UtilsTest.Two, UtilsTest.One);
+
+            result.Should().Be("Two,One");
+        }
+
+        [Test]
         [TestCase("Flag2", ClinicalInformation.Flag2)]
         [TestCase("Flag1,,Flag2", ClinicalInformation.Flag2 | ClinicalInformation.Flag1)]
         [TestCase("", ClinicalInformation.None)]

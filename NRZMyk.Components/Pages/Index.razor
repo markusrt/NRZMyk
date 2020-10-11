@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using NRZMyk.Services.Models
 
 <p>
     Das vom Robert Koch-Institut und dem Bundesministerium für Gesundheit berufene
@@ -11,10 +12,24 @@
 
 <p>
     Das NRZMyk ist angesiedelt am
-    <a href="http://www.leibniz-hki.de" rel="noopener"  target="_blank">Leibniz-Institut für Naturstoff-Forschung und Infektionsbiologie - Hans-Knöll-Institut (HKI)</a>
+    <a href="http://www.leibniz-hki.de" rel="noopener" target="_blank">Leibniz-Institut für Naturstoff-Forschung und Infektionsbiologie - Hans-Knöll-Institut (HKI)</a>
     in Jena. Einige Untersuchungen werden am
-    <a href="https://www.hygiene.uni-wuerzburg.de/startseite/" rel="noopener"  target="_blank">Institut für Hygiene und Mikrobiologie</a>
+    <a href="https://www.hygiene.uni-wuerzburg.de/startseite/" rel="noopener" target="_blank">Institut für Hygiene und Mikrobiologie</a>
     der Universität Würzburg (Lehrstuhl für Medizinische Mikrobiologie &amp; Mykologie, Prof. Kurzai) durchgeführt.
 </p>
+
+<AuthorizeView Roles="@nameof(Role.Guest)">
+    <Authorized>
+        <div class="alert alert-warning mr-5 ml-5" role="alert">
+            <span class="oi oi-lock-locked mr-2" aria-hidden="true"></span>
+            <strong>Eingeschränkter Gastzugang!</strong>
+            <p>
+                Sie sind als <string>Gast</string> mit dem Benutzernamen <i>@context.User.Identity.Name</i> angemeldet.
+                Bitte <a href="mailto:nrzmyk@hygiene.uni-wuerzburg.de?subject=Sentinel Netzwerk: Freischaltung des Accounts [@context.User.Identity.Name]">kontaktieren Sie das koordinierende Labor</a>
+                um ihren Account für die Datenerfassung freizuschalten
+            </p>
+        </div>
+    </Authorized>
+</AuthorizeView>
 
 <SendSamples Title="Probeneinsendung" />
