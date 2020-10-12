@@ -33,6 +33,7 @@ namespace NRZMyk.Components.Playground
             services.AddServerSideBlazor();
             services.AddSingleton<IApplicationInsights, NullApplicationInsights>();
             services.AddSingleton<SentinelEntryService, MockSentinelEntryServiceImpl>();
+            services.AddSingleton<IAccountService, MockAccountService>();
             services.AddSingleton<ClinicalBreakpointService, MockClinicalBreakpointServiceImpl>();
             services.AddSingleton<MicStepsService, MicStepsServiceImpl>();
 
