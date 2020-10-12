@@ -9,7 +9,7 @@ using NRZMyk.Services.Models;
 using NRZMyk.Services.Specifications;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace NRZMyk.Server.Controllers.User
+namespace NRZMyk.Server.Controllers.Account
 {
     [Authorize]
     public class Connect : BaseAsyncEndpoint<ConnectedAccount>

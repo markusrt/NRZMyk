@@ -20,5 +20,9 @@ namespace NRZMyk.Services.Data.Entities
         public string Postalcode { get; set; }
 
         public string Street { get; set; }
+
+        public int? OrganizationId { get; set; }
+
+        public Organization Organization { get; set; }
     }
 }

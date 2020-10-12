@@ -1,7 +1,78 @@
 ﻿@page "/admin"
 @using NRZMyk.Services.Models
+@using NRZMyk.Components.SharedComponents.Input
+@using NRZMyk.Components.Helpers
 @attribute [Authorize(Roles = nameof(Role.Admin) + "," + nameof(Role.SuperUser))] //TODO implement this base on Role enum flag
+
+@inherits AdminBase
+
 
 <h1>Administration</h1>
 
-Inhalt folgt bald...
+@if (Accounts == null && Organizations == null)
+{
+    <p><em>Lädt...</em></p>
+}
+else
+{
+    @if (SaveState == SaveState.Failed)
+    {
+        <div class="alert alert-danger" role="alert">
+            Fehler beim Speichern. Bitte versuchen sie es erneut oder wenden sie sich an den Administrator. (UTC-Zeitstempel: @DateTime.UtcNow.ToString("s"))
+        </div>
+    }
+    @if (SaveState == SaveState.Success)
+    {
+        <div class="alert alert-success" role="alert">
+            Änderungen wurden gespeichert
+        </div>
+    }
+
+    <h2>Benutzer</h2>
+    <div class="row">
+        <div class="col-md-8">
+            <p>
+                Benutzeraccounts sind so lange im Zustand "Gast", bis sie einer Organisation zugeordnet sind. Alle Benutzer einer Organisation
+                dürfen die selben Sentinel-Daten einsehen und bearbeiten.
+            </p>
+            <EditForm Model="Accounts" OnValidSubmit="@SubmitClick">
+                <table class="table table-striped table-hover table-sm">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Ort</th>
+                        <th>Organisation zuordnen</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Accounts)
+                    {
+                        <tr>
+                            <td>@item.DisplayName</td>
+                            <td>@item.Email</td>
+                            <td>@item.Postalcode @item.City</td>
+                            <td>
+                                <InputSelectNumber class="form-control form-control-sm" @bind-Value="item.OrganizationId">
+                                    <option>- Keine Organisation zugeordnet -</option>
+                                    @foreach (var organization in Organizations)
+                                    {
+                                        <option value="@organization.Id">@organization.Name</option>
+                                    }
+                                </InputSelectNumber>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <button type="submit" class="btn btn-primary">
+                            Änderungen speichern
+                        </button>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}

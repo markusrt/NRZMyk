@@ -41,6 +41,7 @@ namespace NRZMyk.Client
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("NRZMyk.ServerAPI"));
 
             builder.Services.AddTransient<SentinelEntryService, SentinelEntryServiceImpl>();
+            builder.Services.AddTransient<IAccountService, AccountService>();
             builder.Services.AddTransient<ClinicalBreakpointService, ClinicalBreakpointServiceImpl>();
             builder.Services.AddTransient<MicStepsService, MicStepsServiceImpl>();
 

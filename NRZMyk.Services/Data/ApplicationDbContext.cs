@@ -11,6 +11,8 @@ namespace NRZMyk.Services.Data
         {
         }
 
+        public DbSet<Organization> Organizations { get; set; }
+
         public DbSet<RemoteAccount> RemoteAccounts { get; set; }
 
         public DbSet<SentinelEntry> SentinelEntries { get; set; }
