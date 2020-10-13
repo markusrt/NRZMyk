@@ -11,9 +11,9 @@ namespace NRZMyk.Client
 
         private ReloadBaseUriLogger _logger;
 
-        public ReloadOnCriticalErrorLogProvider(NavigationManager navigationManager)
+        public ReloadOnCriticalErrorLogProvider(NavigationManager navigationManager, string errorContains)
         {
-            _logger = new ReloadBaseUriLogger(navigationManager);
+            _logger = new ReloadBaseUriLogger(navigationManager, errorContains);
         }
 
         public ILogger CreateLogger(string categoryName)
@@ -33,10 +33,12 @@ namespace NRZMyk.Client
         private class ReloadBaseUriLogger : ILogger
         {
             private readonly NavigationManager _navigationManager;
+            private readonly string _errorContains;
 
-            public ReloadBaseUriLogger(NavigationManager navigationManager)
+            public ReloadBaseUriLogger(NavigationManager navigationManager, string errorContains)
             {
                 _navigationManager = navigationManager;
+                _errorContains = errorContains;
             }
 
             public IDisposable BeginScope<TState>(TState state)
@@ -53,8 +55,7 @@ namespace NRZMyk.Client
                 Exception exception, Func<TState, Exception, string> formatter)
             {
                 if (!IsEnabled(logLevel) || eventId.Id != 100) return;
-
-                Console.WriteLine("Reload base uri after critical error");
+                if(!formatter(state, exception).Contains(_errorContains)) return;
 
                 _navigationManager.NavigateTo(_navigationManager.BaseUri, true);
             }

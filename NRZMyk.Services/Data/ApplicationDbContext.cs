@@ -11,6 +11,10 @@ namespace NRZMyk.Services.Data
         {
         }
 
+        public DbSet<Organization> Organizations { get; set; }
+
+        public DbSet<RemoteAccount> RemoteAccounts { get; set; }
+
         public DbSet<SentinelEntry> SentinelEntries { get; set; }
 
         public DbSet<ClinicalBreakpoint> ClinicalBreakpoints { get; set; }
@@ -20,10 +24,19 @@ namespace NRZMyk.Services.Data
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
+            builder.Entity<SentinelEntry>().Property(s => s.ProtectKey).IsRequired();
+            builder.Entity<SentinelEntry>().HasIndex(s => s.ProtectKey);
             builder.Entity<SentinelEntry>()
                 .HasIndex(p => new {p.CryoBoxNumber , p.CryoBoxSlot}).IsUnique();
             builder.Entity<SentinelEntry>()
                 .HasIndex(p => new {p.Year , p.YearlySequentialEntryNumber}).IsUnique();
+
+            builder.Entity<RemoteAccount>().Property(
+                a => a.ObjectId).IsRequired();
+            builder.Entity<RemoteAccount>().Property(
+                a => a.Email).IsRequired();
+            builder.Entity<RemoteAccount>()
+                .HasIndex(a => a.ObjectId).IsUnique();
         }
     }
 }

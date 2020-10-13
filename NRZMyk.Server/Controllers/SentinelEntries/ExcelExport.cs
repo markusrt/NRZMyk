@@ -2,15 +2,18 @@
 using System.Globalization;
 using System.Threading.Tasks;
 using HaemophilusWeb.Tools;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Export;
 using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [ApiController]
+    [Authorize(Roles = nameof(Role.SuperUser))]
     public class ExcelExport : ControllerBase
     {
         private const string XlsxContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

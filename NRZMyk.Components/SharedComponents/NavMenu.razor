@@ -1,4 +1,6 @@
-﻿@inherits NavMenuBase
+﻿@using NRZMyk.Services.Models
+@using NRZMyk.Services.Utils
+@inherits NavMenuBase
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">
@@ -9,44 +11,30 @@
     </button>
 </div>
 
-<AuthorizeView>
-    <Authorized>
-        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-            <ul class="nav flex-column">
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link text-nowrap" href="" Match="NavLinkMatch.All">
-                        <span class="oi oi-home" aria-hidden="true"></span> Startseite
-                    </NavLink>
-                </li>
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Startseite
+            </NavLink>
+        </li>
+        <AuthorizeView Roles="@EnumUtils.ToCommaSeparatedList(Role.User, Role.SuperUser, Role.Admin)">
+            <Authorized>
                 <li class="nav-item px-3">
                     <NavLink class="nav-link text-nowrap" href="sentinel-entries">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Sentinel Daten
                     </NavLink>
                 </li>
-            </ul>
-        </div>
-    </Authorized>
-    <NotAuthorized>
-        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-            <ul class="nav flex-column">
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="@EnumUtils.ToCommaSeparatedList(Role.Admin)">
+            <Authorized>
                 <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    <NavLink class="nav-link text-nowrap" href="admin">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Administration
                     </NavLink>
                 </li>
-            </ul>
-        </div>
-    </NotAuthorized>
-</AuthorizeView>
-
-<AuthorizeView Roles="8,6"> @*TODO implement this base on Role enum flag*@
-    <Authorized>
-        <ul class="nav flex-column">
-            <li class="nav-item px-3">
-                <NavLink class="nav-link text-nowrap" href="writer">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Writer access
-                </NavLink>
-            </li>
-        </ul>
-    </Authorized>
-</AuthorizeView>
+            </Authorized>
+        </AuthorizeView>
+    </ul>
+</div>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ using NRZMyk.Services.Services;
 
 namespace NRZMyk.Client
 {
-    public class Program
+    public static class Program
     {
         public static async Task Main(string[] args)
         {
@@ -40,6 +41,7 @@ namespace NRZMyk.Client
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("NRZMyk.ServerAPI"));
 
             builder.Services.AddTransient<SentinelEntryService, SentinelEntryServiceImpl>();
+            builder.Services.AddTransient<IAccountService, AccountService>();
             builder.Services.AddTransient<ClinicalBreakpointService, ClinicalBreakpointServiceImpl>();
             builder.Services.AddTransient<MicStepsService, MicStepsServiceImpl>();
 
@@ -52,8 +54,8 @@ namespace NRZMyk.Client
             {
                 builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
                 options.ProviderOptions.DefaultAccessTokenScopes.Add("https://nrcmycosis.onmicrosoft.com/e7562337-a4df-40c3-a8a1-7cc33d6bc193/API.Access");
-                options.UserOptions.RoleClaim = "extension_Role";
-            });
+            }).AddAccountClaimsPrincipalFactory<RemoteAuthenticationState, RemoteUserAccount,
+                CustomUserFactory>();
 
             await builder.Build().RunAsync();
         }
@@ -62,10 +64,10 @@ namespace NRZMyk.Client
         {
             //TODO check after blazor .net 5.0 release if the issue with password reset (see #35) is eventually adressed
             //     This would allow to remove this workaround
-            
+
             var navigationManager = builder.Services.Single(
                 s => s.ServiceType == typeof(NavigationManager)).ImplementationInstance as NavigationManager;
-            var customLoggerProvider = new ReloadOnCriticalErrorLogProvider(navigationManager);
+            var customLoggerProvider = new ReloadOnCriticalErrorLogProvider(navigationManager, "Unexpected error in authentication");
             builder.Logging.AddProvider(customLoggerProvider);
         }
     }

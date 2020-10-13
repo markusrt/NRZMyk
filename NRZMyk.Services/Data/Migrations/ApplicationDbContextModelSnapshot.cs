@@ -15,7 +15,7 @@ namespace NRZMyk.Services.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.4")
+                .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -97,6 +97,63 @@ namespace NRZMyk.Services.Data.Migrations
                     b.ToTable("ClinicalBreakpoints");
                 });
 
+            modelBuilder.Entity("NRZMyk.Services.Data.Entities.Organization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("NRZMyk.Services.Data.Entities.RemoteAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ObjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Postalcode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ObjectId")
+                        .IsUnique();
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("RemoteAccounts");
+                });
+
             modelBuilder.Entity("NRZMyk.Services.Data.Entities.SentinelEntry", b =>
                 {
                     b.Property<int>("Id")
@@ -125,6 +182,10 @@ namespace NRZMyk.Services.Data.Migrations
                     b.Property<int>("Material")
                         .HasColumnType("int");
 
+                    b.Property<string>("ProtectKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Remark")
                         .HasColumnType("nvarchar(max)");
 
@@ -145,6 +206,8 @@ namespace NRZMyk.Services.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProtectKey");
+
                     b.HasIndex("CryoBoxNumber", "CryoBoxSlot")
                         .IsUnique();
 
@@ -163,6 +226,13 @@ namespace NRZMyk.Services.Data.Migrations
                     b.HasOne("NRZMyk.Services.Data.Entities.SentinelEntry", "SentinelEntry")
                         .WithMany("AntimicrobialSensitivityTests")
                         .HasForeignKey("SentinelEntryId");
+                });
+
+            modelBuilder.Entity("NRZMyk.Services.Data.Entities.RemoteAccount", b =>
+                {
+                    b.HasOne("NRZMyk.Services.Data.Entities.Organization", "Organization")
+                        .WithMany("Members")
+                        .HasForeignKey("OrganizationId");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,7 +1,9 @@
 ﻿@page "/sentinel-entries"
 @attribute [Authorize]
+@*TODO: specify roles here*@
 @inject SentinelEntryService SentinelEntryService
 @using NRZMyk.Services.Data.Entities
+@using NRZMyk.Services.Models
 @using NRZMyk.Services.Services
 @using NRZMyk.Services.Utils
 @inherits NRZMyk.Components.Helpers.BlazorComponent
@@ -24,7 +26,11 @@ else
                 </button>
             </div>
             <div class="offset-3 col-sm-6 text-right">
-                <ExportButton />
+                <AuthorizeView Roles=@nameof(Role.SuperUser)>
+                    <Authorized>
+                        <ExportButton/>
+                    </Authorized>
+                </AuthorizeView>
             </div>
         </div>
 

@@ -6,11 +6,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
 {
-    [Authorize]
+    [Authorize(Roles=nameof(Role.Admin))]
     public class Create : BaseAsyncEndpoint<CreateClinicalBreakpointRequest, ClinicalBreakpoint>
     {
         private readonly IAsyncRepository<ClinicalBreakpoint> _clinicalBreakpointRepository;

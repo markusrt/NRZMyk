@@ -8,12 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
+using NRZMyk.Services.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
-    [Authorize]
+    [Authorize(Roles = nameof(Role.User))]
     public class Create : BaseAsyncEndpoint<SentinelEntryRequest, SentinelEntry>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
@@ -33,9 +35,15 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request)
         {
+            var organizationId = User.Claims.OrganizationId();
+            if (string.IsNullOrEmpty(organizationId))
+            {
+                return Forbid();
+            }
             var newEntry = _mapper.Map<SentinelEntry>(request);
             _sentinelEntryRepository.AssignNextEntryNumber(newEntry);
             _sentinelEntryRepository.AssignNextCryoBoxNumber(newEntry);
+            newEntry.ProtectKey = organizationId;
             var storedEntry = await _sentinelEntryRepository.AddAsync(newEntry);
             return Created(new Uri($"{Request.GetUri()}/{storedEntry.Id}"), storedEntry);
         }

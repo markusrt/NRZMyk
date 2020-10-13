@@ -12,6 +12,12 @@ namespace NRZMyk.Services.Utils
     /// </summary>
     public static class EnumUtils
     {
+        public static string ToCommaSeparatedList<TEnum>(params TEnum[] enumValues)
+            where TEnum : struct, IConvertible
+        {
+            return string.Join(",", enumValues.Select(e => Enum.GetName(typeof(TEnum), e)));
+        }
+
         public static TEnum ParseCommaSeperatedListOfNamesAsFlagsEnum<TEnum>(string commaSeperatedList)
             where TEnum : struct, IConvertible
         {
