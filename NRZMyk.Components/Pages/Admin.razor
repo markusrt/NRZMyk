@@ -2,7 +2,7 @@
 @using NRZMyk.Services.Models
 @using NRZMyk.Components.SharedComponents.Input
 @using NRZMyk.Components.Helpers
-@attribute [Authorize(Roles = nameof(Role.Admin) + "," + nameof(Role.SuperUser))] //TODO implement this base on Role enum flag
+@attribute [Authorize(Roles = nameof(Role.Admin))]
 
 @inherits AdminBase
 

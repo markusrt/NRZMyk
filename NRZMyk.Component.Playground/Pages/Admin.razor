@@ -1,5 +1,5 @@
 ﻿@page "/admin"
 @using NRZMyk.Services.Models
-@attribute [Authorize(Roles = nameof(Role.Admin) + "," + nameof(Role.SuperUser))] //TODO implement this base on Role enum flag
+@attribute [Authorize(Roles = nameof(Role.Admin))]
 
 <NRZMyk.Components.Pages.Admin />

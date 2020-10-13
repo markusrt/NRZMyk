@@ -30,7 +30,7 @@ namespace NRZMyk.Services.Tests.Utils
         {
             var claims = new Dictionary<string, string>
             {
-                {"extension_Role", "8"}
+                {"extension_Role", "4"}
             };
             var identity = new ClaimsIdentity(claims.Select(c => new Claim(c.Key, c.Value)));
 

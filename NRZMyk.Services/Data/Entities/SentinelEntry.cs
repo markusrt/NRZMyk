@@ -49,5 +49,7 @@ namespace NRZMyk.Services.Data.Entities
         
         [Display(Name = "Labornummer")]
         public string LaboratoryNumber => $"SN-{Year}-{YearlySequentialEntryNumber:0000}";
+
+        public string ProtectKey { get; set; }
     }
 }

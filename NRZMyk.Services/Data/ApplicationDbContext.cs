@@ -24,6 +24,8 @@ namespace NRZMyk.Services.Data
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
+            builder.Entity<SentinelEntry>().Property(s => s.ProtectKey).IsRequired();
+            builder.Entity<SentinelEntry>().HasIndex(s => s.ProtectKey);
             builder.Entity<SentinelEntry>()
                 .HasIndex(p => new {p.CryoBoxNumber , p.CryoBoxSlot}).IsUnique();
             builder.Entity<SentinelEntry>()

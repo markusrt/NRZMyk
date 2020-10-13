@@ -47,7 +47,7 @@ namespace NRZMyk.Server.Controllers.Account
             return new ConnectedAccount
             {
                 Account = storedAccount, 
-                IsGuest = true
+                IsGuest = !storedAccount.OrganizationId.HasValue
             };
         }
     }
