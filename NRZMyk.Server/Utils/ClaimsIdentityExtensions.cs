@@ -13,14 +13,12 @@ namespace NRZMyk.Server.Utils
 {
     public static class ClaimsIdentityExtensions
     {
-        
-
         public static async Task AddOrganizationClaim(this ClaimsIdentity identity, TokenValidatedContext context)
         {
             var objectId = identity.Claims.ObjectId();
             var accountRepository = context.HttpContext.RequestServices.GetRequiredService<IAsyncRepository<RemoteAccount>>();
             var account = await accountRepository.FirstOrDefaultAsync(new RemoteAccountByObjectIdSpecification(objectId));
-            if (account.OrganizationId.HasValue)
+            if (account?.OrganizationId != null)
             {
                 identity.AddClaim(new Claim(ClaimTypes.Organization, account.OrganizationId.ToString()));
                 identity.AddClaim(new Claim(System.Security.Claims.ClaimTypes.Role, nameof(Role.User)));
