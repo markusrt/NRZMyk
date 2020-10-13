@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Configuration;
+using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Data
 {
@@ -21,7 +22,12 @@ namespace NRZMyk.Services.Data
                         && databaseSeed?.ClinicalBreakpoints?.Any() == true)
                 {
                     await context.ClinicalBreakpoints.AddRangeAsync(databaseSeed.ClinicalBreakpoints);
-
+                    await context.SaveChangesAsync();
+                }
+                if (!await context.Organizations.AnyAsync()
+                    && !string.IsNullOrEmpty(databaseSeed?.MainOrganization))
+                {
+                    await context.Organizations.AddAsync(new Organization {Name = databaseSeed.MainOrganization});
                     await context.SaveChangesAsync();
                 }
             }

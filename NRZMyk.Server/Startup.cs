@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
@@ -16,11 +17,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
-using NRZMyk.Server.Model;
+using NRZMyk.Server.Utils;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data;
+using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
+using NRZMyk.Services.Specifications;
+using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Server
 {
@@ -131,36 +135,10 @@ namespace NRZMyk.Server
                     {
                         OnTokenValidated = async ctx =>
                         {
-                            //Get the calling app client id that came from the token produced by Azure AD
-                            var roleGroups = new Dictionary<string, string>();
-                            Configuration.Bind("AuthorizationGroups", roleGroups);
-                            var roles = ctx.Principal.Claims.Where(c => c.Type == "extension_Role").ToList();
-                            var singleRole = roles.FirstOrDefault()?.Value;
-                            if (!string.IsNullOrEmpty(singleRole) && Enum.TryParse<Role>(singleRole, out var role))
+                            if (ctx.Principal.Identity is ClaimsIdentity identity)
                             {
-                                var claims = new List<Claim>();
-                                if (role.HasFlag(Role.Guest))
-                                {
-                                    claims.Add(new Claim(ClaimTypes.Role, "User"));
-                                }
-
-                                if (role.HasFlag(Role.User))
-                                {
-                                    claims.Add(new Claim(ClaimTypes.Role, "User"));
-                                }
-
-                                if (role.HasFlag(Role.Admin))
-                                {
-                                    claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-                                }
-
-                                if (role.HasFlag(Role.SuperUser))
-                                {
-                                    claims.Add(new Claim(ClaimTypes.Role, "SuperUser"));
-                                }
-
-                                var appIdentity = new ClaimsIdentity(claims);
-                                ctx.Principal.AddIdentity(appIdentity);
+                                identity.AddRolesFromExtensionClaim();
+                                await identity.AddOrganizationClaim(ctx);
                             }
                         }
                     };
