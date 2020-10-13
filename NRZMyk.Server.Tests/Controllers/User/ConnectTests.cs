@@ -18,7 +18,7 @@ namespace NRZMyk.Server.Tests.Controllers.User
     public class ConnectTests
     {
         [Test]
-        public async Task WhenConnected_ReturnsNewAuthenticatedUserAsGuest()
+        public async Task WhenConnectedWithoutAssignedOrganization_ReturnsNewAuthenticatedUserAsGuest()
         {
             var user = new ClaimsPrincipal();
             var sut = CreateSut(user, out var repository, out var mapper);
@@ -36,6 +36,25 @@ namespace NRZMyk.Server.Tests.Controllers.User
             connectedAccount.IsGuest.Should().BeTrue();
         }
 
+
+        [Test]
+        public async Task WhenConnectedWithAssignedOrganization_ReturnsNewAuthenticatedUserAsUser()
+        {
+            var user = new ClaimsPrincipal();
+            var sut = CreateSut(user, out var repository, out var mapper);
+            var mappedAccount = new RemoteAccount {DisplayName = "Jane Doe"};
+            var storedAccount = new RemoteAccount {Id = 123, DisplayName = "Jane Doe", OrganizationId = 12};
+            mapper.Map<RemoteAccount>(user).Returns(mappedAccount);
+            repository.AddAsync(mappedAccount).Returns(storedAccount);
+
+            var action = await sut.HandleAsync();
+
+            mapper.Received(1).Map<RemoteAccount>(user);
+            await repository.Received(1).AddAsync(mappedAccount);
+            var connectedAccount = action.Value.Should().BeOfType<ConnectedAccount>().Subject;
+            connectedAccount.Account.Should().Be(storedAccount);
+            connectedAccount.IsGuest.Should().BeFalse();
+        }
         [Test]
         public async Task WhenConnected_UpdatesExistingUserDetails()
         {

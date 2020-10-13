@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 using NRZMyk.Services.Models;
+using ClaimTypes = System.Security.Claims.ClaimTypes;
 
 namespace NRZMyk.Services.Utils
 {
@@ -18,14 +19,14 @@ namespace NRZMyk.Services.Utils
                     identity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.User)));
                 }
 
-                if (role.HasFlag(Role.Admin))
-                {
-                    identity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.Admin)));
-                }
-
                 if (role.HasFlag(Role.SuperUser))
                 {
                     identity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.SuperUser)));
+                }
+
+                if (role.HasFlag(Role.Admin))
+                {
+                    identity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.Admin)));
                 }
             }
 

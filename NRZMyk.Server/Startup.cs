@@ -17,10 +17,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
+using NRZMyk.Server.Utils;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data;
+using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
+using NRZMyk.Services.Specifications;
 using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Server
@@ -130,13 +133,13 @@ namespace NRZMyk.Server
                     options.TokenValidationParameters.NameClaimType = "name";
                     options.Events = new JwtBearerEvents
                     {
-                        OnTokenValidated = ctx =>
+                        OnTokenValidated = async ctx =>
                         {
                             if (ctx.Principal.Identity is ClaimsIdentity identity)
                             {
                                 identity.AddRolesFromExtensionClaim();
+                                await identity.AddOrganizationClaim(ctx);
                             }
-                            return Task.CompletedTask;
                         }
                     };
                 }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication.Internal;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Utils;
+using ClaimTypes = System.Security.Claims.ClaimTypes;
 
 namespace NRZMyk.Client
 {
@@ -52,6 +54,7 @@ namespace NRZMyk.Client
                     if (!connectedAccount.IsGuest && !userIdentity.HasClaim(ClaimTypes.Role, nameof(Role.User)))
                     {
                         userIdentity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.User)));
+                        userIdentity.RemoveClaim(userIdentity.Claims.FirstOrDefault(c=> c.Type == ClaimTypes.Role && c.Value == nameof(Role.Guest)));
                     }
                 }
                 else

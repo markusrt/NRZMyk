@@ -7,13 +7,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Specifications;
+using NRZMyk.Services.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
-    [Authorize]
+    [Authorize(Roles = nameof(Role.User))]
     public class Update : BaseAsyncEndpoint<SentinelEntryRequest, SentinelEntry>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
@@ -37,9 +39,15 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request)
         {
+            var organizationId = User.Claims.OrganizationId();
+            if (string.IsNullOrEmpty(organizationId))
+            {
+                return Forbid();
+            }
+
             var existingItem = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(request.Id)));
-            if (existingItem == null)
+            if (existingItem == null || existingItem.ProtectKey != organizationId)
             {
                 return NotFound();
             }
