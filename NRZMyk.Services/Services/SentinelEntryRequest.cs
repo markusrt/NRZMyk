@@ -31,6 +31,8 @@ namespace NRZMyk.Services.Services
 
         public string Remark { get; set; }
 
+        public Gender Gender { get; set; }
+        
         public List<AntimicrobialSensitivityTestRequest> AntimicrobialSensitivityTests { get; set;} = new List<AntimicrobialSensitivityTestRequest>();
     }
 }

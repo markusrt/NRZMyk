@@ -55,7 +55,7 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.HospitalDepartmentType = HospitalDepartmentType.NormalUnit;
             SentinelEntry.HospitalDepartment = HospitalDepartment.Anaesthetics;
             SentinelEntry.IdentifiedSpecies = Species.CandidaDubliniensis;
-            SentinelEntry.Material = Material.Isolate;
+            SentinelEntry.Material = Material.CentralBloodCultureCvc;
             SentinelEntry.SenderLaboratoryNumber = "LabNr. 123";
             SentinelEntry.Year = 2020;
             SentinelEntry.YearlySequentialEntryNumber = 123;
@@ -71,7 +71,7 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Stationstyp"].Should().Be("NS");
             export.Rows[0]["Station"].Should().Be("anästhesiologisch");
             export.Rows[0]["Spezies"].Should().Be("Candida dubliniensis");
-            export.Rows[0]["Material"].Should().Be("Isolat");
+            export.Rows[0]["Material"].Should().Be("Blutkultur zentral - ZVK");
             export.Rows[0]["Labnr. Einsender"].Should().Be("LabNr. 123");
         }
 
