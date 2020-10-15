@@ -26,14 +26,6 @@ app {
     align-items: center;
 }
 
-img.logo {
-    height: 3.5rem;
-}
-
-img.logo-text {
-    height: 4rem;
-}
-
 .main {
     flex: 1;
 }
