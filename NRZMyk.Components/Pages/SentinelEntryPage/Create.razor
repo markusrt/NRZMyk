@@ -47,6 +47,19 @@ else
                     <ValidationMessage For="() => SentinelEntry.AgeGroup"/>
                 </div>
             </div>
+            
+            <div class="form-group row">
+                <label class="col-form-label col-sm-4">Geschlecht</label>
+                <div class="col-sm-6">
+                    <InputSelect class="form-control" @bind-Value="SentinelEntry.Gender">
+                        @foreach (var gender in EnumUtils.AllEnumValues<Gender>())
+                        {
+                            <option value="@gender">@EnumUtils.GetEnumDescription(gender)</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => SentinelEntry.Gender"/>
+                </div>
+            </div>
 
             <div class="form-group row">
                 <label class="control-label col-sm-4">Probenentnahme</label>

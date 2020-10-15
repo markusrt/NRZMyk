@@ -34,6 +34,9 @@ namespace NRZMyk.Services.Data.Entities
         [Display(Name = "Bemerkung")]
         public string Remark { get; set; }
 
+        [Display(Name = "Geschlecht")]
+        public Gender Gender { get; set; }
+
         public int CryoBoxNumber { get; set; }
         
         public int CryoBoxSlot { get; set; }
