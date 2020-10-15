@@ -15,6 +15,8 @@ RUN dotnet build "NRZMyk.Server.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "NRZMyk.Server.csproj" -c Release -o /app/publish
+RUN cd /app/publish/wwwroot
+RUN version="$(date '+%Y-%m-%d-%H-%M-%S')" && sed -i "s/\${version}/${version}/" index.html
 
 FROM base AS final
 WORKDIR /app
