@@ -27,7 +27,7 @@ namespace NRZMyk.Mocks.MockServices
             {
                 AgeGroup = AgeGroup.ElevenToFifteen,
                 IdentifiedSpecies = Species.CandidaDubliniensis,
-                Material = Material.Isolate,
+                Material = Material.CentralBloodCultureCvc,
                 Remark = "Some notes",
                 HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
                 HospitalDepartment =  HospitalDepartment.Neurology,
