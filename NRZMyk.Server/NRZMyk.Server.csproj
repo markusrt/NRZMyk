@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-NRZMykServer-18B2E2D4-3174-4F74-B35E-876A891FBF01</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <VersionPrefix>1.0.$([System.DateTime]::UtcNow.ToString(`yyMM`)).$([System.DateTime]::UtcNow.ToString(`ddHH`))</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
