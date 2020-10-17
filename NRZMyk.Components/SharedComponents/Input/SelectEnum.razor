@@ -1,0 +1,51 @@
+﻿@using NRZMyk.Services.Utils
+@typeparam T
+@inherits SelectEnumBase<T>
+
+
+@if (AddFormRow)
+{
+    <div class="form-group row">
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <label class="col-form-label col-sm-4">@Label</label>
+        }
+    
+    
+        <div class="@SelectClass">
+            <select class="form-control" @bind="CurrentValueAsString">
+                @if (ShowDefaultOption)
+                {
+                    <option value="0" hidden disabled>-</option>
+                }
+                @foreach (var enumValue in EnumUtils.AllEnumValues<T>())
+                {
+                    <option value="@enumValue">@EnumUtils.GetEnumDescription(enumValue)</option>
+                }
+            </select>
+            <ValidationMessage For="@ValidationFor" />
+        </div>
+    </div>
+}
+else
+{
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label class="col-form-label col-sm-4">@Label</label>
+    }
+
+    <div class="@SelectClass">
+        <select class="form-control" @bind="CurrentValueAsString">
+            @if (ShowDefaultOption)
+            {
+                <option value="0" hidden disabled>-</option>
+            }
+            @foreach (var enumValue in EnumUtils.AllEnumValues<T>())
+            {
+                <option value="@enumValue">@EnumUtils.GetEnumDescription(enumValue)</option>
+            }
+        </select>
+        <ValidationMessage For="@ValidationFor" />
+    </div>
+}
+
