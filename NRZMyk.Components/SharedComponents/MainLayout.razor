@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Reflection
+@inherits LayoutComponentBase
 
 <ApplicationInsightsComponent />
 
@@ -9,7 +10,7 @@
 <div class="main">
     <div class="top-row px-1 auth">
         <div class="col-md-3">
-            <img class="logo-text" src="/images/logo-sentinel-text.svg"/>
+            <img class="logo-text" src="/images/logo-sentinel-text.svg" />
         </div>
         <div class="col-md-9 text-right">
             <div><LoginDisplay /></div>
@@ -17,7 +18,13 @@
         </div>
     </div>
 
-    <div class="content px-4">
+    <div class="content p-4">
         @Body
     </div>
-</div>
+    </div>
+
+<footer class="footer">
+    <div class="container float-right">
+        <span class="float-right text-muted">©2020-@DateTime.Now.Year NRZMyk – All Rights Reserved - v.@Assembly.GetExecutingAssembly().GetName().Version.ToString()</span>
+    </div>
+</footer>

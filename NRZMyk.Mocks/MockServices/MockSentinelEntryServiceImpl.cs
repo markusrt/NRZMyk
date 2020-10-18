@@ -85,5 +85,10 @@ namespace NRZMyk.Mocks.MockServices
             await stream.ReadAsync(data, 0, data.Length);
             return Convert.ToBase64String(data);
         }
+
+        public Task<List<string>> OtherMaterials()
+        {
+            return Task.FromResult(new List<string> {"Material 1", "Material 2", "Material 3"});
+        }
     }
 }
