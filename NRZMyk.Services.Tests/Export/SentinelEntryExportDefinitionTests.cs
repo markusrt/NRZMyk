@@ -9,7 +9,7 @@ using Tynamix.ObjectFiller;
 
 namespace NRZMyk.Services.Tests.Export
 {
-    public class SentinelEntryExportTests
+    public class SentinelEntryExportDefinitionTests
     {
         private IEnumerable<SentinelEntry> SentinelEntries { get; set; }
         
@@ -73,6 +73,19 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Spezies"].Should().Be("Candida dubliniensis");
             export.Rows[0]["Material"].Should().Be("Blutkultur zentral - ZVK");
             export.Rows[0]["Labnr. Einsender"].Should().Be("LabNr. 123");
+        }
+
+        [Test]
+        public void DataTable_ContainsOtherValues()
+        {
+            var sut = CreateExportDefinition();
+
+            SentinelEntry.Material = Material.Other;
+            SentinelEntry.OtherMaterial = "Some other material";
+            
+            var export = sut.ToDataTable(SentinelEntries);
+
+            export.Rows[0]["Material"].Should().Be("Some other material");
         }
 
         private SentinelEntryExportDefinition CreateExportDefinition()

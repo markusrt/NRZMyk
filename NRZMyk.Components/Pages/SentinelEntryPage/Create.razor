@@ -21,9 +21,12 @@ else
         <EditForm Model="SentinelEntry" OnValidSubmit="@SubmitClick">
             <DataAnnotationsValidator />
             
-            <SelectEnum Label="Material" @bind-Value="@SentinelEntry.Material" ValidationFor="() => SentinelEntry.Material" />
-            <SelectEnum Label="Alter des Patienten" @bind-Value="@SentinelEntry.AgeGroup" ValidationFor="() => SentinelEntry.AgeGroup" />
-            <SelectEnum Label="Geschlecht" @bind-Value="@SentinelEntry.Gender" ValidationFor="() => SentinelEntry.Gender" />
+            <SelectEnumOrOther Label="Material" Other="Material.Other" OtherLabel="Anderes Material"
+                               @bind-OtherValue="@SentinelEntry.OtherMaterial" @bind-Value="@SentinelEntry.Material"
+                               OtherValues="@OtherMaterials"
+                               ValidationFor="() => SentinelEntry.Material" />
+            <SelectEnum Label="Alter des Patienten" @bind-Value="SentinelEntry.AgeGroup" ValidationFor="() => SentinelEntry.AgeGroup" />
+            <SelectEnum Label="Geschlecht" @bind-Value="SentinelEntry.Gender" ValidationFor="() => SentinelEntry.Gender" />
 
             <div class="form-group row">
                 <label class="control-label col-sm-4">Probenentnahme</label>
