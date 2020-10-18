@@ -16,6 +16,7 @@ namespace NRZMyk.Services.Services
         Task<SentinelEntryRequest> GetById(int id);
         Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
         Task<string> Export();
+        Task<List<string>> OtherMaterials();
     }
 
     public class SentinelEntryServiceImpl : SentinelEntryService
@@ -70,6 +71,19 @@ namespace NRZMyk.Services.Services
             {
                 _logger.LogError(exception, "Failed to export sentinel entries from backend");
                 return string.Empty;
+            }
+        }
+
+        public async Task<List<string>> OtherMaterials()
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<string>>("api/sentinel-entries/other/materials");
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Failed to load other materials from backend");
+                return new List<string>();
             }
         }
 

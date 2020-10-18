@@ -2,11 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <VersionPrefix>1.0.$([System.DateTime]::UtcNow.ToString(`yyMM`)).$([System.DateTime]::UtcNow.ToString(`ddHH`))</VersionPrefix>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Services\CatalogBrandService.cs~RF30d3c1.TMP" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.0.0" />
@@ -16,9 +13,4 @@
     <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
     <PackageReference Include="Tynamix.ObjectFiller" Version="1.5.5" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
-
 </Project>

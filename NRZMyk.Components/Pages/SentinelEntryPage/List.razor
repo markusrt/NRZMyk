@@ -6,6 +6,7 @@
 @using NRZMyk.Services.Models
 @using NRZMyk.Services.Services
 @using NRZMyk.Services.Utils
+@using NRZMyk.Server.ModelExtensions
 @inherits NRZMyk.Components.Helpers.BlazorComponent
 @namespace NRZMyk.Components.Pages.SentinelEntryPage
 
@@ -54,7 +55,7 @@ else
                 <tr @onclick="() => DetailsClick(item.Id)">
                     <td>@item.LaboratoryNumber</td>
                     <td>@item.CryoBox</td>
-                    <td>@EnumUtils.GetEnumDescription(item.Material)</td>
+                    <td>@item.MaterialOrOther()</td>
                     <td>@EnumUtils.GetEnumDescription(item.AgeGroup)</td>
                     <td>
                         @if (item.SamplingDate.HasValue)
