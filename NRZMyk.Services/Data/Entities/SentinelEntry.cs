@@ -15,6 +15,8 @@ namespace NRZMyk.Services.Data.Entities
         
         [Display(Name = "Material")]
         public Material Material { get; set; }
+        
+        public string OtherMaterial { get; set; }
 
         [Display(Name = "Stationstyp")]
         public HospitalDepartmentType HospitalDepartmentType { get; set; }

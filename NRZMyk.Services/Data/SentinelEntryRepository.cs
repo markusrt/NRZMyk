@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data.Entities;
@@ -14,6 +17,11 @@ namespace NRZMyk.Services.Data
         public SentinelEntryRepository(IOptions<ApplicationSettings> config, ApplicationDbContext dbContext) : base(dbContext)
         {
             _maxSize = config?.Value?.Application?.CryoBoxSize ?? Default10x10CryoBoxSize;
+        }
+
+        public Task<List<string>> OtherMaterials()
+        {
+            return _dbContext.SentinelEntries.Where(s => s.OtherMaterial != null).Select(s => s.OtherMaterial).Distinct().ToListAsync();
         }
 
         public void AssignNextEntryNumber(SentinelEntry entry)

@@ -1,4 +1,5 @@
 ﻿using System;
+using NRZMyk.Server.ModelExtensions;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Export;
 
@@ -16,7 +17,7 @@ namespace HaemophilusWeb.Tools
             AddField(s => ExportToString(s.AgeGroup));
             AddField(s => ExportToString(s.HospitalDepartmentType));
             AddField(s => ExportToString(s.HospitalDepartment));
-            AddField(s => ExportToString(s.Material));
+            AddField(s => s.MaterialOrOther(), "Material");
             AddField(s => ExportToString(s.SpeciesIdentificationMethod));
             AddField(s => ExportToString(s.IdentifiedSpecies));
         }
