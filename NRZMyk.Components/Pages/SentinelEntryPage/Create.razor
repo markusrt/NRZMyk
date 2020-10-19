@@ -48,14 +48,19 @@ else
                                @bind-OtherValue="@SentinelEntry.OtherIdentifiedSpecies" @bind-Value="@SentinelEntry.IdentifiedSpecies"
                                ValidationFor="() => SentinelEntry.IdentifiedSpecies" />
             
-            <SelectEnum Label="Methode Speziesidentifikation" @bind-Value="@SentinelEntry.SpeciesIdentificationMethod"
-                        ValidationFor="() => SentinelEntry.SpeciesIdentificationMethod" />
+            <SelectEnumOrOther Label="Methode Speziesidentifikation" Key="pcr-details" Other="SpeciesIdentificationMethod.Pcr" OtherLabel="PCR Details"
+                               @bind-OtherValue="@SentinelEntry.PcrDetails" @bind-Value="@SentinelEntry.SpeciesIdentificationMethod"
+                               ValidationFor="() => SentinelEntry.SpeciesIdentificationMethod" />
 
             <div class="form-group row">
                 <label class="col-form-label col-sm-4">Anmerkungen</label>
                 <div class="col-sm-6">
-                    <InputTextArea class="form-control" @bind-Value="SentinelEntry.Remark" />
-                    <ValidationMessage For="() => SentinelEntry.Remark" />
+                    @if (SentinelEntry.SpeciesIdentificationMethod == SpeciesIdentificationMethod.Other)
+                    {	                   
+                        <span class="badge badge-warning">Bitte geben Sie in den Details zu der anderen Methode der Speziesidentifikation an.</span>	
+                    }
+                    <InputTextArea class="form-control" @bind-Value="SentinelEntry.Remark"/>
+                    <ValidationMessage For="() => SentinelEntry.Remark"/>
                 </div>
             </div>
 

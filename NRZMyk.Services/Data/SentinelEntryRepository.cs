@@ -22,7 +22,8 @@ namespace NRZMyk.Services.Data
 
         public Task<List<string>> Other(Expression<Func<SentinelEntry, string>> otherField)
         {
-            return _dbContext.SentinelEntries.Select(otherField).Distinct().Where(s => s != null).ToListAsync();
+            return _dbContext.SentinelEntries.Select(otherField).Distinct()
+                .Where(s => s != null).OrderBy(s => s).ToListAsync();
         }
 
         public void AssignNextEntryNumber(SentinelEntry entry)
