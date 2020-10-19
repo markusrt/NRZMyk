@@ -18,5 +18,12 @@ namespace NRZMyk.Server.ModelExtensions
                 ? sentinelEntry.OtherIdentifiedSpecies
                 : EnumUtils.GetEnumDescription(sentinelEntry.IdentifiedSpecies);
         }
+
+        public static string SpeciesIdentificationMethodWithPcrDetails(this SentinelEntry sentinelEntry)
+        {
+            return sentinelEntry.SpeciesIdentificationMethod == SpeciesIdentificationMethod.Pcr
+                ? $"{EnumUtils.GetEnumDescription(SpeciesIdentificationMethod.Pcr)}: {sentinelEntry.PcrDetails}"
+                : EnumUtils.GetEnumDescription(sentinelEntry.IdentifiedSpecies);
+        }
     }
 }

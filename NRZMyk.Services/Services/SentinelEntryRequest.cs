@@ -35,6 +35,9 @@ namespace NRZMyk.Services.Services
 
         [Range(1, int.MaxValue, ErrorMessage = "Das Feld Methode Speziesidentifikation ist erforderlich")]
         public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }
+        
+        [OtherValue((int) SpeciesIdentificationMethod.Pcr, nameof(SpeciesIdentificationMethod))]
+        public string PcrDetails { get; set; }
 
         public AgeGroup AgeGroup { get; set; }
 
