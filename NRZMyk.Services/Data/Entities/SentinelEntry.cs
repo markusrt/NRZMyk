@@ -25,6 +25,7 @@ namespace NRZMyk.Services.Data.Entities
 
         [Display(Name = "Methode Speziesidentifikation")]
         public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }
+        public string PcrDetails { get; set; }
 
         [Display(Name = "Spezies")]
         public Species IdentifiedSpecies { get; set; }
