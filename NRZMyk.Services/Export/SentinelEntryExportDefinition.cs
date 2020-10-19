@@ -19,7 +19,7 @@ namespace HaemophilusWeb.Tools
             AddField(s => ExportToString(s.HospitalDepartment));
             AddField(s => s.MaterialOrOther(), "Material");
             AddField(s => ExportToString(s.SpeciesIdentificationMethod));
-            AddField(s => ExportToString(s.IdentifiedSpecies));
+            AddField(s => s.SpeciesOrOther(), "Spezies");
         }
 
         private static string ToReportFormat(DateTime? dateTime)

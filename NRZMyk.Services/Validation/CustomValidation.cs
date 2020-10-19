@@ -9,12 +9,12 @@ namespace NRZMyk.Services.Validation
     public class OtherValueAttribute : ValidationAttribute
     {
         private readonly int _otherValue;
-        private readonly string _otherProperty;
+        private readonly string _enumProperty;
 
-        public OtherValueAttribute(int otherValue, string otherProperty)
+        public OtherValueAttribute(int otherValue, string enumProperty)
         {
             _otherValue = otherValue;
-            _otherProperty = otherProperty;
+            _enumProperty = enumProperty;
         }
 
         protected override ValidationResult IsValid(object value,
@@ -22,8 +22,8 @@ namespace NRZMyk.Services.Validation
         {
             var sentinelEntry = (SentinelEntryRequest)validationContext.ObjectInstance;
 
-            var otherProperty = sentinelEntry.GetType().GetProperty(_otherProperty);
-            if ((int)sentinelEntry.Material == _otherValue && string.IsNullOrEmpty(otherProperty?.GetValue(sentinelEntry) as string))
+            var enumProperty = sentinelEntry.GetType().GetProperty(_enumProperty);
+            if (enumProperty != null && (int)enumProperty.GetValue(sentinelEntry) == _otherValue && string.IsNullOrEmpty(value as string))
             {
                 return new ValidationResult(ErrorMessage);
             }

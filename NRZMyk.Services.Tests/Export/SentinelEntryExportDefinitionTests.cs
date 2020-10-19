@@ -82,10 +82,13 @@ namespace NRZMyk.Services.Tests.Export
 
             SentinelEntry.Material = Material.Other;
             SentinelEntry.OtherMaterial = "Some other material";
+            SentinelEntry.IdentifiedSpecies = Species.Other;
+            SentinelEntry.OtherIdentifiedSpecies = "Candida fructus";
             
             var export = sut.ToDataTable(SentinelEntries);
 
             export.Rows[0]["Material"].Should().Be("Some other material");
+            export.Rows[0]["Spezies"].Should().Be("Candida fructus");
         }
 
         private SentinelEntryExportDefinition CreateExportDefinition()

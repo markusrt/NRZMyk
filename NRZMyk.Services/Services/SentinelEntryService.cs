@@ -16,7 +16,7 @@ namespace NRZMyk.Services.Services
         Task<SentinelEntryRequest> GetById(int id);
         Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
         Task<string> Export();
-        Task<List<string>> OtherMaterials();
+        Task<List<string>> Other(string other);
     }
 
     public class SentinelEntryServiceImpl : SentinelEntryService
@@ -74,15 +74,15 @@ namespace NRZMyk.Services.Services
             }
         }
 
-        public async Task<List<string>> OtherMaterials()
+        public async Task<List<string>> Other(string other)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<string>>("api/sentinel-entries/other/materials");
+                return await _httpClient.GetFromJsonAsync<List<string>>($"api/sentinel-entries/other/{other}");
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, "Failed to load other materials from backend");
+                _logger.LogError(exception, $"Failed to load other {other} from backend");
                 return new List<string>();
             }
         }
