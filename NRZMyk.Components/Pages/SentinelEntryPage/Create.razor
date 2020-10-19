@@ -40,8 +40,9 @@ else
             <div class="form-group row">
                 <SelectEnum Label="Station" AddFormRow="false" SelectClass="col-sm-3"
                             @bind-Value="@SentinelEntry.HospitalDepartmentType" ValidationFor="() => SentinelEntry.HospitalDepartmentType" />
-                <SelectEnum AddFormRow="false" SelectClass="col-sm-3"
-                            @bind-Value="@SentinelEntry.HospitalDepartment" ValidationFor="() => SentinelEntry.HospitalDepartment" />
+                <SelectEnumOrOther AddFormRow="false" SelectClass="col-sm-3" Other="HospitalDepartment.Other" OtherLabel="Andere Abteilung"
+                                   @bind-OtherValue="@SentinelEntry.OtherHospitalDepartment" @bind-Value="@SentinelEntry.HospitalDepartment"
+                                   Key="hospital-departments" ValidationFor="() => SentinelEntry.HospitalDepartment" />
             </div>
             
             <SelectEnumOrOther Label="Spezies" Key="species" Other="Species.Other" OtherLabel="Andere Spezies"

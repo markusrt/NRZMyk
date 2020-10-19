@@ -19,6 +19,13 @@ namespace NRZMyk.Server.ModelExtensions
                 : EnumUtils.GetEnumDescription(sentinelEntry.IdentifiedSpecies);
         }
 
+        public static string HospitalDepartementOrOther(this SentinelEntry sentinelEntry)
+        {
+            return sentinelEntry.HospitalDepartment == HospitalDepartment.Other
+                ? sentinelEntry.OtherHospitalDepartment
+                : EnumUtils.GetEnumDescription(sentinelEntry.HospitalDepartment);
+        }
+
         public static string SpeciesIdentificationMethodWithPcrDetails(this SentinelEntry sentinelEntry)
         {
             return sentinelEntry.SpeciesIdentificationMethod == SpeciesIdentificationMethod.Pcr
