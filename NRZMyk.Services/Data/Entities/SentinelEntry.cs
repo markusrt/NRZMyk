@@ -15,7 +15,6 @@ namespace NRZMyk.Services.Data.Entities
         
         [Display(Name = "Material")]
         public Material Material { get; set; }
-        
         public string OtherMaterial { get; set; }
 
         [Display(Name = "Stationstyp")]
@@ -29,6 +28,7 @@ namespace NRZMyk.Services.Data.Entities
 
         [Display(Name = "Spezies")]
         public Species IdentifiedSpecies { get; set; }
+        public string OtherIdentifiedSpecies { get; set; }
 
         [Display(Name = "Altersgruppe")]
         public AgeGroup AgeGroup { get; set; }

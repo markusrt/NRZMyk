@@ -13,24 +13,24 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User))]
-    public class OtherMaterials : BaseAsyncEndpoint<List<string>>
+    public class OtherSpecies : BaseAsyncEndpoint<List<string>>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
 
-        public OtherMaterials(ISentinelEntryRepository sentinelEntryRepository)
+        public OtherSpecies(ISentinelEntryRepository sentinelEntryRepository)
         {
             _sentinelEntryRepository = sentinelEntryRepository;
         }
 
-        [HttpGet("api/sentinel-entries/other/materials")]
+        [HttpGet("api/sentinel-entries/other/species")]
         [SwaggerOperation(
-            Summary = "List all used other materials)",
-            OperationId = "sentinel-entries.OtherMaterials",
+            Summary = "List all used other species)",
+            OperationId = "sentinel-entries.OtherSpecies",
             Tags = new[] { "SentinelEndpoints" })
         ]
         public override async Task<ActionResult<List<string>>> HandleAsync()
         {
-            var otherMaterials =  await _sentinelEntryRepository.Other(s => s.OtherMaterial);
+            var otherMaterials =  await _sentinelEntryRepository.Other(s => s.OtherIdentifiedSpecies);
             return Ok(otherMaterials);
         }
     }

@@ -39,8 +39,6 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         public List<ClinicalBreakpoint> AllBreakpoints { get; private set; } = new List<ClinicalBreakpoint>();
         
-        public List<string> OtherMaterials { get; private set; } = new List<string>();
-
         public SpeciesTestingMethod TestingMethod { get; set; } = SpeciesTestingMethod.Vitek;
         
         public BrothMicrodilutionStandard Standard { get; set; } = BrothMicrodilutionStandard.Eucast;
@@ -178,7 +176,6 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             PrimaryAction = IsEdit() ? "Speichern" : "Anlegen";
 
             AllBreakpoints = await ClinicalBreakpointService.List();
-            OtherMaterials = await SentinelEntryService.OtherMaterials();
 
             if (Id.HasValue)
             {
