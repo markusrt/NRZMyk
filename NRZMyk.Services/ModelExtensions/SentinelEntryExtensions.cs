@@ -11,5 +11,12 @@ namespace NRZMyk.Server.ModelExtensions
                 ? sentinelEntry.OtherMaterial
                 : EnumUtils.GetEnumDescription(sentinelEntry.Material);
         }
+
+        public static string SpeciesOrOther(this SentinelEntry sentinelEntry)
+        {
+            return sentinelEntry.IdentifiedSpecies == Species.Other
+                ? sentinelEntry.OtherIdentifiedSpecies
+                : EnumUtils.GetEnumDescription(sentinelEntry.IdentifiedSpecies);
+        }
     }
 }

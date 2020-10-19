@@ -20,7 +20,7 @@ namespace NRZMyk.Services.Services
 
         public Material Material { get; set; }
 
-        [OtherValue((int) Material.Other, nameof(OtherMaterial))]
+        [OtherValue((int) Material.Other, nameof(Material))]
         public string OtherMaterial { get; set; }
 
         public HospitalDepartmentType HospitalDepartmentType { get; set; }
@@ -29,6 +29,9 @@ namespace NRZMyk.Services.Services
 
         [Range(1, int.MaxValue, ErrorMessage = "Das Feld Spezies ist erforderlich")]
         public Species IdentifiedSpecies { get; set; }
+
+        [OtherValue((int) Material.Other, nameof(IdentifiedSpecies))]
+        public string OtherIdentifiedSpecies { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "Das Feld Methode Speziesidentifikation ist erforderlich")]
         public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }

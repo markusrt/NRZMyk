@@ -86,9 +86,9 @@ namespace NRZMyk.Mocks.MockServices
             return Convert.ToBase64String(data);
         }
 
-        public Task<List<string>> OtherMaterials()
+        public Task<List<string>> Other(string other)
         {
-            return Task.FromResult(new List<string> {"Material 1", "Material 2", "Material 3"});
+            return Task.FromResult(new List<string> {$"{other} 1",$"{other} 2", $"{other} 3"});
         }
     }
 }
