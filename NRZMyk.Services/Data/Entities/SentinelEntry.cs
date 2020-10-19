@@ -22,6 +22,8 @@ namespace NRZMyk.Services.Data.Entities
 
         [Display(Name = "Station")]
         public HospitalDepartment HospitalDepartment { get; set; }
+        
+        public string OtherHospitalDepartment { get; set; }
 
         [Display(Name = "Methode Speziesidentifikation")]
         public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }

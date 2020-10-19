@@ -26,6 +26,9 @@ namespace NRZMyk.Services.Services
         public HospitalDepartmentType HospitalDepartmentType { get; set; }
 
         public HospitalDepartment HospitalDepartment { get; set; }
+        
+        [OtherValue((int) Data.Entities.HospitalDepartment.Other, nameof(HospitalDepartment))]
+        public string OtherHospitalDepartment { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "Das Feld Spezies ist erforderlich")]
         public Species IdentifiedSpecies { get; set; }
