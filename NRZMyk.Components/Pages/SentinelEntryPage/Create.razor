@@ -21,9 +21,8 @@ else
         <EditForm Model="SentinelEntry" OnValidSubmit="@SubmitClick">
             <DataAnnotationsValidator />
             
-            <SelectEnumOrOther Label="Material" Other="Material.Other" OtherLabel="Anderes Material"
+            <SelectEnumOrOther Label="Material" Key="materials" Other="Material.Other" OtherLabel="Anderes Material"
                                @bind-OtherValue="@SentinelEntry.OtherMaterial" @bind-Value="@SentinelEntry.Material"
-                               OtherValues="@OtherMaterials"
                                ValidationFor="() => SentinelEntry.Material" />
             <SelectEnum Label="Alter des Patienten" @bind-Value="SentinelEntry.AgeGroup" ValidationFor="() => SentinelEntry.AgeGroup" />
             <SelectEnum Label="Geschlecht" @bind-Value="SentinelEntry.Gender" ValidationFor="() => SentinelEntry.Gender" />
@@ -44,9 +43,11 @@ else
                 <SelectEnum AddFormRow="false" SelectClass="col-sm-3"
                             @bind-Value="@SentinelEntry.HospitalDepartment" ValidationFor="() => SentinelEntry.HospitalDepartment" />
             </div>
-
-            <SelectEnum Label="Spezies" @bind-Value="@SentinelEntry.IdentifiedSpecies"
-                        ValidationFor="() => SentinelEntry.IdentifiedSpecies" />
+            
+            <SelectEnumOrOther Label="Spezies" Key="species" Other="Species.Other" OtherLabel="Andere Spezies"
+                               @bind-OtherValue="@SentinelEntry.OtherIdentifiedSpecies" @bind-Value="@SentinelEntry.IdentifiedSpecies"
+                               ValidationFor="() => SentinelEntry.IdentifiedSpecies" />
+            
             <SelectEnum Label="Methode Speziesidentifikation" @bind-Value="@SentinelEntry.SpeciesIdentificationMethod"
                         ValidationFor="() => SentinelEntry.SpeciesIdentificationMethod" />
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -19,9 +20,9 @@ namespace NRZMyk.Services.Data
             _maxSize = config?.Value?.Application?.CryoBoxSize ?? Default10x10CryoBoxSize;
         }
 
-        public Task<List<string>> OtherMaterials()
+        public Task<List<string>> Other(Expression<Func<SentinelEntry, string>> otherField)
         {
-            return _dbContext.SentinelEntries.Where(s => s.OtherMaterial != null).Select(s => s.OtherMaterial).Distinct().ToListAsync();
+            return _dbContext.SentinelEntries.Select(otherField).Distinct().Where(s => s != null).ToListAsync();
         }
 
         public void AssignNextEntryNumber(SentinelEntry entry)
