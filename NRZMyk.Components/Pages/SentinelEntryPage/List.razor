@@ -64,7 +64,7 @@ else
                         }
                     </td>
                     <td>@item.SenderLaboratoryNumber</td>
-                    <td>@EnumUtils.GetEnumDescription(item.HospitalDepartmentType), @EnumUtils.GetEnumDescription(item.HospitalDepartment)</td>
+                    <td>@item.HospitalDepartementOrOther()</td>
                     <td>@item.SpeciesOrOther()</td>
                     <td>
                         <a href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary">

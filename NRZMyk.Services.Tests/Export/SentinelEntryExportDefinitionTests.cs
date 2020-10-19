@@ -84,11 +84,17 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.OtherMaterial = "Some other material";
             SentinelEntry.IdentifiedSpecies = Species.Other;
             SentinelEntry.OtherIdentifiedSpecies = "Candida fructus";
+            SentinelEntry.SpeciesIdentificationMethod = SpeciesIdentificationMethod.Pcr;
+            SentinelEntry.PcrDetails = "Details";
+            SentinelEntry.HospitalDepartment = HospitalDepartment.Other;
+            SentinelEntry.OtherHospitalDepartment = "urologic";
             
             var export = sut.ToDataTable(SentinelEntries);
 
             export.Rows[0]["Material"].Should().Be("Some other material");
             export.Rows[0]["Spezies"].Should().Be("Candida fructus");
+            export.Rows[0]["Methode Speziesidentifikation"].Should().Be("PCR: Details");
+            export.Rows[0]["Station"].Should().Be("urologic");
         }
 
         private SentinelEntryExportDefinition CreateExportDefinition()

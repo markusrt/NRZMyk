@@ -38,7 +38,7 @@ namespace NRZMyk.Components.Pages
         {
             try
             {
-                AccountService.AssignToOrganizationAsync(Accounts);
+                await AccountService.AssignToOrganizationAsync(Accounts);
                 SaveState = SaveState.Success;
             }
             catch (Exception e)

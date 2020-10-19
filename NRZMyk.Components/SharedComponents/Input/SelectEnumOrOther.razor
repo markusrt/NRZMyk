@@ -6,7 +6,50 @@
 
 @if (AddFormRow)
 {
-<div class="form-group row">
+    <div class="form-group row">
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <label class="col-form-label col-sm-4">@Label</label>
+        }
+
+        <div class="@SelectClass">
+            <select class="form-control" @bind="CurrentValueAsString">
+                @if (ShowDefaultOption)
+                {
+                    <option value="0" hidden disabled>-</option>
+                }
+                @foreach (var enumValue in EnumUtils.AllEnumValues<T>())
+                {
+                    <option value="@enumValue">@EnumUtils.GetEnumDescription(enumValue)</option>
+                }
+            </select>
+            <ValidationMessage For="@ValidationFor" />
+        </div>
+        @if (IsOtherVisible())
+        {
+            @if (!string.IsNullOrWhiteSpace(OtherLabel))
+            {
+                <label class="col-form-label col-sm-4 mt-2 font-italic">@OtherLabel</label>
+            }
+
+            <div class="col-sm-6 mt-2">
+                <InputText list="@DataListId" class="form-control" @bind-Value="OtherValue" @oninput="OnOtherValueChanged" />
+                <datalist id="@DataListId">
+                    @foreach (var item in OtherValues)
+                    {
+                        <option value="@item" />
+                    }
+                </datalist>
+                @if (string.IsNullOrWhiteSpace(OtherValue))
+                {
+                    <div class="validation-message">Das Feld '@OtherLabel' ist erforderlich</div>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
     @if (!string.IsNullOrWhiteSpace(Label))
     {
         <label class="col-form-label col-sm-4">@Label</label>
@@ -46,26 +89,4 @@
             }
         </div>
     }
-</div>
-}
-else
-{
-    @if (!string.IsNullOrWhiteSpace(Label))
-    {
-        <label class="col-form-label col-sm-4">@Label</label>
-    }
-
-    <div class="@SelectClass">
-        <select class="form-control" @bind="CurrentValueAsString">
-            @if (ShowDefaultOption)
-            {
-                <option value="0" hidden disabled>-</option>
-            }
-            @foreach (var enumValue in EnumUtils.AllEnumValues<T>())
-            {
-                <option value="@enumValue">@EnumUtils.GetEnumDescription(enumValue)</option>
-            }
-        </select>
-        <ValidationMessage For="@ValidationFor" />
-    </div>
 }
