@@ -63,6 +63,11 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             sensitivityTest.ClinicalBreakpointId = ApplicableBreakpoints(sensitivityTest).FirstOrDefault()?.Id;
         }
 
+        internal void RemoveAntimicrobialSensitivityTest(AntimicrobialSensitivityTestRequest sensitivityTest)
+        {
+            SentinelEntry.AntimicrobialSensitivityTests.Remove(sensitivityTest);
+        }
+
         internal IEnumerable<MicStep> MicSteps(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
             var matchingSteps = MicStepsService.StepsByTestingMethodAndAgent(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent);

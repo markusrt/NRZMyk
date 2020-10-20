@@ -116,7 +116,7 @@ else
         {
             sentinelEntries = await SentinelEntryService.ListPaged(50);
 
-            CallRequestRefresh();
+            await InvokeAsync(CallRequestRefresh);
         }
 
         await base.OnAfterRenderAsync(firstRender);
