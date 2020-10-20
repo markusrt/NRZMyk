@@ -67,7 +67,7 @@ else
                     <td>@item.HospitalDepartementOrOther()</td>
                     <td>@item.SpeciesOrOther()</td>
                     <td>
-                        <a href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary">
+                        <a href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary btn-sm">
                             Bearbeiten
                         </a>
 
@@ -116,7 +116,7 @@ else
         {
             sentinelEntries = await SentinelEntryService.ListPaged(50);
 
-            CallRequestRefresh();
+            await InvokeAsync(CallRequestRefresh);
         }
 
         await base.OnAfterRenderAsync(firstRender);
