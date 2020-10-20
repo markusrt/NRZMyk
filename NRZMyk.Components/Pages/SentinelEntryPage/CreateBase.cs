@@ -30,7 +30,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         private SentinelEntryService SentinelEntryService { get; set; }
 
         [Inject]
-        private MicStepsService MicStepsService { get; set; }
+        protected MicStepsService MicStepsService { get; set; }
 
         [Inject]
         private ClinicalBreakpointService ClinicalBreakpointService { get; set; }
@@ -53,12 +53,23 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         internal void AddAntimicrobialSensitivityTest()
         {
-            var sensitivityTest = new AntimicrobialSensitivityTestRequest
+            var antifungalAgents = MicStepsService.IsMultiAgentSystem(TestingMethod)
+                ? MicStepsService.AntifungalAgents(TestingMethod)
+                : new List<AntifungalAgent> {AntifungalAgent};
+            
+            foreach (var antifungalAgent in antifungalAgents)
             {
-                TestingMethod = TestingMethod,
-                AntifungalAgent = AntifungalAgent,
-                Standard = Standard
-            };
+                AddAntimicrobialSensitivityTest(new AntimicrobialSensitivityTestRequest
+                {
+                    TestingMethod = TestingMethod,
+                    AntifungalAgent = antifungalAgent,
+                    Standard = Standard
+                });
+            }
+        }
+
+        private void AddAntimicrobialSensitivityTest(AntimicrobialSensitivityTestRequest sensitivityTest)
+        {
             SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
             sensitivityTest.ClinicalBreakpointId = ApplicableBreakpoints(sensitivityTest).FirstOrDefault()?.Id;
         }
