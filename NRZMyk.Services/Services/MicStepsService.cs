@@ -14,17 +14,20 @@ namespace NRZMyk.Services.Services
         List<MicStep> StepsByTestingMethodAndAgent(SpeciesTestingMethod testingMethod, AntifungalAgent agent);
         IEnumerable<SpeciesTestingMethod> TestingMethods();
         IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod testingMethod);
+        bool IsMultiAgentSystem(SpeciesTestingMethod testingMethod);
     }
 
     public class MicStepsServiceImpl : MicStepsService
     {
         private readonly ILogger<MicStepsServiceImpl> _logger;
-        private Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>> _micSteps;
+        private readonly Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>> _micSteps;
+        private readonly List<SpeciesTestingMethod> _multiAgentSystems;
 
         public MicStepsServiceImpl(IOptions<BreakpointSettings> config, ILogger<MicStepsServiceImpl> logger)
         {
             _logger = logger;
             _micSteps = config.Value?.Breakpoint?.MicSteps??new Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>>();
+            _multiAgentSystems = config.Value?.Breakpoint?.MultiAgentSystems ?? new List<SpeciesTestingMethod>();
         }
 
         public List<MicStep> StepsByTestingMethodAndAgent(SpeciesTestingMethod testingMethod, AntifungalAgent agent)
@@ -51,6 +54,11 @@ namespace NRZMyk.Services.Services
         public IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod speciesTestingMethod)
         {
             return _micSteps[speciesTestingMethod].Keys;
+        }
+
+        public bool IsMultiAgentSystem(SpeciesTestingMethod testingMethod)
+        {
+            return _multiAgentSystems.Contains(testingMethod);
         }
     }
 }

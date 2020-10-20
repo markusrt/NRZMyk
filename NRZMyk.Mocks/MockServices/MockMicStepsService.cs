@@ -26,5 +26,10 @@ namespace NRZMyk.Mocks.MockServices
         {
             return new List<AntifungalAgent> {AntifungalAgent.AmphotericinB};
         }
+
+        public bool IsMultiAgentSystem(SpeciesTestingMethod testingMethod)
+        {
+            return true;
+        }
     }
 }
