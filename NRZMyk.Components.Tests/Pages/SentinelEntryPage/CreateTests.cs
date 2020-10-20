@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using AutoMapper;
 using Bunit;
 using FluentAssertions;
@@ -66,7 +67,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             var sensitivityTest = sut.SentinelEntry.AntimicrobialSensitivityTests.First();
 
             sensitivityTest.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
-            sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.Micafungin);
+            sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.AmphotericinB);
         }
 
         [Test]
@@ -85,7 +86,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 var sensitivityTest = sut.SentinelEntry.AntimicrobialSensitivityTests.First();
 
                 sensitivityTest.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
-                sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.Micafungin);
+                sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.AmphotericinB);
                 sensitivityTest.ClinicalBreakpointId.Should().BeNull();
             }
             catch (Exception e)
