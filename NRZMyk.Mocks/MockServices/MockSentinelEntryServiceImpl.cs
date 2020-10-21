@@ -16,6 +16,8 @@ namespace NRZMyk.Mocks.MockServices
         private readonly IMapper _mapper;
         private readonly ILogger<MockSentinelEntryServiceImpl> _logger;
 
+        private int _id = 1;
+
         private readonly List<SentinelEntry> _repository = new List<SentinelEntry>();
 
         public MockSentinelEntryServiceImpl(IMapper mapper, ILogger<MockSentinelEntryServiceImpl> logger)
@@ -25,6 +27,7 @@ namespace NRZMyk.Mocks.MockServices
 
             _repository.Add(new SentinelEntry
             {
+                Id = _id++,
                 AgeGroup = AgeGroup.ElevenToFifteen,
                 IdentifiedSpecies = Species.CandidaDubliniensis,
                 Material = Material.CentralBloodCultureCvc,
@@ -55,6 +58,7 @@ namespace NRZMyk.Mocks.MockServices
         {
             _logger.LogInformation($"Create sentinel entry: {request}");
             var sentinelEntry = _mapper.Map<SentinelEntry>(request);
+            sentinelEntry.Id = _id++;
             _repository.Add(sentinelEntry);
             return Task.FromResult(sentinelEntry);
         }
@@ -89,6 +93,13 @@ namespace NRZMyk.Mocks.MockServices
         public Task<List<string>> Other(string other)
         {
             return Task.FromResult(new List<string> {$"{other} 1",$"{other} 2", $"{other} 3"});
+        }
+
+        public Task Delete(int id)
+        {
+            var entry = _repository.FirstOrDefault(e => e.Id == id);
+            _repository.Remove(entry);
+            return Task.CompletedTask;
         }
     }
 }
