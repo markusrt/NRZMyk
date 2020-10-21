@@ -65,12 +65,12 @@ else
                         <td>@item.SpeciesOrOther()</td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                <a href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary">
-                                    Bearbeiten
+                                <a title="Eintrag bearbeiten" href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary">
+                                    <i class="oi oi-pencil"></i>
                                 </a>
 
-                                <a href="" @onclick="() => DeleteClick(item.Id)" @onclick:preventDefault class="btn btn-danger">
-                                    Löschen
+                                <a title="Eintrag löschen" href="" @onclick="() => DeleteClick(item.Id)" @onclick:preventDefault class="btn btn-danger">
+                                    <i class="oi oi-trash"></i>
                                 </a>
                             </div>
                         </td>

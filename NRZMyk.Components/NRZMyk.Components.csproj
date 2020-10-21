@@ -29,26 +29,10 @@
     <Watch Include="..\**\*.scss" />
     <Watch Include="..\**\*.cs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="Pages\SentinelEntryPage\Delete.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Watch Remove="Pages\SentinelEntryPage\CreateBase.cs" />
-    <Watch Remove="Pages\SentinelEntryPage\Delete.razor" />
-    <Watch Remove="Pages\SentinelEntryPage\DeleteBase.cs" />
-  </ItemGroup>
-
   
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>$(AssemblyName).Tests</_Parameter1>
     </AssemblyAttribute>
-  </ItemGroup>
-
-  
-  <ItemGroup>
-    <None Include="Pages\SentinelEntryPage\Delete.razor" />
   </ItemGroup>
 </Project>
