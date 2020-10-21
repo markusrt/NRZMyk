@@ -1,0 +1,61 @@
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
+using NRZMyk.Components.Helpers;
+using NRZMyk.Services.Services;
+
+namespace NRZMyk.Components.Pages.SentinelEntryPage
+{
+    public class DeleteBase : BlazorComponent
+    {
+        [Inject]
+        private ILogger<CreateBase> Logger { get; set; }
+
+        [Inject]
+        private SentinelEntryService SentinelEntryService { get; set; }
+
+        [Parameter]
+        public int Id { get; set; }
+
+        [Parameter]
+        public EventCallback<string> OnCloseClick { get; set; }
+
+        internal SentinelEntryRequest SentinelEntry { get; set; }
+
+        internal bool DeleteFailed { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            Logger.LogInformation("Now loading... /Catalog/Delete/{Id}", Id);
+
+            SentinelEntry = await SentinelEntryService.GetById(Id);
+
+            await base.OnInitializedAsync();
+        }
+
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            return base.OnAfterRenderAsync(firstRender);
+        }
+
+        internal async Task DeleteClick()
+        {
+            try
+            {
+                await SentinelEntryService.Delete(Id);
+                DeleteFailed = false;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Deleting failed");
+                DeleteFailed = true;
+            }
+
+            if (!DeleteFailed)
+            {
+                await OnCloseClick.InvokeAsync(null);
+            }
+        }
+    }
+}
