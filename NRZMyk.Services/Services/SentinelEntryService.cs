@@ -17,6 +17,7 @@ namespace NRZMyk.Services.Services
         Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
         Task<string> Export();
         Task<List<string>> Other(string other);
+        Task Delete(int id);
     }
 
     public class SentinelEntryServiceImpl : SentinelEntryService
@@ -84,6 +85,19 @@ namespace NRZMyk.Services.Services
             {
                 _logger.LogError(exception, $"Failed to load other {other} from backend");
                 return new List<string>();
+            }
+        }
+
+        public async Task Delete(int id)
+        {
+            try
+            {
+                await _httpClient.DeleteAsync($"api/sentinel-entries/{id}");
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Failed to retrieve sentinel entry");
+                throw;
             }
         }
 
