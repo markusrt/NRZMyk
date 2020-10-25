@@ -82,7 +82,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         internal IEnumerable<MicStep> MicSteps(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
             var matchingSteps = MicStepsService.StepsByTestingMethodAndAgent(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent);
-            if (matchingSteps.Any() && matchingSteps.All(s => !s.Value.Equals(sensitivityTest.MinimumInhibitoryConcentration)))
+            if (sensitivityTest.MinimumInhibitoryConcentration.HasValue && matchingSteps.Any() && matchingSteps.All(s => !s.Value.Equals(sensitivityTest.MinimumInhibitoryConcentration)))
             {
                 sensitivityTest.MinimumInhibitoryConcentration = matchingSteps.First().Value;
             }

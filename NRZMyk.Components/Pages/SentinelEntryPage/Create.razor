@@ -20,10 +20,9 @@ else
         }
         <EditForm Model="SentinelEntry" OnValidSubmit="@SubmitClick">
             <DataAnnotationsValidator />
-            
             <SelectEnumOrOther Label="Material" Key="materials" Other="Material.Other" OtherLabel="Anderes Material"
                                @bind-OtherValue="@SentinelEntry.OtherMaterial" @bind-Value="@SentinelEntry.Material"
-                               ValidationFor="() => SentinelEntry.Material" />
+                               ValidationFor="() => SentinelEntry.Material" ValidationForOther="() => SentinelEntry.OtherMaterial"/>
             <SelectEnum Label="Alter des Patienten" @bind-Value="SentinelEntry.AgeGroup" ValidationFor="() => SentinelEntry.AgeGroup" />
             <SelectEnum Label="Geschlecht" @bind-Value="SentinelEntry.Gender" ValidationFor="() => SentinelEntry.Gender" />
 
@@ -42,16 +41,17 @@ else
                             @bind-Value="@SentinelEntry.HospitalDepartmentType" ValidationFor="() => SentinelEntry.HospitalDepartmentType" />
                 <SelectEnumOrOther AddFormRow="false" SelectClass="col-sm-3" Other="HospitalDepartment.Other" OtherLabel="Andere Abteilung"
                                    @bind-OtherValue="@SentinelEntry.OtherHospitalDepartment" @bind-Value="@SentinelEntry.HospitalDepartment"
-                                   Key="hospital-departments" ValidationFor="() => SentinelEntry.HospitalDepartment" />
+                                   Key="hospital-departments" ValidationFor="() => SentinelEntry.HospitalDepartment" 
+                                   ValidationForOther="() => SentinelEntry.OtherHospitalDepartment"/>
             </div>
             
             <SelectEnumOrOther Label="Spezies" Key="species" Other="Species.Other" OtherLabel="Andere Spezies"
                                @bind-OtherValue="@SentinelEntry.OtherIdentifiedSpecies" @bind-Value="@SentinelEntry.IdentifiedSpecies"
-                               ValidationFor="() => SentinelEntry.IdentifiedSpecies" />
+                               ValidationFor="() => SentinelEntry.IdentifiedSpecies" ValidationForOther="() => SentinelEntry.OtherIdentifiedSpecies" />
             
             <SelectEnumOrOther Label="Methode Speziesidentifikation" Key="pcr-details" Other="SpeciesIdentificationMethod.Pcr" OtherLabel="PCR Details"
                                @bind-OtherValue="@SentinelEntry.PcrDetails" @bind-Value="@SentinelEntry.SpeciesIdentificationMethod"
-                               ValidationFor="() => SentinelEntry.SpeciesIdentificationMethod" />
+                               ValidationFor="() => SentinelEntry.SpeciesIdentificationMethod" ValidationForOther="() => SentinelEntry.PcrDetails"/>
 
             <div class="form-group row">
                 <label class="col-form-label col-sm-4">Anmerkungen</label>
@@ -98,7 +98,8 @@ else
                     <button type="button" id="addAntimicrobialSensitivityTest" class="btn btn-sm btn-outline-secondary" @onclick="AddAntimicrobialSensitivityTest">Neuer MHK Eintrag</button>
                 </div>
             </div>
-
+            
+            <ValidationMessage For="() => SentinelEntry.AntimicrobialSensitivityTests"></ValidationMessage>
             @foreach (var sensitivityTest in RecalculateResistance())
             {
                 <div class="form-group row">
@@ -120,10 +121,11 @@ else
                             @if (MicSteps(sensitivityTest).Any())
                             {
                                 <InputSelectNumber class="form-control form-control-sm" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration">
+                                    <option>-</option>
                                     @foreach (var micStep in MicSteps(sensitivityTest))
-                                     {
+                                    {
                                         <option value="@micStep.Value">@micStep.Title</option>
-                                     }
+                                    }
                                 </InputSelectNumber>
                             }
                             else
