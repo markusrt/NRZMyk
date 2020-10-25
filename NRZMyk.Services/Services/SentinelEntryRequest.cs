@@ -21,26 +21,26 @@ namespace NRZMyk.Services.Services
         [Range(1, int.MaxValue, ErrorMessage = "Das Feld Material ist erforderlich")]
         public Material Material { get; set; }
 
-        [OtherValue((int) Material.Other, nameof(Material))]
+        [OtherValue((int) Material.Other, nameof(Material), ErrorMessage = "Das Feld Anderes Material ist erforderlich")]
         public string OtherMaterial { get; set; }
 
         public HospitalDepartmentType HospitalDepartmentType { get; set; }
 
         public HospitalDepartment HospitalDepartment { get; set; }
         
-        [OtherValue((int) Data.Entities.HospitalDepartment.Other, nameof(HospitalDepartment))]
+        [OtherValue((int) HospitalDepartment.Other, nameof(HospitalDepartment), ErrorMessage = "Das Feld Andere Abteilung ist erforderlich")]
         public string OtherHospitalDepartment { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "Das Feld Spezies ist erforderlich")]
         public Species IdentifiedSpecies { get; set; }
 
-        [OtherValue((int) Material.Other, nameof(IdentifiedSpecies))]
+        [OtherValue((int) Material.Other, nameof(IdentifiedSpecies), ErrorMessage = "Das Feld Andere Spezies ist erforderlich")]
         public string OtherIdentifiedSpecies { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "Das Feld Methode Speziesidentifikation ist erforderlich")]
         public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }
         
-        [OtherValue((int) SpeciesIdentificationMethod.Pcr, nameof(SpeciesIdentificationMethod))]
+        [OtherValue((int) SpeciesIdentificationMethod.Pcr, nameof(SpeciesIdentificationMethod), ErrorMessage = "Das Feld PCR Details ist erforderlich")]
         public string PcrDetails { get; set; }
 
         public AgeGroup AgeGroup { get; set; }
@@ -50,6 +50,7 @@ namespace NRZMyk.Services.Services
 
         public Gender Gender { get; set; }
         
+        [SensitivityTest(ErrorMessage = "Alle MHK Werte sind erforderlich")]
         public List<AntimicrobialSensitivityTestRequest> AntimicrobialSensitivityTests { get; set;} = new List<AntimicrobialSensitivityTestRequest>();
 
         private static int GetMaterial(SentinelEntryRequest sentinelEntryRequest)

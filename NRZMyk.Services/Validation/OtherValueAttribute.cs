@@ -23,11 +23,10 @@ namespace NRZMyk.Services.Validation
             var sentinelEntry = (SentinelEntryRequest)validationContext.ObjectInstance;
 
             var enumProperty = sentinelEntry.GetType().GetProperty(_enumProperty);
-            if (enumProperty != null && (int)enumProperty.GetValue(sentinelEntry) == _otherValue && string.IsNullOrEmpty(value as string))
-            {
-                return new ValidationResult(ErrorMessage);
-            }
-            return ValidationResult.Success;
+            var isInvalid = enumProperty != null && (int) enumProperty.GetValue(sentinelEntry) == _otherValue && string.IsNullOrEmpty(value as string);
+            return isInvalid 
+                ? new ValidationResult(ErrorMessage, new []{validationContext.MemberName})
+                : ValidationResult.Success;
         }
     }
 }
