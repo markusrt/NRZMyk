@@ -4,8 +4,9 @@ namespace NRZMyk.Services.Data.Entities
 {
     public enum Material
     {
+        [Description("-")] None = 0,
         [Description("Blutkultur peripher")]
-        PeripheralBloodCulture = 0,
+        PeripheralBloodCulture = 50,
         [Description("Blutkultur zentral - ZVK")]
         CentralBloodCultureCvc = 100,
         [Description("Blutkultur zentral - Port")]
