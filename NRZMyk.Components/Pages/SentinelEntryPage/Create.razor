@@ -88,7 +88,7 @@ else
                 }
                 <div class="col-sm-3 col-lg-2">
                     <select class="form-control form-control-sm" @bind="Standard">
-                        @foreach (var standard in EnumUtils.AllEnumValues<BrothMicrodilutionStandard>().Where(t => t != BrothMicrodilutionStandard.None))
+                        @foreach (var standard in Standards())
                         {
                             <option value="@standard">@EnumUtils.GetEnumDescription(standard)</option>
                         }

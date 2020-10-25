@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
+using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Mocks.MockServices
 {
@@ -11,9 +13,9 @@ namespace NRZMyk.Mocks.MockServices
         {
             return new List<MicStep>()
             {
-                new MicStep(){Title = "≤4", Value = 1},
-                new MicStep(){Title = "8", Value = 8},
-                new MicStep(){Title = "≥16", Value = 16}
+                new MicStep {Title = "≤4", Value = 1},
+                new MicStep {Title = "8", Value = 8},
+                new MicStep {Title = "≥16", Value = 16}
             };
         }
 
@@ -27,9 +29,16 @@ namespace NRZMyk.Mocks.MockServices
             return new List<AntifungalAgent> {AntifungalAgent.AmphotericinB};
         }
 
+        public IEnumerable<BrothMicrodilutionStandard> Standards(SpeciesTestingMethod testingMethod)
+        {
+            return EnumUtils.AllEnumValues<BrothMicrodilutionStandard>().Where(t => t != BrothMicrodilutionStandard.None);
+        }
+
         public bool IsMultiAgentSystem(SpeciesTestingMethod testingMethod)
         {
             return true;
         }
+
+
     }
 }
