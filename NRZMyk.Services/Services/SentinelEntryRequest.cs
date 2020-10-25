@@ -18,6 +18,7 @@ namespace NRZMyk.Services.Services
         [Required(ErrorMessage = "Das Feld Labornummer Einsender ist erforderlich")]
         public string SenderLaboratoryNumber { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Das Feld Material ist erforderlich")]
         public Material Material { get; set; }
 
         [OtherValue((int) Material.Other, nameof(Material))]
