@@ -9,6 +9,7 @@ using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Models;
 using NUnit.Framework;
 using NRZMyk.Services.Services;
+using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Services.Tests.Services
 {
@@ -25,13 +26,40 @@ namespace NRZMyk.Services.Tests.Services
         }
 
         [Test]
+        public void WhenStandardsNotConfigured_ReturnsAllValues()
+        {
+            var expectedStandards = EnumUtils.AllEnumValues<BrothMicrodilutionStandard>().ToList();
+            expectedStandards.Remove(BrothMicrodilutionStandard.None);
+            var sut = CreateSut(Options.Create(new BreakpointSettings()));
+
+            var standards = sut.Standards(SpeciesTestingMethod.ETest);
+
+            standards.Should().BeEquivalentTo(expectedStandards);
+        }
+
+        [Test]
         public void WhenConfiguredWithoutSteps_ReturnsEmptyList()
         {
-            var sut = CreateSut(Options.Create(new BreakpointSettings() {Breakpoint = new Breakpoint()}));
+            var sut = CreateSut(Options.Create(new BreakpointSettings {Breakpoint = new Breakpoint()}));
 
             var steps = sut.StepsByTestingMethodAndAgent(SpeciesTestingMethod.ETest, AntifungalAgent.Caspofungin);
             
             steps.Should().BeEmpty();
+        }
+
+        [Test]
+        public void WhenStandardConfigured_ReturnsCorrespondingValues()
+        {
+            var sut = CreateSut(Options.Create(new BreakpointSettings
+            {Breakpoint = new Breakpoint
+            {Standards = new Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>> {{
+                SpeciesTestingMethod.Vitek, new List<BrothMicrodilutionStandard> {BrothMicrodilutionStandard.Eucast}
+            }}}}));
+
+            var standards = sut.Standards(SpeciesTestingMethod.Vitek);
+
+            standards.Should().HaveCount(1);
+            standards.Should().OnlyContain(standard => standard ==BrothMicrodilutionStandard.Eucast);
         }
 
         [Test]
