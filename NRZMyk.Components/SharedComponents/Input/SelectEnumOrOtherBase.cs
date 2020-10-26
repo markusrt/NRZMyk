@@ -17,6 +17,7 @@ namespace NRZMyk.Components.SharedComponents.Input
         [Parameter] public string OtherValue { get; set; }  
         [Parameter] public EventCallback<string> OtherValueChanged { get; set; }  
         [Parameter] public Expression<Func<T>> ValidationFor { get; set; }
+        [Parameter] public Expression<Func<string>> ValidationForOther { get; set; }
         [Parameter] public bool ShowDefaultOption { get; set; } = true;
         [Parameter] public bool AddFormRow { get; set; } = true;
         [Parameter] public string SelectClass { get; set; } = "col-sm-6";
