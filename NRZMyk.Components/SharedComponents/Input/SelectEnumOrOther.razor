@@ -40,10 +40,7 @@
                         <option value="@item" />
                     }
                 </datalist>
-                @if (string.IsNullOrWhiteSpace(OtherValue))
-                {
-                    <div class="validation-message">Das Feld '@OtherLabel' ist erforderlich</div>
-                }
+                <ValidationMessage For="@ValidationForOther" />
             </div>
         }
     </div>
@@ -83,10 +80,7 @@ else
                     <option value="@item" />
                 }
             </datalist>
-            @if (string.IsNullOrWhiteSpace(OtherValue))
-            {
-                <div class="validation-message">Das Feld '@OtherLabel' ist erforderlich</div>
-            }
+            <ValidationMessage For="@ValidationForOther" />
         </div>
     }
 }

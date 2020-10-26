@@ -12,7 +12,7 @@ namespace NRZMyk.Services.Services
 
         public int? ClinicalBreakpointId { get; set; }
 
-        public float MinimumInhibitoryConcentration { get; set; }
+        public float? MinimumInhibitoryConcentration { get; set; }
 
         public Resistance Resistance { get; set; }
         

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Options;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Models;
+using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Services.Services
 {
@@ -14,6 +16,7 @@ namespace NRZMyk.Services.Services
         List<MicStep> StepsByTestingMethodAndAgent(SpeciesTestingMethod testingMethod, AntifungalAgent agent);
         IEnumerable<SpeciesTestingMethod> TestingMethods();
         IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod testingMethod);
+        IEnumerable<BrothMicrodilutionStandard> Standards(SpeciesTestingMethod testingMethod);
         bool IsMultiAgentSystem(SpeciesTestingMethod testingMethod);
     }
 
@@ -22,12 +25,15 @@ namespace NRZMyk.Services.Services
         private readonly ILogger<MicStepsServiceImpl> _logger;
         private readonly Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>> _micSteps;
         private readonly List<SpeciesTestingMethod> _multiAgentSystems;
+        private Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>> _standards;
 
         public MicStepsServiceImpl(IOptions<BreakpointSettings> config, ILogger<MicStepsServiceImpl> logger)
         {
             _logger = logger;
             _micSteps = config.Value?.Breakpoint?.MicSteps??new Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>>();
             _multiAgentSystems = config.Value?.Breakpoint?.MultiAgentSystems ?? new List<SpeciesTestingMethod>();
+            _standards = config.Value?.Breakpoint?.Standards ??
+                         new Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>>();
         }
 
         public List<MicStep> StepsByTestingMethodAndAgent(SpeciesTestingMethod testingMethod, AntifungalAgent agent)
@@ -54,6 +60,12 @@ namespace NRZMyk.Services.Services
         public IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod speciesTestingMethod)
         {
             return _micSteps[speciesTestingMethod].Keys;
+        }
+
+        public IEnumerable<BrothMicrodilutionStandard> Standards(SpeciesTestingMethod testingMethod)
+        {
+            _standards.TryGetValue(testingMethod, out var standards);
+            return standards ?? EnumUtils.AllEnumValues<BrothMicrodilutionStandard>().Where(t => t != BrothMicrodilutionStandard.None);
         }
 
         public bool IsMultiAgentSystem(SpeciesTestingMethod testingMethod)
