@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using FluentAssertions;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Validation;
@@ -47,8 +48,11 @@ namespace NRZMyk.Services.Tests.Validation
                 new AntimicrobialSensitivityTestRequest { MinimumInhibitoryConcentration = null },
                 new AntimicrobialSensitivityTestRequest { MinimumInhibitoryConcentration = 0.25f }
             };
+            var validationContext = new ValidationContext(sensitivityTests) {MemberName = "ValidatedProperty"};
+            var result = sut.GetValidationResult(sensitivityTests, validationContext);
 
-            sut.IsValid(sensitivityTests).Should().BeFalse();
+            result.MemberNames.Should().BeEquivalentTo(new List<string>{"ValidatedProperty"});
+            result.ErrorMessage.Should().NotBeEmpty();
         }
 
         private SensitivityTestAttribute CreateSut()
