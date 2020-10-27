@@ -127,6 +127,15 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             return applicableBreakpoints;
         }
 
+        internal string DuplicateClass(AntimicrobialSensitivityTestRequest sensitivityTest)
+        {
+            var isDuplicate = SentinelEntry.AntimicrobialSensitivityTests.Count(
+                s => s.AntifungalAgent == sensitivityTest.AntifungalAgent
+                     && s.Standard == sensitivityTest.Standard
+                     && s.TestingMethod == sensitivityTest.TestingMethod) > 1;
+            return isDuplicate ? "duplicate-sensitivity-test" : "";
+        }
+
         internal string ResistanceBadge(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
             Logger.LogInformation("Resistance update");

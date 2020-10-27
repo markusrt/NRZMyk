@@ -103,9 +103,9 @@ else
             @foreach (var sensitivityTest in RecalculateResistance())
             {
                 <div class="form-group row">
-                    <div class="col-sm-4 col-md-5 col-lg-4 col-xl-3">
+                    <div class="col-sm-4 col-md-5 col-lg-4 col-xl-3 @DuplicateClass(sensitivityTest)">
                         <p class="form-control-plaintext form-control-sm">
-                            <a class="btn btn-sm"><i class="oi oi-minus" @onclick="() => RemoveAntimicrobialSensitivityTest(sensitivityTest)"></i></a>
+                            <a class="btn btn-sm"><i class="oi oi-trash" @onclick="() => RemoveAntimicrobialSensitivityTest(sensitivityTest)"></i></a>
                             <b>@EnumUtils.GetEnumDescription(sensitivityTest.TestingMethod)</b> - @EnumUtils.GetEnumDescription(sensitivityTest.AntifungalAgent) -
                             <span class="badge badge-pill">
                                 @EnumUtils.GetEnumDescription(sensitivityTest.Standard)
