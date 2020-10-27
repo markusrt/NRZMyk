@@ -68,7 +68,7 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Kryo-Box"].ToString().Should().Match("2020-005");
             export.Rows[0]["Altersgruppe"].Should().Be("86-90");
             export.Rows[0]["Entnahmedatum"].ToString().Should().Match("??.??.????");
-            export.Rows[0]["Stationstyp"].Should().Be("NS");
+            export.Rows[0]["Stationstyp"].Should().Be("Normalstation");
             export.Rows[0]["Station"].Should().Be("anästhesiologisch");
             export.Rows[0]["Spezies"].Should().Be("Candida dubliniensis");
             export.Rows[0]["Material"].Should().Be("Blutkultur zentral - ZVK");

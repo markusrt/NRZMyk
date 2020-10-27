@@ -5,7 +5,7 @@ namespace NRZMyk.Services.Data.Entities
     public enum HospitalDepartmentType
     {
         [Description("unbekannt")] Unknown = 0,
-        [Description("ITS")] IntensiveCareUnit = 1,
-        [Description("NS")] NormalUnit = 2
+        [Description("Intensivstation")] IntensiveCareUnit = 1,
+        [Description("Normalstation")] NormalUnit = 2
     }
 }
