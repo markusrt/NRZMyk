@@ -202,3 +202,10 @@ img.logo-text {
     line-height: 2rem; /* Vertically center the text there */
     background-color: #f5f5f5;
 }
+
+.duplicate-sensitivity-test {
+    border: 0;
+    border-left: 10px;
+    border-style: solid;
+    border-color: #ffc107;
+}
