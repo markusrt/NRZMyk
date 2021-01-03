@@ -26,7 +26,6 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntries = sentinelEntries;
         }
 
-
         [Test]
         public void Ctor_DoesNotCrash()
         {
@@ -57,6 +56,7 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.IdentifiedSpecies = Species.CandidaDubliniensis;
             SentinelEntry.Material = Material.CentralBloodCultureCvc;
             SentinelEntry.SenderLaboratoryNumber = "LabNr. 123";
+            SentinelEntry.SpeciesIdentificationMethod = SpeciesIdentificationMethod.BBL;
             SentinelEntry.Year = 2020;
             SentinelEntry.YearlySequentialEntryNumber = 123;
             SentinelEntry.CryoBoxNumber = 5;
@@ -73,6 +73,7 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Spezies"].Should().Be("Candida dubliniensis");
             export.Rows[0]["Material"].Should().Be("Blutkultur zentral - ZVK");
             export.Rows[0]["Labnr. Einsender"].Should().Be("LabNr. 123");
+            export.Rows[0]["Methode Speziesidentifikation"].Should().Be("BBL Crystal (Becton-Dickinson)");
         }
 
         [Test]
