@@ -15,6 +15,8 @@ namespace NRZMyk.Services.Data.Entities
         CentralBloodCultureShaldon = 300,
         [Description("Blutkultur zentral - k.A.")]
         CentralBloodCultureOther = 400,
+        [Description("Blutkultur - ohne genauere Angabe")]
+        BloodCultureOther = 500,
         [Description("Andere")] Other = 10000
     }
 }
