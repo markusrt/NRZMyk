@@ -8,6 +8,7 @@ using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Export;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
+using NRZMyk.Services.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.SentinelEntries
@@ -19,10 +20,12 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         private const string XlsxContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
+        private readonly IProtectKeyToOrganizationResolver _organizationResolver;
 
-        public ExcelExport(IAsyncRepository<SentinelEntry> sentinelEntryRepository)
+        public ExcelExport(IAsyncRepository<SentinelEntry> sentinelEntryRepository, IProtectKeyToOrganizationResolver organizationResolver)
         {
             _sentinelEntryRepository = sentinelEntryRepository;
+            _organizationResolver = organizationResolver;
         }
 
         [HttpGet("api/sentinel-entries/export")]
@@ -34,7 +37,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         public async Task<IActionResult> DownloadExcel()
         {
             byte[] reportBytes;
-            var export = new SentinelEntryExportDefinition();
+            var export = new SentinelEntryExportDefinition(_organizationResolver);
             using(var package = ExcelUtils.CreateExcelPackage(export, await _sentinelEntryRepository.ListAllAsync()))
             {
                 reportBytes = package.GetAsByteArray();

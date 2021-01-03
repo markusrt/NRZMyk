@@ -4,6 +4,8 @@ using System.Linq;
 using FluentAssertions;
 using HaemophilusWeb.Tools;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Services;
+using NSubstitute;
 using NUnit.Framework;
 using Tynamix.ObjectFiller;
 
@@ -29,7 +31,7 @@ namespace NRZMyk.Services.Tests.Export
         [Test]
         public void Ctor_DoesNotCrash()
         {
-            var sut = CreateExportDefinition();
+            var sut = CreateExportDefinition(out _);
 
             sut.Should().NotBeNull();
         }
@@ -37,17 +39,17 @@ namespace NRZMyk.Services.Tests.Export
         [Test]
         public void DataTable_ContainsAllColumns()
         {
-            var sut = CreateExportDefinition();
+            var sut = CreateExportDefinition(out _);
 
             var export = sut.ToDataTable(SentinelEntries);
 
-            export.Columns.Count.Should().Be(11);
+            export.Columns.Count.Should().Be(12);
         }
 
         [Test]
         public void DataTable_ContainsValues()
         {
-            var sut = CreateExportDefinition();
+            var sut = CreateExportDefinition(out _);
 
             SentinelEntry.AgeGroup = AgeGroup.EightySixToNinety;
             SentinelEntry.SamplingDate = new DateTime(2005, 8, 31);
@@ -77,9 +79,37 @@ namespace NRZMyk.Services.Tests.Export
         }
 
         [Test]
+        public void DataTable_ContainsSender()
+        {
+            var sut = CreateExportDefinition(out var organizationResolver);
+
+            SentinelEntry.ProtectKey = "12345";
+            organizationResolver.ResolveOrganization("12345").Returns("Laboratory 1");
+
+            var export = sut.ToDataTable(SentinelEntries);
+
+            export.Rows[0]["Einsender"].Should().Be("Laboratory 1");
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        public void DataTable_ContainsUnknownSender(string organization)
+        {
+            var sut = CreateExportDefinition(out var organizationResolver);
+
+            SentinelEntry.ProtectKey = "12345";
+            organizationResolver.ResolveOrganization("12345").Returns(organization);
+
+            var export = sut.ToDataTable(SentinelEntries);
+
+            export.Rows[0]["Einsender"].Should().Be("Unbekannt");
+        }
+
+
+        [Test]
         public void DataTable_ContainsOtherValues()
         {
-            var sut = CreateExportDefinition();
+            var sut = CreateExportDefinition(out _);
 
             SentinelEntry.Material = Material.Other;
             SentinelEntry.OtherMaterial = "Some other material";
@@ -98,9 +128,10 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Station"].Should().Be("urologic");
         }
 
-        private SentinelEntryExportDefinition CreateExportDefinition()
+        private SentinelEntryExportDefinition CreateExportDefinition(out IProtectKeyToOrganizationResolver organizationResolver)
         {
-            return new SentinelEntryExportDefinition();
+            organizationResolver = Substitute.For<IProtectKeyToOrganizationResolver>();
+            return new SentinelEntryExportDefinition(organizationResolver);
         }
     }
 }
