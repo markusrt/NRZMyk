@@ -38,7 +38,7 @@ namespace NRZMyk.Services.ModelExtensions
         {
             return sentinelEntry.SpeciesIdentificationMethod == SpeciesIdentificationMethod.Pcr
                 ? $"{EnumUtils.GetEnumDescription(SpeciesIdentificationMethod.Pcr)}: {sentinelEntry.PcrDetails}"
-                : EnumUtils.GetEnumDescription(sentinelEntry.IdentifiedSpecies);
+                : EnumUtils.GetEnumDescription(sentinelEntry.SpeciesIdentificationMethod);
         }
     }
 }
