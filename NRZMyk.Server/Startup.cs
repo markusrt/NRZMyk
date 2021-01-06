@@ -72,6 +72,7 @@ namespace NRZMyk.Server
             services.AddSingleton<WeatherForecastService>();
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped<ISentinelEntryRepository, SentinelEntryRepository>();
+            services.AddScoped<IProtectKeyToOrganizationResolver, ProtectKeyToOrganizationResolver>();
 
             services.Configure<DatabaseSeedSettings>(Configuration);
             services.Configure<ApplicationSettings>(Configuration);
