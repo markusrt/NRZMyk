@@ -6,6 +6,7 @@ namespace NRZMyk.Services.Data.Entities
     {
         [Description("unbekannt")] Unknown = 0,
         [Description("Intensivstation")] IntensiveCareUnit = 1,
-        [Description("Normalstation")] NormalUnit = 2
+        [Description("Normalstation")] NormalUnit = 2,
+        [Description("ambulant")] Ambulant = 3
     }
 }
