@@ -53,7 +53,7 @@ namespace NRZMyk.Services.Data.Entities
         public ICollection<AntimicrobialSensitivityTest> AntimicrobialSensitivityTests { get; set; }
 
         [Display(Name = "Kryo-Box")]
-        public string CryoBox => $"{Year}-{CryoBoxNumber:000}";
+        public string CryoBox => $"SN-{CryoBoxNumber:0000}";
         
         [Display(Name = "Labornummer")]
         public string LaboratoryNumber => $"SN-{Year}-{YearlySequentialEntryNumber:0000}";
