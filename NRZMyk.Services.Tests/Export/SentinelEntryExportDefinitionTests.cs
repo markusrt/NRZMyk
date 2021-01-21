@@ -67,7 +67,7 @@ namespace NRZMyk.Services.Tests.Export
             var export = sut.ToDataTable(SentinelEntries);
 
             export.Rows[0]["Labornummer"].ToString().Should().Match("SN-2020-0123");
-            export.Rows[0]["Kryo-Box"].ToString().Should().Match("2020-005");
+            export.Rows[0]["Kryo-Box"].ToString().Should().Match("SN-0005");
             export.Rows[0]["Altersgruppe"].Should().Be("86-90");
             export.Rows[0]["Entnahmedatum"].ToString().Should().Match("??.??.????");
             export.Rows[0]["Stationstyp"].Should().Be("Normalstation");

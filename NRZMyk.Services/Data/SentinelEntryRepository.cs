@@ -40,12 +40,10 @@ namespace NRZMyk.Services.Data
 
         public void AssignNextCryoBoxNumber(SentinelEntry entry)
         {
-            var currentYear = DateTime.Now.Year;
-            entry.Year = currentYear;
-            var currentBoxNumber = _dbContext.SentinelEntries.Where(i => i.Year == currentYear)
+            var currentBoxNumber = _dbContext.SentinelEntries
                 .DefaultIfEmpty().Max(s => s == null ? 1 : s.CryoBoxNumber);
             var currentBoxSlot = _dbContext.SentinelEntries.Where(
-                    s =>  s.Year == currentYear && s.CryoBoxNumber == currentBoxNumber)
+                    s =>  s.CryoBoxNumber == currentBoxNumber)
                 .DefaultIfEmpty().Max(s => s == null ? 0 : s.CryoBoxSlot);
 
             var currentBoxFull = currentBoxSlot == _maxSize;
