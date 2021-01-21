@@ -92,12 +92,11 @@ namespace NRZMyk.Services.Tests.Data
                 
             entry.CryoBoxNumber.Should().Be(2);
             entry.CryoBoxSlot.Should().Be(1);
-            entry.CryoBox.Should().Be($"{DateTime.Now.Year}-002");
+            entry.CryoBox.Should().Be("SN-0002");
         }
 
-
         [Test]
-        public async Task WhenNoOnlyOldYearEntryExists_NewCryoBoxIsStarted()
+        public async Task WhenNoOnlyOldYearEntryExists_NoNewCryoBoxIsStarted()
         {
             var entry = _filler.Create();
             var entryTwoYearsAgo = _filler.Create();
@@ -109,11 +108,10 @@ namespace NRZMyk.Services.Tests.Data
 
             sut.AssignNextCryoBoxNumber(entry);
                 
-            entry.CryoBoxNumber.Should().Be(1);
-            entry.CryoBoxSlot.Should().Be(1);
-            entry.CryoBox.Should().Be($"{DateTime.Now.Year}-001");
+            entry.CryoBoxNumber.Should().Be(40);
+            entry.CryoBoxSlot.Should().Be(12);
+            entry.CryoBox.Should().Be("SN-0040");
         }
-
 
         [Test]
         public async Task WhenNoEntriesExist_CryoBoxAndSlotAreIncrementedAsExpectedDueToSpecificOptions()
