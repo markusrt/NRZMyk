@@ -9,6 +9,7 @@ using NRZMyk.Server.Controllers.Account;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
+using NRZMyk.Services.Services;
 using NRZMyk.Services.Specifications;
 using NSubstitute;
 using NUnit.Framework;
@@ -21,7 +22,7 @@ namespace NRZMyk.Server.Tests.Controllers.User
         public async Task WhenConnectedWithoutAssignedOrganization_ReturnsNewAuthenticatedUserAsGuest()
         {
             var user = new ClaimsPrincipal();
-            var sut = CreateSut(user, out var repository, out var mapper);
+            var sut = CreateSut(user, out var repository, out var mapper, out _);
             var mappedAccount = new RemoteAccount {DisplayName = "Jane Doe"};
             var storedAccount = new RemoteAccount {Id = 123, DisplayName = "Jane Doe"};
             mapper.Map<RemoteAccount>(user).Returns(mappedAccount);
@@ -36,12 +37,28 @@ namespace NRZMyk.Server.Tests.Controllers.User
             connectedAccount.IsGuest.Should().BeTrue();
         }
 
+        [Test]
+        public async Task WhenConnectedWithoutAssignedOrganization_SendsEmailNotification()
+        {
+            var user = new ClaimsPrincipal();
+            var sut = CreateSut(user, out var repository, out var mapper, out var emailNotificationService);
+            var mappedAccount = new RemoteAccount { DisplayName = "Jane Doe", City = "New York", Email = "jane.doe@doyouknowthedoes.com"};
+            var storedAccount = new RemoteAccount { Id = 123, DisplayName = "Jane Doe", City = "New York", Email = "jane.doe@doyouknowthedoes.com" };
+            mapper.Map<RemoteAccount>(user).Returns(mappedAccount);
+            repository.AddAsync(mappedAccount).Returns(storedAccount);
+
+            await sut.HandleAsync();
+
+            await emailNotificationService.Received(1)
+                .NotifyNewUserRegistered("Jane Doe", "jane.doe@doyouknowthedoes.com", "New York");
+        }
+
 
         [Test]
         public async Task WhenConnectedWithAssignedOrganization_ReturnsNewAuthenticatedUserAsUser()
         {
             var user = new ClaimsPrincipal();
-            var sut = CreateSut(user, out var repository, out var mapper);
+            var sut = CreateSut(user, out var repository, out var mapper, out _);
             var mappedAccount = new RemoteAccount {DisplayName = "Jane Doe"};
             var storedAccount = new RemoteAccount {Id = 123, DisplayName = "Jane Doe", OrganizationId = 12};
             mapper.Map<RemoteAccount>(user).Returns(mappedAccount);
@@ -59,7 +76,7 @@ namespace NRZMyk.Server.Tests.Controllers.User
         public async Task WhenConnected_UpdatesExistingUserDetails()
         {
             var user = new ClaimsPrincipal();
-            var sut = CreateSut(user, out var repository, out var mapper);
+            var sut = CreateSut(user, out var repository, out var mapper, out _);
             var mappedAccount = new RemoteAccount {DisplayName = "Jane Doe", Street = "Long Road 1000233", ObjectId = Guid.NewGuid()};
             var existingAccount = new RemoteAccount {Id = 123, DisplayName = "Jane Doe"};
             mapper.Map<RemoteAccount>(user).Returns(mappedAccount);
@@ -76,15 +93,16 @@ namespace NRZMyk.Server.Tests.Controllers.User
         }
 
         private static Connect CreateSut(ClaimsPrincipal user,
-            out IAsyncRepository<RemoteAccount> accountRepository, out IMapper map)
+            out IAsyncRepository<RemoteAccount> accountRepository, out IMapper map, out IEmailNotificationService emailNotificationService)
         {
             accountRepository = Substitute.For<IAsyncRepository<RemoteAccount>>();
             map = Substitute.For<IMapper>();
+            emailNotificationService = Substitute.For<IEmailNotificationService>();
             var httpContext = new DefaultHttpContext {User = user};
             httpContext.Request.Host = new HostString("localhost");
             httpContext.Request.Scheme = "http";
             httpContext.Request.Path = new PathString("/api/connect/user");
-            return new Connect(accountRepository, map)
+            return new Connect(accountRepository, map, emailNotificationService)
             {
                 ControllerContext = new ControllerContext
                 {

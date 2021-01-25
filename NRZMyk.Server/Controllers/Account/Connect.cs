@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
+using NRZMyk.Services.Services;
 using NRZMyk.Services.Specifications;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,11 +17,13 @@ namespace NRZMyk.Server.Controllers.Account
     {
         private readonly IAsyncRepository<RemoteAccount> _accountRepository;
         private readonly IMapper _mapper;
+        private readonly IEmailNotificationService _emailNotificationService;
 
-        public Connect(IAsyncRepository<RemoteAccount> accountRepository, IMapper mapper)
+        public Connect(IAsyncRepository<RemoteAccount> accountRepository, IMapper mapper, IEmailNotificationService emailNotificationService)
         {
             _accountRepository = accountRepository;
             _mapper = mapper;
+            _emailNotificationService = emailNotificationService;
         }
 
         [HttpGet("api/user/connect")]
@@ -37,6 +40,8 @@ namespace NRZMyk.Server.Controllers.Account
             if (storedAccount == null)
             {
                 storedAccount = await _accountRepository.AddAsync(connectingAccount);
+                await _emailNotificationService
+                    .NotifyNewUserRegistered(storedAccount.DisplayName, storedAccount.Email, storedAccount.City);
             }
             else
             {
