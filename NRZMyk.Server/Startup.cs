@@ -25,6 +25,8 @@ using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Specifications;
 using NRZMyk.Services.Utils;
+using SendGrid;
+using SendGrid.Extensions.DependencyInjection;
 
 namespace NRZMyk.Server
 {
@@ -74,10 +76,12 @@ namespace NRZMyk.Server
             services.AddScoped<ISentinelEntryRepository, SentinelEntryRepository>();
             services.AddScoped<IProtectKeyToOrganizationResolver, ProtectKeyToOrganizationResolver>();
 
+            services.AddScoped<IEmailNotificationService, EmailNotificationService>();
+            services.Configure<SendGridClientOptions>(Configuration.GetSection("SendGrid"));
+            services.AddSendGrid(options => { });
+
             services.Configure<DatabaseSeedSettings>(Configuration);
             services.Configure<ApplicationSettings>(Configuration);
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
