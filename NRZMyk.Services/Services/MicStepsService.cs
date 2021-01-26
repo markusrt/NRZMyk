@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +27,8 @@ namespace NRZMyk.Services.Services
         private readonly Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>> _micSteps;
         private readonly List<SpeciesTestingMethod> _multiAgentSystems;
         private Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>> _standards;
+
+     
 
         public MicStepsServiceImpl(IOptions<BreakpointSettings> config, ILogger<MicStepsServiceImpl> logger)
         {
@@ -59,7 +62,8 @@ namespace NRZMyk.Services.Services
 
         public IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod speciesTestingMethod)
         {
-            return _micSteps[speciesTestingMethod].Keys;
+            var antifungalAgents = _micSteps[speciesTestingMethod].Keys;
+            return antifungalAgents.ToImmutableSortedSet(new AntifungalAgentComparer());
         }
 
         public IEnumerable<BrothMicrodilutionStandard> Standards(SpeciesTestingMethod testingMethod)
