@@ -120,6 +120,17 @@ namespace NRZMyk.Services.Tests.Services
             antifungalAgents.Should().BeEquivalentTo(new List<AntifungalAgent>{AntifungalAgent.Fluconazole});
         }
 
+        [Test]
+        public void WhenConfiguredWithSteps_ReturnsAntifungalAgentsInPreferredOrder()
+        {
+            var sut = CreateSutWithSteps();
+
+            var antifungalAgents = sut.AntifungalAgents(SpeciesTestingMethod.ETest);
+            
+            antifungalAgents.Should().HaveCount(2);
+            antifungalAgents.First().Should().Be(AntifungalAgent.Caspofungin);
+        }
+
         private MicStepsServiceImpl CreateSutWithSteps()
         {
             var sut = CreateSut(Options.Create(new BreakpointSettings
@@ -130,14 +141,14 @@ namespace NRZMyk.Services.Tests.Services
                     {
                         [SpeciesTestingMethod.ETest] = new Dictionary<AntifungalAgent, List<MicStep>>
                         {
+                            [AntifungalAgent.Micafungin] = new List<MicStep>
+                            {
+                                new MicStep {Title = "<11", Value = 11},
+                            },
                             [AntifungalAgent.Caspofungin] = new List<MicStep>
                             {
                                 new MicStep {Title = "<10", Value = 10},
                                 new MicStep {Title = "20", Value = 20}
-                            },
-                            [AntifungalAgent.Micafungin] = new List<MicStep>
-                            {
-                                new MicStep {Title = "<11", Value = 11},
                             }
                         },
                         [SpeciesTestingMethod.Vitek] = new Dictionary<AntifungalAgent, List<MicStep>>
