@@ -95,17 +95,17 @@ else
                     </select>
                 </div>
                 <div class="col-sm-3 col-lg-3">
-                    <button type="button" id="addAntimicrobialSensitivityTest" class="btn btn-sm btn-outline-secondary" @onclick="AddAntimicrobialSensitivityTest">Neuer MHK Eintrag</button>
+                    <button type="button" id="addAntimicrobialSensitivityTest" class="btn btn-sm btn-outline-secondary" @onclick="AddAntimicrobialSensitivityTest">Neue MHK Einträge</button>
                 </div>
+                <div class="col-12"><span class="small">*einzelne MHK Einträge können mit <i class="oi oi-trash" /> gelöscht werden</span></div>
             </div>
-            
             <ValidationMessage For="() => SentinelEntry.AntimicrobialSensitivityTests"></ValidationMessage>
             @foreach (var sensitivityTest in RecalculateResistance())
             {
                 <div class="form-group row">
                     <div class="col-sm-4 col-md-5 col-lg-4 col-xl-3 @DuplicateClass(sensitivityTest)">
                         <p class="form-control-plaintext form-control-sm">
-                            <a class="btn btn-sm"><i class="oi oi-trash" @onclick="() => RemoveAntimicrobialSensitivityTest(sensitivityTest)"></i></a>
+                            <a class="btn btn-sm btn-delete" title="MHK Eintrag löschen"><i class="oi oi-trash" @onclick="() => RemoveAntimicrobialSensitivityTest(sensitivityTest)"></i></a>
                             <b>@EnumUtils.GetEnumDescription(sensitivityTest.TestingMethod)</b> - @EnumUtils.GetEnumDescription(sensitivityTest.AntifungalAgent) -
                             <span class="badge badge-pill">
                                 @EnumUtils.GetEnumDescription(sensitivityTest.Standard)
