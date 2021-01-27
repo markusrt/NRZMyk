@@ -105,7 +105,7 @@ else
                 <div class="form-group row">
                     <div class="col-sm-4 col-md-5 col-lg-4 col-xl-3 @DuplicateClass(sensitivityTest)">
                         <p class="form-control-plaintext form-control-sm">
-                            <a class="btn btn-sm btn-delete" title="MHK Eintrag löschen"><i class="oi oi-trash" @onclick="() => RemoveAntimicrobialSensitivityTest(sensitivityTest)"></i></a>
+                            <a class="btn btn-sm btn-delete" @onclick="() => RemoveAntimicrobialSensitivityTest(sensitivityTest)" title="MHK Eintrag löschen"><i class="oi oi-trash"></i></a>
                             <b>@EnumUtils.GetEnumDescription(sensitivityTest.TestingMethod)</b> - @EnumUtils.GetEnumDescription(sensitivityTest.AntifungalAgent) -
                             <span class="badge badge-pill">
                                 @EnumUtils.GetEnumDescription(sensitivityTest.Standard)
