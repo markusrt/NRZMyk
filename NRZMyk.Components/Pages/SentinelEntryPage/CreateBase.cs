@@ -198,9 +198,11 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             }
         }
 
-        protected IEnumerable<AntimicrobialSensitivityTestRequest> RecalculateResistance()
+        internal IEnumerable<AntimicrobialSensitivityTestRequest> RecalculateResistance()
         {
-            return SentinelEntry.AntimicrobialSensitivityTests;
+            return SentinelEntry.AntimicrobialSensitivityTests
+                .OrderBy(a => a.TestingMethod)
+                .ThenBy(a => a.AntifungalAgent, new AntifungalAgentComparer());
         }
 
         protected override async Task OnInitializedAsync()
