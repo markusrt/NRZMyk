@@ -183,6 +183,43 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             sensitivityTest.Resistance.Should().Be(Resistance.NotDetermined);
         }
 
+        [Test]
+        public void WhenSensitivityTestsAreAdded_ListIsSortedBasedOnTestingMethodAndAntifungalAgentGroups()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
+            var firstBreakpoint = sut.AllBreakpoints.First(b => 
+                !b.MicBreakpointResistent.HasValue && !b.MicBreakpointSusceptible.HasValue);
+
+            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(new AntimicrobialSensitivityTestRequest
+            {
+                ClinicalBreakpointId = firstBreakpoint.Id,
+                TestingMethod = SpeciesTestingMethod.ETest,
+                AntifungalAgent = AntifungalAgent.Fluorouracil
+            });
+            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(new AntimicrobialSensitivityTestRequest
+            {
+                ClinicalBreakpointId = firstBreakpoint.Id,
+                TestingMethod = SpeciesTestingMethod.ETest,
+                AntifungalAgent = AntifungalAgent.AmphotericinB
+            });
+            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(new AntimicrobialSensitivityTestRequest
+            {
+                ClinicalBreakpointId = firstBreakpoint.Id,
+                TestingMethod = SpeciesTestingMethod.Micronaut,
+                AntifungalAgent = AntifungalAgent.Fluconazole
+            });
+
+            var viewOrder = sut.RecalculateResistance().ToList();
+
+            viewOrder[0].TestingMethod.Should().Be(SpeciesTestingMethod.Micronaut);
+            viewOrder[1].TestingMethod.Should().Be(SpeciesTestingMethod.ETest);
+            viewOrder[1].AntifungalAgent.Should().Be(AntifungalAgent.AmphotericinB);
+            viewOrder[2].TestingMethod.Should().Be(SpeciesTestingMethod.ETest);
+            viewOrder[2].AntifungalAgent.Should().Be(AntifungalAgent.Fluorouracil);
+        }
+
+
         private static TestContext CreateContext()
         {
             var context = new TestContext();
