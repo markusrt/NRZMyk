@@ -104,7 +104,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [Test]
         public void WhenApplicableBreakpoints_OnlyValidOnesAreReturned()
         {
-            var sensitivityTest = new AntimicrobialSensitivityTestRequest()
+            var sensitivityTest = new AntimicrobialSensitivityTestRequest
             {
                 AntifungalAgent = AntifungalAgent.Micafungin,
                 Standard = BrothMicrodilutionStandard.Eucast
@@ -117,6 +117,23 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             breakpoints.Should().HaveCount(1);
             breakpoints.Should().OnlyContain(
                 b => b.AntifungalAgent == AntifungalAgent.Micafungin && b.Standard == BrothMicrodilutionStandard.Eucast);
+        }
+
+        [Test]
+        public void WhenNoApplicableBreakpoint_SensitivityIsSetToNotDetermined()
+        {
+            var sensitivityTest = new AntimicrobialSensitivityTestRequest
+            {
+                AntifungalAgent = AntifungalAgent.Fluorouracil,
+                Standard = BrothMicrodilutionStandard.Eucast,
+                Resistance = Resistance.Susceptible
+            };
+            var sut = _renderedComponent.Instance;
+            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaTropicalis;
+
+            var breakpoints = sut.ApplicableBreakpoints(sensitivityTest).ToList();
+
+            sensitivityTest.Resistance.Should().Be(Resistance.NotDetermined);
         }
 
         [TestCase(0.01f, "badge-danger", Resistance.Resistant)]

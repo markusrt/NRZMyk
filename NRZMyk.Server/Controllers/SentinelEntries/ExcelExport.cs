@@ -24,11 +24,13 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
         private readonly IProtectKeyToOrganizationResolver _organizationResolver;
+        private readonly MicStepsService _micStepsService;
 
-        public ExcelExport(IAsyncRepository<SentinelEntry> sentinelEntryRepository, IProtectKeyToOrganizationResolver organizationResolver)
+        public ExcelExport(IAsyncRepository<SentinelEntry> sentinelEntryRepository, IProtectKeyToOrganizationResolver organizationResolver, MicStepsService micStepsService)
         {
             _sentinelEntryRepository = sentinelEntryRepository;
             _organizationResolver = organizationResolver;
+            _micStepsService = micStepsService;
         }
 
         [HttpGet("api/sentinel-entries/export")]
@@ -41,7 +43,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         {
             byte[] reportBytes;
             var entriesExport = new SentinelEntryExportDefinition(_organizationResolver);
-            var testsExport = new AntimicrobialSensitivityTestExportDefinition();
+            var testsExport = new AntimicrobialSensitivityTestExportDefinition(_micStepsService);
             
             using(var package = new ExcelPackage())
             {

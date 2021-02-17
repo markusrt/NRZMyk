@@ -75,6 +75,7 @@ namespace NRZMyk.Server
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped<ISentinelEntryRepository, SentinelEntryRepository>();
             services.AddScoped<IProtectKeyToOrganizationResolver, ProtectKeyToOrganizationResolver>();
+            services.AddScoped<MicStepsService, MicStepsServiceImpl>();
 
             services.AddScoped<IEmailNotificationService, EmailNotificationService>();
             services.Configure<SendGridClientOptions>(Configuration.GetSection("SendGrid"));
@@ -82,6 +83,7 @@ namespace NRZMyk.Server
 
             services.Configure<DatabaseSeedSettings>(Configuration);
             services.Configure<ApplicationSettings>(Configuration);
+            services.Configure<BreakpointSettings>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
