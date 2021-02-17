@@ -6,6 +6,8 @@ using HaemophilusWeb.Tools;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Export;
 using NRZMyk.Services.Models;
+using NRZMyk.Services.Services;
+using NSubstitute;
 using NUnit.Framework;
 using Tynamix.ObjectFiller;
 
@@ -33,7 +35,7 @@ namespace NRZMyk.Services.Tests.Export
         [Test]
         public void Ctor_DoesNotThrow()
         {
-            var sut = CreateExportDefinition();
+            var sut = CreateExportDefinition(out _);
 
             sut.Should().NotBeNull();
         }
@@ -41,7 +43,7 @@ namespace NRZMyk.Services.Tests.Export
         [Test]
         public void DataTable_ContainsAllColumns()
         {
-            var sut = CreateExportDefinition();
+            var sut = CreateExportDefinition(out _);
 
             var export = sut.ToDataTable(AntimicrobialSensitivityTests);
 
@@ -51,7 +53,7 @@ namespace NRZMyk.Services.Tests.Export
         [Test]
         public void DataTable_ContainsValues()
         {
-            var sut = CreateExportDefinition();
+            var sut = CreateExportDefinition(out var micStepsService);
 
             AntimicrobialSensitivityTest.SentinelEntry.Id = 1234;
             AntimicrobialSensitivityTest.MinimumInhibitoryConcentration = 0.12f;
@@ -67,16 +69,46 @@ namespace NRZMyk.Services.Tests.Export
             var export = sut.ToDataTable(AntimicrobialSensitivityTests);
 
             export.Rows[0]["Sentinel Datensatz Id"].Should().Be(1234);
-            export.Rows[0]["MHK"].Should().Be(0.12f);
+            export.Rows[0]["MHK"].Should().Be("0,12");
             export.Rows[0]["Antimykotikum"].Should().Be("Itraconazol");
             export.Rows[0]["Test"].Should().Be("Mikrodilution");
             export.Rows[0]["Bewertung"].Should().Be("resistent");
             export.Rows[0]["Breakpoint"].Should().Be("Itraconazole - Candida albicans - v10.0");
         }
 
-        private AntimicrobialSensitivityTestExportDefinition CreateExportDefinition()
+        [Test]
+        public void DataTable_ShowsGreaterThanAndSmallerThanAccordingly()
         {
-            return new AntimicrobialSensitivityTestExportDefinition();
+            var sut = CreateExportDefinition(out var micStepsService);
+            micStepsService.StepsByTestingMethodAndAgent(SpeciesTestingMethod.YeastOne, AntifungalAgent.Anidulafungin)
+                .Returns(new List<MicStep>
+                {
+                    new MicStep {Title = ">8", Value = 8.001f}
+                });
+
+            AntimicrobialSensitivityTest.SentinelEntry.Id = 1234;
+            AntimicrobialSensitivityTest.MinimumInhibitoryConcentration = 8.001f;
+            AntimicrobialSensitivityTest.AntifungalAgent = AntifungalAgent.Anidulafungin;
+            AntimicrobialSensitivityTest.TestingMethod = SpeciesTestingMethod.YeastOne;
+            AntimicrobialSensitivityTest.Resistance = Resistance.Resistant;
+            AntimicrobialSensitivityTest.ClinicalBreakpoint = null;
+
+            var export = sut.ToDataTable(AntimicrobialSensitivityTests);
+
+            export.Rows[0]["Sentinel Datensatz Id"].Should().Be(1234);
+            export.Rows[0]["MHK"].Should().Be(">8");
+            export.Rows[0]["Antimykotikum"].Should().Be("Itraconazol");
+            export.Rows[0]["Test"].Should().Be("Mikrodilution");
+            export.Rows[0]["Bewertung"].Should().Be("resistent");
+            export.Rows[0]["Breakpoint"].Should().Be("Itraconazole - Candida albicans - v10.0");
+        }
+
+        private AntimicrobialSensitivityTestExportDefinition CreateExportDefinition(out MicStepsService micStepsService)
+        {
+            micStepsService = Substitute.For<MicStepsService>();
+            micStepsService.StepsByTestingMethodAndAgent(Arg.Any<SpeciesTestingMethod>(), Arg.Any<AntifungalAgent>())
+                .Returns(new List<MicStep>());
+            return new AntimicrobialSensitivityTestExportDefinition(micStepsService);
         }
     }
 
