@@ -43,7 +43,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             httpContext.Request.Scheme = "http";
             var identity = new ClaimsIdentity();
             httpContext.User = new ClaimsPrincipal(identity);
-            return new ExcelExport(repository, Substitute.For<IProtectKeyToOrganizationResolver>())
+            var micStepsService = Substitute.For<MicStepsService>();
+            micStepsService.StepsByTestingMethodAndAgent(Arg.Any<SpeciesTestingMethod>(), Arg.Any<AntifungalAgent>())
+                .Returns(new List<MicStep>());
+            return new ExcelExport(repository, Substitute.For<IProtectKeyToOrganizationResolver>(), micStepsService)
             {
                 ControllerContext = new ControllerContext
                 {
