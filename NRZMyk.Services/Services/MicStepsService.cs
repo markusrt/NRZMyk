@@ -28,8 +28,6 @@ namespace NRZMyk.Services.Services
         private readonly List<SpeciesTestingMethod> _multiAgentSystems;
         private Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>> _standards;
 
-     
-
         public MicStepsServiceImpl(IOptions<BreakpointSettings> config, ILogger<MicStepsServiceImpl> logger)
         {
             _logger = logger;

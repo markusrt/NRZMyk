@@ -124,6 +124,11 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             }
 
             Logger.LogInformation($"Found {applicableBreakpoints.Count} applicable breakpoints for {antifungalAgent} and {SentinelEntry.IdentifiedSpecies}");
+            
+            if (!applicableBreakpoints.Any())
+            {
+                sensitivityTest.Resistance = Resistance.NotDetermined;
+            }
             return applicableBreakpoints;
         }
 

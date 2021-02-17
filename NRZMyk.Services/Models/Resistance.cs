@@ -4,9 +4,9 @@ namespace NRZMyk.Services.Models
 {
     public enum Resistance
     {
-        [Description("sensibel")] Susceptible,
-        [Description("intermediär")] Intermediate,
-        [Description("resistent")] Resistant,
-        [Description("n.d.")] NotDetermined
+        [Description("sensibel")] Susceptible = 0,
+        [Description("intermediär")] Intermediate = 1,
+        [Description("resistent")] Resistant = 2,
+        [Description("n.d.")] NotDetermined = 3
     }
 }
