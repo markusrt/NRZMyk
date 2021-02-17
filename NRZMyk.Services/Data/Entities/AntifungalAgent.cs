@@ -12,7 +12,7 @@ namespace NRZMyk.Services.Data.Entities
         [Description("Fluconazol")]
         Fluconazole=400,
         [Description("5-FC")]
-        Flucytosine,
+        Flucytosine=401,
         [Description("5-FU")]
         Fluorouracil=500,
         [Description("Isavuconazol")]
