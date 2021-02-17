@@ -97,10 +97,6 @@ namespace NRZMyk.Services.Tests.Export
 
             export.Rows[0]["Sentinel Datensatz Id"].Should().Be(1234);
             export.Rows[0]["MHK"].Should().Be(">8");
-            export.Rows[0]["Antimykotikum"].Should().Be("Itraconazol");
-            export.Rows[0]["Test"].Should().Be("Mikrodilution");
-            export.Rows[0]["Bewertung"].Should().Be("resistent");
-            export.Rows[0]["Breakpoint"].Should().Be("Itraconazole - Candida albicans - v10.0");
         }
 
         private AntimicrobialSensitivityTestExportDefinition CreateExportDefinition(out MicStepsService micStepsService)
