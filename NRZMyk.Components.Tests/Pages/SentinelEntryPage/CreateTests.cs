@@ -131,15 +131,16 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             var sut = _renderedComponent.Instance;
             sut.SentinelEntry.IdentifiedSpecies = Species.CandidaTropicalis;
 
-            var breakpoints = sut.ApplicableBreakpoints(sensitivityTest).ToList();
+            sut.ApplicableBreakpoints(sensitivityTest);
 
             sensitivityTest.Resistance.Should().Be(Resistance.NotDetermined);
         }
 
         [TestCase(0.01f, "badge-danger", Resistance.Resistant)]
+        [TestCase(0f, "badge-warning", Resistance.Intermediate)]
         [TestCase(-0.01f, "badge-warning", Resistance.Intermediate)]
         [TestCase(-0.2f, "badge-success", Resistance.Susceptible)]
-        public void WhenCalculateResistanceBadge_UsesBreakpointValues(float deltaToResistance, string expectedBadge, Resistance expectedResistance)
+        public void WhenCalculateResistanceBadge_UsesBreakpointValuesWithEucastBoundaryConditions(float deltaToResistance, string expectedBadge, Resistance expectedResistance)
         {
             var sut = _renderedComponent.Instance;
             sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
@@ -152,6 +153,33 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             {
                 ClinicalBreakpointId = firstBreakpoint.Id,
                 MinimumInhibitoryConcentration = firstBreakpoint.MicBreakpointResistent.Value + deltaToResistance
+
+            };
+            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+
+            var badge = sut.ResistanceBadge(sensitivityTest);
+
+            badge.Should().Be(expectedBadge);
+            sensitivityTest.Resistance.Should().Be(expectedResistance);
+        }
+
+        [TestCase(0.01f, "badge-danger", Resistance.Resistant)]
+        [TestCase(0f, "badge-danger", Resistance.Resistant)]
+        [TestCase(-0.01f, "badge-warning", Resistance.Intermediate)]
+        [TestCase(-1.0f, "badge-success", Resistance.Susceptible)]
+        public void WhenCalculateResistanceBadge_UsesBreakpointValuesWithClsiBoundaryConditions(float deltaToResistance, string expectedBadge, Resistance expectedResistance)
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaGlabrata;
+            var breakpoint = sut.AllBreakpoints.Single(b => 
+                b.AntifungalAgent == AntifungalAgent.Caspofungin
+                && b.Species == Species.CandidaGlabrata
+                && b.Standard == BrothMicrodilutionStandard.Clsi
+                && b.Version == "M60 2019");
+            var sensitivityTest = new AntimicrobialSensitivityTestRequest
+            {
+                ClinicalBreakpointId = breakpoint.Id,
+                MinimumInhibitoryConcentration = breakpoint.MicBreakpointResistent.Value + deltaToResistance
 
             };
             sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);

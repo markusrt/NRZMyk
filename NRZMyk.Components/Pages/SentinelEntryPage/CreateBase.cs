@@ -141,6 +141,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             return isDuplicate ? "duplicate-sensitivity-test" : "";
         }
 
+        //TODO move resistance evaluation to a pure business logic class
         internal string ResistanceBadge(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
             Logger.LogInformation("Resistance update");
@@ -162,18 +163,38 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             Logger.LogInformation($"Found breakpoint for {sensitivityTest.TestingMethod}/{sensitivityTest.AntifungalAgent} where id is {sensitivityTest.ClinicalBreakpointId}: {breakpoint.Title}");
 
             var mic = sensitivityTest.MinimumInhibitoryConcentration;
-            if (mic > breakpoint.MicBreakpointResistent)
+            if (IsResistantAccordingToEucastDefinition(mic, breakpoint))
             {
                 sensitivityTest.Resistance = Resistance.Resistant;
                 return "badge-danger";
             }
-            if (mic <= breakpoint.MicBreakpointSusceptible)
+            if (IsResistantAccordingToClsiDefinition(mic, breakpoint))
+            {
+                sensitivityTest.Resistance = Resistance.Resistant;
+                return "badge-danger";
+            }
+            if (IsSusceptibleAccordingToBothDefinitions(mic, breakpoint))
             {
                 sensitivityTest.Resistance = Resistance.Susceptible;
                 return "badge-success";
             }
             sensitivityTest.Resistance = Resistance.Intermediate;
             return "badge-warning";
+        }
+
+        private static bool IsResistantAccordingToEucastDefinition(float? mic, ClinicalBreakpoint breakpoint)
+        {
+            return mic > breakpoint.MicBreakpointResistent && breakpoint.Standard == BrothMicrodilutionStandard.Eucast;
+        }
+
+        private static bool IsResistantAccordingToClsiDefinition(float? mic, ClinicalBreakpoint breakpoint)
+        {
+            return mic >= breakpoint.MicBreakpointResistent && breakpoint.Standard == BrothMicrodilutionStandard.Clsi;
+        }
+
+        private static bool IsSusceptibleAccordingToBothDefinitions(float? mic, ClinicalBreakpoint breakpoint)
+        {
+            return mic <= breakpoint.MicBreakpointSusceptible;
         }
 
         internal async Task SubmitClick()
