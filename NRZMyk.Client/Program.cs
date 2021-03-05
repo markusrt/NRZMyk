@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NRZMyk.Components;
 using NRZMyk.Services.Configuration;
+using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
 
 namespace NRZMyk.Client
@@ -43,7 +44,7 @@ namespace NRZMyk.Client
             builder.Services.AddTransient<SentinelEntryService, SentinelEntryServiceImpl>();
             builder.Services.AddTransient<IAccountService, AccountService>();
             builder.Services.AddTransient<ClinicalBreakpointService, ClinicalBreakpointServiceImpl>();
-            builder.Services.AddTransient<MicStepsService, MicStepsServiceImpl>();
+            builder.Services.AddTransient<IMicStepsService, MicStepsService>();
 
             builder.Services.Configure<BreakpointSettings>(options =>
             {

@@ -1,21 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Mocks.MockServices
 {
-    public class MockMicStepsService : MicStepsService
+    public class MockMicStepsService : IMicStepsService
     {
         public List<MicStep> StepsByTestingMethodAndAgent(SpeciesTestingMethod testingMethod, AntifungalAgent agent)
         {
             return new List<MicStep>()
             {
-                new MicStep {Title = "≤4", Value = 1},
+                new MicStep {Title = "≤4", Value = 4, LowerBoundary = true},
                 new MicStep {Title = "8", Value = 8},
-                new MicStep {Title = "≥16", Value = 16}
+                new MicStep {Title = "≥16", Value = 16, UpperBoundary = true}
             };
         }
 
