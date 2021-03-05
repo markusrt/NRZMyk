@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Utils;
@@ -30,7 +31,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         private SentinelEntryService SentinelEntryService { get; set; }
 
         [Inject]
-        protected MicStepsService MicStepsService { get; set; }
+        protected IMicStepsService MicStepsService { get; set; }
 
         [Inject]
         private ClinicalBreakpointService ClinicalBreakpointService { get; set; }
@@ -159,6 +160,20 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 sensitivityTest.Resistance = Resistance.NotDetermined;
                 return "badge-info";
             }
+
+            var selectedStep = MicStepsService.StepsByTestingMethodAndAgent(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent)
+                .FirstOrDefault(s => s.Value.Equals(sensitivityTest.MinimumInhibitoryConcentration));
+
+            if (selectedStep != null)
+            {
+                if (selectedStep.LowerBoundary && sensitivityTest.MinimumInhibitoryConcentration > breakpoint.MicBreakpointSusceptible
+                || selectedStep.UpperBoundary && sensitivityTest.MinimumInhibitoryConcentration < breakpoint.MicBreakpointResistent)
+                {
+                    sensitivityTest.Resistance = Resistance.NotEvaluable;
+                    return "badge-info";
+                }
+            }
+
 
             Logger.LogInformation($"Found breakpoint for {sensitivityTest.TestingMethod}/{sensitivityTest.AntifungalAgent} where id is {sensitivityTest.ClinicalBreakpointId}: {breakpoint.Title}");
 

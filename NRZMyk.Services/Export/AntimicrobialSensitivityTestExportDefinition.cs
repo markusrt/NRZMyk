@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Export;
+using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Utils;
 
@@ -10,9 +11,9 @@ namespace HaemophilusWeb.Tools
 {
     public class AntimicrobialSensitivityTestExportDefinition : ExportDefinition<AntimicrobialSensitivityTest>
     {
-        private readonly MicStepsService _micStepsService;
+        private readonly IMicStepsService _micStepsService;
 
-        public AntimicrobialSensitivityTestExportDefinition(MicStepsService micStepsService)
+        public AntimicrobialSensitivityTestExportDefinition(IMicStepsService micStepsService)
         {
             _micStepsService = micStepsService;
             AddField(m => m.SentinelEntry.Id, "Sentinel Datensatz Id");

@@ -7,6 +7,7 @@ namespace NRZMyk.Services.Models
         [Description("sensibel")] Susceptible = 0,
         [Description("intermediär")] Intermediate = 1,
         [Description("resistent")] Resistant = 2,
-        [Description("n.d.")] NotDetermined = 3
+        [Description("n.d.")] NotDetermined = 3,
+        [Description("n.b.")] NotEvaluable = 4
     }
 }
