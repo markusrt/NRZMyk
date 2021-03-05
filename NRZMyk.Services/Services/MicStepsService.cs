@@ -7,28 +7,20 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Services.Services
 {
-    public interface MicStepsService
+    public class MicStepsService : IMicStepsService
     {
-        List<MicStep> StepsByTestingMethodAndAgent(SpeciesTestingMethod testingMethod, AntifungalAgent agent);
-        IEnumerable<SpeciesTestingMethod> TestingMethods();
-        IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod testingMethod);
-        IEnumerable<BrothMicrodilutionStandard> Standards(SpeciesTestingMethod testingMethod);
-        bool IsMultiAgentSystem(SpeciesTestingMethod testingMethod);
-    }
-
-    public class MicStepsServiceImpl : MicStepsService
-    {
-        private readonly ILogger<MicStepsServiceImpl> _logger;
+        private readonly ILogger<MicStepsService> _logger;
         private readonly Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>> _micSteps;
         private readonly List<SpeciesTestingMethod> _multiAgentSystems;
         private Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>> _standards;
 
-        public MicStepsServiceImpl(IOptions<BreakpointSettings> config, ILogger<MicStepsServiceImpl> logger)
+        public MicStepsService(IOptions<BreakpointSettings> config, ILogger<MicStepsService> logger)
         {
             _logger = logger;
             _micSteps = config.Value?.Breakpoint?.MicSteps??new Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>>();
@@ -50,6 +42,8 @@ namespace NRZMyk.Services.Services
             }
             _logger.LogInformation($"Found {agentSteps.Count} MIC steps for {testingMethod}/{agent} found");
 
+            agentSteps.First().LowerBoundary = true;
+            agentSteps.Last().UpperBoundary = true;
             return agentSteps;
         }
 

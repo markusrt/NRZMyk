@@ -18,9 +18,14 @@ namespace NRZMyk.Mocks.MockServices
             var clinicalBreakpointJson = ReadBreakpointJson();
             foreach (var breakPoint in JsonConvert.DeserializeObject<IEnumerable<MockClinicalBreakPoint>>(clinicalBreakpointJson))
             {
-                breakPoint.OverwriteId(id++);
-                _repository.Add(breakPoint);
+                AddBreakpoint(id++, breakPoint);
             }
+        }
+
+        public void AddBreakpoint(int id, MockClinicalBreakPoint breakPoint)
+        {
+            breakPoint.OverwriteId(id++);
+            _repository.Add(breakPoint);
         }
 
         private string ReadBreakpointJson()
@@ -35,8 +40,8 @@ namespace NRZMyk.Mocks.MockServices
         {
             return Task.FromResult(_repository);
         }
-
-        private sealed class MockClinicalBreakPoint : ClinicalBreakpoint
+        
+        public sealed class MockClinicalBreakPoint : ClinicalBreakpoint
         {
             public void OverwriteId(int id)
             {

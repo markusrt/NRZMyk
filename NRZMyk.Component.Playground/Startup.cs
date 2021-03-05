@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NRZMyk.Mocks.MockServices;
 using NRZMyk.Services.Configuration;
+using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
 
 namespace NRZMyk.Components.Playground
@@ -35,7 +36,7 @@ namespace NRZMyk.Components.Playground
             services.AddSingleton<SentinelEntryService, MockSentinelEntryServiceImpl>();
             services.AddSingleton<IAccountService, MockAccountService>();
             services.AddSingleton<ClinicalBreakpointService, MockClinicalBreakpointServiceImpl>();
-            services.AddSingleton<MicStepsService, MicStepsServiceImpl>();
+            services.AddSingleton<IMicStepsService, MicStepsService>();
 
             services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
             services.AddScoped<SignOutSessionStateManager>();

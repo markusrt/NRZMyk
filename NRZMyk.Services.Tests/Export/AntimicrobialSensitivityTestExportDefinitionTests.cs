@@ -5,6 +5,7 @@ using FluentAssertions;
 using HaemophilusWeb.Tools;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Export;
+using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
 using NSubstitute;
@@ -99,9 +100,9 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["MHK"].Should().Be(">8");
         }
 
-        private AntimicrobialSensitivityTestExportDefinition CreateExportDefinition(out MicStepsService micStepsService)
+        private AntimicrobialSensitivityTestExportDefinition CreateExportDefinition(out IMicStepsService micStepsService)
         {
-            micStepsService = Substitute.For<MicStepsService>();
+            micStepsService = Substitute.For<IMicStepsService>();
             micStepsService.StepsByTestingMethodAndAgent(Arg.Any<SpeciesTestingMethod>(), Arg.Any<AntifungalAgent>())
                 .Returns(new List<MicStep>());
             return new AntimicrobialSensitivityTestExportDefinition(micStepsService);
