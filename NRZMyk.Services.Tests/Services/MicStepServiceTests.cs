@@ -13,7 +13,7 @@ using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Services.Tests.Services
 {
-    public class MicStepServiceImplTests
+    public class MicStepServiceTests
     {
         [Test]
         public void WhenNotConfigured_ReturnsEmptyList()
@@ -83,8 +83,8 @@ namespace NRZMyk.Services.Tests.Services
         {
             var expectedSteps = new List<MicStep>
             {
-                new MicStep {Title = "<10", Value = 10},
-                new MicStep {Title = "20", Value = 20}
+                new MicStep {Title = "<10", Value = 10, LowerBoundary = true},
+                new MicStep {Title = "20", Value = 20, UpperBoundary = true}
             };
             var sut = CreateSutWithSteps();
 
@@ -92,6 +92,28 @@ namespace NRZMyk.Services.Tests.Services
             
             steps.Should().HaveCount(2);
             steps.Should().BeEquivalentTo(expectedSteps);
+        }
+
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(5)]
+        public void WhenConfiguredWithSteps_FirstAndLastValueIsMarkedAccordingly(int numberOfEntries)
+        {
+            var sut = CreateSutWithSteps(numberOfEntries);
+
+            var steps = sut.StepsByTestingMethodAndAgent(SpeciesTestingMethod.Micronaut, AntifungalAgent.Anidulafungin);
+
+            steps.Should().HaveCount(numberOfEntries);
+            var firstStep = steps.First();
+            var lastStep = steps.Last();
+            var neitherFirstNorLast = steps.Where(s => s != firstStep && s != lastStep);
+            
+            if (numberOfEntries > 2)
+            {
+                neitherFirstNorLast.Should().OnlyContain(s => s.UpperBoundary == false && s.LowerBoundary == false);
+            }
+            firstStep.LowerBoundary.Should().BeTrue();
+            lastStep.UpperBoundary.Should().BeTrue();
         }
 
         [Test]
@@ -120,6 +142,7 @@ namespace NRZMyk.Services.Tests.Services
             antifungalAgents.Should().BeEquivalentTo(new List<AntifungalAgent>{AntifungalAgent.Fluconazole});
         }
 
+
         [Test]
         public void WhenConfiguredWithSteps_ReturnsAntifungalAgentsInPreferredOrder()
         {
@@ -131,9 +154,9 @@ namespace NRZMyk.Services.Tests.Services
             antifungalAgents.First().Should().Be(AntifungalAgent.Caspofungin);
         }
 
-        private MicStepsServiceImpl CreateSutWithSteps()
+        private MicStepsService CreateSutWithSteps(int microNautCount = 0)
         {
-            var sut = CreateSut(Options.Create(new BreakpointSettings
+            var options = Options.Create(new BreakpointSettings
             {
                 Breakpoint = new Breakpoint
                 {
@@ -162,13 +185,29 @@ namespace NRZMyk.Services.Tests.Services
                         }
                     }
                 }
-            }));
+            });
+            if (microNautCount > 0)
+            {
+                var micSteps = new List<MicStep>();
+                for (var i = 0; i < microNautCount; i++)
+                {
+                    micSteps.Add(new MicStep { Title = $"{i}", Value = i });
+                }
+                options.Value.Breakpoint.MicSteps[SpeciesTestingMethod.Micronaut] =
+                    new Dictionary<AntifungalAgent, List<MicStep>>
+                    {
+                        [AntifungalAgent.Anidulafungin] = micSteps
+                    };
+            }
+
+            var sut = CreateSut(options);
+            
             return sut;
         }
 
-        private MicStepsServiceImpl CreateSut(IOptions<BreakpointSettings> option)
+        private MicStepsService CreateSut(IOptions<BreakpointSettings> option)
         {
-            return new MicStepsServiceImpl(option, new NullLogger<MicStepsServiceImpl>());
+            return new MicStepsService(option, new NullLogger<MicStepsService>());
         }
     }
 }

@@ -24,9 +24,9 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
         private readonly IProtectKeyToOrganizationResolver _organizationResolver;
-        private readonly MicStepsService _micStepsService;
+        private readonly IMicStepsService _micStepsService;
 
-        public ExcelExport(IAsyncRepository<SentinelEntry> sentinelEntryRepository, IProtectKeyToOrganizationResolver organizationResolver, MicStepsService micStepsService)
+        public ExcelExport(IAsyncRepository<SentinelEntry> sentinelEntryRepository, IProtectKeyToOrganizationResolver organizationResolver, IMicStepsService micStepsService)
         {
             _sentinelEntryRepository = sentinelEntryRepository;
             _organizationResolver = organizationResolver;
