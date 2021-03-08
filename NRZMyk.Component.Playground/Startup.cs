@@ -35,7 +35,7 @@ namespace NRZMyk.Components.Playground
             services.AddSingleton<IApplicationInsights, NullApplicationInsights>();
             services.AddSingleton<SentinelEntryService, MockSentinelEntryServiceImpl>();
             services.AddSingleton<IAccountService, MockAccountService>();
-            services.AddSingleton<ClinicalBreakpointService, MockClinicalBreakpointServiceImpl>();
+            services.AddSingleton<IClinicalBreakpointService, MockClinicalBreakpointService>();
             services.AddSingleton<IMicStepsService, MicStepsService>();
 
             services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
