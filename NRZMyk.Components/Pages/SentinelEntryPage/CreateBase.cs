@@ -15,6 +15,8 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 {
     public class CreateBase : BlazorComponent
     {
+        private const float EucastExtraLowSusceptibleValueToAlwaysGetIntermediate = 0.001f;
+
         [Parameter]
         public int? Id { get; set; }
 
@@ -34,7 +36,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         protected IMicStepsService MicStepsService { get; set; }
 
         [Inject]
-        private ClinicalBreakpointService ClinicalBreakpointService { get; set; }
+        private IClinicalBreakpointService ClinicalBreakpointService { get; set; }
 
         public SentinelEntryRequest SentinelEntry { get; private set; }
 
@@ -155,7 +157,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 }
                 else
                 {
-                    Logger.LogInformation($"Breakpoints {breakpoint.Id} (resistent/suseptible) values are not complete ({breakpoint.MicBreakpointResistent}/{breakpoint.MicBreakpointSusceptible})");
+                    Logger.LogInformation($"Breakpoints {breakpoint.Id} (resistant/susceptible) values are not complete ({breakpoint.MicBreakpointResistent}/{breakpoint.MicBreakpointSusceptible})");
                 }
                 sensitivityTest.Resistance = Resistance.NotDetermined;
                 return "badge-info";
@@ -164,7 +166,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             var selectedStep = MicStepsService.StepsByTestingMethodAndAgent(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent)
                 .FirstOrDefault(s => s.Value.Equals(sensitivityTest.MinimumInhibitoryConcentration));
 
-            if (selectedStep != null)
+            if (selectedStep != null && Math.Abs(breakpoint.MicBreakpointSusceptible.Value - EucastExtraLowSusceptibleValueToAlwaysGetIntermediate) > 0.001f)
             {
                 if (selectedStep.LowerBoundary && sensitivityTest.MinimumInhibitoryConcentration > breakpoint.MicBreakpointSusceptible
                 || selectedStep.UpperBoundary && sensitivityTest.MinimumInhibitoryConcentration < breakpoint.MicBreakpointResistent)
