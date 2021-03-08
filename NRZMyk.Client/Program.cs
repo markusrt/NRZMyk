@@ -43,7 +43,7 @@ namespace NRZMyk.Client
 
             builder.Services.AddTransient<SentinelEntryService, SentinelEntryServiceImpl>();
             builder.Services.AddTransient<IAccountService, AccountService>();
-            builder.Services.AddTransient<ClinicalBreakpointService, ClinicalBreakpointServiceImpl>();
+            builder.Services.AddTransient<IClinicalBreakpointService, ClinicalBreakpointService>();
             builder.Services.AddTransient<IMicStepsService, MicStepsService>();
 
             builder.Services.Configure<BreakpointSettings>(options =>

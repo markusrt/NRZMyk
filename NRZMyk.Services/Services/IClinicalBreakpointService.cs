@@ -8,17 +8,17 @@ using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Services
 {
-    public interface ClinicalBreakpointService
+    public interface IClinicalBreakpointService
     {
         Task<List<ClinicalBreakpoint>> List();
     }
 
-    public class ClinicalBreakpointServiceImpl : ClinicalBreakpointService
+    public class ClinicalBreakpointService : IClinicalBreakpointService
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<ClinicalBreakpointServiceImpl> _logger;
+        private readonly ILogger<ClinicalBreakpointService> _logger;
 
-        public ClinicalBreakpointServiceImpl(HttpClient httpClient, ILogger<ClinicalBreakpointServiceImpl> logger)
+        public ClinicalBreakpointService(HttpClient httpClient, ILogger<ClinicalBreakpointService> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
