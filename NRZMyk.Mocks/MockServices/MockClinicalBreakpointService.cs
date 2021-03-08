@@ -8,11 +8,11 @@ using NRZMyk.Services.Services;
 
 namespace NRZMyk.Mocks.MockServices
 {
-    public class MockClinicalBreakpointServiceImpl : ClinicalBreakpointService
+    public class MockClinicalBreakpointService : IClinicalBreakpointService
     {
         private readonly List<ClinicalBreakpoint> _repository = new List<ClinicalBreakpoint>();
 
-        public MockClinicalBreakpointServiceImpl()
+        public MockClinicalBreakpointService()
         {
             var id = 1;
             var clinicalBreakpointJson = ReadBreakpointJson();

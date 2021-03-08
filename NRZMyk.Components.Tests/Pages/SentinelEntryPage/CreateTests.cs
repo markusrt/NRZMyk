@@ -25,19 +25,19 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
     {
         private TestContext _context;
         private IRenderedComponent<Create> _renderedComponent;
-        private MockClinicalBreakpointServiceImpl _mockClinicalBreakpointService;
+        private MockClinicalBreakpointService _mockClinicalBreakpointService;
         private MockMicStepsService _mockMicStepsService;
 
-        [OneTimeSetUp]
+        [SetUp]
         public void CreateComponent()
         {
-            _mockClinicalBreakpointService = new MockClinicalBreakpointServiceImpl();
+            _mockClinicalBreakpointService = new MockClinicalBreakpointService();
             _mockMicStepsService = new MockMicStepsService();
 
             var context = new TestContext();
             context.Services.AddAutoMapper(typeof(SentinelEntryService).Assembly);
             context.Services.AddSingleton<SentinelEntryService, MockSentinelEntryServiceImpl>();
-            context.Services.AddSingleton<ClinicalBreakpointService>(_mockClinicalBreakpointService);
+            context.Services.AddSingleton<IClinicalBreakpointService>(_mockClinicalBreakpointService);
             context.Services.AddSingleton<IMicStepsService>(_mockMicStepsService);
             context.Services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
             context.Services.AddScoped<SignOutSessionStateManager>();
@@ -46,7 +46,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             _renderedComponent = CreateSut(_context);
         }
 
-        [OneTimeTearDown]
+        [TearDown]
         public void DisposeContext()
         {
             _context.Dispose();
@@ -207,10 +207,10 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         public void WhenCalculateResistanceBadgeWithLowerBoundaryStillBiggerThenSusceptible_ResultsInNotEvaluable()
         {
             var sut = _renderedComponent.Instance;
-            var breakPoint = new MockClinicalBreakpointServiceImpl.MockClinicalBreakPoint()
+            var breakPoint = new MockClinicalBreakpointService.MockClinicalBreakPoint()
             {
                 AntifungalAgent = AntifungalAgent.Flucytosine,
-                MicBreakpointSusceptible = 0.001f,
+                MicBreakpointSusceptible = 0.01f,
                 MicBreakpointResistent = 100f,
                 Species = Species.CandidaParapsilosis,
             };
@@ -234,10 +234,10 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         public void WhenCalculateResistanceBadgeWithUpperBoundaryStillSmallerThenResistant_ResultsInNotEvaluable()
         {
             var sut = _renderedComponent.Instance;
-            var breakPoint = new MockClinicalBreakpointServiceImpl.MockClinicalBreakPoint()
+            var breakPoint = new MockClinicalBreakpointService.MockClinicalBreakPoint()
             {
                 AntifungalAgent = AntifungalAgent.Flucytosine,
-                MicBreakpointSusceptible = 0.001f,
+                MicBreakpointSusceptible = 0.01f,
                 MicBreakpointResistent = 100f,
                 Species = Species.CandidaParapsilosis,
             };
@@ -255,6 +255,33 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
             badge.Should().Be("badge-info");
             sensitivityTest.Resistance.Should().Be(Resistance.NotEvaluable);
+        }
+
+        [Test]
+        public void WhenCalculateResistanceBadgeWithLowerBoundaryBiggerThenSusceptibleButSusceptibleIsUnrealisticSmall_ResultIsIntermediate()
+        {
+            var sut = _renderedComponent.Instance;
+            var breakPoint = new MockClinicalBreakpointService.MockClinicalBreakPoint()
+            {
+                AntifungalAgent = AntifungalAgent.Flucytosine,
+                MicBreakpointSusceptible = 0.001f,
+                MicBreakpointResistent = 100f,
+                Species = Species.CandidaParapsilosis,
+            };
+            _mockClinicalBreakpointService.AddBreakpoint(100000, breakPoint);
+            var sensitivityTest = new AntimicrobialSensitivityTestRequest
+            {
+                ClinicalBreakpointId = 100000,
+                AntifungalAgent = AntifungalAgent.Flucytosine,
+                MinimumInhibitoryConcentration = _mockMicStepsService.StepsByTestingMethodAndAgent(SpeciesTestingMethod.Vitek, AntifungalAgent.Flucytosine).First().Value
+            };
+
+            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+
+            var badge = sut.ResistanceBadge(sensitivityTest);
+
+            badge.Should().Be("badge-warning");
+            sensitivityTest.Resistance.Should().Be(Resistance.Intermediate);
         }
 
         [Test]
