@@ -6,31 +6,36 @@
 @using NRZMyk.Services.Models
 @using NRZMyk.Services.Services
 @using NRZMyk.Services.Utils
-@inherits  CryoViewBase
+@inherits CryoViewBase
+
+@functions {
+   
+}
 
 <h1>Kryo Asservierung - Sentinel Daten</h1>
 
-@if (sentinelEntries == null)
+@if (SentinelEntries == null)
 {
     <p><em>Daten werden geladen...</em></p>
 }
 else
 {
-    <div class="form-group row">
-        <div class="col-sm-3">
-            Org Auswahl
-        </div>
-        <div class="offset-3 col-sm-6 text-right">
-            <AuthorizeView Roles=@nameof(Role.SuperUser)>
-                <Authorized>
-                    <ExportButton />
-                </Authorized>
-            </AuthorizeView>
-        </div>
-    </div>
+    <EditForm Model="SentinelEntries">
 
-    <table class="table table-striped table-hover table-sm">
-        <thead>
+        <div class="form-group row">
+            <div class="col-sm-3">
+                <InputSelectNumber class="form-control form-control-sm" @bind-Value="SelectedOrganization" @oninput="ReloadCatalogItems">
+                    <option>- Bitte Organisation auswählen -</option>
+                    @foreach (var organization in Organizations)
+                    {
+                        <option value="@organization.Id">@organization.Name</option>
+                    }
+                </InputSelectNumber>
+            </div>
+        </div>
+
+        <table class="table table-striped table-hover table-sm">
+            <thead>
             <tr>
                 <th>Sentinel Labornummer</th>
                 <th>Kryobox</th>
@@ -39,11 +44,12 @@ else
                 <th>Probennahme</th>
                 <th>Spezies</th>
                 <th>Asservierung</th>
+                <th>Kommentar</th>
                 <th></th>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in sentinelEntries)
+            </thead>
+            <tbody>
+            @foreach (var item in SentinelEntries)
             {
                 <tr>
                     <td>@item.LaboratoryNumber</td>
@@ -58,16 +64,23 @@ else
                     </td>
                     <td>@item.SpeciesOrOther()</td>
                     <td>TODO</td>
+                    <td><InputText class="form-control" @bind-Value="item.Remark" /></td>
                     <td>
-                        <a title="Asservieren" href="" @onclick="() => StoreClick(item.Id)" @onclick:preventDefault class="btn btn-success">
+                        <a title="Asservieren" href="" @onclick="() => StoreClick(item)" @onclick:preventDefault class="btn btn-sm btn-success">
                             <i class="oi oi-data-transfer-download"></i>
                         </a>
-                        <a title="Asservieren" href="" @onclick="() => StoreClick(item.Id)" @onclick:preventDefault class="btn btn-danger">
+                        <a title="Asservieren" href="" @onclick="() => StoreClick(item)" @onclick:preventDefault class="btn btn-sm btn-danger">
                             <i class="oi oi-data-transfer-upload"></i>
                         </a>
                     </td>
                 </tr>
             }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+        
+        @if (!SentinelEntries.Any())
+        {
+            <div><i>Zur gewählten Organisation wurden keine Einträge gefunden.</i></div>
+        }
+    </EditForm>
 }
