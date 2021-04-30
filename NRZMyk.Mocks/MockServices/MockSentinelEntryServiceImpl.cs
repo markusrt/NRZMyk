@@ -36,6 +36,7 @@ namespace NRZMyk.Mocks.MockServices
                 HospitalDepartment =  HospitalDepartment.Neurology,
                 SamplingDate = new DateTime(2020,5,1),
                 SenderLaboratoryNumber = "SLN-123456",
+                ProtectKey = "1",
                 AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>
                 {
                     new AntimicrobialSensitivityTest
@@ -66,6 +67,11 @@ namespace NRZMyk.Mocks.MockServices
         public Task<List<SentinelEntry>> ListPaged(int pageSize)
         {
             return Task.FromResult(_repository);
+        }
+
+        public Task<List<SentinelEntry>> ListByOrganization(int organizationId)
+        {
+            return Task.FromResult(_repository.Where(s => s.ProtectKey == organizationId.ToString()).ToList());
         }
 
         public Task<SentinelEntryRequest> GetById(int id)

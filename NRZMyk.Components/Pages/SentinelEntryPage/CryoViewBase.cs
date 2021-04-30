@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Services;
@@ -10,15 +11,28 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
     public class CryoViewBase : BlazorComponent
     {
         [Inject]
+        private IAccountService AccountService { get; set; }
+
+        [Inject]
         private SentinelEntryService SentinelEntryService { get; set; }
-        
-        protected List<SentinelEntry> sentinelEntries;
+
+        [Inject]
+        private ILogger<CryoViewBase> Logger { get; set; }
+
+        internal ICollection<Organization> Organizations { get; set; }
+
+        protected List<SentinelEntry> SentinelEntries { get; set; }
+
+        protected int SelectedOrganization { get; set; } = -1;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                sentinelEntries = await SentinelEntryService.ListPaged(50);
+                Logger.LogInformation("Now loading... /cryo-view/sentinel-entries");
+
+                SentinelEntries = await SentinelEntryService.ListByOrganization(SelectedOrganization);
+                Organizations = await AccountService.ListOrganizations();
 
                 await InvokeAsync(CallRequestRefresh);
             }
@@ -26,15 +40,15 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal async Task StoreClick(int id)
+        internal async Task StoreClick(SentinelEntry entry)
         {
             //Store
             await ReloadCatalogItems();
         }
 
-        private async Task ReloadCatalogItems()
+        internal async Task ReloadCatalogItems()
         {
-            sentinelEntries = await SentinelEntryService.ListPaged(50);
+            SentinelEntries = await SentinelEntryService.ListByOrganization(SelectedOrganization);
             StateHasChanged();
         }
     }

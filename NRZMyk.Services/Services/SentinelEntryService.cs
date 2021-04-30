@@ -13,6 +13,7 @@ namespace NRZMyk.Services.Services
     {
         Task<SentinelEntry> Create(SentinelEntryRequest request);
         Task<List<SentinelEntry>> ListPaged(int pageSize);
+        Task<List<SentinelEntry>> ListByOrganization(int organizationId);
         Task<SentinelEntryRequest> GetById(int id);
         Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
         Task<string> Export();
@@ -113,6 +114,11 @@ namespace NRZMyk.Services.Services
                 _logger.LogError(exception, "Failed to load paged sentinel entries from backend");
                 return new List<SentinelEntry>();
             }
+        }
+
+        public Task<List<SentinelEntry>> ListByOrganization(int organizationId)
+        {
+            return ListPaged(50);
         }
 
         public async Task<SentinelEntryRequest> GetById(int id)
