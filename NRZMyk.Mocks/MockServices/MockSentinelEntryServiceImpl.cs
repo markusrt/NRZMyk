@@ -87,6 +87,14 @@ namespace NRZMyk.Mocks.MockServices
             return Task.FromResult(entry);
         }
 
+        public Task<SentinelEntry> CryoArchive(CryoArchiveRequest request)
+        {
+            var entry = _repository.FirstOrDefault(e => e.Id == request.Id);
+            entry.CryoRemark = request.CryoRemark;
+            entry.CryoDate = request.CryoDate;
+            return Task.FromResult(entry);
+        }
+
         public async Task<string> Export()
         {
             await Task.Delay(2500);

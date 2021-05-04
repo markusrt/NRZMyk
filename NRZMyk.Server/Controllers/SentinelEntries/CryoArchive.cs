@@ -27,7 +27,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
 
         [HttpPut("api/sentinel-entries/cryo-archive")]
         [SwaggerOperation(
-            Summary = "Stores or releases aSentinel Entry from cryo storage",
+            Summary = "Store or releases a Sentinel Entry from cryo storage",
             OperationId = "sentinel-entries.cryo-archive",
             Tags = new[] { "SentinelEndpoints" })
         ]

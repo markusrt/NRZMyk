@@ -16,6 +16,7 @@ namespace NRZMyk.Services.Services
         Task<List<SentinelEntry>> ListByOrganization(int organizationId);
         Task<SentinelEntryRequest> GetById(int id);
         Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
+        Task<SentinelEntry> CryoArchive(CryoArchiveRequest request);
         Task<string> Export();
         Task<List<string>> Other(string other);
         Task Delete(int id);
@@ -58,6 +59,20 @@ namespace NRZMyk.Services.Services
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Failed to update sentinel entry");
+                throw;
+            }
+        }
+
+        public async Task<SentinelEntry> CryoArchive(CryoArchiveRequest request)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync("api/sentinel-entries", request);
+                return await response.Content.ReadFromJsonAsync<SentinelEntry>();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Failed to cryo archive sentinel entry");
                 throw;
             }
         }
