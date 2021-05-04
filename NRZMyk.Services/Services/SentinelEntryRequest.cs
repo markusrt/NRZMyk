@@ -44,7 +44,6 @@ namespace NRZMyk.Services.Services
         public string PcrDetails { get; set; }
 
         public AgeGroup AgeGroup { get; set; }
-
         
         public string Remark { get; set; }
 

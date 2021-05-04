@@ -30,21 +30,23 @@ namespace NRZMyk.Mocks.MockServices
             });
         }
 
-        public Task<ICollection<RemoteAccount>> ListAccounts()
+        public async Task<ICollection<RemoteAccount>> ListAccounts()
         {
-            return Task.FromResult((ICollection<RemoteAccount>)_accounts.ToList());
+            await Task.Delay(2000);
+            return _accounts.ToList();
         }
 
-        public Task<ICollection<Organization>> ListOrganizations()
+        public async Task<ICollection<Organization>> ListOrganizations()
         {
-            return Task.FromResult((ICollection<Organization>)_organization);
+            await Task.Delay(2000);
+            return _organization;
         }
 
-        public Task AssignToOrganizationAsync(ICollection<RemoteAccount> accounts)
+        public async Task AssignToOrganizationAsync(ICollection<RemoteAccount> accounts)
         {
+            await Task.Delay(1000);
             _accounts.Clear();
             _accounts.AddRange(accounts);
-            return Task.CompletedTask;
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
@@ -36,6 +37,7 @@ namespace NRZMyk.Mocks.MockServices
                 HospitalDepartment =  HospitalDepartment.Neurology,
                 SamplingDate = new DateTime(2020,5,1),
                 SenderLaboratoryNumber = "SLN-123456",
+                ProtectKey = "1",
                 AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>
                 {
                     new AntimicrobialSensitivityTest
@@ -68,6 +70,12 @@ namespace NRZMyk.Mocks.MockServices
             return Task.FromResult(_repository);
         }
 
+        public async Task<List<SentinelEntry>> ListByOrganization(int organizationId)
+        {
+            await Task.Delay(2000);
+            return _repository.Where(s => s.ProtectKey == organizationId.ToString()).ToList();
+        }
+
         public Task<SentinelEntryRequest> GetById(int id)
         {
             var entry = _repository.FirstOrDefault(e => e.Id == id);
@@ -79,6 +87,15 @@ namespace NRZMyk.Mocks.MockServices
             var entry = _repository.FirstOrDefault(e => e.Id == updateRequest.Id);
             _mapper.Map(updateRequest, entry);
             return Task.FromResult(entry);
+        }
+
+        public async Task<SentinelEntry> CryoArchive(CryoArchiveRequest request)
+        {
+            await Task.Delay(2000);
+            var entry = _repository.FirstOrDefault(e => e.Id == request.Id);
+            entry.CryoRemark = request.CryoRemark;
+            entry.CryoDate = request.CryoDate;
+            return entry;
         }
 
         public async Task<string> Export()

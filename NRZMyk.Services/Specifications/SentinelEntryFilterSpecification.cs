@@ -9,6 +9,7 @@ namespace NRZMyk.Services.Specifications
         public SentinelEntryFilterSpecification(string protectKey) : base(s => s.ProtectKey == protectKey)
         {
             ProtectKey = protectKey;
+            ApplyOrderByDescending(s => s.Id);
         }
     }
 }
