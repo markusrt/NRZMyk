@@ -67,7 +67,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync("api/sentinel-entries", request);
+                var response = await _httpClient.PutAsJsonAsync("api/sentinel-entries/cryo-archive", request);
                 return await response.Content.ReadFromJsonAsync<SentinelEntry>();
             }
             catch (Exception exception)
@@ -131,9 +131,17 @@ namespace NRZMyk.Services.Services
             }
         }
 
-        public Task<List<SentinelEntry>> ListByOrganization(int organizationId)
+        public async Task<List<SentinelEntry>> ListByOrganization(int organizationId)
         {
-            return ListPaged(50);
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<SentinelEntry>>($"api/sentinel-entries/organization/{organizationId}");
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, $"Failed to load sentinel entries by organization id '{organizationId}'");
+                return new List<SentinelEntry>();
+            }
         }
 
         public async Task<SentinelEntryRequest> GetById(int id)

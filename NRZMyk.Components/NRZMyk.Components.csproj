@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Watch Remove="Helpers\LoadState.cs" />
     <Watch Remove="Pages\SentinelEntryPage\CryoView.razor" />
     <Watch Remove="Pages\SentinelEntryPage\CryoViewBase.cs" />
   </ItemGroup>
