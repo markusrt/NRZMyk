@@ -19,7 +19,7 @@ namespace NRZMyk.Components.Helpers
 
         private void DoRefresh()
         {
-            StateHasChanged();
+            InvokeAsync(StateHasChanged);
         }
 
     }

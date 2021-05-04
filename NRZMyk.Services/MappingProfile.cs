@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 using NRZMyk.Services.Data.Entities;
-using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
 
-namespace NRZMyk.Server
+namespace NRZMyk.Services
 {
     public class MappingProfile : Profile
     {

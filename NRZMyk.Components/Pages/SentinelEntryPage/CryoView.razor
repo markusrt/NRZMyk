@@ -1,0 +1,116 @@
+﻿@namespace NRZMyk.Components.Pages.SentinelEntryPage
+@page "/cryo-view/sentinel-entries"
+@attribute [Authorize(Roles = nameof(Role.SuperUser))]
+@inject SentinelEntryService SentinelEntryService
+@using NRZMyk.Services.ModelExtensions
+@using NRZMyk.Services.Models
+@using NRZMyk.Services.Services
+@using NRZMyk.Components.Helpers
+
+@inherits CryoViewBase
+
+<h1>Kryo Asservierung - Sentinel Daten</h1>
+
+@if (SentinelEntries == null)
+{
+    <p><em>Daten werden geladen...</em></p>
+}
+else
+{
+    <EditForm Model="SentinelEntries">
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-2">Organisation</label>
+            <div class="col-sm-4">
+                <InputSelectNumber class="form-control" @bind-Value="SelectedOrganization">
+                    @foreach (var organization in Organizations)
+                        {
+                        <option value="@organization.Id">@organization.Name</option>
+                        }
+                </InputSelectNumber>
+
+            </div>
+            <div class="col-sm-3">
+                @if (LoadState  == LoadState.Loading)
+                {
+                    <button class="btn btn-primary" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Daten werden geladen...
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-primary" type="button" @onclick="@(async () => await LoadData())">
+                        Einsendungen laden
+                    </button>
+                }
+            </div>
+        </div>
+        @if (LoadState == LoadState.Loaded)
+        {
+            <table class="table table-striped table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>Sentinel Labornummer</th>
+                        <th>Kryobox</th>
+                        <th>Einsender Labornummer</th>
+                        <th>Material</th>
+                        <th>Probennahme</th>
+                        <th>Spezies</th>
+                        <th>Asservierung</th>
+                        <th>Kommentar</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in SentinelEntries)
+                    {
+                        <tr>
+                            <td>@item.LaboratoryNumber</td>
+                            <td>@item.CryoBox</td>
+                            <td>@item.SenderLaboratoryNumber</td>
+                            <td>@item.MaterialOrOther()</td>
+                            <td>
+                                @if (item.SamplingDate.HasValue)
+                                {
+                                    @item.SamplingDate.Value.ToShortDateString();
+                                }
+                            </td>
+                            <td>@item.SpeciesOrOther()</td>
+                            <td>@item.CryoDate?.ToShortDateString()</td>
+                            <td>
+                                @if (item.CryoDate.HasValue)
+                                {
+                                    @item.CryoRemark
+                                }
+                                else
+                                {
+                                    <InputText class="form-control form-control-sm" @bind-Value="item.CryoRemark" />
+                                }
+                            </td>
+                            <td>
+                                @if (item.CryoDate.HasValue)
+                                {
+                                    <a title="Aus Cryobox entfernen" href="" @onclick="() => ReleaseFromCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-danger">
+                                        <i class="oi oi-data-transfer-upload"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a title="In Cryobox einlagern" href="" @onclick="() => PutToCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-success">
+                                        <i class="oi oi-data-transfer-download"></i>
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (!SentinelEntries.Any())
+            {
+                <div><i>Zur gewählten Organisation wurden keine Einträge gefunden.</i></div>
+            }
+        }
+    </EditForm>
+}

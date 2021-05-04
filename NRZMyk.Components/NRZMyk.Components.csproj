@@ -29,6 +29,12 @@
     <Watch Include="..\**\*.scss" />
     <Watch Include="..\**\*.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Watch Remove="Helpers\LoadState.cs" />
+    <Watch Remove="Pages\SentinelEntryPage\CryoView.razor" />
+    <Watch Remove="Pages\SentinelEntryPage\CryoViewBase.cs" />
+  </ItemGroup>
   
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">

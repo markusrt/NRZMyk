@@ -59,5 +59,11 @@ namespace NRZMyk.Services.Data.Entities
         public string LaboratoryNumber => $"SN-{Year}-{YearlySequentialEntryNumber:0000}";
 
         public string ProtectKey { get; set; }
+
+        [Display(Name = "Kryo-Datum")]
+        public DateTime? CryoDate { get; set; }
+
+        [Display(Name = "Kryo-Kommentar")]
+        public string CryoRemark { get; set; }
     }
 }
