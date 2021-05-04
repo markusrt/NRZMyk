@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
@@ -69,9 +70,10 @@ namespace NRZMyk.Mocks.MockServices
             return Task.FromResult(_repository);
         }
 
-        public Task<List<SentinelEntry>> ListByOrganization(int organizationId)
+        public async Task<List<SentinelEntry>> ListByOrganization(int organizationId)
         {
-            return Task.FromResult(_repository.Where(s => s.ProtectKey == organizationId.ToString()).ToList());
+            await Task.Delay(2000);
+            return _repository.Where(s => s.ProtectKey == organizationId.ToString()).ToList();
         }
 
         public Task<SentinelEntryRequest> GetById(int id)
@@ -87,12 +89,13 @@ namespace NRZMyk.Mocks.MockServices
             return Task.FromResult(entry);
         }
 
-        public Task<SentinelEntry> CryoArchive(CryoArchiveRequest request)
+        public async Task<SentinelEntry> CryoArchive(CryoArchiveRequest request)
         {
+            await Task.Delay(2000);
             var entry = _repository.FirstOrDefault(e => e.Id == request.Id);
             entry.CryoRemark = request.CryoRemark;
             entry.CryoDate = request.CryoDate;
-            return Task.FromResult(entry);
+            return entry;
         }
 
         public async Task<string> Export()
