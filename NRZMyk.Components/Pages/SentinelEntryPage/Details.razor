@@ -1,0 +1,102 @@
+﻿@namespace NRZMyk.Components.Pages.SentinelEntryPage
+
+@using NRZMyk.Services.ModelExtensions
+@using NRZMyk.Services.Utils
+@inherits DetailsBase
+
+<h2>Detailansicht Einsendung</h2>
+
+
+@if (SentinelEntry == null)
+{
+    <p><em>Lade Datensatz...</em></p>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="alert alert-info" role="alert">
+                Die Probe wurde bereits eingesendet und am @SentinelEntry.CryoDate.Value.ToShortDateString() in einer Kryo-Box asserviert.
+                Eine nachträgliche Bearbeitung der Daten ist aus diesem Grund nicht mehr möglich.
+            </div>
+            <dl class="col-md-6 dl-horizontal">
+                <dt>
+                    Sentinel Labornummer
+                </dt>
+                <dd>
+                    @SentinelEntry.SenderLaboratoryNumber
+                </dd>
+                <dt>
+                    Kryo-Box
+                </dt>
+                <dd>
+                    @SentinelEntry.CryoBox
+                </dd>
+                <dt>
+                    Labornummer Einsender
+                </dt>
+                <dd>
+                    @SentinelEntry.SenderLaboratoryNumber
+                </dd>
+                @if (SentinelEntry.SamplingDate.HasValue)
+                {
+                    <dt>
+                        Probennahme
+                    </dt>
+                    <dd>
+                        @SentinelEntry.SamplingDate.Value.ToShortDateString()
+                    </dd>
+                }
+                <dt>
+                    Material
+                </dt>
+                <dd>
+                    @SentinelEntry.MaterialOrOther()
+                </dd>
+                <dt>
+                    Alter des Patienten
+                </dt>
+                <dd>
+                    @EnumUtils.GetEnumDescription(SentinelEntry.AgeGroup)
+                </dd>
+                <dt>
+                    Geschlecht
+                </dt>
+                <dd>
+                    @EnumUtils.GetEnumDescription(SentinelEntry.Gender)
+                </dd>
+                <dt>
+                    Station
+                </dt>
+                <dd>
+                    @EnumUtils.GetEnumDescription(SentinelEntry.HospitalDepartmentType) @SentinelEntry.HospitalDepartementOrOther()
+                </dd>
+                <dt>
+                    Spezies
+                </dt>
+                <dd>
+                    @SentinelEntry.SpeciesOrOther()
+                </dd>
+                <dt>
+                    Methode Speziesidentifikation
+                </dt>
+                <dd>
+                    @SentinelEntry.SpeciesIdentificationMethodWithPcrDetails()
+                </dd>
+                <dt>
+                    Anmerkungen
+                </dt>
+                <dd>
+                    @SentinelEntry.Remark
+                </dd>
+            </dl>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <a href="" @onclick="() => OnCloseClick.InvokeAsync(null)" @onclick:preventDefault class="btn btn-secondary">
+                    Zurück zur Liste
+                </a>
+            </div>
+        </div>
+    </div>
+}
