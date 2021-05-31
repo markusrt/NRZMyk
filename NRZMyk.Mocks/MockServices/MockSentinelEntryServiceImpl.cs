@@ -54,6 +54,18 @@ namespace NRZMyk.Mocks.MockServices
                     }
                 }
             });
+            _repository.Add(new SentinelEntry
+            {
+                Id = _id++,
+                AgeGroup = AgeGroup.ElevenToFifteen,
+                IdentifiedSpecies = Species.CandidaGuilliermondii,
+                Material = Material.CentralBloodCulturePort,
+                HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
+                HospitalDepartment = HospitalDepartment.Neurology,
+                SamplingDate = new DateTime(2020, 5, 1),
+                SenderLaboratoryNumber = "SLO-123456",
+                ProtectKey = "2"
+            });
         }
 
         public Task<SentinelEntry> Create(SentinelEntryRequest request)
@@ -73,7 +85,9 @@ namespace NRZMyk.Mocks.MockServices
         public async Task<List<SentinelEntry>> ListByOrganization(int organizationId)
         {
             await Task.Delay(2000);
-            return _repository.Where(s => s.ProtectKey == organizationId.ToString()).ToList();
+            return organizationId == -1
+                ? _repository.ToList()
+                : _repository.Where(s => s.ProtectKey == organizationId.ToString()).ToList();
         }
 
         public Task<SentinelEntryRequest> GetById(int id)

@@ -23,12 +23,12 @@ else
             <label class="col-form-label col-sm-2">Organisation</label>
             <div class="col-sm-4">
                 <InputSelectNumber class="form-control" @bind-Value="SelectedOrganization">
+                    <option value="-1">Alle Organisationen</option>
                     @foreach (var organization in Organizations)
-                        {
+                    {
                         <option value="@organization.Id">@organization.Name</option>
-                        }
+                    }
                 </InputSelectNumber>
-
             </div>
             <div class="col-sm-3">
                 @if (LoadState  == LoadState.Loading)
@@ -58,7 +58,7 @@ else
                         <th>Probennahme</th>
                         <th>Spezies</th>
                         <th>Asservierung</th>
-                        <th>Kommentar</th>
+                        <th>Zusätzliche Info</th>
                         <th></th>
                     </tr>
                 </thead>
