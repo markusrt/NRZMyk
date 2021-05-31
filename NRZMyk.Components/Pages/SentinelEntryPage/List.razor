@@ -50,7 +50,7 @@ else
             <tbody>
                 @foreach (var item in sentinelEntries)
                 {
-                    <tr @onclick="() => DetailsClick(item.Id)">
+                    <tr>
                         <td>@item.LaboratoryNumber</td>
                         <td>@item.MaterialOrOther()</td>
                         <td>@EnumUtils.GetEnumDescription(item.AgeGroup)</td>
@@ -65,9 +65,18 @@ else
                         <td>@item.SpeciesOrOther()</td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                                <a title="Eintrag bearbeiten" href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary">
-                                    <i class="oi oi-pencil"></i>
-                                </a>
+                                @if (item.CryoDate.HasValue)
+                                {
+                                    <a title="Eintrag ansehen" href="" @onclick="() => DetailsClick(item.Id)" @onclick:preventDefault class="btn btn-primary">
+                                        <i class="oi oi-eye"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a title="Eintrag bearbeiten" href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary">
+                                        <i class="oi oi-pencil"></i>
+                                    </a>
+                                }
 
                                 <a title="Eintrag löschen" href="" @onclick="() => DeleteClick(item.Id)" @onclick:preventDefault class="btn btn-danger">
                                     <i class="oi oi-trash"></i>
@@ -81,7 +90,7 @@ else
     }
     @if (showDetails)
     {
-        @*<Details Id="@selectedId" Brands="@catalogBrands" Types="@catalogTypes" OnCloseClick="CloseDetailsHandler" OnEditClick="EditDetailsHandler"></Details>*@
+        <Details Id="@selectedId" OnCloseClick="CloseDetailsHandler"></Details>
     }
 
     @if (showEdit)
@@ -124,7 +133,7 @@ else
     private void DetailsClick(int id)
     {
         selectedId = id;
-        //showDetails = true;
+        showDetails = true;
     }
 
     private void CreateClick()
@@ -149,14 +158,7 @@ else
         showDetails = false;
         await ReloadCatalogItems();
     }
-
-    private void EditDetailsHandler(int id)
-    {
-        showDetails = false;
-        selectedId = id;
-        showEdit = true;
-    }
-
+    
     private async Task CloseEditHandler(string action)
     {
         showEdit = false;

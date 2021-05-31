@@ -14,7 +14,7 @@ namespace NRZMyk.Services.Services
         Task<SentinelEntry> Create(SentinelEntryRequest request);
         Task<List<SentinelEntry>> ListPaged(int pageSize);
         Task<List<SentinelEntry>> ListByOrganization(int organizationId);
-        Task<SentinelEntryRequest> GetById(int id);
+        Task<SentinelEntry> GetById(int id);
         Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
         Task<SentinelEntry> CryoArchive(CryoArchiveRequest request);
         Task<string> Export();
@@ -144,12 +144,11 @@ namespace NRZMyk.Services.Services
             }
         }
 
-        public async Task<SentinelEntryRequest> GetById(int id)
+        public async Task<SentinelEntry> GetById(int id)
         {
             try
             {
-                var response = await _httpClient.GetFromJsonAsync<SentinelEntry>($"api/sentinel-entries/{id}");
-                return _mapper.Map<SentinelEntryRequest>(response);
+                return await _httpClient.GetFromJsonAsync<SentinelEntry>($"api/sentinel-entries/{id}");
             }
             catch (Exception exception)
             {

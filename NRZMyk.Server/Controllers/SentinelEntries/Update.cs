@@ -47,9 +47,15 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
 
             var existingItem = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(request.Id)));
+
             if (existingItem == null || existingItem.ProtectKey != organizationId)
             {
                 return NotFound();
+            }
+
+            if (existingItem.CryoDate.HasValue)
+            {
+                return Forbid();
             }
 
             //TODO make update a bit more intelligent, i.e. check if ids are same instead of deleting all...
