@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
+using Ardalis.Specification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
@@ -29,8 +30,10 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<List<SentinelEntry>>> HandleAsync([FromRoute] int organizationId)
         {
-            var items = await _sentinelEntryRepository.ListAsync(
-                new SentinelEntryFilterSpecification($"{organizationId}"));
+            var filter = organizationId == -1 
+                ? (ISpecification<SentinelEntry>) new AllSentinelEntriesFilterSpecification()
+                : new SentinelEntryFilterSpecification($"{organizationId}");
+            var items = await _sentinelEntryRepository.ListAsync(filter);
             return Ok(items);
         }
     }
