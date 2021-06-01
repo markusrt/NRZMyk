@@ -9,8 +9,6 @@ namespace NRZMyk.Services.Services
 {
     public class SentinelEntryRequest
     {
-        private static Func<SentinelEntryRequest, int> Value = request => (int) request.Material;
-
         public int Id { get; set; }
 
         public DateTime? SamplingDate { get; set; }

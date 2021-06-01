@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -91,6 +92,27 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
             okResult.Value.Should().Be(sentinelEntry);
         }
+
+        [Test]
+        public async Task WhenFoundButAlreadyArchived_DeniesAccess()
+        {
+            var sut = CreateSut(out var repository, out _, out _, "12");
+            var updateSentinelEntry = new SentinelEntryRequest { Id = 567 };
+            var sentinelEntry = new SentinelEntry
+            {
+                ProtectKey = "12",
+                CryoDate = new DateTime(2010,10,10),
+                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>()
+            };
+            repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
+                .Returns(Task.FromResult(sentinelEntry));
+
+            var action = await sut.HandleAsync(updateSentinelEntry);
+
+            action.Result.Should().BeOfType<ForbidResult>();
+            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>());
+        }
+
 
         private static Update CreateSut(out IAsyncRepository<SentinelEntry> sentinelEntryRepository,
             out IAsyncRepository<AntimicrobialSensitivityTest> sensitivityTestRepository, out IMapper map,
