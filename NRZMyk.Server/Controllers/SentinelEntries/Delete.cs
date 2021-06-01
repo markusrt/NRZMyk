@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,13 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
     public class Delete : BaseAsyncEndpoint<int, int>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
+        private readonly IAsyncRepository<AntimicrobialSensitivityTest> _sensitivityTestRepository;
 
-        public Delete(IAsyncRepository<SentinelEntry> sentinelEntryRepository)
+        public Delete(IAsyncRepository<SentinelEntry> sentinelEntryRepository,
+            IAsyncRepository<AntimicrobialSensitivityTest> sensitivityTestRepository)
         {
             _sentinelEntryRepository = sentinelEntryRepository;
+            _sensitivityTestRepository = sensitivityTestRepository;
         }
 
         [HttpDelete("api/sentinel-entries/{sentinelEntryId}")]
@@ -41,7 +45,18 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
                 return NotFound();
             }
 
+            if (sentinelEntry.CryoDate.HasValue)
+            {
+                return Forbid();
+            }
+
+            foreach (var sensitivityTest in sentinelEntry.AntimicrobialSensitivityTests.ToList())
+            {
+                //TODO isn't there a better way to cascade delete one-to-many?
+                await _sensitivityTestRepository.DeleteAsync(sensitivityTest);
+            }
             await _sentinelEntryRepository.DeleteAsync(sentinelEntry);
+            
             return Ok(sentinelEntry.Id);
         }
     }
