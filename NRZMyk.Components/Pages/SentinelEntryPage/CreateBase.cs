@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
@@ -37,6 +38,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         [Inject]
         private IClinicalBreakpointService ClinicalBreakpointService { get; set; }
+        
+        [Inject]
+        private IMapper Mapper { get; set; }
 
         public SentinelEntryRequest SentinelEntry { get; private set; }
 
@@ -259,7 +263,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
             if (Id.HasValue)
             {
-                SentinelEntry = await SentinelEntryService.GetById(Id.Value);
+                SentinelEntry = Mapper.Map<SentinelEntryRequest>(await SentinelEntryService.GetById(Id.Value));
             }
             else
             {

@@ -1,0 +1,1 @@
+UPDATE ClinicalBreakpoints SET MicBreakpointSusceptible=0.125  WHERE MicBreakpointSusceptible=0.12

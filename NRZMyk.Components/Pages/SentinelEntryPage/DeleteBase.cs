@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
@@ -15,6 +16,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         [Inject]
         private SentinelEntryService SentinelEntryService { get; set; }
 
+        [Inject]
+        private IMapper Mapper { get; set; }
+
         [Parameter]
         public int Id { get; set; }
 
@@ -29,14 +33,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         {
             Logger.LogInformation("Now loading... /Catalog/Delete/{Id}", Id);
 
-            SentinelEntry = await SentinelEntryService.GetById(Id);
+            SentinelEntry = Mapper.Map<SentinelEntryRequest>(await SentinelEntryService.GetById(Id));
 
             await base.OnInitializedAsync();
-        }
-
-        protected override Task OnAfterRenderAsync(bool firstRender)
-        {
-            return base.OnAfterRenderAsync(firstRender);
         }
 
         internal async Task DeleteClick()
