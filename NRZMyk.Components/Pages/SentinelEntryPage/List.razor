@@ -19,13 +19,13 @@ else
 {
     @if (!showCreate && !showDetails && !showEdit && !showDelete)
     {
-        <div class="form-group row">
+        <div class="mb-3 row">
             <div class="col-sm-3">
                 <button class="btn btn-primary" @onclick="@CreateClick">
                     Neu anlegen
                 </button>
             </div>
-            <div class="offset-3 col-sm-6 text-right">
+            <div class="offset-3 col-sm-6 text-end">
                 <AuthorizeView Roles=@nameof(Role.SuperUser)>
                     <Authorized>
                         <ExportButton />

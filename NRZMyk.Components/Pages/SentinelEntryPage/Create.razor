@@ -26,7 +26,7 @@ else
             <SelectEnum Label="Alter des Patienten" @bind-Value="SentinelEntry.AgeGroup" ValidationFor="() => SentinelEntry.AgeGroup" />
             <SelectEnum Label="Geschlecht" @bind-Value="SentinelEntry.Gender" ValidationFor="() => SentinelEntry.Gender" />
 
-            <div class="form-group row">
+            <div class="mb-3 row">
                 <label class="control-label col-sm-4">Probenentnahme</label>
                 <div class="col-sm-6">
                     <InputDate class="form-control" @bind-Value="SentinelEntry.SamplingDate" />
@@ -36,7 +36,7 @@ else
 
             <InputTextWithValidation FieldName="Labornummer Einsender" @bind-Value="SentinelEntry.SenderLaboratoryNumber" For="() => SentinelEntry.SenderLaboratoryNumber" />
 
-            <div class="form-group row">
+            <div class="mb-3 row">
                 <SelectEnum Label="Station" AddFormRow="false" SelectClass="col-sm-3"
                             @bind-Value="@SentinelEntry.HospitalDepartmentType" ValidationFor="() => SentinelEntry.HospitalDepartmentType" />
                 <SelectEnumOrOther AddFormRow="false" SelectClass="col-sm-3" Other="HospitalDepartment.Other" OtherLabel="Andere Abteilung"
@@ -53,7 +53,7 @@ else
                                @bind-OtherValue="@SentinelEntry.PcrDetails" @bind-Value="@SentinelEntry.SpeciesIdentificationMethod"
                                ValidationFor="() => SentinelEntry.SpeciesIdentificationMethod" ValidationForOther="() => SentinelEntry.PcrDetails"/>
 
-            <div class="form-group row">
+            <div class="mb-3 row">
                 <label class="col-form-label col-sm-4">Anmerkungen</label>
                 <div class="col-sm-6">
                     @if (SentinelEntry.SpeciesIdentificationMethod == SpeciesIdentificationMethod.Other)
@@ -66,7 +66,7 @@ else
             </div>
 
             <h3>Tests</h3>
-            <div class="form-group row">
+            <div class="mb-3 row">
                 <div class="col-sm-3 col-lg-2">
                     <select class="form-control form-control-sm" @bind="TestingMethod">
                         @foreach (var testingMethod in TestingMethods())
@@ -102,7 +102,7 @@ else
             <ValidationMessage For="() => SentinelEntry.AntimicrobialSensitivityTests"></ValidationMessage>
             @foreach (var sensitivityTest in RecalculateResistance())
             {
-                <div class="form-group row">
+                <div class="mb-3 row">
                     <div class="col-sm-4 col-md-5 col-lg-4 col-xl-3 @DuplicateClass(sensitivityTest)">
                         <p class="form-control-plaintext form-control-sm">
                             <a class="btn btn-sm btn-delete" @onclick="() => RemoveAntimicrobialSensitivityTest(sensitivityTest)" title="MHK Eintrag löschen"><i class="oi oi-trash"></i></a>
@@ -164,7 +164,7 @@ else
                 </div>
             }
 
-            <div class="form-group row">
+            <div class="mb-3 row">
                 <div class="col-sm-6">
                     <a href="" @onclick="() => OnCloseClick.InvokeAsync(null)" @onclick:preventDefault class="btn btn-secondary">
                         Abbrechen
