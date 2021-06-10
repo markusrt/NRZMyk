@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
     <VersionPrefix>1.0.$([System.DateTime]::UtcNow.ToString(`yyMM`)).$([System.DateTime]::UtcNow.ToString(`ddHH`))</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BlazorApplicationInsights" Version="0.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.0-*" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="3.2.1" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="5.0.0-*" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0-*" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0-*" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
