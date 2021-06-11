@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data.Entities;
