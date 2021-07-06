@@ -32,7 +32,7 @@ namespace NRZMyk.Client
             RedirectToBaseUrlOnCriticalException(builder);
 
             builder.Services.AddBlazorApplicationInsights();
-            builder.RootComponents.Add<App>("app");
+            builder.RootComponents.Add<App>("#app");
             builder.Services.AddHttpClient("NRZMyk.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
@@ -54,7 +54,7 @@ namespace NRZMyk.Client
             builder.Services.AddMsalAuthentication(options =>
             {
                 builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
-                options.ProviderOptions.DefaultAccessTokenScopes.Add("https://nrcmycosis.onmicrosoft.com/e7562337-a4df-40c3-a8a1-7cc33d6bc193/API.Access");
+                options.ProviderOptions.DefaultAccessTokenScopes.Add("https://nrcmycosis.onmicrosoft.com/nrzmyk-client/API.Access");
             }).AddAccountClaimsPrincipalFactory<RemoteAuthenticationState, RemoteUserAccount,
                 CustomUserFactory>();
 
