@@ -10,7 +10,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.Account
 {
-    [Authorize(Roles = nameof(Role.Admin))]
+    [Authorize(Roles = nameof(Role.SuperUser))]
     public class List : BaseAsyncEndpoint<List<RemoteAccount>>
     {
         private readonly IAsyncRepository<Organization> _organizationRepository;
