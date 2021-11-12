@@ -26,6 +26,21 @@ namespace NRZMyk.Services.Tests.Utils
         }
 
         [Test]
+        public void WhenExtensionFlagClaimIsPresent_RolesAreAdded1()
+        {
+            var claims = new Dictionary<string, string>
+            {
+                {"extension_Role", "6"}
+            };
+            var identity = new ClaimsIdentity(claims.Select(c => new Claim(c.Key, c.Value)));
+
+            identity.AddRolesFromExtensionClaim();
+
+            identity.HasClaim(ClaimTypes.Role, "SuperUser").Should().BeTrue();
+            identity.HasClaim(ClaimTypes.Role, "User").Should().BeTrue();
+        }
+
+        [Test]
         public void WhenExtensionSingleClaimIsPresent_RoleIsAdded()
         {
             var claims = new Dictionary<string, string>
