@@ -37,7 +37,7 @@ namespace HaemophilusWeb.Tools
         {
             var breakpoint = test.ClinicalBreakpoint;
             return breakpoint == null
-                ? null //Kein Breakpoint für Antimykotikum "5-FC" und Spezies "Candida albicans" verfügbar.
+                ? null
                 : $"{breakpoint.AntifungalAgentDetails} - {EnumUtils.GetEnumDescription(breakpoint.Species)} - v{breakpoint.Version}";;
         }
     }
