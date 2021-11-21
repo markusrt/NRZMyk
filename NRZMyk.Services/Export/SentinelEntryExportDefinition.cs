@@ -19,6 +19,7 @@ namespace HaemophilusWeb.Tools
             AddField(s => ExportToString(s.SenderLaboratoryNumber));
             AddField(s => ToReportFormat(s.SamplingDate));
             AddField(s => ExportToString(s.AgeGroup));
+            AddField(s => ExportToString(s.Gender));
             AddField(s => ExportToString(s.HospitalDepartmentType));
             AddField(s => s.HospitalDepartementOrOther(), "Station");
             AddField(s => s.MaterialOrOther(), "Material");
