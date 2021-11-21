@@ -15,7 +15,6 @@ using NRZMyk.Services.Specifications;
 using NSubstitute;
 using NUnit.Framework;
 using Tynamix.ObjectFiller;
-using ClaimTypes = NRZMyk.Services.Models.ClaimTypes;
 
 namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
 {

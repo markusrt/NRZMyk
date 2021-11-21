@@ -43,7 +43,7 @@ namespace NRZMyk.Services.Tests.Export
 
             var export = sut.ToDataTable(SentinelEntries);
 
-            export.Columns.Count.Should().Be(12);
+            export.Columns.Count.Should().Be(13);
         }
 
         [Test]
@@ -119,6 +119,7 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.PcrDetails = "Details";
             SentinelEntry.HospitalDepartment = HospitalDepartment.Other;
             SentinelEntry.OtherHospitalDepartment = "urologic";
+            SentinelEntry.Gender = Gender.Female;
             
             var export = sut.ToDataTable(SentinelEntries);
 
@@ -126,6 +127,7 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Spezies"].Should().Be("Candida fructus");
             export.Rows[0]["Methode Speziesidentifikation"].Should().Be("PCR: Details");
             export.Rows[0]["Station"].Should().Be("urologic");
+            export.Rows[0]["Geschlecht"].Should().Be("weiblich");
         }
 
         private SentinelEntryExportDefinition CreateExportDefinition(out IProtectKeyToOrganizationResolver organizationResolver)
