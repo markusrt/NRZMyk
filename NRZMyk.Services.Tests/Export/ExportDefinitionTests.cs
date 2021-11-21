@@ -99,12 +99,4 @@ namespace NRZMyk.Services.Tests.Export
             return new ExportDefinition<Person>();
         }
     }
-
-    internal class Person
-    {
-        public string Name { get; set; }
-        public DateTime BirthDate { get; set; }
-        public int HeightInCentimeters { get; set; }
-        public FileAccess AccessLevel { get; set; }
-    }
 }

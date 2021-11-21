@@ -10,15 +10,17 @@ namespace NRZMyk.Services.Export
         {
             var worksheet = package.Workbook.Worksheets.Add(title);
             var dataTable = exportDefinition.ToDataTable(entries);
+            var rowCount = dataTable.Rows.Count + 1;
+            var columnCount = dataTable.Columns.Count;
 
             worksheet.Cells["A1"].LoadFromDataTable(dataTable, true);
-           
-            var tbl = worksheet.Tables.Add(new ExcelAddressBase(1, 1, dataTable.Rows.Count +1,  dataTable.Columns.Count), title.Replace(" ", "_"));
+
+            var tbl = worksheet.Tables.Add(new ExcelAddressBase(1, 1, rowCount,  columnCount), title.Replace(" ", "_"));
             tbl.ShowHeader = true;
             tbl.TableStyle = TableStyles.Light1;
             tbl.ShowTotal = false;
             
-            worksheet.Cells[1, 1, entries.Count, 11].AutoFitColumns();
+            worksheet.Cells[1, 1, rowCount, columnCount].AutoFitColumns();
         }
     }
 }
