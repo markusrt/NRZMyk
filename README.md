@@ -30,12 +30,18 @@ to setup client and server apps according to this documentation:
 
 ### Server App
 
-Configure the following environment variables for the server project:
+Configure the following secretsthe server project:
 
-- `AzureAdB2C__Domain`: Your ADB2C domain
-- `AzureAd__TenantId`: Your tenant ID
-- `AzureAdB2C__ClientId`: Your server app client ID
-- `AzureAdB2C__SignUpSignInPolicyId`: Your signin policy name
+```shell
+dotnet user-secrets set "AzureAdB2C:Domain" "Your ADB2C domain"
+dotnet user-secrets set "AzureAdB2C:ClientId" "Your server app client ID"
+dotnet user-secrets set "AzureAdB2C:SignUpSignInPolicyId" "Your signin policy name"
+dotnet user-secrets set "APPINSIGHTS:INSTRUMENTATIONKEY": "Your application insights key"
+dotnet user-secrets set "Application:SendGridSenderEmail": "Address used to send messages to other users"
+dotnet user-secrets set "Application:SendGridDynamicTemplateId": "Sendgrid dynamic template id"
+dotnet user-secrets set "Application:AdministratorEmail": "Address of admin to receive registration requests"
+dotnet user-secrets set "SendGrid:ApiKey" "Sendgrid API key"
+```
 
 See also `appsettings.json` in server project.
 
@@ -54,15 +60,20 @@ Roles are currently supported by adding a custom attribute to the ADB2C users.
 
 Flag based authentication on client side is still WIP.
 
-### Deployment setup
-
-Make sure above mentioned environment variables are also set correctly in your deployment environment
-
 ### Base tools to install
 
 ```
 dotnet tool install --global dotnet-ef
 ```
+
+## Deployment setup
+
+Make sure above mentioned secrets are also set correctly in your deployment environment. Usually this 
+can be done via environment variables:
+
+- `AzureAdB2C__Domain=contoso.onmicrosoft.com`
+- `AzureAdB2C__ClientId=acc6f10a-484d-4e56-a0fa-1536d7b2df0b
+- *etc...*
 
 ## Development tasks
 
