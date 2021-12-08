@@ -24,6 +24,8 @@ namespace NRZMyk.Services.Tests.Export
             }
         };
 
+        private ExcelPackage _sut;
+
         [OneTimeSetUp]
         public void SetupExportDefinition()
         {
@@ -32,25 +34,33 @@ namespace NRZMyk.Services.Tests.Export
             _exportDefinition.AddField(person => person.Name);
         }
 
+        [SetUp]
+        public void Setup()
+        {
+            _sut = new ExcelPackage();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _sut.Dispose();
+        }
+
         [Test]
         public void AddSheet_AddsTable()
         {
-            var package = new ExcelPackage();
+            _sut.AddSheet("Title", _exportDefinition, _data);
 
-            package.AddSheet("Title", _exportDefinition, _data);
-
-            package.Workbook.Worksheets.Should().HaveCount(1);
-            package.Workbook.Worksheets[0].Tables.Should().HaveCount(1);
+            _sut.Workbook.Worksheets.Should().HaveCount(1);
+            _sut.Workbook.Worksheets[0].Tables.Should().HaveCount(1);
         }
 
         [Test]
         public void AddSheet_SetsTableProperties()
         {
-            var package = new ExcelPackage();
+            _sut.AddSheet("My Title", _exportDefinition, _data);
 
-            package.AddSheet("My Title", _exportDefinition, _data);
-
-            var table = package.Workbook.Worksheets[0].Tables[0];
+            var table = _sut.Workbook.Worksheets[0].Tables[0];
             table.ShowHeader.Should().BeTrue();
             table.ShowTotal.Should().BeFalse();
             table.TableStyle.Should().Be(TableStyles.Light1);
