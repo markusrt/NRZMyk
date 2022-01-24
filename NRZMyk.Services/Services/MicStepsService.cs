@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -22,11 +23,15 @@ namespace NRZMyk.Services.Services
 
         public MicStepsService(IOptions<BreakpointSettings> config, ILogger<MicStepsService> logger)
         {
+            logger.LogInformation($"Entering constructor: {DateTime.Now}");
+            
             _logger = logger;
             _micSteps = config.Value?.Breakpoint?.MicSteps??new Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>>();
             _multiAgentSystems = config.Value?.Breakpoint?.MultiAgentSystems ?? new List<SpeciesTestingMethod>();
             _standards = config.Value?.Breakpoint?.Standards ??
                          new Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>>();
+            
+            logger.LogInformation($"Exiting constructor: {DateTime.Now}");
         }
 
         public List<MicStep> StepsByTestingMethodAndAgent(SpeciesTestingMethod testingMethod, AntifungalAgent agent)

@@ -3,28 +3,29 @@
 
 <ApplicationInsightsComponent />
 
-<div class="sidebar">
-    <NavMenu />
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-1 auth">
+            <div class="col-md-3">
+                <img class="logo-text" src="/images/logo-sentinel-text.svg" />
+            </div>
+            <div class="col-md-9 text-end">
+                <div><LoginDisplay /></div>
+                <div><a href="https://github.com/markusrt/NRZMyk/issues/new" aria-label="Fehler melden" rel="noopener" target="_blank"><span class="oi oi-bug"></span></a></div>
+            </div>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+    <footer class="footer">
+        <div class="container float-end">
+            <span class="float-end text-muted">©2020-@DateTime.Now.Year NRZMyk – All Rights Reserved - v.@Assembly.GetExecutingAssembly().GetName().Version.ToString()</span>
+        </div>
+    </footer>
 </div>
-
-<div class="main">
-    <div class="top-row px-1 auth">
-        <div class="col-md-3">
-            <img class="logo-text" src="/images/logo-sentinel-text.svg" />
-        </div>
-        <div class="col-md-9 text-right">
-            <div><LoginDisplay /></div>
-            <div><a href="https://github.com/markusrt/NRZMyk/issues/new" aria-label="Fehler melden" rel="noopener" target="_blank"><span class="oi oi-bug"></span></a></div>
-        </div>
-    </div>
-
-    <div class="content p-4">
-        @Body
-    </div>
-    </div>
-
-<footer class="footer">
-    <div class="container float-right">
-        <span class="float-right text-muted">©2020-@DateTime.Now.Year NRZMyk – All Rights Reserved - v.@Assembly.GetExecutingAssembly().GetName().Version.ToString()</span>
-    </div>
-</footer>

@@ -2,48 +2,48 @@
 @using NRZMyk.Services.Utils
 @inherits NavMenuBase
 
-<div class="top-row pl-4 navbar navbar-dark">
+<div class="top-row ps-3 navbar navbar-dark">
     <a class="navbar-brand" href="">
         <img class="logo" src="/images/logo-sentinel.svg" />
     </a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+    <button title="Navigation" class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Startseite
             </NavLink>
-        </li>
+        </div>
         <AuthorizeView Roles="@EnumUtils.ToCommaSeparatedList(Role.User, Role.SuperUser, Role.Admin)">
             <Authorized>
-                <li class="nav-item px-3">
+                <div class="nav-item px-3">
                     <NavLink class="nav-link text-nowrap" href="sentinel-entries">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Sentinel Daten
                     </NavLink>
-                </li>
+                </div>
             </Authorized>
         </AuthorizeView>
         <AuthorizeView Roles="@EnumUtils.ToCommaSeparatedList(Role.SuperUser)">
             <Authorized>
-                <li class="nav-item px-3">
+                <div class="nav-item px-3">
                     <NavLink class="nav-link text-nowrap" href="cryo-view/sentinel-entries">
                         <span class="oi oi-data-transfer-download" aria-hidden="true"></span>Kryo Asservierung
                     </NavLink>
-                </li>
+                </div>
             </Authorized>
         </AuthorizeView>
         <AuthorizeView Roles="@EnumUtils.ToCommaSeparatedList(Role.Admin)">
             <Authorized>
-                <li class="nav-item px-3">
+                <div class="nav-item px-3">
                     <NavLink class="nav-link text-nowrap" href="admin">
                         <span class="oi oi-person" aria-hidden="true"></span> Administration
                     </NavLink>
-                </li>
+                </div>
             </Authorized>
         </AuthorizeView>
-    </ul>
+    </nav>
 </div>
