@@ -21,4 +21,8 @@
     <ProjectReference Include="..\NRZMyk.Services\NRZMyk.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
+  </ItemGroup>
+
 </Project>
