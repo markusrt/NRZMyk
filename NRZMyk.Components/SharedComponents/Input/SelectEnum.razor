@@ -13,7 +13,7 @@
     
     
         <div class="@SelectClass">
-            <select class="form-control" @bind="CurrentValueAsString">
+            <select class="form-select" @bind="CurrentValueAsString">
                 @if (ShowDefaultOption)
                 {
                     <option value="0" hidden disabled>-</option>
@@ -35,7 +35,7 @@ else
     }
 
     <div class="@SelectClass">
-        <select class="form-control" @bind="CurrentValueAsString">
+        <select class="form-select" @bind="CurrentValueAsString">
             @if (ShowDefaultOption)
             {
                 <option value="0" hidden disabled>-</option>

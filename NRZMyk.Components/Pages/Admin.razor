@@ -53,7 +53,7 @@ else
                             <td>@item.Email</td>
                             <td>@item.Postalcode @item.City</td>
                             <td>
-                                <InputSelectNumber class="form-control form-control-sm" @bind-Value="item.OrganizationId">
+                                <InputSelectNumber class="form-select form-select-sm" @bind-Value="item.OrganizationId">
                                     <option>- Keine Organisation zugeordnet -</option>
                                     @foreach (var organization in Organizations)
                                     {

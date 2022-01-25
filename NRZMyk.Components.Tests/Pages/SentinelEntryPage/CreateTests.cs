@@ -150,10 +150,10 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             sensitivityTest.Resistance.Should().Be(Resistance.NotDetermined);
         }
 
-        [TestCase(0.01f, "badge-danger", Resistance.Resistant)]
-        [TestCase(0f, "badge-warning", Resistance.Intermediate)]
-        [TestCase(-0.01f, "badge-warning", Resistance.Intermediate)]
-        [TestCase(-0.2f, "badge-success", Resistance.Susceptible)]
+        [TestCase(0.01f, "bg-danger", Resistance.Resistant)]
+        [TestCase(0f, "bg-warning", Resistance.Intermediate)]
+        [TestCase(-0.01f, "bg-warning", Resistance.Intermediate)]
+        [TestCase(-0.2f, "bg-success", Resistance.Susceptible)]
         public void WhenCalculateResistanceBadge_UsesBreakpointValuesWithEucastBoundaryConditions(float deltaToResistance, string expectedBadge, Resistance expectedResistance)
         {
             var sut = _renderedComponent.Instance;
@@ -176,10 +176,10 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             sensitivityTest.Resistance.Should().Be(expectedResistance);
         }
 
-        [TestCase(0.01f, "badge-danger", Resistance.Resistant)]
-        [TestCase(0f, "badge-danger", Resistance.Resistant)]
-        [TestCase(-0.01f, "badge-warning", Resistance.Intermediate)]
-        [TestCase(-1.0f, "badge-success", Resistance.Susceptible)]
+        [TestCase(0.01f, "bg-danger", Resistance.Resistant)]
+        [TestCase(0f, "bg-danger", Resistance.Resistant)]
+        [TestCase(-0.01f, "bg-warning", Resistance.Intermediate)]
+        [TestCase(-1.0f, "bg-success", Resistance.Susceptible)]
         public void WhenCalculateResistanceBadge_UsesBreakpointValuesWithClsiBoundaryConditions(float deltaToResistance, string expectedBadge, Resistance expectedResistance)
         {
             var sut = _renderedComponent.Instance;
@@ -226,7 +226,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
-            badge.Should().Be("badge-info");
+            badge.Should().Be("bg-info");
             sensitivityTest.Resistance.Should().Be(Resistance.NotEvaluable);
         }
 
@@ -253,7 +253,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
-            badge.Should().Be("badge-info");
+            badge.Should().Be("bg-info");
             sensitivityTest.Resistance.Should().Be(Resistance.NotEvaluable);
         }
 
@@ -280,7 +280,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
-            badge.Should().Be("badge-warning");
+            badge.Should().Be("bg-warning");
             sensitivityTest.Resistance.Should().Be(Resistance.Intermediate);
         }
 
@@ -300,7 +300,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
-            badge.Should().Be("badge-info");
+            badge.Should().Be("bg-info");
             sensitivityTest.Resistance.Should().Be(Resistance.NotDetermined);
         }
 
@@ -318,7 +318,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
-            badge.Should().Be("badge-info");
+            badge.Should().Be("bg-info");
             sensitivityTest.Resistance.Should().Be(Resistance.NotDetermined);
         }
 

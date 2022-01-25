@@ -164,7 +164,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                     Logger.LogInformation($"Breakpoints {breakpoint.Id} (resistant/susceptible) values are not complete ({breakpoint.MicBreakpointResistent}/{breakpoint.MicBreakpointSusceptible})");
                 }
                 sensitivityTest.Resistance = Resistance.NotDetermined;
-                return "badge-info";
+                return "bg-info";
             }
 
             var selectedStep = MicStepsService.StepsByTestingMethodAndAgent(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent)
@@ -176,7 +176,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 || selectedStep.UpperBoundary && sensitivityTest.MinimumInhibitoryConcentration < breakpoint.MicBreakpointResistent)
                 {
                     sensitivityTest.Resistance = Resistance.NotEvaluable;
-                    return "badge-info";
+                    return "bg-info";
                 }
             }
 
@@ -187,20 +187,20 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             if (IsResistantAccordingToEucastDefinition(mic, breakpoint))
             {
                 sensitivityTest.Resistance = Resistance.Resistant;
-                return "badge-danger";
+                return "bg-danger";
             }
             if (IsResistantAccordingToClsiDefinition(mic, breakpoint))
             {
                 sensitivityTest.Resistance = Resistance.Resistant;
-                return "badge-danger";
+                return "bg-danger";
             }
             if (IsSusceptibleAccordingToBothDefinitions(mic, breakpoint))
             {
                 sensitivityTest.Resistance = Resistance.Susceptible;
-                return "badge-success";
+                return "bg-success";
             }
             sensitivityTest.Resistance = Resistance.Intermediate;
-            return "badge-warning";
+            return "bg-warning";
         }
 
         private static bool IsResistantAccordingToEucastDefinition(float? mic, ClinicalBreakpoint breakpoint)
