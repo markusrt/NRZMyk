@@ -22,7 +22,7 @@ else
         <div class="mb-3 row">
             <label class="col-form-label col-sm-2">Organisation</label>
             <div class="col-sm-4">
-                <InputSelectNumber class="form-control" @bind-Value="SelectedOrganization">
+                <InputSelectNumber class="form-select" @bind-Value="SelectedOrganization">
                     <option value="-1">Alle Organisationen</option>
                     @foreach (var organization in Organizations)
                     {

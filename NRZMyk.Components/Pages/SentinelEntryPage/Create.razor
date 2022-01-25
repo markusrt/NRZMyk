@@ -58,7 +58,7 @@ else
                 <div class="col-sm-6">
                     @if (SentinelEntry.SpeciesIdentificationMethod == SpeciesIdentificationMethod.Other)
                     {	                   
-                        <span class="badge badge-warning">Bitte geben Sie in den Details zu der anderen Methode der Speziesidentifikation an.</span>	
+                        <span class="badge bg-warning">Bitte geben Sie in den Details zu der anderen Methode der Speziesidentifikation an.</span>	
                     }
                     <InputTextArea class="form-control" @bind-Value="SentinelEntry.Remark"/>
                     <ValidationMessage For="() => SentinelEntry.Remark"/>
@@ -68,7 +68,7 @@ else
             <h3>Tests</h3>
             <div class="mb-3 row">
                 <div class="col-sm-3 col-lg-2">
-                    <select class="form-control form-control-sm" @bind="TestingMethod">
+                    <select class="form-select form-select-sm" @bind="TestingMethod">
                         @foreach (var testingMethod in TestingMethods())
                         {
                             <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
@@ -78,7 +78,7 @@ else
                 @if (!MicStepsService.IsMultiAgentSystem(TestingMethod))
                 {
                     <div class="col-sm-3 col-lg-2">
-                        <select class="form-control form-control-sm" @bind="AntifungalAgent">
+                        <select class="form-select form-select-sm" @bind="AntifungalAgent">
                             @foreach (var antifungalAgent in AntifungalAgents())
                             {
                                 <option value="@antifungalAgent">@EnumUtils.GetEnumDescription(antifungalAgent)</option>
@@ -87,7 +87,7 @@ else
                     </div>
                 }
                 <div class="col-sm-3 col-lg-2">
-                    <select class="form-control form-control-sm" @bind="Standard">
+                    <select class="form-select form-select-sm" @bind="Standard">
                         @foreach (var standard in Standards())
                         {
                             <option value="@standard">@EnumUtils.GetEnumDescription(standard)</option>
@@ -107,7 +107,7 @@ else
                         <p class="form-control-plaintext form-control-sm">
                             <a class="btn btn-sm btn-delete" @onclick="() => RemoveAntimicrobialSensitivityTest(sensitivityTest)" title="MHK Eintrag löschen"><i class="oi oi-trash"></i></a>
                             <b>@EnumUtils.GetEnumDescription(sensitivityTest.TestingMethod)</b> - @EnumUtils.GetEnumDescription(sensitivityTest.AntifungalAgent) -
-                            <span class="badge badge-pill">
+                            <span class="badge rounded-pill">
                                 @EnumUtils.GetEnumDescription(sensitivityTest.Standard)
                             </span>
                         </p>
@@ -115,12 +115,10 @@ else
 
                     <div class="col-sm-3 col-md-3 col-lg-3 col-xl-2">
                         <div class="input-group mb-2 mr-sm-2 input-group-sm">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">MHK</div>
-                            </div>
+                            <div class="input-group-text">MHK</div>
                             @if (MicSteps(sensitivityTest).Any())
                             {
-                                <InputSelectNumber class="form-control form-control-sm" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration">
+                                <InputSelectNumber class="form-select" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration">
                                     <option>-</option>
                                     @foreach (var micStep in MicSteps(sensitivityTest))
                                     {
@@ -130,14 +128,14 @@ else
                             }
                             else
                             {
-                                <InputNumber class="form-control form-control-sm" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration"></InputNumber>
+                                <InputNumber class="form-control" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration"></InputNumber>
                             }
                         </div>
                     </div>
                     @if (ApplicableBreakpoints(sensitivityTest).Any())
                     {
                         <div class="col-sm-4 col-md-3 col-lg-4 col-xl-3">
-                            <InputSelectNumber class="form-control form-control-sm" @bind-Value="sensitivityTest.ClinicalBreakpointId">
+                            <InputSelectNumber class="form-select form-select-sm" @bind-Value="sensitivityTest.ClinicalBreakpointId">
                                 @foreach (var breakpoint in ApplicableBreakpoints(sensitivityTest))
                                  {
                                     <option value="@breakpoint.Id">@breakpoint.Title</option>
