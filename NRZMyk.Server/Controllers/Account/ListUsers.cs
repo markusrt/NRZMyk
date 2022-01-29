@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
+using NRZMyk.Services.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.Account
@@ -14,10 +15,12 @@ namespace NRZMyk.Server.Controllers.Account
     public class ListUsers : BaseAsyncEndpoint<List<RemoteAccount>>
     {
         private readonly IAsyncRepository<RemoteAccount> _accountRepository;
+        private readonly IUserService _userService;
 
-        public ListUsers(IAsyncRepository<RemoteAccount> accountRepository)
+        public ListUsers(IAsyncRepository<RemoteAccount> accountRepository, IUserService userService)
         {
             _accountRepository = accountRepository;
+            _userService = userService;
         }
 
         [HttpGet("api/users")]
@@ -29,6 +32,7 @@ namespace NRZMyk.Server.Controllers.Account
         public override async Task<ActionResult<List<RemoteAccount>>> HandleAsync()
         {
             var items = await _accountRepository.ListAllAsync();
+            await _userService.UpdateRoleViaGraphApi(items);
             return Ok(items);
         }
     }

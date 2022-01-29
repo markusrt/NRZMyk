@@ -37,7 +37,7 @@
             "type": "blazorwasm",
             "request": "launch",
             "hosted": true,
-            "program": "${workspaceFolder}/NRZMyk.Server/bin/Debug/netcoreapp3.1/NRZMyk.Server.dll",
+            "program": "${workspaceFolder}/NRZMyk.Server/bin/Debug/net6.0/NRZMyk.Server.dll",
             "cwd": "${workspaceFolder}/NRZMyk.Server"
         }
     ]

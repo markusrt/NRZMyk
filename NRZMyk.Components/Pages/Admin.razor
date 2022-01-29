@@ -42,6 +42,7 @@ else
                         <th>Name</th>
                         <th>Email</th>
                         <th>Ort</th>
+                        <th>Rollen</th>
                         <th>Organisation zuordnen</th>
                     </tr>
                     </thead>
@@ -52,6 +53,7 @@ else
                             <td>@item.DisplayName</td>
                             <td>@item.Email</td>
                             <td>@item.Postalcode @item.City</td>
+                            <td>@item.Role</td>
                             <td>
                                 <InputSelectNumber class="form-select form-select-sm" @bind-Value="item.OrganizationId">
                                     <option>- Keine Organisation zugeordnet -</option>

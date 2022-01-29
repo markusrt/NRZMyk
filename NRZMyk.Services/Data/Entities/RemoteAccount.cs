@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Models;
 
 namespace NRZMyk.Services.Data.Entities
 {
@@ -24,5 +26,8 @@ namespace NRZMyk.Services.Data.Entities
         public int? OrganizationId { get; set; }
 
         public Organization Organization { get; set; }
+
+        [NotMapped]
+        public Role Role { get; set; }
     }
 }

@@ -1,11 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,10 +15,8 @@ using Microsoft.OpenApi.Models;
 using NRZMyk.Server.Utils;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data;
-using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
-using NRZMyk.Services.Specifications;
 using NRZMyk.Services.Utils;
 using SendGrid;
 using SendGrid.Extensions.DependencyInjection;
@@ -46,10 +39,6 @@ namespace NRZMyk.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddOptions<Breakpoint>()
-            //    .Bind(Configuration.GetSection(nameof(Breakpoint)))
-            //    .ValidateDataAnnotations();
-
             ConfigureAzureAdB2C(services);
             ConfigureSwagger(services);
 
@@ -150,6 +139,10 @@ namespace NRZMyk.Server
                     };
                 }
             );
+
+            services.Configure<AzureAdB2CSettings>(Configuration);
+            services.AddScoped<IGraphServiceClient, GraphServiceClientWrapper>();
+            services.AddScoped<IUserService, UserService>();
         }
 
 
