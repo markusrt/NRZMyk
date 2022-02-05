@@ -47,10 +47,10 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             
             using(var package = new ExcelPackage())
             {
-                var entries = await _sentinelEntryRepository.ListAsync(new SentinelEntriesIncludingTestsSpecification());
+                var entries = await _sentinelEntryRepository.ListAsync(new SentinelEntriesIncludingTestsSpecification()).ConfigureAwait(false);
                 package.AddSheet("Sentinel Daten", entriesExport, entries);
                 package.AddSheet("Resistenztestung", testsExport, entries.SelectMany(e => e.AntimicrobialSensitivityTests).ToList());
-                reportBytes = await package.GetAsByteArrayAsync();
+                reportBytes = await package.GetAsByteArrayAsync().ConfigureAwait(false);
             }
             return File(reportBytes, XlsxContentType, $"Sentinel-Export_{DateTime.Now:yyyyMMdd}.xlsx");
         }

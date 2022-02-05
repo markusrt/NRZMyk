@@ -133,7 +133,7 @@ namespace NRZMyk.Server
                             if (ctx.Principal.Identity is ClaimsIdentity identity)
                             {
                                 identity.AddRolesFromExtensionClaim();
-                                await identity.AddOrganizationClaim(ctx);
+                                await identity.AddOrganizationClaim(ctx).ConfigureAwait(false);
                             }
                         }
                     };

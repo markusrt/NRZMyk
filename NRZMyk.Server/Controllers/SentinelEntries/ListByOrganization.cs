@@ -33,7 +33,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             var filter = organizationId == -1 
                 ? (ISpecification<SentinelEntry>) new AllSentinelEntriesFilterSpecification()
                 : new SentinelEntryFilterSpecification($"{organizationId}");
-            var items = await _sentinelEntryRepository.ListAsync(filter);
+            var items = await _sentinelEntryRepository.ListAsync(filter).ConfigureAwait(false);
             return Ok(items);
         }
     }

@@ -35,14 +35,14 @@ namespace NRZMyk.Server.Controllers.Account
             var updateCount = 0;
             foreach (var accountToUpdate in accountsToUpdate)
             {
-                var account = await _accountRepository.GetByIdAsync(accountToUpdate.Id);
+                var account = await _accountRepository.GetByIdAsync(accountToUpdate.Id).ConfigureAwait(false);
                 if (account == null || !accountToUpdate.OrganizationId.HasValue)
                 {
                     continue;
                 }
 
                 account.OrganizationId = accountToUpdate.OrganizationId;
-                await _accountRepository.UpdateAsync(account);
+                await _accountRepository.UpdateAsync(account).ConfigureAwait(false);
                 updateCount++;
             }
             return updateCount;

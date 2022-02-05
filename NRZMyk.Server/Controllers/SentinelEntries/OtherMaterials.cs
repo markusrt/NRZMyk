@@ -30,7 +30,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<List<string>>> HandleAsync()
         {
-            var otherMaterials =  await _sentinelEntryRepository.Other(s => s.OtherMaterial);
+            var otherMaterials =  await _sentinelEntryRepository.Other(s => s.OtherMaterial).ConfigureAwait(false);
             return Ok(otherMaterials);
         }
     }

@@ -32,7 +32,7 @@ namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
         public override async Task<ActionResult<ClinicalBreakpoint>> HandleAsync(CreateClinicalBreakpointRequest request)
         {
             var newEntry = _mapper.Map<ClinicalBreakpoint>(request);
-            return await _clinicalBreakpointRepository.AddAsync(newEntry);
+            return await _clinicalBreakpointRepository.AddAsync(newEntry).ConfigureAwait(false);
         }
     }
 }

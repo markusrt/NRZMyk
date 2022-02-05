@@ -37,7 +37,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
                 new SentinelEntryIncludingTestsSpecification(request.Id));
             
             _mapper.Map(request, existingItem);
-            await _sentinelEntryRepository.UpdateAsync(existingItem);
+            await _sentinelEntryRepository.UpdateAsync(existingItem).ConfigureAwait(false);
             
             return Ok(existingItem);
         }

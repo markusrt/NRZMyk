@@ -53,9 +53,9 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             foreach (var sensitivityTest in sentinelEntry.AntimicrobialSensitivityTests.ToList())
             {
                 //TODO isn't there a better way to cascade delete one-to-many?
-                await _sensitivityTestRepository.DeleteAsync(sensitivityTest);
+                await _sensitivityTestRepository.DeleteAsync(sensitivityTest).ConfigureAwait(false);
             }
-            await _sentinelEntryRepository.DeleteAsync(sentinelEntry);
+            await _sentinelEntryRepository.DeleteAsync(sentinelEntry).ConfigureAwait(false);
             
             return Ok(sentinelEntry.Id);
         }

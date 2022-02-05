@@ -30,7 +30,7 @@ namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
         public override async Task<ActionResult<List<ClinicalBreakpoint>>> HandleAsync([FromQuery]ListClinicalBreakpointsRequest request)
         {
             var filter = new ClinicalBreakpointFilterSpecification(request.Species);
-            var items = await _clinicalBreakpointRepository.ListAsync(filter);
+            var items = await _clinicalBreakpointRepository.ListAsync(filter).ConfigureAwait(false);
             return Ok(items);
         }
     }

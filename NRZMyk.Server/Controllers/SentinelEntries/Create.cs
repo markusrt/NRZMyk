@@ -44,7 +44,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             _sentinelEntryRepository.AssignNextEntryNumber(newEntry);
             _sentinelEntryRepository.AssignNextCryoBoxNumber(newEntry);
             newEntry.ProtectKey = organizationId;
-            var storedEntry = await _sentinelEntryRepository.AddAsync(newEntry);
+            var storedEntry = await _sentinelEntryRepository.AddAsync(newEntry).ConfigureAwait(false);
             return Created(new Uri($"{Request.GetUri()}/{storedEntry.Id}"), storedEntry);
         }
     }

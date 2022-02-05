@@ -17,7 +17,7 @@ namespace NRZMyk.Server.Utils
         {
             var objectId = identity.Claims.ObjectId();
             var accountRepository = context.HttpContext.RequestServices.GetRequiredService<IAsyncRepository<RemoteAccount>>();
-            var account = await accountRepository.FirstOrDefaultAsync(new RemoteAccountByObjectIdSpecification(objectId));
+            var account = await accountRepository.FirstOrDefaultAsync(new RemoteAccountByObjectIdSpecification(objectId)).ConfigureAwait(false);
             if (account?.OrganizationId != null)
             {
                 identity.AddClaim(new Claim(ClaimTypes.Organization, account.OrganizationId.ToString()));

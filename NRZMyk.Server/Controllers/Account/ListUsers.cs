@@ -31,7 +31,7 @@ namespace NRZMyk.Server.Controllers.Account
         ]
         public override async Task<ActionResult<List<RemoteAccount>>> HandleAsync()
         {
-            var items = await _accountRepository.ListAllAsync();
+            var items = await _accountRepository.ListAllAsync().ConfigureAwait(false);
             await _userService.GetRolesViaGraphApi(items);
             return Ok(items);
         }
