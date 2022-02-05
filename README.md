@@ -40,9 +40,10 @@ to setup client and server apps according to this documentation:
 
 ### Server App
 
-Configure the following secretsthe server project:
+Configure the following secrets for the server project:
 
 ```shell
+cd NRZMyk.Server
 dotnet user-secrets set "AzureAdB2C:Domain" "Your ADB2C domain"
 dotnet user-secrets set "AzureAdB2C:ClientId" "Your server app client ID"
 dotnet user-secrets set "AzureAdB2C:SignUpSignInPolicyId" "Your signin policy name"
@@ -51,6 +52,8 @@ dotnet user-secrets set "Application:SendGridSenderEmail": "Address used to send
 dotnet user-secrets set "Application:SendGridDynamicTemplateId": "Sendgrid dynamic template id"
 dotnet user-secrets set "Application:AdministratorEmail": "Address of admin to receive registration requests"
 dotnet user-secrets set "SendGrid:ApiKey" "Sendgrid API key"
+dotnet user-secrets set "AzureAdB2C:ClientSecret" "Client secret for GraphAPI access"
+dotnet user-secrets set "AzureAdB2C:B2cExtensionAppClientId" "B2C extensions app client id"
 ```
 
 See also `appsettings.json` in server project.

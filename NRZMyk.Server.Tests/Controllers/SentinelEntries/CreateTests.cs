@@ -5,6 +5,7 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NRZMyk.Mocks.TestUtils;
 using NRZMyk.Server.Controllers.SentinelEntries;
 using NRZMyk.Services.Data;
 using NRZMyk.Services.Data.Entities;
@@ -55,21 +56,9 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         {
             sentinelEntryRepository = Substitute.For<ISentinelEntryRepository>();
             map = Substitute.For<IMapper>();
-            var httpContext = new DefaultHttpContext();
-            httpContext.Request.Host = new HostString("localhost");
-            httpContext.Request.Scheme = "http";
-            httpContext.Request.Path = new PathString("/api/sentinel-entries");
-            var identity = new ClaimsIdentity();
-            if (organizationId != null)
-            {
-                identity.AddClaim(new Claim(ClaimTypes.Organization, organizationId));
-            }
-            httpContext.User = new ClaimsPrincipal(identity);
             return new Create(sentinelEntryRepository, map)
             {
-                ControllerContext = new ControllerContext {
-                    HttpContext = httpContext,
-                }
+                ControllerContext = new MockControllerContext("/api/sentinel-entries", organizationId)
             };
         }
     }

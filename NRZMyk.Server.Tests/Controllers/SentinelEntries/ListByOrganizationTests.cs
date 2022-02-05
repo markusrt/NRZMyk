@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NRZMyk.Mocks.TestUtils;
 using NRZMyk.Server.Controllers.SentinelEntries;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
@@ -49,15 +50,9 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         private static ListByOrganization CreateSut(out IAsyncRepository<SentinelEntry> repository)
         {
             repository = Substitute.For<IAsyncRepository<SentinelEntry>>();
-            var httpContext = new DefaultHttpContext();
-            httpContext.Request.Host = new HostString("localhost");
-            httpContext.Request.Scheme = "http";
             return new ListByOrganization(repository)
             {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = httpContext
-                }
+                ControllerContext = new MockControllerContext()
             };
         }
     }
