@@ -20,8 +20,9 @@ public class UserService : IUserService
     private readonly ILogger<UserService> _logger;
     private readonly string _extensionAppClientId;
 
-    private const string RoleAttributeName = "Role";
+    private const string RoleAttribute = "Role";
 
+    private string RoleAttributeName { get; set; }
 
     public UserService(IGraphServiceClient graphClient, IOptions<AzureAdB2CSettings> config, ILogger<UserService> logger)
     {
@@ -36,54 +37,70 @@ public class UserService : IUserService
         _graphClient = graphClient;
         _logger = logger;
         _extensionAppClientId = config.Value.AzureAdB2C.B2cExtensionAppClientId;
+
+        RoleAttributeName = $"extension_{_extensionAppClientId.Replace("-", "")}_{RoleAttribute}";
     }
 
     public async Task GetRolesViaGraphApi(IEnumerable<RemoteAccount> remoteAccounts)
     {
-        var roleAttributeName = GetCompleteAttributeName(RoleAttributeName);
-
         foreach (var remoteAccount in remoteAccounts)
         {
-            var role = Role.Guest;
-
-            try
-            {
-                var user = await _graphClient.Users[remoteAccount.ObjectId.ToString()]
-                    .Request()
-                    .Select($"id,displayName,{roleAttributeName}")
-                    .GetAsync();
-            
-                if (user.AdditionalData?[roleAttributeName] != null)
-                {
-                    var roleString = user.AdditionalData?[roleAttributeName].ToString();
-                    role = Enum.Parse<Role>(roleString);
-                }
-            }
-            catch (ServiceException e)
-            {
-                if (e.StatusCode == HttpStatusCode.NotFound)
-                {
-                    _logger.LogWarning("User with ID {0} was not found in AADB2C, assigning guest role",
-                        remoteAccount.ObjectId);
-                }
-                else
-                {
-                    _logger.LogError(e, "Failed to query user with ID {0} from AADB2C, assigning guest role",
-                        remoteAccount.ObjectId);
-                }
-            }
-
-            remoteAccount.Role = role;
+            await GetRoleViaGraphApi(remoteAccount);
         }
     }
-   
+
+    private async Task GetRoleViaGraphApi(RemoteAccount remoteAccount)
+    {
+        var role = Role.Guest;
+
+        try
+        {
+            var user = await _graphClient.Users[remoteAccount.ObjectId.ToString()]
+                .Request()
+                .Select($"id,displayName,{RoleAttributeName}")
+                .GetAsync();
+
+            role = TryToGetRoleFromCustomAttribute(user);
+        }
+        catch (ServiceException e)
+        {
+            if (e.StatusCode == HttpStatusCode.NotFound)
+            {
+                _logger.LogWarning("User with ID {remoteAccount} was not found in AADB2C, assigning guest role",
+                    remoteAccount.ObjectId);
+            }
+            else
+            {
+                _logger.LogError(e, "Failed to query user with ID {remoteAccount} from AADB2C, assigning guest role",
+                    remoteAccount.ObjectId);
+            }
+        }
+
+        remoteAccount.Role = role;
+    }
+
+    private Role TryToGetRoleFromCustomAttribute(User user)
+    {
+        if (user.AdditionalData?[RoleAttributeName] == null)
+        {
+            return Role.Guest;
+        }
+        
+        var roleString = user.AdditionalData[RoleAttributeName].ToString();
+        var parseSuccess = Enum.TryParse<Role>(roleString, out var role);
+        if (parseSuccess && Enum.IsDefined(role))
+        {
+            return role;
+        }
+
+        return Role.Guest;
+    }
+
     public async Task UpdateUserRole(string userId, Role role)
     {
-        var roleAttributeName = GetCompleteAttributeName(RoleAttributeName);
-
         IDictionary<string, object> extensionInstance = new Dictionary<string, object>
         {
-            { roleAttributeName, ((int)role).ToString() }
+            { RoleAttributeName, ((int)role).ToString() }
         };
 
         var user = new User
@@ -104,11 +121,5 @@ public class UserService : IUserService
                 "Failed to update role to '{role}' for user with object ID '{userId}'",
                 role, userId);
         }
-    }
-
-    private string GetCompleteAttributeName(string attributeName)
-    {
-        var sanitizedClientId = _extensionAppClientId.Replace("-", "");
-        return $"extension_{sanitizedClientId}_{attributeName}";
     }
 }

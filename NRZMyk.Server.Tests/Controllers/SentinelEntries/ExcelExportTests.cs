@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NRZMyk.Mocks.TestUtils;
 using NRZMyk.Server.Controllers.SentinelEntries;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
@@ -37,20 +38,12 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         private static ExcelExport CreateSut(out IAsyncRepository<SentinelEntry> repository)
         {
             repository = Substitute.For<IAsyncRepository<SentinelEntry>>();
-            var httpContext = new DefaultHttpContext();
-            httpContext.Request.Host = new HostString("localhost");
-            httpContext.Request.Scheme = "http";
-            var identity = new ClaimsIdentity();
-            httpContext.User = new ClaimsPrincipal(identity);
             var micStepsService = Substitute.For<IMicStepsService>();
             micStepsService.StepsByTestingMethodAndAgent(Arg.Any<SpeciesTestingMethod>(), Arg.Any<AntifungalAgent>())
                 .Returns(new List<MicStep>());
             return new ExcelExport(repository, Substitute.For<IProtectKeyToOrganizationResolver>(), micStepsService)
             {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = httpContext
-                }
+                ControllerContext = new MockControllerContext()
             };
         }
     }

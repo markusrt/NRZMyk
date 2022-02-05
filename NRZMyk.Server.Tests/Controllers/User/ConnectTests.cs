@@ -5,6 +5,7 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NRZMyk.Mocks.TestUtils;
 using NRZMyk.Server.Controllers.Account;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
@@ -98,16 +99,9 @@ namespace NRZMyk.Server.Tests.Controllers.User
             accountRepository = Substitute.For<IAsyncRepository<RemoteAccount>>();
             map = Substitute.For<IMapper>();
             emailNotificationService = Substitute.For<IEmailNotificationService>();
-            var httpContext = new DefaultHttpContext {User = user};
-            httpContext.Request.Host = new HostString("localhost");
-            httpContext.Request.Scheme = "http";
-            httpContext.Request.Path = new PathString("/api/connect/user");
             return new Connect(accountRepository, map, emailNotificationService)
             {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = httpContext
-                }
+                ControllerContext = new MockControllerContext("/api/connect/user", user:user)
             };
         }
     }

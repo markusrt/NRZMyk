@@ -1,4 +1,5 @@
-﻿using Azure.Identity;
+﻿using System;
+using Azure.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using NRZMyk.Services.Configuration;
@@ -16,6 +17,13 @@ public class GraphServiceClientWrapper : IGraphServiceClient
 
     public GraphServiceClientWrapper(IOptions<AzureAdB2CSettings> config)
     {
+        if (config?.Value?.AzureAdB2C == null)
+        {
+            throw new ArgumentException(
+                $"Configuration for {nameof(AzureAdB2CSettings.AzureAdB2C)} is not found.",
+                nameof(config));
+        }
+
         var settings = config.Value.AzureAdB2C;
         var clientSecretCredential = new ClientSecretCredential(settings.Domain, settings.ClientId, settings.ClientSecret);
         _graphClient = new GraphServiceClient(clientSecretCredential, Scopes);

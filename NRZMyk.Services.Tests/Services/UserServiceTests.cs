@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -64,7 +67,131 @@ public class UserServiceTests
             s => new Regex("Failed to update.*Admin.*123").IsMatch(s)), exception);
     }
 
-    private static UserService CreateSut(out IGraphServiceClient graphServiceClient, out IOptions<AzureAdB2CSettings> settings, out MockLogger<UserService> logger)
+
+    [Test]
+    public async Task WhenGettingRolesWithEmptyList_DoesNothing()
+    {
+        var sut = CreateSut(out _, out _, out _);
+        var remoteAccounts = new List<RemoteAccount>();
+
+        await sut.GetRolesViaGraphApi(remoteAccounts);
+
+        remoteAccounts.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task WhenRemoteRequestFailed_LogsErrorAndSetsGuestRole()
+    {
+        var guid = Guid.NewGuid();
+        var remoteAccounts = new List<RemoteAccount>
+        {
+            new() { ObjectId = guid },
+        };
+        var sut = CreateSut(out var graphServiceClient, out _, out var logger);
+        var serviceException = new ServiceException(new Error(), null, HttpStatusCode.BadRequest);
+        graphServiceClient.Users[guid.ToString()].Throws(serviceException);
+
+        await sut.GetRolesViaGraphApi(remoteAccounts);
+
+        remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
+        logger.Received(1).Log(LogLevel.Error, Arg.Is<string>(s => s.StartsWith(
+            $"Failed to query user with ID {guid}")), serviceException);
+    }
+
+    [Test]
+    public async Task WhenRemoteUserNotFound_LogsWarningAndSetsGuestRole()
+    {
+        var guid = Guid.NewGuid();
+        var remoteAccounts = new List<RemoteAccount>
+        {
+            new() { ObjectId = guid },
+        };
+        var sut = CreateSut(out var graphServiceClient, out _, out var logger);
+        var serviceException = new ServiceException(new Error(), null, HttpStatusCode.NotFound);
+        graphServiceClient.Users[guid.ToString()].Throws(serviceException);
+
+        await sut.GetRolesViaGraphApi(remoteAccounts);
+
+        remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
+        logger.Received(1).Log(LogLevel.Warning, Arg.Is<string>(s => s.StartsWith(
+            $"User with ID {guid} was not found")));
+    }
+
+    [Test]
+    public async Task WhenGettingRolesForTwoRemoteAccounts_QueriesTwoUsers()
+    {
+        var guid1 = Guid.NewGuid();
+        var guid2 = Guid.NewGuid();
+        var remoteAccounts = new List<RemoteAccount>
+        {
+            new() { ObjectId = guid1 },
+            new() { ObjectId = guid2 }
+        };
+        var sut = CreateSut(out var graphServiceClient, out _, out var logger);
+        var userRequest = Substitute.For<IUserRequest>();
+        var userRequestBuilder = Substitute.For<IUserRequestBuilder>();
+        userRequestBuilder.Request().Returns(userRequest);
+        userRequest.Select($"id,displayName,{RoleCompleteAttributeName}").Returns(userRequest);
+        userRequest.GetAsync().Returns(new User
+            { AdditionalData = new Dictionary<string, object> { { RoleCompleteAttributeName, "4" } } });
+        graphServiceClient.Users[guid1.ToString()].Returns(userRequestBuilder);
+        graphServiceClient.Users[guid2.ToString()].Returns(userRequestBuilder);
+
+        await sut.GetRolesViaGraphApi(remoteAccounts);
+
+        userRequest.Received(2).Select(Arg.Any<string>());
+        remoteAccounts.Should().OnlyContain(a => a.Role == Role.SuperUser);
+    }
+
+    [Test]
+    public async Task WhenUserDoesNotHaveRoleAssigned_SetsGuestRole()
+    {
+        var guid = Guid.NewGuid();
+        var remoteAccounts = new List<RemoteAccount>
+        {
+            new() { ObjectId = guid },
+        };
+        var sut = CreateSut(out var graphServiceClient, out _, out var logger);
+        var userRequest = Substitute.For<IUserRequest>();
+        var userRequestBuilder = Substitute.For<IUserRequestBuilder>();
+        userRequestBuilder.Request().Returns(userRequest);
+        userRequest.Select($"id,displayName,{RoleCompleteAttributeName}").Returns(userRequest);
+        userRequest.GetAsync().Returns(new User { AdditionalData = null });
+        graphServiceClient.Users[guid.ToString()].Returns(userRequestBuilder);
+
+        await sut.GetRolesViaGraphApi(remoteAccounts);
+
+        userRequest.Received(1).Select(Arg.Any<string>());
+        remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
+    }
+
+    [TestCase("")]
+    [TestCase("1234")]
+    [TestCase(null)]
+    public async Task WhenRolesAttributeIsInvalid_SetsGuestRole(string role)
+    {
+        var guid = Guid.NewGuid();
+        var remoteAccounts = new List<RemoteAccount>
+        {
+            new() { ObjectId = guid },
+        };
+        var sut = CreateSut(out var graphServiceClient, out _, out var logger);
+        var userRequest = Substitute.For<IUserRequest>();
+        var userRequestBuilder = Substitute.For<IUserRequestBuilder>();
+        userRequestBuilder.Request().Returns(userRequest);
+        userRequest.Select($"id,displayName,{RoleCompleteAttributeName}").Returns(userRequest);
+        userRequest.GetAsync().Returns(new User
+            { AdditionalData = new Dictionary<string, object> { { RoleCompleteAttributeName, role } } });
+        graphServiceClient.Users[guid.ToString()].Returns(userRequestBuilder);
+
+        await sut.GetRolesViaGraphApi(remoteAccounts);
+
+        userRequest.Received(1).Select(Arg.Any<string>());
+        remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
+    }
+
+    private static UserService CreateSut(out IGraphServiceClient graphServiceClient,
+        out IOptions<AzureAdB2CSettings> settings, out MockLogger<UserService> logger)
     {
         settings = Options.Create(new AzureAdB2CSettings());
         settings.Value.AzureAdB2C = new AzureAdB2C()
