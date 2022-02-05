@@ -224,11 +224,11 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             {
                 if (IsEdit())
                 {
-                    await SentinelEntryService.Update(SentinelEntry);
+                    await SentinelEntryService.Update(SentinelEntry).ConfigureAwait(true);
                 }
                 else
                 {
-                    await SentinelEntryService.Create(SentinelEntry);
+                    await SentinelEntryService.Create(SentinelEntry).ConfigureAwait(true);
                 }
 
                 SaveFailed = false;
@@ -241,7 +241,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
             if (!SaveFailed)
             {
-                await OnCloseClick.InvokeAsync(null);
+                await OnCloseClick.InvokeAsync(null).ConfigureAwait(true);
             }
         }
 
@@ -259,18 +259,18 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             Title = IsEdit() ? "Bearbeiten" : "Neu anlegen";
             PrimaryAction = IsEdit() ? "Speichern" : "Anlegen";
 
-            AllBreakpoints = await ClinicalBreakpointService.List();
+            AllBreakpoints = await ClinicalBreakpointService.List().ConfigureAwait(true);
 
             if (Id.HasValue)
             {
-                SentinelEntry = Mapper.Map<SentinelEntryRequest>(await SentinelEntryService.GetById(Id.Value));
+                SentinelEntry = Mapper.Map<SentinelEntryRequest>(await SentinelEntryService.GetById(Id.Value).ConfigureAwait(true));
             }
             else
             {
                 SentinelEntry = new SentinelEntryRequest();
             }
 
-            await base.OnInitializedAsync();
+            await base.OnInitializedAsync().ConfigureAwait(true);
         }
 
         private bool IsEdit()

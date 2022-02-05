@@ -35,14 +35,14 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             {
                 Logger.LogInformation("Now loading... /cryo-view/sentinel-entries");
 
-                Organizations = await AccountService.ListOrganizations();
+                Organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
                 SelectedOrganization = Organizations.First().Id;
                 SentinelEntries = new List<SentinelEntry>();
 
-                await InvokeAsync(CallRequestRefresh);
+                await InvokeAsync(CallRequestRefresh).ConfigureAwait(true);
             }
 
-            await base.OnAfterRenderAsync(firstRender);
+            await base.OnAfterRenderAsync(firstRender).ConfigureAwait(true);
         }
 
         internal async Task PutToCryoStorage(SentinelEntry entry)
@@ -54,7 +54,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 CryoDate = DateTime.Now,
                 CryoRemark = entry.CryoRemark
             });
-            await LoadData();
+            await LoadData().ConfigureAwait(true);
         }
 
 
@@ -67,7 +67,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 CryoDate = null,
                 CryoRemark = entry.CryoRemark
             });
-            await LoadData();
+            await LoadData().ConfigureAwait(true);
         }
 
 
@@ -75,7 +75,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         {
             LoadState = LoadState.Loading;
 
-            SentinelEntries = await SentinelEntryService.ListByOrganization(SelectedOrganization);
+            SentinelEntries = await SentinelEntryService.ListByOrganization(SelectedOrganization).ConfigureAwait(true);
 
             LoadState = LoadState.Loaded;
             StateHasChanged();

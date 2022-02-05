@@ -33,16 +33,16 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         {
             Logger.LogInformation("Now loading... /Catalog/Delete/{Id}", Id);
 
-            SentinelEntry = Mapper.Map<SentinelEntryRequest>(await SentinelEntryService.GetById(Id));
+            SentinelEntry = Mapper.Map<SentinelEntryRequest>(await SentinelEntryService.GetById(Id).ConfigureAwait(true));
 
-            await base.OnInitializedAsync();
+            await base.OnInitializedAsync().ConfigureAwait(true);
         }
 
         internal async Task DeleteClick()
         {
             try
             {
-                await SentinelEntryService.Delete(Id);
+                await SentinelEntryService.Delete(Id).ConfigureAwait(true);
                 DeleteFailed = false;
             }
             catch (Exception e)
@@ -53,7 +53,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
             if (!DeleteFailed)
             {
-                await OnCloseClick.InvokeAsync(null);
+                await OnCloseClick.InvokeAsync(null).ConfigureAwait(true);
             }
         }
     }

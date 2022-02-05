@@ -29,16 +29,16 @@ namespace NRZMyk.Components.Pages
         {
             Logger.LogInformation("Now loading... /Admin");
 
-            Accounts = await AccountService.ListAccounts();
-            Organizations = await AccountService.ListOrganizations();
-            await base.OnInitializedAsync();
+            Accounts = await AccountService.ListAccounts().ConfigureAwait(true);
+            Organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
+            await base.OnInitializedAsync().ConfigureAwait(true);
         }
 
         internal async Task SubmitClick()
         {
             try
             {
-                await AccountService.AssignToOrganizationAsync(Accounts);
+                await AccountService.AssignToOrganizationAsync(Accounts).ConfigureAwait(true);
                 SaveState = SaveState.Success;
             }
             catch (Exception e)

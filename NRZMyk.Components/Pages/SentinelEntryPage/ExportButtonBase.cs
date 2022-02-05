@@ -20,9 +20,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         protected async Task DownloadFile()
         {
             DownloadInProgress = true;
-            var fileData = await SentinelEntryService.Export();
+            var fileData = await SentinelEntryService.Export().ConfigureAwait(true);
             var fileName =  $"Sentinel-Export_{DateTime.Now:yyyyMMdd}.xlsx";
-            await JsRuntime.InvokeAsync<object>("saveAsFile", new object[] { fileName, fileData });
+            await JsRuntime.InvokeAsync<object>("saveAsFile", new object[] { fileName, fileData }).ConfigureAwait(true);
             DownloadInProgress = false;
         }
     }

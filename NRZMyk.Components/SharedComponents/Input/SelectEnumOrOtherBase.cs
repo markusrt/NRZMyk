@@ -48,8 +48,8 @@ namespace NRZMyk.Components.SharedComponents.Input
 
         protected override async Task OnInitializedAsync()
         {
-            OtherValues = await SentinelEntryService.Other(Key);
-            await base.OnInitializedAsync();
+            OtherValues = await SentinelEntryService.Other(Key).ConfigureAwait(true);
+            await base.OnInitializedAsync().ConfigureAwait(true);
         }
     }
 }

@@ -29,9 +29,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         {
             Logger.LogInformation("Now loading... /SentinelEntries/Details/{Id}", Id);
 
-            SentinelEntry = await SentinelEntryService.GetById(Id);
+            SentinelEntry = await SentinelEntryService.GetById(Id).ConfigureAwait(true);
 
-            await base.OnInitializedAsync();
+            await base.OnInitializedAsync().ConfigureAwait(true);
         }
     }
 }
