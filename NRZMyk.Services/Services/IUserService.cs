@@ -7,6 +7,6 @@ namespace NRZMyk.Services.Services;
 
 public interface IUserService
 {
-    Task UpdateRoleViaGraphApi(IEnumerable<RemoteAccount> remoteAccounts);
+    Task GetRolesViaGraphApi(IEnumerable<RemoteAccount> remoteAccounts);
     Task UpdateUserRole(string userId, Role role);
 }

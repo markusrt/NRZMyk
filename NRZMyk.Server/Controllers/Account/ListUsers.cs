@@ -32,7 +32,7 @@ namespace NRZMyk.Server.Controllers.Account
         public override async Task<ActionResult<List<RemoteAccount>>> HandleAsync()
         {
             var items = await _accountRepository.ListAllAsync();
-            await _userService.UpdateRoleViaGraphApi(items);
+            await _userService.GetRolesViaGraphApi(items);
             return Ok(items);
         }
     }

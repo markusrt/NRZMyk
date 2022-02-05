@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NRZMyk.Mocks\NRZMyk.Mocks.csproj" />
     <ProjectReference Include="..\NRZMyk.Services\NRZMyk.Services.csproj" />
   </ItemGroup>
 </Project>

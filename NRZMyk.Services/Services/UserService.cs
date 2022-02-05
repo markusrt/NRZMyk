@@ -20,12 +20,16 @@ public class UserService : IUserService
     private readonly ILogger<UserService> _logger;
     private readonly string _extensionAppClientId;
 
+    private const string RoleAttributeName = "Role";
+
+
     public UserService(IGraphServiceClient graphClient, IOptions<AzureAdB2CSettings> config, ILogger<UserService> logger)
     {
         if (string.IsNullOrWhiteSpace(config?.Value?.AzureAdB2C?.B2cExtensionAppClientId))
         {
             throw new ArgumentException(
-                "B2C Extension App ClientId (ApplicationId) is missing in the appsettings.json.",
+                "Missing extension client id configuration: " +
+                $"{nameof(AzureAdB2CSettings.AzureAdB2C)} -> {nameof(AzureAdB2CSettings.AzureAdB2C.B2cExtensionAppClientId)}.",
                 nameof(_extensionAppClientId));
         }
 
@@ -34,9 +38,9 @@ public class UserService : IUserService
         _extensionAppClientId = config.Value.AzureAdB2C.B2cExtensionAppClientId;
     }
 
-    public async Task UpdateRoleViaGraphApi(IEnumerable<RemoteAccount> remoteAccounts)
+    public async Task GetRolesViaGraphApi(IEnumerable<RemoteAccount> remoteAccounts)
     {
-        var roleAttributeName = GetCompleteAttributeName("Role");
+        var roleAttributeName = GetCompleteAttributeName(RoleAttributeName);
 
         foreach (var remoteAccount in remoteAccounts)
         {
@@ -75,22 +79,14 @@ public class UserService : IUserService
    
     public async Task UpdateUserRole(string userId, Role role)
     {
+        var roleAttributeName = GetCompleteAttributeName(RoleAttributeName);
 
-        Console.WriteLine($"Looking for user with object ID '{userId}'...");
+        IDictionary<string, object> extensionInstance = new Dictionary<string, object>
+        {
+            { roleAttributeName, ((int)role).ToString() }
+        };
 
-        // Declare the names of the custom attributes
-        const string customAttributeName1 = "Role";
-
-        // Get the complete name of the custom attribute (Azure AD extension)
-        string roleAttributeName = GetCompleteAttributeName(customAttributeName1);
-
-        Console.WriteLine($"Create a user with the custom attributes '{customAttributeName1}'");
-
-        // Fill custom attributes
-        IDictionary<string, object> extensionInstance = new Dictionary<string, object>();
-        extensionInstance.Add(roleAttributeName, ((int)role).ToString());
-
-        var user = new Microsoft.Graph.User
+        var user = new User
         {
             AdditionalData = extensionInstance
         };
@@ -98,29 +94,21 @@ public class UserService : IUserService
 
         try
         {
-            // Update user by object ID
-            await _graphClient.Users[userId]
-                .Request()
-                .UpdateAsync(user);
-
-            Console.WriteLine($"User with object ID '{userId}' successfully updated.");
+            await _graphClient.Users[userId].Request().UpdateAsync(user);
+            _logger.LogInformation("Updated role to '{role}' for user with object ID '{userId}'",
+                role, userId);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(ex.Message);
-            Console.ResetColor();
+            _logger.LogError(e, 
+                "Failed to update role to '{role}' for user with object ID '{userId}'",
+                role, userId);
         }
     }
 
-    internal string GetCompleteAttributeName(string attributeName)
+    private string GetCompleteAttributeName(string attributeName)
     {
         var sanitizedClientId = _extensionAppClientId.Replace("-", "");
-        if (string.IsNullOrWhiteSpace(attributeName))
-        {
-            throw new System.ArgumentException("Parameter cannot be null", nameof(attributeName));
-        }
-
         return $"extension_{sanitizedClientId}_{attributeName}";
     }
 }
