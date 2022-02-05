@@ -22,16 +22,17 @@ namespace NRZMyk.Services.Services
 
         public async Task<string> ResolveOrganization(string protectKey)
         {
-            if (_cache.TryGetValue(protectKey, out var organization))
+            if (_cache.TryGetValue(protectKey, out var organizationName))
             {
-                return organization;
+                return organizationName;
             }
 
             try
             {
-                organization = (await _organizationRepository.GetByIdAsync(int.Parse(protectKey))).Name;
-                _cache.Add(protectKey, organization);
-                return organization;
+                var organization = await _organizationRepository.GetByIdAsync(int.Parse(protectKey)).ConfigureAwait(false);
+                organizationName = organization.Name;
+                _cache.Add(protectKey, organizationName);
+                return organizationName;
             }
             catch (Exception e)
             {

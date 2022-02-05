@@ -28,7 +28,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                var response = await _httpClient.GetFromJsonAsync<List<ClinicalBreakpoint>>("api/clinical-breakpoints");
+                var response = await _httpClient.GetFromJsonAsync<List<ClinicalBreakpoint>>("api/clinical-breakpoints").ConfigureAwait(false);
                 _logger.LogInformation($"API returned {response.Count} clinical breakpoints");
                 return response;
             }

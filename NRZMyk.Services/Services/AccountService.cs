@@ -25,7 +25,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<ICollection<RemoteAccount>>($"api/users");
+                return await _httpClient.GetFromJsonAsync<ICollection<RemoteAccount>>($"api/users").ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -38,7 +38,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<ICollection<Organization>>($"api/organizations");
+                return await _httpClient.GetFromJsonAsync<ICollection<Organization>>($"api/organizations").ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -51,7 +51,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                await _httpClient.PostAsJsonAsync("api/users/assign-organization", accounts);
+                await _httpClient.PostAsJsonAsync("api/users/assign-organization", accounts).ConfigureAwait(false);
             }
             catch (Exception exception)
             {

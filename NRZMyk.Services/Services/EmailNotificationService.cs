@@ -38,14 +38,14 @@ namespace NRZMyk.Services.Services
                 Time = now.ToString("HH:mm")
             });
 
-            var response = await _sendGridClient.SendEmailAsync(sendGridMessage);
+            var response = await _sendGridClient.SendEmailAsync(sendGridMessage).ConfigureAwait(false);
             if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
             {
                 _logger.LogInformation($"Email notification on new user registration was sent via SendGrid to {_appSettings.AdministratorEmail}");
             }
             else
             {
-                var errorDetails = await response.Body.ReadAsStringAsync();
+                var errorDetails = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
                 _logger.LogError($"Email notification via SendGrid failed with status {response.StatusCode}, error details: '{errorDetails}'");
 
             }

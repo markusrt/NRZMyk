@@ -45,7 +45,7 @@ public class UserService : IUserService
     {
         foreach (var remoteAccount in remoteAccounts)
         {
-            await GetRoleViaGraphApi(remoteAccount);
+            await GetRoleViaGraphApi(remoteAccount).ConfigureAwait(false);
         }
     }
 
@@ -111,7 +111,7 @@ public class UserService : IUserService
 
         try
         {
-            await _graphClient.Users[userId].Request().UpdateAsync(user);
+            await _graphClient.Users[userId].Request().UpdateAsync(user).ConfigureAwait(false);
             _logger.LogInformation("Updated role to '{role}' for user with object ID '{userId}'",
                 role, userId);
         }

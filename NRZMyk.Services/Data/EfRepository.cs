@@ -24,30 +24,30 @@ namespace NRZMyk.Services.Data
 
         public virtual async Task<T> GetByIdAsync(int id)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            return await _dbContext.Set<T>().FindAsync(id).ConfigureAwait(false);
         }
 
         public async Task<IReadOnlyList<T>> ListAllAsync()
         {
-            return await _dbContext.Set<T>().ToListAsync();
+            return await _dbContext.Set<T>().ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
         {
-            var specificationResult = await ApplySpecification(spec);
-            return await specificationResult.ToListAsync();
+            var specificationResult = await ApplySpecification(spec).ConfigureAwait(false);
+            return await specificationResult.ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
-            var specificationResult = await ApplySpecification(spec);
-            return await specificationResult.CountAsync();
+            var specificationResult = await ApplySpecification(spec).ConfigureAwait(false);
+            return await specificationResult.CountAsync().ConfigureAwait(false);
         }
 
         public async Task<T> AddAsync(T entity)
         {
-            await _dbContext.Set<T>().AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.Set<T>().AddAsync(entity).ConfigureAwait(false);
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return entity;
         }
@@ -55,30 +55,30 @@ namespace NRZMyk.Services.Data
         public async Task UpdateAsync(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task DeleteAsync(T entity)
         {
             _dbContext.Set<T>().Remove(entity);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<T> FirstAsync(ISpecification<T> spec)
         {
-            var specificationResult = await ApplySpecification(spec);
-            return await specificationResult.FirstAsync();
+            var specificationResult = await ApplySpecification(spec).ConfigureAwait(false);
+            return await specificationResult.FirstAsync().ConfigureAwait(false);
         }
 
         public async Task<T> FirstOrDefaultAsync(ISpecification<T> spec)
         {
-            var specificationResult = await ApplySpecification(spec);
-            return await specificationResult.FirstOrDefaultAsync();
+            var specificationResult = await ApplySpecification(spec).ConfigureAwait(false);
+            return await specificationResult.FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
         private async Task<IQueryable<T>> ApplySpecification(ISpecification<T> spec)
         {
-            return await EfSpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>().AsQueryable(), spec);
+            return await EfSpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>().AsQueryable(), spec).ConfigureAwait(false);
         }
     }
 }

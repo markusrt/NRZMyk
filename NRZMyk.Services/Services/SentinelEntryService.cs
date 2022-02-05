@@ -39,8 +39,8 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/sentinel-entries", request);
-                return await response.Content.ReadFromJsonAsync<SentinelEntry>();
+                var response = await _httpClient.PostAsJsonAsync("api/sentinel-entries", request).ConfigureAwait(false);
+                return await response.Content.ReadFromJsonAsync<SentinelEntry>().ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -53,8 +53,8 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync("api/sentinel-entries", updateRequest);
-                return await response.Content.ReadFromJsonAsync<SentinelEntry>();
+                var response = await _httpClient.PutAsJsonAsync("api/sentinel-entries", updateRequest).ConfigureAwait(false);
+                return await response.Content.ReadFromJsonAsync<SentinelEntry>().ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -67,8 +67,8 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync("api/sentinel-entries/cryo-archive", request);
-                return await response.Content.ReadFromJsonAsync<SentinelEntry>();
+                var response = await _httpClient.PutAsJsonAsync("api/sentinel-entries/cryo-archive", request).ConfigureAwait(false);
+                return await response.Content.ReadFromJsonAsync<SentinelEntry>().ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -81,7 +81,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                var data = await _httpClient.GetByteArrayAsync("api/sentinel-entries/export");
+                var data = await _httpClient.GetByteArrayAsync("api/sentinel-entries/export").ConfigureAwait(false);
                 return Convert.ToBase64String(data);
             }
             catch (Exception exception)
@@ -95,7 +95,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<string>>($"api/sentinel-entries/other/{other}");
+                return await _httpClient.GetFromJsonAsync<List<string>>($"api/sentinel-entries/other/{other}").ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -108,7 +108,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                await _httpClient.DeleteAsync($"api/sentinel-entries/{id}");
+                await _httpClient.DeleteAsync($"api/sentinel-entries/{id}").ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -121,7 +121,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                var response = await _httpClient.GetFromJsonAsync<PagedSentinelEntryResult>($"api/sentinel-entries?PageSize={pageSize}");
+                var response = await _httpClient.GetFromJsonAsync<PagedSentinelEntryResult>($"api/sentinel-entries?PageSize={pageSize}").ConfigureAwait(false);
                 return response.SentinelEntries;
             }
             catch (Exception exception)
@@ -135,7 +135,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<SentinelEntry>>($"api/sentinel-entries/organization/{organizationId}");
+                return await _httpClient.GetFromJsonAsync<List<SentinelEntry>>($"api/sentinel-entries/organization/{organizationId}").ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -148,7 +148,7 @@ namespace NRZMyk.Services.Services
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<SentinelEntry>($"api/sentinel-entries/{id}");
+                return await _httpClient.GetFromJsonAsync<SentinelEntry>($"api/sentinel-entries/{id}").ConfigureAwait(false);
             }
             catch (Exception exception)
             {
