@@ -29,8 +29,9 @@ namespace NRZMyk.Client
             RemoteUserAccount account,
             RemoteAuthenticationUserOptions options)
         {
-            var initialUser = await base.CreateUserAsync(account, options);
-            var tokenStatus = (await TokenProvider.RequestAccessToken()).Status;
+            var initialUser = await base.CreateUserAsync(account, options).ConfigureAwait(true);
+            var token = await TokenProvider.RequestAccessToken().ConfigureAwait(true);
+            var tokenStatus = token.Status;
 
             if (account == null || !(initialUser.Identity is ClaimsIdentity userIdentity) 
                                 || tokenStatus != AccessTokenResultStatus.Success || !userIdentity.IsAuthenticated)
@@ -45,10 +46,10 @@ namespace NRZMyk.Client
             try
             {
                 var client = _clientFactory.CreateClient("NRZMyk.ServerAPI");
-                var response = await client.GetAsync("api/user/connect");
+                var response = await client.GetAsync("api/user/connect").ConfigureAwait(true);
                 if (response.IsSuccessStatusCode)
                 {
-                    var connectedAccount = await response.Content.ReadFromJsonAsync<ConnectedAccount>();
+                    var connectedAccount = await response.Content.ReadFromJsonAsync<ConnectedAccount>().ConfigureAwait(true);
 
                     _logger.LogInformation($"Connect success, {connectedAccount.Account.DisplayName}, IsGuest={connectedAccount.IsGuest}");
                     if (!connectedAccount.IsGuest && !userIdentity.HasClaim(ClaimTypes.Role, nameof(Role.User)))

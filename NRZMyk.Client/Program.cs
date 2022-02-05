@@ -41,4 +41,4 @@ builder.Services.AddMsalAuthentication(options =>
 
 // Custom services end
 
-await builder.Build().RunAsync();
+await builder.Build().RunAsync().ConfigureAwait(true);
