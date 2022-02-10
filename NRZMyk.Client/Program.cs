@@ -16,6 +16,7 @@ builder.Services.AddHttpClient("NRZMyk.ServerAPI",
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
     .CreateClient("NRZMyk.ServerAPI"));
+builder.Services.AddScoped<IHttpClient, LoggingJsonHttpClient>();
 
 // Custom services start
 

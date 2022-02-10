@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Json;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Services
 {
     public interface SentinelEntryService
     {
-        Task<SentinelEntry> Create(SentinelEntryRequest request);
+        Task<SentinelEntry> Create(SentinelEntryRequest createRequest);
         Task<List<SentinelEntry>> ListPaged(int pageSize);
         Task<List<SentinelEntry>> ListByOrganization(int organizationId);
         Task<SentinelEntry> GetById(int id);
         Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
-        Task<SentinelEntry> CryoArchive(CryoArchiveRequest request);
+        Task<SentinelEntry> CryoArchive(CryoArchiveRequest archiveRequest);
         Task<string> Export();
         Task<List<string>> Other(string other);
         Task Delete(int id);
@@ -24,137 +19,43 @@ namespace NRZMyk.Services.Services
 
     public class SentinelEntryServiceImpl : SentinelEntryService
     {
-        private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper;
-        private readonly ILogger<SentinelEntryServiceImpl> _logger;
+        private const string BaseApi = "api/sentinel-entries";
+        private readonly IHttpClient _httpClient;
 
-        public SentinelEntryServiceImpl(HttpClient httpClient, IMapper mapper, ILogger<SentinelEntryServiceImpl> logger)
+        public SentinelEntryServiceImpl(IHttpClient httpClient)
         {
             _httpClient = httpClient;
-            _mapper = mapper;
-            _logger = logger;
         }
 
-        public async Task<SentinelEntry> Create(SentinelEntryRequest request)
-        {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync("api/sentinel-entries", request).ConfigureAwait(false);
-                return await response.Content.ReadFromJsonAsync<SentinelEntry>().ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Failed to create sentinel entry");
-                throw;
-            }
-        }
+        public Task<SentinelEntry> Create(SentinelEntryRequest createRequest)
+            => _httpClient.Post<SentinelEntryRequest, SentinelEntry>(BaseApi, createRequest);
 
-        public async Task<SentinelEntry> Update(SentinelEntryRequest updateRequest)
-        {
-            try
-            {
-                var response = await _httpClient.PutAsJsonAsync("api/sentinel-entries", updateRequest).ConfigureAwait(false);
-                return await response.Content.ReadFromJsonAsync<SentinelEntry>().ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Failed to update sentinel entry");
-                throw;
-            }
-        }
+        public Task<SentinelEntry> Update(SentinelEntryRequest updateRequest)
+            => _httpClient.Put<SentinelEntryRequest, SentinelEntry>(BaseApi, updateRequest);
 
-        public async Task<SentinelEntry> CryoArchive(CryoArchiveRequest request)
-        {
-            try
-            {
-                var response = await _httpClient.PutAsJsonAsync("api/sentinel-entries/cryo-archive", request).ConfigureAwait(false);
-                return await response.Content.ReadFromJsonAsync<SentinelEntry>().ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Failed to cryo archive sentinel entry");
-                throw;
-            }
-        }
+        public Task<SentinelEntry> CryoArchive(CryoArchiveRequest archiveRequest)
+            => _httpClient.Put<CryoArchiveRequest, SentinelEntry>($"{BaseApi}/cryo-archive", archiveRequest);
 
-        public async Task<string> Export()
-        {
-            try
-            {
-                var data = await _httpClient.GetByteArrayAsync("api/sentinel-entries/export").ConfigureAwait(false);
-                return Convert.ToBase64String(data);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Failed to export sentinel entries from backend");
-                return string.Empty;
-            }
-        }
+        public Task<string> Export()
+            => _httpClient.GetBytesAsBase64($"{BaseApi}/export");
 
-        public async Task<List<string>> Other(string other)
-        {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<List<string>>($"api/sentinel-entries/other/{other}").ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"Failed to load other {other} from backend");
-                return new List<string>();
-            }
-        }
+        public Task<List<string>> Other(string other) 
+            => _httpClient.Get<List<string>>($"{BaseApi}/other/{other}");
 
-        public async Task Delete(int id)
-        {
-            try
-            {
-                await _httpClient.DeleteAsync($"api/sentinel-entries/{id}").ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Failed to retrieve sentinel entry");
-                throw;
-            }
-        }
+        public Task Delete(int id)
+            => _httpClient.Delete<SentinelEntry>($"{BaseApi}/{id}");
+
+        public Task<List<SentinelEntry>> ListByOrganization(int organizationId)
+            => _httpClient.Get<List<SentinelEntry>>($"{BaseApi}/organization/{organizationId}");
+
+        public Task<SentinelEntry> GetById(int id)
+            => _httpClient.Get<SentinelEntry>($"{BaseApi}/{id}");
 
         public async Task<List<SentinelEntry>> ListPaged(int pageSize)
         {
-            try
-            {
-                var response = await _httpClient.GetFromJsonAsync<PagedSentinelEntryResult>($"api/sentinel-entries?PageSize={pageSize}").ConfigureAwait(false);
-                return response.SentinelEntries;
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Failed to load paged sentinel entries from backend");
-                return new List<SentinelEntry>();
-            }
-        }
-
-        public async Task<List<SentinelEntry>> ListByOrganization(int organizationId)
-        {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<List<SentinelEntry>>($"api/sentinel-entries/organization/{organizationId}").ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, $"Failed to load sentinel entries by organization id '{organizationId}'");
-                return new List<SentinelEntry>();
-            }
-        }
-
-        public async Task<SentinelEntry> GetById(int id)
-        {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<SentinelEntry>($"api/sentinel-entries/{id}").ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Failed to retrieve sentinel entry");
-                throw;
-            }
+            var pagedResult = await _httpClient
+                .Get<PagedSentinelEntryResult>($"{BaseApi}?PageSize={pageSize}").ConfigureAwait(false);
+            return pagedResult.SentinelEntries;
         }
     }
 }

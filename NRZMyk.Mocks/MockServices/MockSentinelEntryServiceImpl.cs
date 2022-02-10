@@ -68,10 +68,10 @@ namespace NRZMyk.Mocks.MockServices
             });
         }
 
-        public Task<SentinelEntry> Create(SentinelEntryRequest request)
+        public Task<SentinelEntry> Create(SentinelEntryRequest createRequest)
         {
-            _logger.LogInformation($"Create sentinel entry: {request}");
-            var sentinelEntry = _mapper.Map<SentinelEntry>(request);
+            _logger.LogInformation($"Create sentinel entry: {createRequest}");
+            var sentinelEntry = _mapper.Map<SentinelEntry>(createRequest);
             sentinelEntry.Id = _id++;
             _repository.Add(sentinelEntry);
             return Task.FromResult(sentinelEntry);
@@ -103,12 +103,12 @@ namespace NRZMyk.Mocks.MockServices
             return Task.FromResult(entry);
         }
 
-        public async Task<SentinelEntry> CryoArchive(CryoArchiveRequest request)
+        public async Task<SentinelEntry> CryoArchive(CryoArchiveRequest archiveRequest)
         {
             await Task.Delay(2000);
-            var entry = _repository.FirstOrDefault(e => e.Id == request.Id);
-            entry.CryoRemark = request.CryoRemark;
-            entry.CryoDate = request.CryoDate;
+            var entry = _repository.FirstOrDefault(e => e.Id == archiveRequest.Id);
+            entry.CryoRemark = archiveRequest.CryoRemark;
+            entry.CryoDate = archiveRequest.CryoDate;
             return entry;
         }
 

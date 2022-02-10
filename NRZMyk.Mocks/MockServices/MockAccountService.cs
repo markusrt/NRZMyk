@@ -42,11 +42,12 @@ namespace NRZMyk.Mocks.MockServices
             return _organization;
         }
 
-        public async Task AssignToOrganizationAsync(ICollection<RemoteAccount> accounts)
+        public async Task<int> AssignToOrganization(ICollection<RemoteAccount> accounts)
         {
             await Task.Delay(1000);
             _accounts.Clear();
             _accounts.AddRange(accounts);
+            return accounts.Count;
         }
     }
 }

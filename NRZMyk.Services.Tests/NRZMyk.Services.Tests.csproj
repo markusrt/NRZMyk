@@ -18,6 +18,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
     <PackageReference Include="Tynamix.ObjectFiller" Version="1.5.5" />
   </ItemGroup>
 

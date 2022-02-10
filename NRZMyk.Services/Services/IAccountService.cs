@@ -11,6 +11,6 @@ namespace NRZMyk.Services.Services
         
         Task<ICollection<Organization>> ListOrganizations();
         
-        Task AssignToOrganizationAsync(ICollection<RemoteAccount> accounts);
+        Task<int> AssignToOrganization(ICollection<RemoteAccount> accounts);
     }
 }
