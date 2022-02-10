@@ -111,7 +111,7 @@ public class LoggingJsonHttpClient : IHttpClient
         }
         catch (Exception exception)
         {
-            LogError(method, requestUri, callingMethod, requestType?.Name, exception, response.StatusCode);
+            LogError(method, requestUri, callingMethod, requestType?.Name, exception, response?.StatusCode);
             throw;
         }
     }
