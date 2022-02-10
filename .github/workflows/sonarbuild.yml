@@ -46,6 +46,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"markusrt_NRZMyk" /o:"markusrt" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vstest.reportsPaths="**/*.trx" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.exclusions="./NRZMyk.Services/Data/Migrations/**,Program.cs,*Tests.cs"
-          dotnet test --settings coverlet.runsettings --logger:trx --configuration Release
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"markusrt_NRZMyk" /o:"markusrt" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vstest.reportsPaths="**/*.trx" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.exclusions="./NRZMyk.Services/Data/Migrations/**,Program.cs,**/*Tests.cs"
+          dotnet test -c Release -p:CollectCoverage=true -p:CoverletOutputFormat=\"json,opencover\" -p:SkipAutoProps=true -p:MergeWith=./coverage.json -p:CoverletOutput=./coverage.json -p:ExcludeByFile=\"**/Migrations/*.cs,**/NRZMyk.Mocks/**/*.cs
+\"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
