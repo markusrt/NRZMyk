@@ -29,11 +29,11 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.ListAllAsync()
                 .Returns(Task.FromResult((IReadOnlyList<RemoteAccount>)expectedResult));
 
-            var action = await sut.HandleAsync();
+            var action = await sut.HandleAsync().ConfigureAwait(true);
 
             action.Result.Should().BeOfType<OkObjectResult>();
             action.Result.As<OkObjectResult>().Value.Should().Be(expectedResult);
-            await userService.Received(1).GetRolesViaGraphApi(expectedResult);
+            await userService.Received(1).GetRolesViaGraphApi(expectedResult).ConfigureAwait(true);
         }
 
 

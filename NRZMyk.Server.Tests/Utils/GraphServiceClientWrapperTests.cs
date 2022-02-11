@@ -14,7 +14,7 @@ public class GraphServiceClientWrapperTests
     [Test]
     public void CtorWithMissingConfigSection_DoesThrow()
     {
-        Action createSut = () => new GraphServiceClientWrapper(Options.Create(new AzureAdB2CSettings()));
+        Action createSut = () => _ = new GraphServiceClientWrapper(Options.Create(new AzureAdB2CSettings()));
 
         createSut.Should().Throw<ArgumentException>();
     }
@@ -22,7 +22,7 @@ public class GraphServiceClientWrapperTests
     [Test]
     public void CtorWithValidConfigKeys_DoesNotThrow()
     {
-        Action createSut = () => new GraphServiceClientWrapper(Options.Create(new AzureAdB2CSettings {AzureAdB2C = new AzureAdB2C()}));
+        Action createSut = () => _ = new GraphServiceClientWrapper(Options.Create(new AzureAdB2CSettings {AzureAdB2C = new AzureAdB2C()}));
 
         createSut.Should().Throw<ArgumentException>();
     }
@@ -30,7 +30,7 @@ public class GraphServiceClientWrapperTests
     [Test]
     public void CtorWithValidConfig_DoesNotThrow()
     {
-        Action createSut = () => new GraphServiceClientWrapper(Options.Create(new AzureAdB2CSettings {AzureAdB2C = new AzureAdB2C()
+        Action createSut = () => _ = new GraphServiceClientWrapper(Options.Create(new AzureAdB2CSettings {AzureAdB2C = new AzureAdB2C()
         {
             Domain = "foo",
             ClientId = "123",

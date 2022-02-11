@@ -29,7 +29,7 @@ namespace NRZMyk.Services.Tests.Services
             sendGridClient.SendEmailAsync(Arg.Do<SendGridMessage>(s => messageSent = s))
                 .Returns(Task.FromResult(new Response(HttpStatusCode.Accepted, null, null)));
 
-            await sut.NotifyNewUserRegistered("Anders Hellman", "anders.hellman@arasaka.nc", "Night City");
+            await sut.NotifyNewUserRegistered("Anders Hellman", "anders.hellman@arasaka.nc", "Night City").ConfigureAwait(true);
 
             messageSent.TemplateId.Should().Be("RegisterTemplate");
             messageSent.From.Email.Should().Be("server@arasaka.nc");
@@ -56,7 +56,7 @@ namespace NRZMyk.Services.Tests.Services
             sendGridClient.SendEmailAsync(Arg.Do<SendGridMessage>(s => messageSent = s))
                 .Returns(Task.FromResult(badResponse));
 
-            await sut.NotifyNewUserRegistered("荒坂 三郎", "saburo.arasaka@arasaka.nc", "Night City");
+            await sut.NotifyNewUserRegistered("荒坂 三郎", "saburo.arasaka@arasaka.nc", "Night City").ConfigureAwait(true);
 
             logger.Messages[LogLevel.Error].Should().Contain("Error details");
         }

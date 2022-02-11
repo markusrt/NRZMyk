@@ -56,7 +56,7 @@ public class EfRepositoryTests
     [Test]
     public async Task WhenGetById_ReturnsEntity()
     {
-        var organization = await CreateSut().GetByIdAsync(1);
+        var organization = await CreateSut().GetByIdAsync(1).ConfigureAwait(true);
 
         organization.Name.Should().Be("Org1");
     }
@@ -64,7 +64,7 @@ public class EfRepositoryTests
     [Test]
     public async Task WhenListAll_ReturnsAll()
     {
-        var organizations = await CreateSut().ListAllAsync();
+        var organizations = await CreateSut().ListAllAsync().ConfigureAwait(true);
 
         organizations.Should().HaveCount(2);
     }
@@ -72,7 +72,7 @@ public class EfRepositoryTests
     [Test]
     public async Task WhenListWithSpec_ReturnsFiltered()
     {
-        var organizations = await CreateSut().ListAsync(new Org1Spec());
+        var organizations = await CreateSut().ListAsync(new Org1Spec()).ConfigureAwait(true);
 
         organizations.Should().HaveCount(1);
     }
@@ -80,7 +80,7 @@ public class EfRepositoryTests
     [Test]
     public async Task WhenCountWithSpec_ReturnsFiltered()
     {
-        var organizations = await CreateSut().CountAsync(new Org1Spec());
+        var organizations = await CreateSut().CountAsync(new Org1Spec()).ConfigureAwait(true);
 
         organizations.Should().Be(1);
     }
@@ -88,32 +88,32 @@ public class EfRepositoryTests
     [Test]
     public async Task WhenAdd_InsertsOneMore()
     {
-        await CreateSut().AddAsync(new Organization() {Id = 3, Name = "Org3"});
+        await CreateSut().AddAsync(new Organization() {Id = 3, Name = "Org3"}).ConfigureAwait(true);
 
-        var organizations = await CreateSut().ListAllAsync();
+        var organizations = await CreateSut().ListAllAsync().ConfigureAwait(true);
         organizations.Should().HaveCount(3);
     }
 
     [Test]
     public async Task WhenFirstUpdateFirstOrDefault_BehavesAsExpected()
     {
-        var org1 = await CreateSut().FirstAsync(new Org1Spec());
+        var org1 = await CreateSut().FirstAsync(new Org1Spec()).ConfigureAwait(true);
         org1.Name = "Org3";
 
-        await CreateSut().UpdateAsync(org1);
+        await CreateSut().UpdateAsync(org1).ConfigureAwait(true);
 
-        var organizations = await CreateSut().FirstOrDefaultAsync(new Org1Spec());
+        var organizations = await CreateSut().FirstOrDefaultAsync(new Org1Spec()).ConfigureAwait(true);
         organizations.Should().BeNull();
     }
 
     [Test]
     public async Task WhenDelete_RemovesEntity()
     {
-        var org1 = await CreateSut().FirstAsync(new Org1Spec());
+        var org1 = await CreateSut().FirstAsync(new Org1Spec()).ConfigureAwait(true);
 
-        await CreateSut().DeleteAsync(org1);
+        await CreateSut().DeleteAsync(org1).ConfigureAwait(true);
 
-        var organizations = await CreateSut().FirstOrDefaultAsync(new Org1Spec());
+        var organizations = await CreateSut().FirstOrDefaultAsync(new Org1Spec()).ConfigureAwait(true);
         organizations.Should().BeNull();
     }
 

@@ -29,7 +29,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.ListAsync(Arg.Any<SentinelEntriesIncludingTestsSpecification>())
                 .Returns(Task.FromResult((IReadOnlyList<SentinelEntry>)filler.Create(10)));
 
-            var action = await sut.DownloadExcel();
+            var action = await sut.DownloadExcel().ConfigureAwait(true);
 
             var fileResult = action.Should().BeOfType<FileContentResult>().Subject;
             fileResult.ContentType.Should().Be("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

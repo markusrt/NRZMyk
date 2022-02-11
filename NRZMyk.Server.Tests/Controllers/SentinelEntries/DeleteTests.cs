@@ -25,10 +25,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 123))
                 .Returns(Task.FromResult((SentinelEntry)null));
 
-            var action = await sut.HandleAsync(123);
+            var action = await sut.HandleAsync(123).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<ForbidResult>();
-            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>());
+            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 123))
                 .Returns(Task.FromResult((SentinelEntry)null));
 
-            var action = await sut.HandleAsync(123);
+            var action = await sut.HandleAsync(123).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<NotFoundResult>();
         }
@@ -55,10 +55,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(567);
+            var action = await sut.HandleAsync(567).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<NotFoundResult>();
-            await repository.Received(0).DeleteAsync(Arg.Any<SentinelEntry>());
+            await repository.Received(0).DeleteAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
         }
 
         [Test]
@@ -80,11 +80,11 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(567);
+            var action = await sut.HandleAsync(567).ConfigureAwait(true);
 
-            await sensitivityTestRepository.Received(1).DeleteAsync(sensitivityTest1);
-            await sensitivityTestRepository.Received(1).DeleteAsync(sensitivityTest2);
-            await repository.Received(1).DeleteAsync(sentinelEntry);
+            await sensitivityTestRepository.Received(1).DeleteAsync(sensitivityTest1).ConfigureAwait(true);
+            await sensitivityTestRepository.Received(1).DeleteAsync(sensitivityTest2).ConfigureAwait(true);
+            await repository.Received(1).DeleteAsync(sentinelEntry).ConfigureAwait(true);
             var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
             okResult.Value.Should().Be(567);
         }
@@ -102,10 +102,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(567);
+            var action = await sut.HandleAsync(567).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<ForbidResult>();
-            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>());
+            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
         }
 
 

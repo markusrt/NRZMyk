@@ -29,10 +29,10 @@ namespace NRZMyk.Server.Tests.Controllers.User
             mapper.Map<RemoteAccount>(user).Returns(mappedAccount);
             repository.AddAsync(mappedAccount).Returns(storedAccount);
 
-            var action = await sut.HandleAsync();
+            var action = await sut.HandleAsync().ConfigureAwait(true);
 
             mapper.Received(1).Map<RemoteAccount>(user);
-            await repository.Received(1).AddAsync(mappedAccount);
+            await repository.Received(1).AddAsync(mappedAccount).ConfigureAwait(true);
             var connectedAccount = action.Value.Should().BeOfType<ConnectedAccount>().Subject;
             connectedAccount.Account.Should().Be(storedAccount);
             connectedAccount.IsGuest.Should().BeTrue();
@@ -48,7 +48,7 @@ namespace NRZMyk.Server.Tests.Controllers.User
             mapper.Map<RemoteAccount>(user).Returns(mappedAccount);
             repository.AddAsync(mappedAccount).Returns(storedAccount);
 
-            await sut.HandleAsync();
+            await sut.HandleAsync().ConfigureAwait(true);
 
             await emailNotificationService.Received(1)
                 .NotifyNewUserRegistered("Jane Doe", "jane.doe@doyouknowthedoes.com", "New York");
@@ -65,10 +65,10 @@ namespace NRZMyk.Server.Tests.Controllers.User
             mapper.Map<RemoteAccount>(user).Returns(mappedAccount);
             repository.AddAsync(mappedAccount).Returns(storedAccount);
 
-            var action = await sut.HandleAsync();
+            var action = await sut.HandleAsync().ConfigureAwait(true);
 
             mapper.Received(1).Map<RemoteAccount>(user);
-            await repository.Received(1).AddAsync(mappedAccount);
+            await repository.Received(1).AddAsync(mappedAccount).ConfigureAwait(true);
             var connectedAccount = action.Value.Should().BeOfType<ConnectedAccount>().Subject;
             connectedAccount.Account.Should().Be(storedAccount);
             connectedAccount.IsGuest.Should().BeFalse();
@@ -84,10 +84,10 @@ namespace NRZMyk.Server.Tests.Controllers.User
             repository.FirstOrDefaultAsync(Arg.Is<RemoteAccountByObjectIdSpecification>(s => s.ObjectId == mappedAccount.ObjectId)).Returns(existingAccount);
             mapper.When(m => m.Map(user, existingAccount)).Do(info => info.Arg<RemoteAccount>().Street = "Long Road 1000233");
 
-            var action = await sut.HandleAsync();
+            var action = await sut.HandleAsync().ConfigureAwait(true);
 
             mapper.Received(1).Map(user, existingAccount);
-            await repository.Received(1).UpdateAsync(existingAccount);
+            await repository.Received(1).UpdateAsync(existingAccount).ConfigureAwait(true);
             var connectedAccount = action.Value.Should().BeOfType<ConnectedAccount>().Subject;
             connectedAccount.Account.Should().Be(existingAccount);
             connectedAccount.IsGuest.Should().BeTrue();

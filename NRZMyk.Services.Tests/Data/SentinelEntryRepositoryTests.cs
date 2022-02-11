@@ -54,7 +54,7 @@ namespace NRZMyk.Services.Tests.Data
             {
                 sut.AssignNextCryoBoxNumber(existingEntry);
                 sut.AssignNextEntryNumber(existingEntry);
-                await sut.AddAsync(existingEntry);
+                await sut.AddAsync(existingEntry).ConfigureAwait(true);
             }
 
             sut.AssignNextEntryNumber(entry);
@@ -85,7 +85,7 @@ namespace NRZMyk.Services.Tests.Data
             {
                 sut.AssignNextCryoBoxNumber(existingEntry);
                 sut.AssignNextEntryNumber(existingEntry);
-                await sut.AddAsync(existingEntry);
+                await sut.AddAsync(existingEntry).ConfigureAwait(true);
             }
 
             sut.AssignNextCryoBoxNumber(entry);
@@ -104,7 +104,7 @@ namespace NRZMyk.Services.Tests.Data
             entryTwoYearsAgo.CryoBoxNumber = 40;
             entryTwoYearsAgo.Year = DateTime.Now.Year - 2;
             var sut = CreateSut(Options.Create(new ApplicationSettings()));
-            await sut.AddAsync(entryTwoYearsAgo);
+            await sut.AddAsync(entryTwoYearsAgo).ConfigureAwait(true);
 
             sut.AssignNextCryoBoxNumber(entry);
                 
@@ -122,7 +122,7 @@ namespace NRZMyk.Services.Tests.Data
             {
                 sut.AssignNextCryoBoxNumber(existingEntry);
                 sut.AssignNextEntryNumber(existingEntry);
-                await sut.AddAsync(existingEntry);
+                await sut.AddAsync(existingEntry).ConfigureAwait(true);
             }
 
             sut.AssignNextCryoBoxNumber(entry);

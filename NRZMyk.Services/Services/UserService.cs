@@ -31,7 +31,7 @@ public class UserService : IUserService
             throw new ArgumentException(
                 "Missing extension client id configuration: " +
                 $"{nameof(AzureAdB2CSettings.AzureAdB2C)} -> {nameof(AzureAdB2CSettings.AzureAdB2C.B2cExtensionAppClientId)}.",
-                nameof(_extensionAppClientId));
+                nameof(config));
         }
 
         _graphClient = graphClient;
@@ -56,9 +56,8 @@ public class UserService : IUserService
         try
         {
             var user = await _graphClient.Users[remoteAccount.ObjectId.ToString()]
-                .Request()
-                .Select($"id,displayName,{RoleAttributeName}")
-                .GetAsync();
+                .Request().Select($"id,displayName,{RoleAttributeName}")
+                .GetAsync().ConfigureAwait(false);
 
             role = TryToGetRoleFromCustomAttribute(user);
         }

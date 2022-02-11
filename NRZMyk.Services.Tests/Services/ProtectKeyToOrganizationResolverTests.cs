@@ -28,7 +28,7 @@ namespace NRZMyk.Services.Tests.Services
             var sut = CreateSut(out var repository);
             repository.GetByIdAsync(10).Returns(new Organization {Name = "Laboratory 1"});
 
-            var organization = await sut.ResolveOrganization("10");
+            var organization = await sut.ResolveOrganization("10").ConfigureAwait(true);
 
             organization.Should().Be("Laboratory 1");
         }
@@ -38,10 +38,10 @@ namespace NRZMyk.Services.Tests.Services
         {
             var sut = CreateSut(out var repository);
             repository.GetByIdAsync(10).Returns(new Organization {Name = "Laboratory 1"});
-            _ = await sut.ResolveOrganization("10");
+            _ = await sut.ResolveOrganization("10").ConfigureAwait(true);
             repository.GetByIdAsync(Arg.Any<int>()).Throws(new Exception());
 
-            var organization = await sut.ResolveOrganization("10");
+            var organization = await sut.ResolveOrganization("10").ConfigureAwait(true);
 
             organization.Should().Be("Laboratory 1");
         }
@@ -51,7 +51,7 @@ namespace NRZMyk.Services.Tests.Services
         {
             var sut = CreateSut(out _);
 
-            var organization = await sut.ResolveOrganization("Foo");
+            var organization = await sut.ResolveOrganization("Foo").ConfigureAwait(true);
 
             organization.Should().BeEmpty();
         }
@@ -62,7 +62,7 @@ namespace NRZMyk.Services.Tests.Services
             var sut = CreateSut(out var repository);
             repository.GetByIdAsync(404).Returns((Organization)null);
 
-            var organization = await sut.ResolveOrganization("404");
+            var organization = await sut.ResolveOrganization("404").ConfigureAwait(true);
 
             organization.Should().BeEmpty();
         }

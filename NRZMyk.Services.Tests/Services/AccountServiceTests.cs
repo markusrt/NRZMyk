@@ -24,7 +24,7 @@ public class AccountServiceTests
     {
         var sut = CreateSut(out var httpClient);
         
-        await sut.ListAccounts();
+        await sut.ListAccounts().ConfigureAwait(true);
 
         await httpClient.Received(1).Get<ICollection<RemoteAccount>>(
             "api/users", default, Arg.Is<string>(s => !string.IsNullOrEmpty(s)));
@@ -35,7 +35,7 @@ public class AccountServiceTests
     {
         var sut = CreateSut(out var httpClient);
         
-        await sut.ListOrganizations();
+        await sut.ListOrganizations().ConfigureAwait(true);
 
         await httpClient.Received(1).Get<ICollection<Organization>>(
             "api/organizations", default, Arg.Is<string>(s => !string.IsNullOrEmpty(s)));
@@ -47,7 +47,7 @@ public class AccountServiceTests
         var sut = CreateSut(out var httpClient);
         var accounts = new List<RemoteAccount>();
         
-        await sut.AssignToOrganization(accounts);
+        await sut.AssignToOrganization(accounts).ConfigureAwait(true);
 
         await httpClient.Received(1).Post<ICollection<RemoteAccount>, int>(
             "api/users/assign-organization", accounts, default, Arg.Is<string>(s => !string.IsNullOrEmpty(s)));

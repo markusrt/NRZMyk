@@ -24,7 +24,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 123))
                 .Returns(Task.FromResult((SentinelEntry)null));
 
-            var action = await sut.HandleAsync(123);
+            var action = await sut.HandleAsync(123).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<NotFoundResult>();
         }
@@ -40,7 +40,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(123);
+            var action = await sut.HandleAsync(123).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<NotFoundResult>();
         }
@@ -53,10 +53,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(567);
+            var action = await sut.HandleAsync(567).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<ForbidResult>();
-            await repository.Received(0).FirstOrDefaultAsync(Arg.Any<SentinelEntryIncludingTestsSpecification>());
+            await repository.Received(0).FirstOrDefaultAsync(Arg.Any<SentinelEntryIncludingTestsSpecification>()).ConfigureAwait(true);
         }
 
         [Test]
@@ -70,7 +70,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(567);
+            var action = await sut.HandleAsync(567).ConfigureAwait(true);
 
             var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
             okResult.Value.Should().Be(sentinelEntry);

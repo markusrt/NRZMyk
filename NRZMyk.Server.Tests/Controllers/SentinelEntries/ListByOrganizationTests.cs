@@ -26,7 +26,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.ListAsync(Arg.Is<SentinelEntryFilterSpecification>(specification => specification.ProtectKey == "567"))
                 .Returns(Task.FromResult((IReadOnlyList<SentinelEntry>)expectedResult));
 
-            var action = await sut.HandleAsync(567);
+            var action = await sut.HandleAsync(567).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<OkObjectResult>();
             action.Result.As<OkObjectResult>().Value.Should().Be(expectedResult);
@@ -40,7 +40,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.ListAsync(Arg.Any<AllSentinelEntriesFilterSpecification>())
                 .Returns(Task.FromResult((IReadOnlyList<SentinelEntry>)expectedResult));
 
-            var action = await sut.HandleAsync(-1);
+            var action = await sut.HandleAsync(-1).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<OkObjectResult>();
             action.Result.As<OkObjectResult>().Value.Should().Be(expectedResult);
