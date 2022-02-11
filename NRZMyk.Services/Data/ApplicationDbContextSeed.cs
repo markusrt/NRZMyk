@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Data
 {
+    [ExcludeFromCodeCoverage(Justification = "Not testable with in memory DB")]
     public class ApplicationDbContextSeed
     {
         public static async Task SeedAsync(ApplicationDbContext context,
