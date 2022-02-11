@@ -21,7 +21,7 @@ namespace NRZMyk.ComponentsTests.SharedComponents
 
             sut.ToggleNavMenu();
 
-            sut.NavMenuCssClass.Should().BeNull();
+            sut.NavMenuCssClass.Should().BeEmpty();
         }
     }
 }
