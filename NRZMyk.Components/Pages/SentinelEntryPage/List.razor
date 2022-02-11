@@ -121,12 +121,12 @@ else
     {
         if (firstRender)
         {
-            sentinelEntries = await SentinelEntryService.ListPaged(50);
+            sentinelEntries = await SentinelEntryService.ListPaged(50).ConfigureAwait(true);
 
-            await InvokeAsync(CallRequestRefresh);
+            await InvokeAsync(CallRequestRefresh).ConfigureAwait(true);
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender).ConfigureAwait(true);
     }
 
     private void DetailsClick(int id)
@@ -155,30 +155,30 @@ else
     private async Task CloseDetailsHandler(string action)
     {
         showDetails = false;
-        await ReloadCatalogItems();
+        await ReloadCatalogItems().ConfigureAwait(true);
     }
     
     private async Task CloseEditHandler(string action)
     {
         showEdit = false;
-        await ReloadCatalogItems();
+        await ReloadCatalogItems().ConfigureAwait(true);
     }
 
     private async Task CloseDeleteHandler(string action)
     {
         showDelete = false;
-        await ReloadCatalogItems();
+        await ReloadCatalogItems().ConfigureAwait(true);
     }
 
     private async Task CloseCreateHandler(string action)
     {
         showCreate = false;
-        await ReloadCatalogItems();
+        await ReloadCatalogItems().ConfigureAwait(true);
     }
 
     private async Task ReloadCatalogItems()
     {
-        sentinelEntries = await SentinelEntryService.ListPaged(50);
+        sentinelEntries = await SentinelEntryService.ListPaged(50).ConfigureAwait(true);
         StateHasChanged();
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using NRZMyk.Services.Services;
 
@@ -10,19 +7,19 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
     public class ExportButtonBase : ComponentBase
     {
         [Inject]
-        internal IJSRuntime JsRuntime { get; set; }   
+        internal IJSRuntime JsRuntime { get; set; } = default!;   
 
         [Inject]
-        internal  SentinelEntryService SentinelEntryService { get; set; }
+        internal  SentinelEntryService SentinelEntryService { get; set; } = default!;
 
         internal bool DownloadInProgress { get; private set; }
         
         protected async Task DownloadFile()
         {
             DownloadInProgress = true;
-            var fileData = await SentinelEntryService.Export();
+            var fileData = await SentinelEntryService.Export().ConfigureAwait(true);
             var fileName =  $"Sentinel-Export_{DateTime.Now:yyyyMMdd}.xlsx";
-            await JsRuntime.InvokeAsync<object>("saveAsFile", new object[] { fileName, fileData });
+            await JsRuntime.InvokeAsync<object>("saveAsFile", new object[] { fileName, fileData }).ConfigureAwait(true);
             DownloadInProgress = false;
         }
     }

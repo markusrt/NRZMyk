@@ -35,7 +35,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(cryoArchiveRequest);
+            var action = await sut.HandleAsync(cryoArchiveRequest).ConfigureAwait(true);
 
             var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
             var storedEntry = okResult.Value as SentinelEntry;

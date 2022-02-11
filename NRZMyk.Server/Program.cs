@@ -27,7 +27,7 @@ namespace NRZMyk.Server
                 try
                 {
                     var catalogContext = services.GetRequiredService<ApplicationDbContext>();
-                    await ApplicationDbContextSeed.SeedAsync(catalogContext, loggerFactory, seedSettings.DatabaseSeed);
+                    await ApplicationDbContextSeed.SeedAsync(catalogContext, loggerFactory, seedSettings.DatabaseSeed).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {

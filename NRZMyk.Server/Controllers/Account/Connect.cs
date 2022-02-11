@@ -39,14 +39,14 @@ namespace NRZMyk.Server.Controllers.Account
                 new RemoteAccountByObjectIdSpecification(connectingAccount.ObjectId));
             if (storedAccount == null)
             {
-                storedAccount = await _accountRepository.AddAsync(connectingAccount);
+                storedAccount = await _accountRepository.AddAsync(connectingAccount).ConfigureAwait(false);
                 await _emailNotificationService
                     .NotifyNewUserRegistered(storedAccount.DisplayName, storedAccount.Email, storedAccount.City);
             }
             else
             {
                 _mapper.Map(User, storedAccount);
-                await _accountRepository.UpdateAsync(storedAccount);
+                await _accountRepository.UpdateAsync(storedAccount).ConfigureAwait(false);
             }
 
             return new ConnectedAccount

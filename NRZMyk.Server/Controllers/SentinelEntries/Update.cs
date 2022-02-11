@@ -61,11 +61,11 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             //TODO make update a bit more intelligent, i.e. check if ids are same instead of deleting all...
             foreach (var sensitivityTest in existingItem.AntimicrobialSensitivityTests.ToList())
             {
-                await _sensitivityTestRepository.DeleteAsync(sensitivityTest);
+                await _sensitivityTestRepository.DeleteAsync(sensitivityTest).ConfigureAwait(false);
             }
             
             _mapper.Map(request, existingItem);
-            await _sentinelEntryRepository.UpdateAsync(existingItem);
+            await _sentinelEntryRepository.UpdateAsync(existingItem).ConfigureAwait(false);
             
             return Ok(existingItem);
         }

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Threading.Tasks;
 using AutoMapper;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,26 +26,27 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
     public class CreateTests
     {
         private TestContext _context;
-        private IRenderedComponent<Create> _renderedComponent;
         private MockClinicalBreakpointService _mockClinicalBreakpointService;
         private MockMicStepsService _mockMicStepsService;
+        private SentinelEntryService _sentinelEntryService;
 
         [SetUp]
         public void CreateComponent()
         {
+            MockSentinelEntryServiceImpl.Delay = 0;
             _mockClinicalBreakpointService = new MockClinicalBreakpointService();
             _mockMicStepsService = new MockMicStepsService();
 
-            var context = new TestContext();
-            context.Services.AddAutoMapper(typeof(SentinelEntryService).Assembly);
-            context.Services.AddSingleton<SentinelEntryService, MockSentinelEntryServiceImpl>();
-            context.Services.AddSingleton<IClinicalBreakpointService>(_mockClinicalBreakpointService);
-            context.Services.AddSingleton<IMicStepsService>(_mockMicStepsService);
-            context.Services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
-            context.Services.AddScoped<SignOutSessionStateManager>();
-            context.Services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
-            _context = context;
-            _renderedComponent = CreateSut(_context);
+            _context = new TestContext();
+            _context.Services.AddAutoMapper(typeof(SentinelEntryService).Assembly);
+            _context.Services.AddSingleton<SentinelEntryService, MockSentinelEntryServiceImpl>();
+            _context.Services.AddSingleton<IClinicalBreakpointService>(_mockClinicalBreakpointService);
+            _context.Services.AddSingleton<IMicStepsService>(_mockMicStepsService);
+            _context.Services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
+            _context.Services.AddScoped<SignOutSessionStateManager>();
+            _context.Services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
+
+            _sentinelEntryService = _context.Services.GetService<SentinelEntryService>();
         }
 
         [TearDown]
@@ -52,29 +55,68 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             _context.Dispose();
         }
 
-        [SetUp]
-        public void Setup()
+        [TestCase(null)]
+        [TestCase(1)]
+        public void WhenCreated_DoesInitializeData(int? id)
         {
-            _renderedComponent.Instance?.SentinelEntry.AntimicrobialSensitivityTests.Clear();
-        }
+            var component = CreateSut(builder => builder.Add(c => c.Id, id));
+            var sut = component.Instance;
 
-        [Test]
-        public void WhenCreated_DoesInitializeData()
-        {
-            var sut = _renderedComponent.Instance;
-
-            _renderedComponent.Markup.Should().NotBeEmpty();
+            component.Markup.Should().NotBeEmpty();
             sut.AllBreakpoints.Should().NotBeEmpty();
             sut.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
             sut.AntifungalAgent.Should().Be(AntifungalAgent.Micafungin);
         }
 
         [Test]
+        public async Task WhenSubmitWithId_UpdatesExistingEntryAndTriggersClose()
+        {
+            var closeTriggered = false;
+            var component = CreateSut(builder =>
+                    {
+                        builder.Add(c => c.OnCloseClick, e =>
+                        {
+                            closeTriggered = true;
+                        }).Add(c => c.Id, 1);
+                    });
+            var sut = component.Instance;
+            sut.SentinelEntry.SenderLaboratoryNumber = "993882";
+
+            await sut.SubmitClick();
+
+            closeTriggered.Should().BeTrue();
+            var entry = await _sentinelEntryService.GetById(1);
+            entry.SenderLaboratoryNumber.Should().Be("993882");
+        }
+
+        [Test]
+        public async Task WhenSubmitWithoutId_CreatesNewEntryAndTriggersClose()
+        {
+            var closeTriggered = false;
+            var component = CreateSut(builder =>
+            {
+                builder.Add(c => c.OnCloseClick, e =>
+                {
+                    closeTriggered = true;
+                });
+            });
+            var sut = component.Instance;
+            sut.SentinelEntry.SenderLaboratoryNumber = "193882";
+
+            await sut.SubmitClick();
+
+            closeTriggered.Should().BeTrue();
+            var entry = await _sentinelEntryService.GetById(3);
+            entry.SenderLaboratoryNumber.Should().Be("193882");
+        }
+
+        [Test]
         public void WhenAddAntimicrobialSensitivityTestClicked_NewSensitivityTestIsAdded()
         {
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
 
-            var addTestButton = _renderedComponent.Find("#addAntimicrobialSensitivityTest");
+            var addTestButton = component.Find("#addAntimicrobialSensitivityTest");
             addTestButton.Click();
 
             sut.SentinelEntry.AntimicrobialSensitivityTests.Should().HaveCount(1);
@@ -87,13 +129,14 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [Test]
         public void WhenAddAntimicrobialSensitivityTestClickedButNoBreakpoints_NewSensitivityTestIsAdded()
         {
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             var storedBreakpoints = new List<ClinicalBreakpoint>(sut.AllBreakpoints);
             try
             {
                 sut.AllBreakpoints.Clear();
 
-                var addTestButton = _renderedComponent.Find("#addAntimicrobialSensitivityTest");
+                var addTestButton = component.Find("#addAntimicrobialSensitivityTest");
                 addTestButton.Click();
 
                 sut.SentinelEntry.AntimicrobialSensitivityTests.Should().HaveCount(1);
@@ -123,7 +166,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 AntifungalAgent = AntifungalAgent.Micafungin,
                 Standard = BrothMicrodilutionStandard.Eucast
             };
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
 
             var breakpoints = sut.ApplicableBreakpoints(sensitivityTest).ToList();
@@ -142,7 +186,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 Standard = BrothMicrodilutionStandard.Eucast,
                 Resistance = Resistance.Susceptible
             };
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             sut.SentinelEntry.IdentifiedSpecies = Species.CandidaTropicalis;
 
             sut.ApplicableBreakpoints(sensitivityTest);
@@ -156,7 +201,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [TestCase(-0.2f, "bg-success", Resistance.Susceptible)]
         public void WhenCalculateResistanceBadge_UsesBreakpointValuesWithEucastBoundaryConditions(float deltaToResistance, string expectedBadge, Resistance expectedResistance)
         {
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
             var firstBreakpoint = sut.AllBreakpoints.Single(b => 
                     b.AntifungalAgent == AntifungalAgent.Voriconazole
@@ -182,7 +228,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [TestCase(-1.0f, "bg-success", Resistance.Susceptible)]
         public void WhenCalculateResistanceBadge_UsesBreakpointValuesWithClsiBoundaryConditions(float deltaToResistance, string expectedBadge, Resistance expectedResistance)
         {
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             sut.SentinelEntry.IdentifiedSpecies = Species.CandidaGlabrata;
             var breakpoint = sut.AllBreakpoints.Single(b => 
                 b.AntifungalAgent == AntifungalAgent.Caspofungin
@@ -206,7 +253,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [Test]
         public void WhenCalculateResistanceBadgeWithLowerBoundaryStillBiggerThenSusceptible_ResultsInNotEvaluable()
         {
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             var breakPoint = new MockClinicalBreakpointService.MockClinicalBreakPoint()
             {
                 AntifungalAgent = AntifungalAgent.Flucytosine,
@@ -233,7 +281,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [Test]
         public void WhenCalculateResistanceBadgeWithUpperBoundaryStillSmallerThenResistant_ResultsInNotEvaluable()
         {
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             var breakPoint = new MockClinicalBreakpointService.MockClinicalBreakPoint()
             {
                 AntifungalAgent = AntifungalAgent.Flucytosine,
@@ -260,7 +309,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [Test]
         public void WhenCalculateResistanceBadgeWithLowerBoundaryBiggerThenSusceptibleButSusceptibleIsUnrealisticSmall_ResultIsIntermediate()
         {
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             var breakPoint = new MockClinicalBreakpointService.MockClinicalBreakPoint()
             {
                 AntifungalAgent = AntifungalAgent.Flucytosine,
@@ -287,7 +337,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [Test]
         public void WhenCalculateResistanceBadgeWithNoMatchingBreakpoint_ResultsInNotDetermined()
         {
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
             var firstBreakpoint = sut.AllBreakpoints.First(b => 
                 !b.MicBreakpointResistent.HasValue && !b.MicBreakpointSusceptible.HasValue);
@@ -307,7 +358,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [Test]
         public void WhenCalculateResistanceBadgeWhereBreakpointHasNoMics_ResultsInNotDetermined()
         {
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             var sensitivityTest = new AntimicrobialSensitivityTestRequest
             {
                 ClinicalBreakpointId = 1234567,
@@ -325,7 +377,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         [Test]
         public void WhenSensitivityTestsAreAdded_ListIsSortedBasedOnTestingMethodAndAntifungalAgentGroups()
         {
-            var sut = _renderedComponent.Instance;
+            var component = CreateSut();
+            var sut = component.Instance;
             sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
             var firstBreakpoint = sut.AllBreakpoints.First(b => 
                 !b.MicBreakpointResistent.HasValue && !b.MicBreakpointSusceptible.HasValue);
@@ -358,9 +411,11 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             viewOrder[2].AntifungalAgent.Should().Be(AntifungalAgent.Fluorouracil);
         }
         
-        private IRenderedComponent<Create> CreateSut(TestContext context)
+        private IRenderedComponent<Create> CreateSut(Action<ComponentParameterCollectionBuilder<Create>> parameterBuilder = null)
         {
-            return context.RenderComponent<Create>();
+            return parameterBuilder == null
+                ? _context.RenderComponent<Create>()
+                : _context.RenderComponent(parameterBuilder);
         }
     }
 }

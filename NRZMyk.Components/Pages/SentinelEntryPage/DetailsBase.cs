@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
 using NRZMyk.Services.Data.Entities;
@@ -12,10 +9,10 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
     public class DetailsBase : BlazorComponent
     {
         [Inject]
-        private ILogger<CreateBase> Logger { get; set; }
+        private ILogger<CreateBase> Logger { get; set; } = default!;
 
         [Inject]
-        private SentinelEntryService SentinelEntryService { get; set; }
+        private SentinelEntryService SentinelEntryService { get; set; } = default!;
 
         [Parameter]
         public int Id { get; set; }
@@ -23,15 +20,15 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         [Parameter]
         public EventCallback<string> OnCloseClick { get; set; }
 
-        internal SentinelEntry SentinelEntry { get; set; }
+        internal SentinelEntry SentinelEntry { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Now loading... /SentinelEntries/Details/{Id}", Id);
 
-            SentinelEntry = await SentinelEntryService.GetById(Id);
+            SentinelEntry = await SentinelEntryService.GetById(Id).ConfigureAwait(true);
 
-            await base.OnInitializedAsync();
+            await base.OnInitializedAsync().ConfigureAwait(true);
         }
     }
 }

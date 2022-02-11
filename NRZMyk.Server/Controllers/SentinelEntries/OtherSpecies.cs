@@ -33,7 +33,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<List<string>>> HandleAsync()
         {
-            var otherSpecies =  await _sentinelEntryRepository.Other(s => s.OtherIdentifiedSpecies);
+            var otherSpecies =  await _sentinelEntryRepository.Other(s => s.OtherIdentifiedSpecies).ConfigureAwait(false);
             return Ok(otherSpecies.Union(_configuredOtherSpecies).Distinct().OrderBy(s=>s));
         }
     }

@@ -9,6 +9,8 @@ namespace NRZMyk.Mocks.MockServices
 {
     public class MockAccountService : IAccountService
     {
+        public static int Delay = 2000;
+
         private List<RemoteAccount> _accounts = new List<RemoteAccount>();
 
         private List<Organization> _organization = new List<Organization>();
@@ -32,21 +34,22 @@ namespace NRZMyk.Mocks.MockServices
 
         public async Task<ICollection<RemoteAccount>> ListAccounts()
         {
-            await Task.Delay(2000);
+            await Task.Delay(Delay);
             return _accounts.ToList();
         }
 
         public async Task<ICollection<Organization>> ListOrganizations()
         {
-            await Task.Delay(2000);
+            await Task.Delay(Delay);
             return _organization;
         }
 
-        public async Task AssignToOrganizationAsync(ICollection<RemoteAccount> accounts)
+        public async Task<int> AssignToOrganization(ICollection<RemoteAccount> accounts)
         {
-            await Task.Delay(1000);
+            await Task.Delay(Delay);
             _accounts.Clear();
             _accounts.AddRange(accounts);
+            return accounts.Count;
         }
     }
 }

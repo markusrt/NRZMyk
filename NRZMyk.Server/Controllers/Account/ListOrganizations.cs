@@ -28,7 +28,7 @@ namespace NRZMyk.Server.Controllers.Account
         ]
         public override async Task<ActionResult<List<RemoteAccount>>> HandleAsync()
         {
-            var items = await _organizationRepository.ListAllAsync();
+            var items = await _organizationRepository.ListAllAsync().ConfigureAwait(false);
             return Ok(items);
         }
     }

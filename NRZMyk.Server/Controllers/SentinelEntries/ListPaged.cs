@@ -38,13 +38,13 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
 
             var response = new ListPagedSentinelEntryResponse();
 
-            var totalItems = await _sentinelEntryRepository.CountAsync(new SentinelEntryFilterSpecification(organizationId));
+            var totalItems = await _sentinelEntryRepository.CountAsync(new SentinelEntryFilterSpecification(organizationId)).ConfigureAwait(false);
 
             var pagedSpec = new SentinelEntryFilterPaginatedSpecification(
                 request.PageIndex * request.PageSize,
                 request.PageSize, organizationId);
 
-            var items = await _sentinelEntryRepository.ListAsync(pagedSpec);
+            var items = await _sentinelEntryRepository.ListAsync(pagedSpec).ConfigureAwait(false);
 
             response.SentinelEntries.AddRange(items);
             response.PageCount = int.Parse(Math.Ceiling((decimal)totalItems / request.PageSize).ToString());

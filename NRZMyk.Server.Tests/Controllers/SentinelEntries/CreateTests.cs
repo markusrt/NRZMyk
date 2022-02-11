@@ -28,10 +28,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             var createSentinelEntryRequest = new SentinelEntryRequest();
             var sentinelEntry = new SentinelEntry {Id = 123};
 
-            var action = await sut.HandleAsync(createSentinelEntryRequest);
+            var action = await sut.HandleAsync(createSentinelEntryRequest).ConfigureAwait(true);
             
             action.Result.Should().BeOfType<ForbidResult>();
-            await repository.Received(0).AddAsync(sentinelEntry);
+            await repository.Received(0).AddAsync(sentinelEntry).ConfigureAwait(true);
         }
 
         [Test]
@@ -43,9 +43,9 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             mapper.Map<SentinelEntry>(createSentinelEntryRequest).Returns(sentinelEntry);
             repository.AddAsync(sentinelEntry).Returns(sentinelEntry);
 
-            var action = await sut.HandleAsync(createSentinelEntryRequest);
+            var action = await sut.HandleAsync(createSentinelEntryRequest).ConfigureAwait(true);
 
-            await repository.Received(1).AddAsync(sentinelEntry);
+            await repository.Received(1).AddAsync(sentinelEntry).ConfigureAwait(true);
             sentinelEntry.ProtectKey.Should().Be("12");
             var createdResult = action.Result.Should().BeOfType<CreatedResult>().Subject;
             createdResult.Value.Should().Be(sentinelEntry);

@@ -31,7 +31,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<List<string>>> HandleAsync()
         {
-            var otherPcrDetails =  await _sentinelEntryRepository.Other(s => s.PcrDetails);
+            var otherPcrDetails =  await _sentinelEntryRepository.Other(s => s.PcrDetails).ConfigureAwait(false);
             return Ok(otherPcrDetails);
         }
     }

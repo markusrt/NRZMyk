@@ -38,6 +38,6 @@ namespace NRZMyk.Services.Data.Entities
                 : $"{AntifungalAgentDetails} - {EnumUtils.GetEnumDescription(Species)} - v{Version} vom {ValidFrom:dd. MMM. yy}";
 
         public bool NotAvailable
-            => Version == null && ValidFrom == null && MicBreakpointResistent == null && MicBreakpointSusceptible == null;
+            => Version == null && MicBreakpointResistent == null && MicBreakpointSusceptible == null;
     }
 }

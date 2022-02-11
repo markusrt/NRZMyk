@@ -93,8 +93,6 @@ namespace NRZMyk.Services.Tests.Utils
             definedFlagValueOfEquivalentSingleEntry.Should().BeTrue();
         }
 
-        private readonly UtilsTest? ZeroAsNullable = UtilsTest.Zero;
-
         [TestCase(0)]
         [TestCase("Zero")]
         [TestCase(UtilsTest.Zero)]

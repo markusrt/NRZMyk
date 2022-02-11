@@ -12,52 +12,20 @@ namespace NRZMyk.Services.Services
    
     public class AccountService : IAccountService
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<SentinelEntryServiceImpl> _logger;
+        private readonly IHttpClient _httpClient;
 
-        public AccountService(HttpClient httpClient, ILogger<SentinelEntryServiceImpl> logger)
+        public AccountService(IHttpClient httpClient)
         {
             _httpClient = httpClient;
-            _logger = logger;
         }
 
-        public async Task<ICollection<RemoteAccount>> ListAccounts()
-        {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<ICollection<RemoteAccount>>($"api/users");
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Failed to load accounts from backend");
-                return new List<RemoteAccount>();
-            }
-        }
+        public Task<ICollection<RemoteAccount>> ListAccounts()
+            => _httpClient.Get<ICollection<RemoteAccount>>("api/users");
 
-        public async Task<ICollection<Organization>> ListOrganizations()
-        {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<ICollection<Organization>>($"api/organizations");
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Failed to load organizations from backend");
-                return new List<Organization>();
-            }
-        }
+        public Task<ICollection<Organization>> ListOrganizations()
+            => _httpClient.Get<ICollection<Organization>>("api/organizations");
 
-        public async Task AssignToOrganizationAsync(ICollection<RemoteAccount> accounts)
-        {
-            try
-            {
-                await _httpClient.PostAsJsonAsync("api/users/assign-organization", accounts);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, "Failed to assign accounts to organization");
-                throw;
-            }
-        }
+        public Task<int> AssignToOrganization(ICollection<RemoteAccount> accounts)
+            => _httpClient.Post<ICollection<RemoteAccount>, int>("api/users/assign-organization", accounts);
     }
 }

@@ -40,12 +40,12 @@ public class UserServiceTests
         User updatedUser = null;
         var sut = CreateSut(out var graphServiceClient, out _, out var logger);
         var userRequest = Substitute.For<IUserRequest>();
-        await userRequest.UpdateAsync(Arg.Do<User>(arg => updatedUser = arg));
+        await userRequest.UpdateAsync(Arg.Do<User>(arg => updatedUser = arg)).ConfigureAwait(true);
         var userRequestBuilder = Substitute.For<IUserRequestBuilder>();
         userRequestBuilder.Request().Returns(userRequest);
         graphServiceClient.Users[userId].Returns(userRequestBuilder);
 
-        await sut.UpdateUserRole(userId, Role.Admin);
+        await sut.UpdateUserRole(userId, Role.Admin).ConfigureAwait(true);
 
         updatedUser.Should().NotBeNull();
         updatedUser.AdditionalData[RoleCompleteAttributeName].Should().Be("8");
@@ -61,7 +61,7 @@ public class UserServiceTests
         var exception = new Exception();
         graphServiceClient.Users[userId].Throws(exception);
 
-        await sut.UpdateUserRole(userId, Role.Admin);
+        await sut.UpdateUserRole(userId, Role.Admin).ConfigureAwait(true);
 
         logger.Received(1).Log(LogLevel.Error, Arg.Is<string>(
             s => new Regex("Failed to update.*Admin.*123").IsMatch(s)), exception);
@@ -74,7 +74,7 @@ public class UserServiceTests
         var sut = CreateSut(out _, out _, out _);
         var remoteAccounts = new List<RemoteAccount>();
 
-        await sut.GetRolesViaGraphApi(remoteAccounts);
+        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
 
         remoteAccounts.Should().BeEmpty();
     }
@@ -91,7 +91,7 @@ public class UserServiceTests
         var serviceException = new ServiceException(new Error(), null, HttpStatusCode.BadRequest);
         graphServiceClient.Users[guid.ToString()].Throws(serviceException);
 
-        await sut.GetRolesViaGraphApi(remoteAccounts);
+        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
 
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
         logger.Received(1).Log(LogLevel.Error, Arg.Is<string>(s => s.StartsWith(
@@ -110,7 +110,7 @@ public class UserServiceTests
         var serviceException = new ServiceException(new Error(), null, HttpStatusCode.NotFound);
         graphServiceClient.Users[guid.ToString()].Throws(serviceException);
 
-        await sut.GetRolesViaGraphApi(remoteAccounts);
+        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
 
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
         logger.Received(1).Log(LogLevel.Warning, Arg.Is<string>(s => s.StartsWith(
@@ -137,7 +137,7 @@ public class UserServiceTests
         graphServiceClient.Users[guid1.ToString()].Returns(userRequestBuilder);
         graphServiceClient.Users[guid2.ToString()].Returns(userRequestBuilder);
 
-        await sut.GetRolesViaGraphApi(remoteAccounts);
+        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
 
         userRequest.Received(2).Select(Arg.Any<string>());
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.SuperUser);
@@ -159,7 +159,7 @@ public class UserServiceTests
         userRequest.GetAsync().Returns(new User { AdditionalData = null });
         graphServiceClient.Users[guid.ToString()].Returns(userRequestBuilder);
 
-        await sut.GetRolesViaGraphApi(remoteAccounts);
+        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
 
         userRequest.Received(1).Select(Arg.Any<string>());
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
@@ -184,7 +184,7 @@ public class UserServiceTests
             { AdditionalData = new Dictionary<string, object> { { RoleCompleteAttributeName, role } } });
         graphServiceClient.Users[guid.ToString()].Returns(userRequestBuilder);
 
-        await sut.GetRolesViaGraphApi(remoteAccounts);
+        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
 
         userRequest.Received(1).Select(Arg.Any<string>());
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);

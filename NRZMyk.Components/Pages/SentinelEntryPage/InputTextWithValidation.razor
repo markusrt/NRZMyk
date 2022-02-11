@@ -13,22 +13,20 @@
 
 @code {  
     [Parameter]  
-    public string Value { get; set; }  
+    public string Value { get; set; } = default!;
 
     [Parameter]
-    public Expression<Func<string>> For { get; set; }
+    public Expression<Func<string>> For { get; set; } = default!;
 
-    [Parameter]  
-    public string FieldName { get; set; }  
+    [Parameter]
+    public string FieldName { get; set; } = default!;
 
     [Parameter]  
     public EventCallback<string> ValueChanged { get; set; }  
 
-    string LengthString;  
-
     private Task OnValueChanged(ChangeEventArgs e)  
     {  
-        Value = e.Value.ToString();  
+        Value = e.Value!.ToString()!;  
         return ValueChanged.InvokeAsync(Value);  
     }  
 }  

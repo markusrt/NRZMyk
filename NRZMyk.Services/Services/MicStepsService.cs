@@ -19,19 +19,15 @@ namespace NRZMyk.Services.Services
         private readonly ILogger<MicStepsService> _logger;
         private readonly Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>> _micSteps;
         private readonly List<SpeciesTestingMethod> _multiAgentSystems;
-        private Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>> _standards;
+        private readonly Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>> _standards;
 
         public MicStepsService(IOptions<BreakpointSettings> config, ILogger<MicStepsService> logger)
         {
-            logger.LogInformation($"Entering constructor: {DateTime.Now}");
-            
             _logger = logger;
             _micSteps = config.Value?.Breakpoint?.MicSteps??new Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>>();
             _multiAgentSystems = config.Value?.Breakpoint?.MultiAgentSystems ?? new List<SpeciesTestingMethod>();
             _standards = config.Value?.Breakpoint?.Standards ??
                          new Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>>();
-            
-            logger.LogInformation($"Exiting constructor: {DateTime.Now}");
         }
 
         public List<MicStep> StepsByTestingMethodAndAgent(SpeciesTestingMethod testingMethod, AntifungalAgent agent)
@@ -42,10 +38,11 @@ namespace NRZMyk.Services.Services
 
             if (agentSteps == null)
             {
-                _logger.LogInformation($"No MIC steps for {testingMethod}/{agent} found");
+                _logger.LogInformation("No MIC steps for {testingMethod}/{agent} found", testingMethod, agent);
                 return new List<MicStep>();
             }
-            _logger.LogInformation($"Found {agentSteps.Count} MIC steps for {testingMethod}/{agent} found");
+            _logger.LogInformation("Found {stepCount} MIC steps for {testingMethod}/{agent} found",
+                agentSteps.Count, testingMethod, agent);
 
             agentSteps.First().LowerBoundary = true;
             agentSteps.Last().UpperBoundary = true;

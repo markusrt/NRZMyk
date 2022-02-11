@@ -29,10 +29,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 123))
                 .Returns(Task.FromResult((SentinelEntry)null));
 
-            var action = await sut.HandleAsync(new SentinelEntryRequest {Id = 123});
+            var action = await sut.HandleAsync(new SentinelEntryRequest {Id = 123}).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<ForbidResult>();
-            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>());
+            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 123))
                 .Returns(Task.FromResult((SentinelEntry)null));
 
-            var action = await sut.HandleAsync(new SentinelEntryRequest {Id = 123});
+            var action = await sut.HandleAsync(new SentinelEntryRequest {Id = 123}).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<NotFoundResult>();
         }
@@ -60,10 +60,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(updateSentinelEntry);
+            var action = await sut.HandleAsync(updateSentinelEntry).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<NotFoundResult>();
-            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>());
+            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
             mapper.Received(0).Map(updateSentinelEntry, sentinelEntry);
         }
 
@@ -85,10 +85,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(updateSentinelEntry);
+            var action = await sut.HandleAsync(updateSentinelEntry).ConfigureAwait(true);
 
-            await sensitivityTestRepository.Received(1).DeleteAsync(sensitivityTest1);
-            await sensitivityTestRepository.Received(1).DeleteAsync(sensitivityTest2);
+            await sensitivityTestRepository.Received(1).DeleteAsync(sensitivityTest1).ConfigureAwait(true);
+            await sensitivityTestRepository.Received(1).DeleteAsync(sensitivityTest2).ConfigureAwait(true);
             mapper.Received(1).Map(updateSentinelEntry, sentinelEntry);
             var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
             okResult.Value.Should().Be(sentinelEntry);
@@ -108,10 +108,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(updateSentinelEntry);
+            var action = await sut.HandleAsync(updateSentinelEntry).ConfigureAwait(true);
 
             action.Result.Should().BeOfType<ForbidResult>();
-            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>());
+            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
         }
 
 

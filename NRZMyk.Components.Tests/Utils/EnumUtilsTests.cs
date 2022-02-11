@@ -101,8 +101,6 @@ namespace NRZMyk.Components.Tests.Utils
             definedFlagValueOfequivalentSingleEntry.Should().BeTrue();
         }
 
-        private readonly UtilsTest? ZeroAsNullable = UtilsTest.Zero;
-
         [TestCase(0)]
         [TestCase("Zero")]
         [TestCase(UtilsTest.Zero)]

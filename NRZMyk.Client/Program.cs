@@ -16,6 +16,7 @@ builder.Services.AddHttpClient("NRZMyk.ServerAPI",
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
     .CreateClient("NRZMyk.ServerAPI"));
+builder.Services.AddScoped<IHttpClient, LoggingJsonHttpClient>();
 
 // Custom services start
 
@@ -41,4 +42,4 @@ builder.Services.AddMsalAuthentication(options =>
 
 // Custom services end
 
-await builder.Build().RunAsync();
+await builder.Build().RunAsync().ConfigureAwait(true);

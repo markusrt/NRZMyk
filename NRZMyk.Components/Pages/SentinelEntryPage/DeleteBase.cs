@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
@@ -11,13 +9,13 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
     public class DeleteBase : BlazorComponent
     {
         [Inject]
-        private ILogger<CreateBase> Logger { get; set; }
+        private ILogger<CreateBase> Logger { get; set; } = default!;
 
         [Inject]
-        private SentinelEntryService SentinelEntryService { get; set; }
+        private SentinelEntryService SentinelEntryService { get; set; } = default!;
 
         [Inject]
-        private IMapper Mapper { get; set; }
+        private IMapper Mapper { get; set; } = default!;
 
         [Parameter]
         public int Id { get; set; }
@@ -25,7 +23,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         [Parameter]
         public EventCallback<string> OnCloseClick { get; set; }
 
-        internal SentinelEntryRequest SentinelEntry { get; set; }
+        internal SentinelEntryRequest SentinelEntry { get; set; } = default!;
 
         internal bool DeleteFailed { get; set; }
 
@@ -33,16 +31,16 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         {
             Logger.LogInformation("Now loading... /Catalog/Delete/{Id}", Id);
 
-            SentinelEntry = Mapper.Map<SentinelEntryRequest>(await SentinelEntryService.GetById(Id));
+            SentinelEntry = Mapper.Map<SentinelEntryRequest>(await SentinelEntryService.GetById(Id).ConfigureAwait(true));
 
-            await base.OnInitializedAsync();
+            await base.OnInitializedAsync().ConfigureAwait(true);
         }
 
         internal async Task DeleteClick()
         {
             try
             {
-                await SentinelEntryService.Delete(Id);
+                await SentinelEntryService.Delete(Id).ConfigureAwait(true);
                 DeleteFailed = false;
             }
             catch (Exception e)
@@ -53,7 +51,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
             if (!DeleteFailed)
             {
-                await OnCloseClick.InvokeAsync(null);
+                await OnCloseClick.InvokeAsync(null).ConfigureAwait(true);
             }
         }
     }

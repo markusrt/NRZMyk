@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Data
 {
+    [ExcludeFromCodeCoverage(Justification = "Not testable with in memory DB")]
     public class ApplicationDbContextSeed
     {
         public static async Task SeedAsync(ApplicationDbContext context,
@@ -21,14 +23,14 @@ namespace NRZMyk.Services.Data
                 if (!await context.ClinicalBreakpoints.AnyAsync()
                         && databaseSeed?.ClinicalBreakpoints?.Any() == true)
                 {
-                    await context.ClinicalBreakpoints.AddRangeAsync(databaseSeed.ClinicalBreakpoints);
-                    await context.SaveChangesAsync();
+                    await context.ClinicalBreakpoints.AddRangeAsync(databaseSeed.ClinicalBreakpoints).ConfigureAwait(false);
+                    await context.SaveChangesAsync().ConfigureAwait(false);
                 }
                 if (!await context.Organizations.AnyAsync()
                     && !string.IsNullOrEmpty(databaseSeed?.MainOrganization))
                 {
-                    await context.Organizations.AddAsync(new Organization {Name = databaseSeed.MainOrganization});
-                    await context.SaveChangesAsync();
+                    await context.Organizations.AddAsync(new Organization {Name = databaseSeed.MainOrganization}).ConfigureAwait(false);
+                    await context.SaveChangesAsync().ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
@@ -38,7 +40,7 @@ namespace NRZMyk.Services.Data
                     retryForAvailability++;
                     var log = loggerFactory.CreateLogger<ApplicationDbContextSeed>();
                     log.LogError(ex.Message);
-                    await SeedAsync(context, loggerFactory, databaseSeed, retryForAvailability);
+                    await SeedAsync(context, loggerFactory, databaseSeed, retryForAvailability).ConfigureAwait(false);
                 }
                 throw;
             }
