@@ -14,6 +14,8 @@ namespace NRZMyk.Mocks.MockServices
 {
     public class MockSentinelEntryServiceImpl : SentinelEntryService
     {
+        public static int Delay = 2000;
+
         private readonly IMapper _mapper;
         private readonly ILogger<MockSentinelEntryServiceImpl> _logger;
 
@@ -84,7 +86,7 @@ namespace NRZMyk.Mocks.MockServices
 
         public async Task<List<SentinelEntry>> ListByOrganization(int organizationId)
         {
-            await Task.Delay(2000);
+            await Task.Delay(Delay);
             return organizationId == -1
                 ? _repository.ToList()
                 : _repository.Where(s => s.ProtectKey == organizationId.ToString()).ToList();
@@ -92,7 +94,7 @@ namespace NRZMyk.Mocks.MockServices
 
         public async Task<SentinelEntry> GetById(int id)
         {
-            await Task.Delay(2000);
+            await Task.Delay(Delay);
             return _repository.FirstOrDefault(e => e.Id == id);
         }
 
@@ -105,7 +107,7 @@ namespace NRZMyk.Mocks.MockServices
 
         public async Task<SentinelEntry> CryoArchive(CryoArchiveRequest archiveRequest)
         {
-            await Task.Delay(2000);
+            await Task.Delay(Delay);
             var entry = _repository.FirstOrDefault(e => e.Id == archiveRequest.Id);
             entry.CryoRemark = archiveRequest.CryoRemark;
             entry.CryoDate = archiveRequest.CryoDate;
@@ -114,7 +116,7 @@ namespace NRZMyk.Mocks.MockServices
 
         public async Task<string> Export()
         {
-            await Task.Delay(2500);
+            await Task.Delay(Delay);
             await using var stream = GetType().Assembly.GetManifestResourceStream("NRZMyk.Mocks.Data.Export.xlsx");
             var data = new byte[stream.Length];
             await stream.ReadAsync(data, 0, data.Length);

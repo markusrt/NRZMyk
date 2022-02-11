@@ -13,19 +13,19 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
     public class CryoViewBase : BlazorComponent
     {
         [Inject]
-        private IAccountService AccountService { get; set; }
+        private IAccountService AccountService { get; set; } = default!;
 
         [Inject]
-        private SentinelEntryService SentinelEntryService { get; set; }
+        private SentinelEntryService SentinelEntryService { get; set; } = default!;
 
         [Inject]
-        private ILogger<CryoViewBase> Logger { get; set; }
+        private ILogger<CryoViewBase> Logger { get; set; } = default!;
 
-        internal ICollection<Organization> Organizations { get; set; }
+        internal ICollection<Organization> Organizations { get; set; } = default!;
 
-        protected List<SentinelEntry> SentinelEntries { get; set; }
+        protected List<SentinelEntry> SentinelEntries { get; set; } = default!;
 
-        protected int SelectedOrganization { get; set; }
+        internal int SelectedOrganization { get; set; }
         
         protected LoadState LoadState { get; set; }
         
@@ -53,7 +53,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 Id = entry.Id,
                 CryoDate = DateTime.Now,
                 CryoRemark = entry.CryoRemark
-            });
+            }).ConfigureAwait(true);
             await LoadData().ConfigureAwait(true);
         }
 
@@ -66,7 +66,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 Id = entry.Id,
                 CryoDate = null,
                 CryoRemark = entry.CryoRemark
-            });
+            }).ConfigureAwait(true);
             await LoadData().ConfigureAwait(true);
         }
 
@@ -78,7 +78,8 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             SentinelEntries = await SentinelEntryService.ListByOrganization(SelectedOrganization).ConfigureAwait(true);
 
             LoadState = LoadState.Loaded;
-            StateHasChanged();
+
+            await InvokeAsync(StateHasChanged).ConfigureAwait(true);
         }
     }
 }
