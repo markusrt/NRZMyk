@@ -44,13 +44,13 @@ namespace NRZMyk.Services.Export
                 : nullValue;
         }
 
-        protected static string ExportToString<T>(T value)
+        protected static string ExportToString<TValue>(TValue value)
         {
             if (value == null)
             {
                 return string.Empty;
             }
-            if (EnumUtils.GetTypeOrNullableType<T>().IsEnum)
+            if (EnumUtils.GetTypeOrNullableType<TValue>().IsEnum)
             {
                 return EnumUtils.GetEnumDescription(value);
             }

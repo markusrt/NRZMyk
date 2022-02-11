@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NRZMyk.Components.Helpers
+﻿namespace NRZMyk.Components.Helpers
 {
     internal sealed class RefreshBroadcast
     {

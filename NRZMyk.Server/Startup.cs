@@ -72,6 +72,8 @@ namespace NRZMyk.Server
             services.Configure<DatabaseSeedSettings>(Configuration);
             services.Configure<ApplicationSettings>(Configuration);
             services.Configure<BreakpointSettings>(Configuration);
+
+            services.AddDatabaseDeveloperPageExceptionFilter();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,8 +83,8 @@ namespace NRZMyk.Server
             {
                 IdentityModelEventSource.ShowPII = true;
                 app.UseDeveloperExceptionPage();
+                app.UseMigrationsEndPoint();
                 app.UseWebAssemblyDebugging();
-                app.UseDatabaseErrorPage();
             }
             else
             {

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -28,21 +24,21 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         public EventCallback<ChangeEventArgs> ValueChanged { get; set; }
 
         [Inject]
-        private ILogger<CreateBase> Logger { get; set; }
+        private ILogger<CreateBase> Logger { get; set; } = default!;
 
         [Inject]
-        private SentinelEntryService SentinelEntryService { get; set; }
+        private SentinelEntryService SentinelEntryService { get; set; } = default!;
 
         [Inject]
-        protected IMicStepsService MicStepsService { get; set; }
+        protected IMicStepsService MicStepsService { get; set; } = default!;
 
         [Inject]
-        private IClinicalBreakpointService ClinicalBreakpointService { get; set; }
+        private IClinicalBreakpointService ClinicalBreakpointService { get; set; } = default!;
         
         [Inject]
-        private IMapper Mapper { get; set; }
+        private IMapper Mapper { get; set; } = default!;
 
-        public SentinelEntryRequest SentinelEntry { get; private set; }
+        public SentinelEntryRequest SentinelEntry { get; private set; } = default!;
 
         public List<ClinicalBreakpoint> AllBreakpoints { get; private set; } = new List<ClinicalBreakpoint>();
         
@@ -52,9 +48,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         public AntifungalAgent AntifungalAgent { get; set; } = AntifungalAgent.Micafungin;
 
-        public string Title { get; set; }
+        public string Title { get; set; } = default!;
         
-        public string PrimaryAction { get; set; }
+        public string PrimaryAction { get; set; } = default!;
         
         public bool SaveFailed { get; set; }
 

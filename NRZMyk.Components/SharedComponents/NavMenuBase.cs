@@ -6,7 +6,7 @@ namespace NRZMyk.Components.SharedComponents
     {
         private bool _collapseNavMenu = true;
 
-        public string NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
+        public string NavMenuCssClass => _collapseNavMenu ? "collapse" : "";
 
         public void ToggleNavMenu()
         {

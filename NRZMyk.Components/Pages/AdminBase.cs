@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
-using NRZMyk.Components.SharedComponents;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Services;
 
@@ -14,14 +9,14 @@ namespace NRZMyk.Components.Pages
     public class AdminBase : BlazorComponent
     {
         [Inject]
-        private IAccountService AccountService { get; set; }
+        private IAccountService AccountService { get; set; } = default!;
 
         [Inject]
-        private ILogger<AdminBase> Logger { get; set; }
+        private ILogger<AdminBase> Logger { get; set; } = default!;
 
-        internal ICollection<RemoteAccount> Accounts { get; set; }
+        internal ICollection<RemoteAccount> Accounts { get; set; } = default!;
 
-        internal ICollection<Organization> Organizations { get; set; }
+        internal ICollection<Organization> Organizations { get; set; } = default!;
         
         internal SaveState SaveState { get; set; }
 
