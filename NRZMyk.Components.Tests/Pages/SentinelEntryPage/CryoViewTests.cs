@@ -47,6 +47,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         {
             var sut = _renderedComponent.Instance;
 
+             sut.SelectedOrganization = 10;
             await sut.LoadData().ConfigureAwait(true);
 
             _renderedComponent.Markup.Should().Contain(
@@ -77,7 +78,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             var entry = await _sentinelEntryService.GetById(1).ConfigureAwait(true);
             entry.CryoDate.Should().BeCloseTo(DateTime.Now);
         }
-
+        
         [Test]
         public async Task WhenReleaseFromCryoStorage_ShowsRemarkAndClearsDate()
         {
