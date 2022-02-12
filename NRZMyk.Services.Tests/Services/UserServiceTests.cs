@@ -143,6 +143,29 @@ public class UserServiceTests
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.SuperUser);
     }
 
+    
+    [Test]
+    public async Task WhenGettingCombinedRoleForRemoteAccounts_AssignsCorrectRoles()
+    {
+        var guid1 = Guid.NewGuid();
+        var remoteAccounts = new List<RemoteAccount>
+        {
+            new() { ObjectId = guid1 },
+        };
+        var sut = CreateSut(out var graphServiceClient, out _, out var logger);
+        var userRequest = Substitute.For<IUserRequest>();
+        var userRequestBuilder = Substitute.For<IUserRequestBuilder>();
+        userRequestBuilder.Request().Returns(userRequest);
+        userRequest.Select($"id,displayName,{RoleCompleteAttributeName}").Returns(userRequest);
+        userRequest.GetAsync().Returns(new User
+            { AdditionalData = new Dictionary<string, object> { { RoleCompleteAttributeName, "14" } } });
+        graphServiceClient.Users[guid1.ToString()].Returns(userRequestBuilder);
+
+        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
+
+        remoteAccounts.Should().OnlyContain(a => a.Role == (Role.User | Role.SuperUser | Role.Admin));
+    }
+
     [Test]
     public async Task WhenUserDoesNotHaveRoleAssigned_SetsGuestRole()
     {
