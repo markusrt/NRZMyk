@@ -2,15 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.Data.SqlClient;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.Extensions.DependencyInjection;
 using NRZMyk.Services.Data;
-using NRZMyk.Services.Data.Migrations;
 using NUnit.Framework;
 
 namespace NRZMyk.Services.Tests.Data.Migrations;
