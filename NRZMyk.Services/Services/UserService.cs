@@ -87,7 +87,7 @@ public class UserService : IUserService
         
         var roleString = user.AdditionalData[RoleAttributeName].ToString();
         var parseSuccess = Enum.TryParse<Role>(roleString, out var role);
-        if (parseSuccess && Enum.IsDefined(role))
+        if (parseSuccess && role.IsDefinedEnumValue())
         {
             return role;
         }
