@@ -47,7 +47,10 @@ namespace NRZMyk.Services.Services
 
         public Gender Gender { get; set; }
         
-        [SensitivityTest(ErrorMessage = "Alle MHK Werte sind erforderlich")]
+        
+        [SensitivityTestNotEmptyWithoutComment(
+            ErrorMessage = "Mindestens ein MHK Eintrag ist erforderlich. Schreiben sie bitte einen Erklärung in die Anmerkungen, falls es keine MHKs ermitteln konnten." )]
+        [SensitivityTest(ErrorMessage = "Bitte tragen sie für jeden MHK einen Messwert ein")]
         public List<AntimicrobialSensitivityTestRequest> AntimicrobialSensitivityTests { get; set;} = new List<AntimicrobialSensitivityTestRequest>();
 
         private static int GetMaterial(SentinelEntryRequest sentinelEntryRequest)
