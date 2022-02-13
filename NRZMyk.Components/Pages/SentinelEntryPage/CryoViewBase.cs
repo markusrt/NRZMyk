@@ -12,7 +12,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         private IAccountService AccountService { get; set; } = default!;
 
         [Inject]
-        private SentinelEntryService SentinelEntryService { get; set; } = default!;
+        private ISentinelEntryService SentinelEntryService { get; set; } = default!;
 
         [Inject]
         private ILogger<CryoViewBase> Logger { get; set; } = default!;

@@ -1,7 +1,7 @@
 ﻿@namespace NRZMyk.Components.Pages.SentinelEntryPage
 @page "/cryo-view/sentinel-entries"
 @attribute [Authorize(Roles = nameof(Role.SuperUser))]
-@inject SentinelEntryService SentinelEntryService
+@inject ISentinelEntryService SentinelEntryService
 @using NRZMyk.Services.ModelExtensions
 @using NRZMyk.Services.Models
 @using NRZMyk.Services.Services

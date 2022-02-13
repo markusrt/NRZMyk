@@ -10,7 +10,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         internal IJSRuntime JsRuntime { get; set; } = default!;   
 
         [Inject]
-        internal  SentinelEntryService SentinelEntryService { get; set; } = default!;
+        internal  ISentinelEntryService SentinelEntryService { get; set; } = default!;
 
         internal bool DownloadInProgress { get; private set; }
         

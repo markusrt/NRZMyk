@@ -4,20 +4,7 @@ using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Services
 {
-    public interface SentinelEntryService
-    {
-        Task<SentinelEntry> Create(SentinelEntryRequest createRequest);
-        Task<List<SentinelEntry>> ListPaged(int pageSize);
-        Task<List<SentinelEntry>> ListByOrganization(int organizationId);
-        Task<SentinelEntry> GetById(int id);
-        Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
-        Task<SentinelEntry> CryoArchive(CryoArchiveRequest archiveRequest);
-        Task<string> Export();
-        Task<List<string>> Other(string other);
-        Task Delete(int id);
-    }
-
-    public class SentinelEntryServiceImpl : SentinelEntryService
+    public class SentinelEntryServiceImpl : ISentinelEntryService
     {
         private const string BaseApi = "api/sentinel-entries";
         private readonly IHttpClient _httpClient;

@@ -22,7 +22,7 @@ public class EfRepositoryTests
     public void SetUp()
     {
         var contextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase("BloggingControllerTest")
+            .UseInMemoryDatabase("ApplicationDbContext")
             .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 

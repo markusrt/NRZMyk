@@ -11,6 +11,7 @@ namespace NRZMyk.Services.Services
     {
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Das Feld \"Probenentnahme\" ist erforderlich")]
         public DateTime? SamplingDate { get; set; }
 
         [Required(ErrorMessage = "Das Feld Labornummer Einsender ist erforderlich")]

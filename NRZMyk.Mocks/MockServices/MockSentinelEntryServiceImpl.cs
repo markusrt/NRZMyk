@@ -12,7 +12,7 @@ using NRZMyk.Services.Services;
 
 namespace NRZMyk.Mocks.MockServices
 {
-    public class MockSentinelEntryServiceImpl : SentinelEntryService
+    public class MockSentinelEntryServiceImpl : ISentinelEntryService
     {
         public static int Delay = 2000;
 

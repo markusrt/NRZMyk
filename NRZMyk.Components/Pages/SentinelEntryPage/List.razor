@@ -1,7 +1,7 @@
 ﻿@namespace NRZMyk.Components.Pages.SentinelEntryPage
 @page "/sentinel-entries"
 @attribute [Authorize(Roles = nameof(Role.User))]
-@inject SentinelEntryService SentinelEntryService
+@inject ISentinelEntryService SentinelEntryService
 @using NRZMyk.Services.Data.Entities
 @using NRZMyk.Services.ModelExtensions
 @using NRZMyk.Services.Models

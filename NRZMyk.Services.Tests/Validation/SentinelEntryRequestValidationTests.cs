@@ -9,10 +9,10 @@ using NUnit.Framework;
 
 namespace NRZMyk.Services.Tests.Validation
 {
-    public class SensitivityTestNotEmptyWithoutCommentAttributeTests
+    public class SentinelEntryRequestValidationTests
     {
         [Test]
-        public void WhenIncorrectParentType_IsTreatedAsValid()
+        public void WhenIncorrectParentTypeForSensitivityTestNotEmptyWithoutComment_IsTreatedAsValid()
         {
             var target = new InvalidType();
             var context = new ValidationContext(target);
@@ -94,6 +94,23 @@ namespace NRZMyk.Services.Tests.Validation
             var result = results.SingleOrDefault(r =>
                 r.MemberNames.Contains(nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)));
             result.Should().BeNull();
+        }
+
+        [Test]
+        public void WhenSamplingDateIsMissing_IsTreatedAsInvalid()
+        {
+            var target = new SentinelEntryRequest()
+            {
+                SamplingDate = null
+            };
+            var context = new ValidationContext(target);
+            var results = new List<ValidationResult>();
+            
+            Validator.TryValidateObject(target, context, results, true);
+
+            var result = results.SingleOrDefault(r =>
+                r.MemberNames.Contains(nameof(SentinelEntryRequest.SamplingDate)));
+            result.Should().NotBe(null, $"{nameof(SentinelEntryRequest.SamplingDate)} should be required");
         }
 
         private SensitivityTestNotEmptyWithoutCommentAttribute CreateSut()

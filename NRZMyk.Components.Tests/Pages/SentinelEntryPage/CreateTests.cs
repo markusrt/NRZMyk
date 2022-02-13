@@ -28,7 +28,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         private TestContext _context;
         private MockClinicalBreakpointService _mockClinicalBreakpointService;
         private MockMicStepsService _mockMicStepsService;
-        private SentinelEntryService _sentinelEntryService;
+        private ISentinelEntryService _sentinelEntryService;
 
         [SetUp]
         public void CreateComponent()
@@ -38,15 +38,15 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             _mockMicStepsService = new MockMicStepsService();
 
             _context = new TestContext();
-            _context.Services.AddAutoMapper(typeof(SentinelEntryService).Assembly);
-            _context.Services.AddSingleton<SentinelEntryService, MockSentinelEntryServiceImpl>();
+            _context.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
+            _context.Services.AddSingleton<ISentinelEntryService, MockSentinelEntryServiceImpl>();
             _context.Services.AddSingleton<IClinicalBreakpointService>(_mockClinicalBreakpointService);
             _context.Services.AddSingleton<IMicStepsService>(_mockMicStepsService);
             _context.Services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
             _context.Services.AddScoped<SignOutSessionStateManager>();
             _context.Services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
 
-            _sentinelEntryService = _context.Services.GetService<SentinelEntryService>();
+            _sentinelEntryService = _context.Services.GetService<ISentinelEntryService>();
         }
 
         [TearDown]
