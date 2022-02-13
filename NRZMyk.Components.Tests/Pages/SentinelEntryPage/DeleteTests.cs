@@ -16,7 +16,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
     public class DeleteTests
     {
         private TestContext _context;
-        private SentinelEntryService _sentinelEntryService;
+        private ISentinelEntryService _sentinelEntryService;
         private IRenderedComponent<Delete> _renderedComponent;
 
         [SetUp]
@@ -24,11 +24,11 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         {
             MockSentinelEntryServiceImpl.Delay = 0;
             _context = new TestContext();
-            _context.Services.AddAutoMapper(typeof(SentinelEntryService).Assembly);
-            _context.Services.AddSingleton<SentinelEntryService, MockSentinelEntryServiceImpl>();
+            _context.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
+            _context.Services.AddSingleton<ISentinelEntryService, MockSentinelEntryServiceImpl>();
             _context.Services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
              
-            _sentinelEntryService = _context.Services.GetService<SentinelEntryService>();
+            _sentinelEntryService = _context.Services.GetService<ISentinelEntryService>();
             _renderedComponent = CreateSut(_context);
         }
 

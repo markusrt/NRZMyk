@@ -21,8 +21,8 @@ builder.Services.AddScoped<IHttpClient, LoggingJsonHttpClient>();
 // Custom services start
 
 builder.Services.AddBlazorApplicationInsights();
-builder.Services.AddAutoMapper(typeof(SentinelEntryService).Assembly);
-builder.Services.AddTransient<SentinelEntryService, SentinelEntryServiceImpl>();
+builder.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
+builder.Services.AddTransient<ISentinelEntryService, SentinelEntryServiceImpl>();
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IClinicalBreakpointService, ClinicalBreakpointService>();
 builder.Services.AddTransient<IMicStepsService, MicStepsService>();

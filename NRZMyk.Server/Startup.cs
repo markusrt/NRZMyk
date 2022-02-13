@@ -42,7 +42,7 @@ namespace NRZMyk.Server
             ConfigureAzureAdB2C(services);
             ConfigureSwagger(services);
 
-            services.AddAutoMapper(typeof(Startup).Assembly, typeof(SentinelEntryService).Assembly);
+            services.AddAutoMapper(typeof(Startup).Assembly, typeof(ISentinelEntryService).Assembly);
 
             services.AddControllersWithViews();
                 // TODO looks nice in swagger but need to find a way on how to make JsonStringEnumConverter

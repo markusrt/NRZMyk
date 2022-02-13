@@ -12,7 +12,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         private ILogger<CreateBase> Logger { get; set; } = default!;
 
         [Inject]
-        private SentinelEntryService SentinelEntryService { get; set; } = default!;
+        private ISentinelEntryService SentinelEntryService { get; set; } = default!;
 
         [Parameter]
         public int Id { get; set; }

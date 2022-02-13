@@ -22,7 +22,7 @@ namespace NRZMyk.Components.SharedComponents.Input
         protected List<string> OtherValues { get; private set; } = new List<string>();
 
         [Inject]
-        private SentinelEntryService SentinelEntryService { get; set; } = default!;
+        private ISentinelEntryService SentinelEntryService { get; set; } = default!;
 
         protected Guid DataListId { get; } = Guid.NewGuid();
 
