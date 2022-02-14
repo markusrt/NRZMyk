@@ -18,7 +18,6 @@ public class UserService : IUserService
 {
     private readonly IGraphServiceClient _graphClient;
     private readonly ILogger<UserService> _logger;
-    private readonly string _extensionAppClientId;
 
     private const string RoleAttribute = "Role";
 
@@ -36,9 +35,9 @@ public class UserService : IUserService
 
         _graphClient = graphClient;
         _logger = logger;
-        _extensionAppClientId = config.Value.AzureAdB2C.B2cExtensionAppClientId;
+        var extensionAppClientId = config.Value.AzureAdB2C.B2cExtensionAppClientId;
 
-        RoleAttributeName = $"extension_{_extensionAppClientId.Replace("-", "")}_{RoleAttribute}";
+        RoleAttributeName = $"extension_{extensionAppClientId.Replace("-", "")}_{RoleAttribute}";
     }
 
     public async Task GetRolesViaGraphApi(IEnumerable<RemoteAccount> remoteAccounts)
@@ -80,12 +79,13 @@ public class UserService : IUserService
 
     private Role TryToGetRoleFromCustomAttribute(User user)
     {
-        if (user.AdditionalData?[RoleAttributeName] == null)
+        if (user.AdditionalData == null || !user.AdditionalData.ContainsKey(RoleAttributeName))
         {
+            _logger.LogInformation("Role attribute is missing for user {user}", user.DisplayName);
             return Role.Guest;
         }
         
-        var roleString = user.AdditionalData[RoleAttributeName].ToString();
+        var roleString = user.AdditionalData[RoleAttributeName]?.ToString();
         var parseSuccess = Enum.TryParse<Role>(roleString, out var role);
         if (parseSuccess && role.IsDefinedEnumValue())
         {
