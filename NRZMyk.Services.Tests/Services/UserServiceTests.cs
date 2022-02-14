@@ -188,6 +188,28 @@ public class UserServiceTests
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
     }
 
+    [Test]
+    public async Task WhenUserDoesNotCustomAttribute_SetsGuestRole()
+    {
+        var guid = Guid.NewGuid();
+        var remoteAccounts = new List<RemoteAccount>
+        {
+            new() { ObjectId = guid },
+        };
+        var sut = CreateSut(out var graphServiceClient, out _, out var logger);
+        var userRequest = Substitute.For<IUserRequest>();
+        var userRequestBuilder = Substitute.For<IUserRequestBuilder>();
+        userRequestBuilder.Request().Returns(userRequest);
+        userRequest.Select($"id,displayName,{RoleCompleteAttributeName}").Returns(userRequest);
+        userRequest.GetAsync().Returns(new User { AdditionalData = new Dictionary<string, object>() });
+        graphServiceClient.Users[guid.ToString()].Returns(userRequestBuilder);
+
+        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
+
+        userRequest.Received(1).Select(Arg.Any<string>());
+        remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
+    }
+
     [TestCase("")]
     [TestCase("1234")]
     [TestCase(null)]
