@@ -2,31 +2,28 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NRZMyk.Services.Data;
 
-namespace NRZMyk.Services.Data.Migrations
+#nullable disable
+
+namespace NRZMyk.Services.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201014105829_SentinelEntry_Gender")]
-    partial class SentinelEntry_Gender
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("NRZMyk.Services.Data.Entities.AntimicrobialSensitivityTest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<int>("AntifungalAgent")
                         .HasColumnType("int");
@@ -35,7 +32,7 @@ namespace NRZMyk.Services.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<float>("MinimumInhibitoryConcentration")
-                        .HasColumnType("real");
+                        .HasColumnType("float");
 
                     b.Property<int>("Resistance")
                         .HasColumnType("int");
@@ -59,21 +56,20 @@ namespace NRZMyk.Services.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<int>("AntifungalAgent")
                         .HasColumnType("int");
 
                     b.Property<string>("AntifungalAgentDetails")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<float?>("MicBreakpointResistent")
-                        .HasColumnType("real");
+                        .HasColumnType("float");
 
                     b.Property<float?>("MicBreakpointSusceptible")
-                        .HasColumnType("real");
+                        .HasColumnType("float");
 
                     b.Property<int>("Species")
                         .HasColumnType("int");
@@ -82,14 +78,14 @@ namespace NRZMyk.Services.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<float?>("TechnicalUncertainty")
-                        .HasColumnType("real");
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("ValidFrom")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Version")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -103,11 +99,10 @@ namespace NRZMyk.Services.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -118,33 +113,32 @@ namespace NRZMyk.Services.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Country")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("DisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<Guid>("ObjectId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<int?>("OrganizationId")
                         .HasColumnType("int");
 
                     b.Property<string>("Postalcode")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Street")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -160,8 +154,7 @@ namespace NRZMyk.Services.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<int>("AgeGroup")
                         .HasColumnType("int");
@@ -171,6 +164,12 @@ namespace NRZMyk.Services.Data.Migrations
 
                     b.Property<int>("CryoBoxSlot")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("CryoDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CryoRemark")
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
@@ -187,18 +186,30 @@ namespace NRZMyk.Services.Data.Migrations
                     b.Property<int>("Material")
                         .HasColumnType("int");
 
+                    b.Property<string>("OtherHospitalDepartment")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OtherIdentifiedSpecies")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OtherMaterial")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PcrDetails")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ProtectKey")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Remark")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("SamplingDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("SenderLaboratoryNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("SpeciesIdentificationMethod")
                         .HasColumnType("int");
@@ -231,6 +242,10 @@ namespace NRZMyk.Services.Data.Migrations
                     b.HasOne("NRZMyk.Services.Data.Entities.SentinelEntry", "SentinelEntry")
                         .WithMany("AntimicrobialSensitivityTests")
                         .HasForeignKey("SentinelEntryId");
+
+                    b.Navigation("ClinicalBreakpoint");
+
+                    b.Navigation("SentinelEntry");
                 });
 
             modelBuilder.Entity("NRZMyk.Services.Data.Entities.RemoteAccount", b =>
@@ -238,6 +253,23 @@ namespace NRZMyk.Services.Data.Migrations
                     b.HasOne("NRZMyk.Services.Data.Entities.Organization", "Organization")
                         .WithMany("Members")
                         .HasForeignKey("OrganizationId");
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("NRZMyk.Services.Data.Entities.ClinicalBreakpoint", b =>
+                {
+                    b.Navigation("AntimicrobialSensitivityTests");
+                });
+
+            modelBuilder.Entity("NRZMyk.Services.Data.Entities.Organization", b =>
+                {
+                    b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("NRZMyk.Services.Data.Entities.SentinelEntry", b =>
+                {
+                    b.Navigation("AntimicrobialSensitivityTests");
                 });
 #pragma warning restore 612, 618
         }

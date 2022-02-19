@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using AutoMapper;
@@ -55,9 +56,11 @@ namespace NRZMyk.Server
             services.AddRazorPages();
 
             services.AddMvc().AddRazorPagesOptions(options => { options.RootDirectory = "/"; });
+
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 23));
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseMySql(
+                    Configuration.GetConnectionString("DefaultConnection"), serverVersion));
             services.AddApplicationInsightsTelemetry();
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));

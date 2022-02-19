@@ -1,0 +1,20 @@
+name: Build and Publish Docker
+
+on:
+  push:
+    branches:
+        - planetscale-dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Publish to Registry
+      uses: HurricanKai/Publish-Docker-Github-Action@master
+      with:
+        name: sivregistrymr.azurecr.io/nrzmyk
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        dockerfile: NRZMyk.Server/Dockerfile
+        registry: sivregistrymr.azurecr.io
