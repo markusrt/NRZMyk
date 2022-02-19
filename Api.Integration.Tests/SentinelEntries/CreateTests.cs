@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -37,6 +38,20 @@ namespace Api.Integration.Tests.SentinelEntries
             content.Should().Contain(nameof(SentinelEntryRequest.SamplingDate));
         }
 
+        [Test]
+        public async Task WhenCreatingWithFutureSamplingDate_RespondsWithBadRequest()
+        {
+            var client = ClientFactory.CreateClient();
+            var request = CreateValidRequest();
+            request.SamplingDate = DateTime.Now.AddDays(1);
+
+            var response = await client.PostAsJsonAsync("api/sentinel-entries", request).ConfigureAwait(true);
+
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var content = await response.Content.ReadAsStringAsync();
+            content.Should().Contain(nameof(SentinelEntryRequest.SamplingDate));
+        }
+
         private SentinelEntryRequest CreateValidRequest()
         {
             var filler = new Filler<SentinelEntryRequest>();
@@ -45,6 +60,7 @@ namespace Api.Integration.Tests.SentinelEntries
             request.HospitalDepartment = HospitalDepartment.GeneralSurgery;
             request.IdentifiedSpecies = Species.CandidaDubliniensis;
             request.SpeciesIdentificationMethod = SpeciesIdentificationMethod.BBL;
+            request.SamplingDate = DateTime.Now.AddDays(-3);
             return request;
         }
     }
