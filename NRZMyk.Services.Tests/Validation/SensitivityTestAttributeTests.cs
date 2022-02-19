@@ -32,8 +32,8 @@ namespace NRZMyk.Services.Tests.Validation
         {
             var sut = CreateSut();
             var sensitivityTests = new List<AntimicrobialSensitivityTestRequest> {
-                new AntimicrobialSensitivityTestRequest { MinimumInhibitoryConcentration = 0.12f },
-                new AntimicrobialSensitivityTestRequest { MinimumInhibitoryConcentration = 0.25f }
+                new() { MinimumInhibitoryConcentration = 0.12f },
+                new() { MinimumInhibitoryConcentration = 0.25f }
             };
 
             sut.IsValid(sensitivityTests).Should().BeTrue();
@@ -41,12 +41,12 @@ namespace NRZMyk.Services.Tests.Validation
 
         
         [Test]
-        public void WhenValueIsMissingMicValue_IsTreatedAsValid()
+        public void WhenValueIsMissingMicValue_IsTreatedAsInvalid()
         {
             var sut = CreateSut();
             var sensitivityTests = new List<AntimicrobialSensitivityTestRequest> {
-                new AntimicrobialSensitivityTestRequest { MinimumInhibitoryConcentration = null },
-                new AntimicrobialSensitivityTestRequest { MinimumInhibitoryConcentration = 0.25f }
+                new() { MinimumInhibitoryConcentration = null },
+                new() { MinimumInhibitoryConcentration = 0.25f }
             };
             var validationContext = new ValidationContext(sensitivityTests) {MemberName = "ValidatedProperty"};
             var result = sut.GetValidationResult(sensitivityTests, validationContext);
