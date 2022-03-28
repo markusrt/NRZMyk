@@ -9,7 +9,7 @@ public interface ISentinelEntryService
     Task<SentinelEntry> Create(SentinelEntryRequest createRequest);
     Task<List<SentinelEntry>> ListPaged(int pageSize);
     Task<List<SentinelEntry>> ListByOrganization(int organizationId);
-    Task<SentinelEntry> GetById(int id);
+    Task<SentinelEntryResponse> GetById(int id);
     Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
     Task<SentinelEntry> CryoArchive(CryoArchiveRequest archiveRequest);
     Task<string> Export();

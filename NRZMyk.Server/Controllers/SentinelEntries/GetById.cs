@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
+using NRZMyk.Services.Services;
 using NRZMyk.Services.Specifications;
 using NRZMyk.Services.Utils;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,13 +14,15 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User))]
-    public class GetById : BaseAsyncEndpoint<int, SentinelEntry>
+    public class GetById : BaseAsyncEndpoint<int, SentinelEntryResponse>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
+        private readonly IMapper _mapper;
 
-        public GetById(IAsyncRepository<SentinelEntry> sentinelEntryRepository)
+        public GetById(IAsyncRepository<SentinelEntry> sentinelEntryRepository, IMapper mapper)
         {
             _sentinelEntryRepository = sentinelEntryRepository;
+            _mapper = mapper;
         }
 
         [HttpGet("api/sentinel-entries/{sentinelEntryId}")]
@@ -27,7 +31,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.GetById",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<SentinelEntry>> HandleAsync([FromRoute] int sentinelEntryId)
+        public override async Task<ActionResult<SentinelEntryResponse>> HandleAsync([FromRoute] int sentinelEntryId)
         {
             var organizationId = User.Claims.OrganizationId();
             if (string.IsNullOrEmpty(organizationId))
@@ -41,7 +45,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
                 return NotFound();
             }
 
-            return Ok(sentinelEntry);
+            return Ok(_mapper.Map<SentinelEntryResponse>(sentinelEntry));
         }
     }
 }

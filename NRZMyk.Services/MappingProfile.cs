@@ -9,7 +9,9 @@ namespace NRZMyk.Services
         public MappingProfile()
         {
             CreateMap<SentinelEntryRequest, SentinelEntry>();
-            CreateMap<SentinelEntry, SentinelEntryRequest>();
+            CreateMap<SentinelEntry, SentinelEntryResponse>();
+            //CreateMap <SentinelEntryRequest, SentinelEntryResponse>();
+            CreateMap<SentinelEntryResponse, SentinelEntryRequest>();
             CreateMap<AntimicrobialSensitivityTestRequest, AntimicrobialSensitivityTest>();
             CreateMap<AntimicrobialSensitivityTest, AntimicrobialSensitivityTestRequest>().ForMember(
                 dest => dest.Standard,

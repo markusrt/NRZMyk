@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using NRZMyk.Server.Controllers.SentinelEntries;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
+using NRZMyk.Services.Services;
 using NRZMyk.Services.Specifications;
 using NSubstitute;
 using NUnit.Framework;
@@ -20,7 +22,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         [Test]
         public async Task WhenNotFound_Returns404()
         {
-            var sut = CreateSut(out var repository, "12");
+            var sut = CreateSut(out var repository, out _, "12");
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 123))
                 .Returns(Task.FromResult((SentinelEntry)null));
 
@@ -32,7 +34,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         [Test]
         public async Task WhenNotFoundWithCorrespondingProtectKey_Returns404()
         {
-            var sut = CreateSut(out var repository, "12");
+            var sut = CreateSut(out var repository, out _, "12");
             var sentinelEntry = new SentinelEntry
             {
                 ProtectKey = "24"
@@ -48,7 +50,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         [Test]
         public async Task WhenNoOrganization_AccessDenied()
         {
-            var sut = CreateSut(out var repository);
+            var sut = CreateSut(out var repository, out _);
             var sentinelEntry = new SentinelEntry();
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
@@ -62,24 +64,29 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         [Test]
         public async Task WhenFound_ReturnsCorrespondingObject()
         {
-            var sut = CreateSut(out var repository, "12");
+            var sut = CreateSut(out var repository, out var mapper, "12");
             var sentinelEntry = new SentinelEntry
             {
                 ProtectKey = "12"
             };
+            var sentinelEntryResponse = new SentinelEntryResponse
+            {
+            };
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
+            mapper.Map<SentinelEntryResponse>(sentinelEntry).Returns(sentinelEntryResponse);
 
             var action = await sut.HandleAsync(567).ConfigureAwait(true);
 
             var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
-            okResult.Value.Should().Be(sentinelEntry);
+            okResult.Value.Should().Be(sentinelEntryResponse);
         }
 
-        private static GetById CreateSut(out IAsyncRepository<SentinelEntry> repository, string organizationId = null)
+        private static GetById CreateSut(out IAsyncRepository<SentinelEntry> repository, out IMapper mapper, string organizationId = null)
         {
             repository = Substitute.For<IAsyncRepository<SentinelEntry>>();
-            return new GetById(repository)
+            mapper = Substitute.For<IMapper>();
+            return new GetById(repository, mapper)
             {
                 ControllerContext = new MockControllerContext(organizationId:organizationId)
             };

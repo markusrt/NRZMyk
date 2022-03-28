@@ -124,7 +124,7 @@ public class SentinelEntryServiceTests
         
         await sut.GetById(833).ConfigureAwait(true);
 
-        await httpClient.Received(1).Get<SentinelEntry>(
+        await httpClient.Received(1).Get<SentinelEntryResponse>(
             "api/sentinel-entries/833", default, Arg.Is<string>(s => !string.IsNullOrEmpty(s)));
     }
 

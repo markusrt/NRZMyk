@@ -76,7 +76,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
             _renderedComponent.Markup.Should().Contain("Duplicate to SN-133422");
             var entry = await _sentinelEntryService.GetById(1).ConfigureAwait(true);
-            entry.CryoDate.Should().BeCloseTo(DateTime.Now);
+            entry.CryoDate.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(2));
         }
         
         [Test]

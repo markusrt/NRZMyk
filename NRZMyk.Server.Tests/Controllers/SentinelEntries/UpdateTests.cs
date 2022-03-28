@@ -71,7 +71,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         public async Task WhenFound_ReturnsCorrespondingObject()
         {
             var sut = CreateSut(out var repository, out var sensitivityTestRepository, out var mapper, "12");
-            var updateSentinelEntry = new SentinelEntryRequest {Id = 567};
+            var updateSentinelEntry = new SentinelEntryRequest {Id = 567, PredecessorLaboratoryNumber = "SN-3030-0303"};
             var sensitivityTest1 = new AntimicrobialSensitivityTest();
             var sensitivityTest2 = new AntimicrobialSensitivityTest();
             var sentinelEntry = new SentinelEntry
@@ -82,6 +82,8 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
                     sensitivityTest1, sensitivityTest2
                 }
             };
+            var predecessorSentinelEntry = new SentinelEntry { Id = 303};
+            repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryByLaboratoryNumberSpecification>(s => s.Year == 3030 && s.SequentialNumber == 303)).Returns(predecessorSentinelEntry);
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
@@ -92,6 +94,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             mapper.Received(1).Map(updateSentinelEntry, sentinelEntry);
             var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
             okResult.Value.Should().Be(sentinelEntry);
+            okResult.Value.As<SentinelEntry>().PredecessorEntryId.Should().Be(303);
         }
 
         [Test]
@@ -114,6 +117,53 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
         }
 
+        [Test]
+        public async Task WhenFoundAndUpdateWithoutPredecessor_ClearsPredecessor()
+        {
+            var sut = CreateSut(out var repository, out var sensitivityTestRepository, out var mapper, "12");
+            var updateSentinelEntry = new SentinelEntryRequest {Id = 567};
+            var sensitivityTest1 = new AntimicrobialSensitivityTest();
+            var sentinelEntry = new SentinelEntry
+            {
+                ProtectKey = "12",
+                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>
+                { 
+                    sensitivityTest1
+                },
+                PredecessorEntry = new SentinelEntry(),
+                PredecessorEntryId = 123
+            };
+            repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
+                .Returns(Task.FromResult(sentinelEntry));
+
+            var action = await sut.HandleAsync(updateSentinelEntry).ConfigureAwait(true);
+
+            await sensitivityTestRepository.Received(1).DeleteAsync(sensitivityTest1).ConfigureAwait(true);
+            mapper.Received(1).Map(updateSentinelEntry, sentinelEntry);
+            var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
+            var updatedSentinelEntry = okResult.Value.As<SentinelEntry>();
+            updatedSentinelEntry.PredecessorEntry.Should().BeNull();
+            updatedSentinelEntry.PredecessorEntryId.Should().BeNull();
+        }
+
+        [Test]
+        public async Task WhenFoundButInvalidPredecessorNumber_BadRequest()
+        {
+            var sut = CreateSut(out var repository, out _, out _, "12");
+            var updateSentinelEntry = new SentinelEntryRequest { Id = 567, PredecessorLaboratoryNumber = "Test"};
+            var sentinelEntry = new SentinelEntry
+            {
+                ProtectKey = "12",
+                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>()
+            };
+            repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
+                .Returns(Task.FromResult(sentinelEntry));
+
+            var action = await sut.HandleAsync(updateSentinelEntry).ConfigureAwait(true);
+
+            action.Result.Should().BeOfType<BadRequestObjectResult>();
+            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
+        }
 
         private static Update CreateSut(out IAsyncRepository<SentinelEntry> sentinelEntryRepository,
             out IAsyncRepository<AntimicrobialSensitivityTest> sensitivityTestRepository, out IMapper map,

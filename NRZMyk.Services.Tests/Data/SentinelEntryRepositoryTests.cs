@@ -16,7 +16,7 @@ namespace NRZMyk.Services.Tests.Data
     {
         private ApplicationDbContext _dbContext;
 
-        private Filler<SentinelEntry> _filler = new Filler<SentinelEntry>();
+        private readonly Filler<SentinelEntry> _filler = new();
         
         [SetUp]
         public void Setup()
@@ -25,6 +25,9 @@ namespace NRZMyk.Services.Tests.Data
                 .UseInMemoryDatabase("TestCatalog")
                 .Options;
             _dbContext = new ApplicationDbContext(dbOptions);
+
+            _filler.Setup().OnProperty(e => e.PredecessorEntry).Use((SentinelEntry)null);
+            _filler.Setup().OnProperty(e => e.PredecessorEntryId).Use((int?)null);
         }
 
         [TearDown]

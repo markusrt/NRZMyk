@@ -30,13 +30,14 @@ namespace NRZMyk.Services.Data
                 .HasIndex(p => new {p.CryoBoxNumber , p.CryoBoxSlot}).IsUnique();
             builder.Entity<SentinelEntry>()
                 .HasIndex(p => new {p.Year , p.YearlySequentialEntryNumber}).IsUnique();
+            builder.Entity<SentinelEntry>()
+                .HasOne(b=>b.PredecessorEntry)
+                .WithMany()
+                .HasForeignKey(b=>b.PredecessorEntryId);
 
-            builder.Entity<RemoteAccount>().Property(
-                a => a.ObjectId).IsRequired();
-            builder.Entity<RemoteAccount>().Property(
-                a => a.Email).IsRequired();
-            builder.Entity<RemoteAccount>()
-                .HasIndex(a => a.ObjectId).IsUnique();
+            builder.Entity<RemoteAccount>().Property(a => a.ObjectId).IsRequired();
+            builder.Entity<RemoteAccount>().Property(a => a.Email).IsRequired();
+            builder.Entity<RemoteAccount>().HasIndex(a => a.ObjectId).IsUnique();
         }
     }
 }
