@@ -15,6 +15,6 @@ namespace NRZMyk.Services.Data.Entities
         [Description("ophthalmologisch")] Ophthalmology = 8,
         [Description("HNO")] Otorhinolaryngology = 9,
         [Description("dermatologisch")] Dermatology = 10,
-        [Description("Andere")] Other = 10000,
+        [Description("andere")] Other = 10000,
     }
 }

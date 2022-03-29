@@ -15,7 +15,9 @@ else
         @if (SaveFailed)
         {
             <div class="alert alert-danger" role="alert">
-                Fehler beim Speichern. Bitte versuchen sie es erneut oder wenden sie sich an den Administrator. (UTC-Zeitstempel: @DateTime.UtcNow.ToString("s"))
+                Fehler beim Speichern. Bitte versuchen sie es erneut oder wenden sie sich an den Administrator.
+                <p>Details: @LastError</p>
+                <p>UTC-Zeitstempel: @DateTime.UtcNow.ToString("s")</p>
             </div>
         }
         <EditForm Model="SentinelEntry" OnValidSubmit="@SubmitClick">
@@ -45,6 +47,11 @@ else
                                    ValidationForOther="() => SentinelEntry.OtherHospitalDepartment"/>
             </div>
             
+            @if (CheckInternalNormalTypeVisibility())
+            {
+                <SelectEnum Label="Internistische Normalstation" @bind-Value="@SentinelEntry.InternalHospitalDepartmentType" ValidationFor="() => SentinelEntry.InternalHospitalDepartmentType"/>
+            }
+
             <SelectEnumOrOther Label="Spezies" Key="species" Other="Species.Other" OtherLabel="Andere Spezies"
                                @bind-OtherValue="@SentinelEntry.OtherIdentifiedSpecies" @bind-Value="@SentinelEntry.IdentifiedSpecies"
                                ValidationFor="() => SentinelEntry.IdentifiedSpecies" ValidationForOther="() => SentinelEntry.OtherIdentifiedSpecies" />

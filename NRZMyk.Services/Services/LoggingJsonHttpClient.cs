@@ -107,6 +107,11 @@ public class LoggingJsonHttpClient : IHttpClient
         try
         {
             response = await httpClientCall();
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                throw new Exception($"Remote call failed with status {response.StatusCode}, content: {content}");
+            }
             return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken:cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception)

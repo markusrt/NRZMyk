@@ -21,7 +21,7 @@ namespace HaemophilusWeb.Tools
             AddField(s => ExportToString(s.AgeGroup));
             AddField(s => ExportToString(s.Gender));
             AddField(s => ExportToString(s.HospitalDepartmentType));
-            AddField(s => s.HospitalDepartementOrOther(), "Station");
+            AddField(s => s.HospitalDepartmentOrOther(), "Station");
             AddField(s => s.MaterialOrOther(), "Material");
             AddField(s => s.SpeciesIdentificationMethodWithPcrDetails(), "Methode Speziesidentifikation");
             AddField(s => s.SpeciesOrOther(), "Spezies");

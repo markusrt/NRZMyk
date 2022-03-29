@@ -51,8 +51,10 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         public string Title { get; set; } = default!;
         
         public string PrimaryAction { get; set; } = default!;
-        
-        public bool SaveFailed { get; set; }
+
+        public bool SaveFailed => !string.IsNullOrEmpty(LastError);
+
+        public string LastError { get; set; } = string.Empty;
 
         internal void AddAntimicrobialSensitivityTest()
         {
@@ -198,6 +200,17 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             sensitivityTest.Resistance = Resistance.Intermediate;
             return "bg-warning";
         }
+        
+        internal bool CheckInternalNormalTypeVisibility()
+        {
+            var isInternalNormalUnit = SentinelEntry.HospitalDepartment == HospitalDepartment.Internal &&
+                          SentinelEntry.HospitalDepartmentType == HospitalDepartmentType.NormalUnit;
+            if (!isInternalNormalUnit)
+            {
+                SentinelEntry.InternalHospitalDepartmentType = InternalHospitalDepartmentType.NoInternalDepartment;
+            }
+            return isInternalNormalUnit;
+        }
 
         private static bool IsResistantAccordingToEucastDefinition(float? mic, ClinicalBreakpoint breakpoint)
         {
@@ -216,6 +229,8 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         internal async Task SubmitClick()
         {
+            LastError = string.Empty;
+
             try
             {
                 if (IsEdit())
@@ -226,13 +241,11 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 {
                     await SentinelEntryService.Create(SentinelEntry).ConfigureAwait(true);
                 }
-
-                SaveFailed = false;
             }
             catch (Exception e)
             {
                 Logger.LogError(e, "Storing failed");
-                SaveFailed = true;
+                LastError = e.Message;
             }
 
             if (!SaveFailed)
