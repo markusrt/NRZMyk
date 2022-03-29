@@ -7,9 +7,9 @@ using NRZMyk.Services.Services;
 
 namespace NRZMyk.Services.Validation
 {
-    public class RequiredForNormalInternalUnit : ValidationAttribute
+    public class RequiredForNormalInternalUnitAttribute : ValidationAttribute
     {
-        public RequiredForNormalInternalUnit() 
+        public RequiredForNormalInternalUnitAttribute() 
             : base("Der Wert für muss für die internistische Normalstation angegeben werden.")
         {
         }
@@ -25,7 +25,7 @@ namespace NRZMyk.Services.Validation
                 var missingForNormalUnit = isInternalNormalUnit && internalTypeSetToNone;
                 var setForNonNormalUnit = !isInternalNormalUnit && !internalTypeSetToNone;
                 
-                isInvalid = missingForNormalUnit | setForNonNormalUnit;
+                isInvalid = missingForNormalUnit || setForNonNormalUnit;
             }
 
             return isInvalid 

@@ -8,7 +8,7 @@ namespace NRZMyk.Services.Data.Entities
         [Description("hämatoonkologisch")] HematoOncological = 10,
         [Description("gastroenterologisch")] Gastroenterological = 20,
         [Description("infektiologisch")] Infectiological = 30,
-        [Description("pulmologisch")] Pulmological = 50,
+        [Description("pulmologisch")] Pulmological = 40,
         [Description("kardiologisch")] Cardiological = 50,
         [Description("endokrinologisch")] Endocrinological = 60,
         [Description("nephrologisch")] Nephrological = 70,

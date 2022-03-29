@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace NRZMyk.Services.Tests.Validation
 {
-    public class RequiredForNormalInternalUnitTests
+    public class RequiredForNormalInternalUnitAttributeTests
     {
         [Test]
         public void WhenValueIsNull_IsTreatedAsValid()
@@ -103,9 +103,9 @@ namespace NRZMyk.Services.Tests.Validation
         public static IEnumerable<InternalHospitalDepartmentType> InternalHospitalDepartmentTypes
             => Enum.GetValues<InternalHospitalDepartmentType>().Where(e => e != InternalHospitalDepartmentType.NoInternalDepartment);
 
-        private RequiredForNormalInternalUnit CreateSut()
+        private RequiredForNormalInternalUnitAttribute CreateSut()
         {
-            return new RequiredForNormalInternalUnit();
+            return new RequiredForNormalInternalUnitAttribute();
         }
     }
 }
