@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Bunit;
@@ -47,7 +48,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         {
             var sut = _renderedComponent.Instance;
 
-             sut.SelectedOrganization = 10;
+            sut.SelectedOrganization = 10;
             await sut.LoadData().ConfigureAwait(true);
 
             _renderedComponent.Markup.Should().Contain(
@@ -69,10 +70,12 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         public async Task WhenPutToCryo_ShowsRemark()
         {
             var sut = _renderedComponent.Instance;
-
             sut.SelectedOrganization = 1;
-            await sut.PutToCryoStorage(
-                new SentinelEntry{Id=1, CryoRemark = "Duplicate to SN-133422"}).ConfigureAwait(true);
+            await sut.LoadData().ConfigureAwait(true);
+
+            var cryoEntry = sut.SentinelEntries.First();
+            cryoEntry.CryoRemark = "Duplicate to SN-133422";
+            await sut.PutToCryoStorage(cryoEntry).ConfigureAwait(true);
 
             _renderedComponent.Markup.Should().Contain("Duplicate to SN-133422");
             var entry = await _sentinelEntryService.GetById(1).ConfigureAwait(true);
@@ -83,12 +86,12 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         public async Task WhenReleaseFromCryoStorage_ShowsRemarkAndClearsDate()
         {
             var sut = _renderedComponent.Instance;
-
             sut.SelectedOrganization = 1;
-            await sut.ReleaseFromCryoStorage(
-                new SentinelEntry{Id=1, CryoRemark = "Wrongly sent specimen"}).ConfigureAwait(true);
+            await sut.LoadData().ConfigureAwait(true);
 
-            _renderedComponent.Markup.Should().Contain("Wrongly sent specimen");
+            var cryoEntry = sut.SentinelEntries.First();
+            await sut.ReleaseFromCryoStorage(cryoEntry).ConfigureAwait(true);
+
             var entry = await _sentinelEntryService.GetById(1).ConfigureAwait(true);
             entry.CryoDate.Should().BeNull();
         }
