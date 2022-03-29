@@ -40,7 +40,7 @@ namespace Api.Integration.Tests.SentinelEntries
             
             //Follow-up entry
             var followUp = CreateValidRequest();
-            followUp.PredecessorLaboratoryNumber = predecessorEntry.LaboratoryNumber;
+            followUp.PredecessorLaboratoryNumber = predecessorEntry?.LaboratoryNumber;
             var followUpResponse = await client.PostAsJsonAsync("api/sentinel-entries", followUp).ConfigureAwait(true);
             var followUpPath = followUpResponse.Headers.Location?.AbsolutePath;
             var followUpEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(followUpPath).ConfigureAwait(true);
@@ -59,22 +59,24 @@ namespace Api.Integration.Tests.SentinelEntries
             var predecessorResponse = await client.PostAsJsonAsync("api/sentinel-entries", predecessor).ConfigureAwait(true);
             var predecessorPath = predecessorResponse.Headers.Location?.AbsolutePath;
             var predecessorEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(predecessorPath).ConfigureAwait(true);
+            predecessorEntry.Should().NotBeNull();
             predecessorEntry?.Id.Should().BeGreaterThan(0);
             var followUp = CreateValidRequest();
-            followUp.PredecessorLaboratoryNumber = predecessorEntry.LaboratoryNumber;
+            followUp.PredecessorLaboratoryNumber = predecessorEntry?.LaboratoryNumber;
             var followUpResponse = await client.PostAsJsonAsync("api/sentinel-entries", followUp).ConfigureAwait(true);
             var followUpPath = followUpResponse.Headers.Location?.AbsolutePath;
             var followUpEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(followUpPath).ConfigureAwait(true);
+            followUpEntry.Should().NotBeNull();
 
             // Arrange: Make original entry reference follow-up, thus creating a circle
             predecessor.Id = predecessorEntry.Id;
-            predecessor.PredecessorLaboratoryNumber = followUpEntry.LaboratoryNumber;
+            predecessor.PredecessorLaboratoryNumber = followUpEntry?.LaboratoryNumber;
             
             var circleResponse = await client.PutAsJsonAsync("api/sentinel-entries", predecessor).ConfigureAwait(true);
             
             circleResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             predecessorEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(predecessorPath).ConfigureAwait(true);
-            predecessorEntry?.PredecessorLaboratoryNumber.Should().Be(followUpEntry.LaboratoryNumber);
+            predecessorEntry?.PredecessorLaboratoryNumber.Should().Be(followUpEntry?.LaboratoryNumber);
         }
 
         [Test]
