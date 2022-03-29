@@ -20,7 +20,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         [Parameter]
         public EventCallback<string> OnCloseClick { get; set; }
 
-        internal SentinelEntry SentinelEntry { get; set; } = default!;
+        internal SentinelEntryResponse SentinelEntry { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {

@@ -35,8 +35,8 @@ namespace NRZMyk.Services.Services
         public Task<List<SentinelEntry>> ListByOrganization(int organizationId)
             => _httpClient.Get<List<SentinelEntry>>($"{BaseApi}/organization/{organizationId}");
 
-        public Task<SentinelEntry> GetById(int id)
-            => _httpClient.Get<SentinelEntry>($"{BaseApi}/{id}");
+        public Task<SentinelEntryResponse> GetById(int id)
+            => _httpClient.Get<SentinelEntryResponse>($"{BaseApi}/{id}");
 
         public async Task<List<SentinelEntry>> ListPaged(int pageSize)
         {

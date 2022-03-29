@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Validation;
 
 namespace NRZMyk.Services.Services
 {
-    public class SentinelEntryRequest
+    public class SentinelEntryRequest : ISentinelEntry
     {
         public int Id { get; set; }
 
@@ -48,7 +49,11 @@ namespace NRZMyk.Services.Services
         public string Remark { get; set; }
 
         public Gender Gender { get; set; }
-        
+
+        public YesNo HasPredecessor { get; set; }
+
+        [OtherValue((int) YesNo.Yes, nameof(HasPredecessor), ErrorMessage = "Das Feld Labornummer Vorgänger ist erforderlich")]
+        public string PredecessorLaboratoryNumber { get; set; }
         
         [SensitivityTestNotEmptyWithoutComment(
             ErrorMessage = "Mindestens ein MHK Eintrag ist erforderlich. Schreiben sie bitte einen Erklärung in die Anmerkungen, falls es keine MHKs ermitteln konnten." )]

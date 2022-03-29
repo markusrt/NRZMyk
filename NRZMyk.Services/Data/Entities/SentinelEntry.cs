@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using NRZMyk.Services.Interfaces;
 
 namespace NRZMyk.Services.Data.Entities
 {
-    public class SentinelEntry : BaseEntity, IAggregateRoot
+    public class SentinelEntry : BaseEntity, IAggregateRoot, ISentinelEntry
     {
         [Display(Name = "Entnahmedatum")]
         public DateTime? SamplingDate { get; set; }
@@ -65,5 +66,14 @@ namespace NRZMyk.Services.Data.Entities
 
         [Display(Name = "Kryo-Kommentar")]
         public string CryoRemark { get; set; }
+
+        public YesNo HasPredecessor => PredecessorEntryId.HasValue ? YesNo.Yes : YesNo.No;
+
+        public string PredecessorLaboratoryNumber => PredecessorEntry?.LaboratoryNumber;
+        
+        public int? PredecessorEntryId {get;set;}
+
+        [JsonIgnore]
+        public virtual SentinelEntry PredecessorEntry {get;set;}
     }
 }

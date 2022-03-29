@@ -92,10 +92,10 @@ namespace NRZMyk.Mocks.MockServices
                 : _repository.Where(s => s.ProtectKey == organizationId.ToString()).ToList();
         }
 
-        public async Task<SentinelEntry> GetById(int id)
+        public async Task<SentinelEntryResponse> GetById(int id)
         {
             await Task.Delay(Delay);
-            return _repository.FirstOrDefault(e => e.Id == id);
+            return _mapper.Map<SentinelEntryResponse>(_repository.FirstOrDefault(e => e.Id == id));
         }
 
         public Task<SentinelEntry> Update(SentinelEntryRequest updateRequest)

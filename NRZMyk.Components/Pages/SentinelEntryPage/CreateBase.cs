@@ -259,7 +259,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
             if (Id.HasValue)
             {
-                SentinelEntry = Mapper.Map<SentinelEntryRequest>(await SentinelEntryService.GetById(Id.Value).ConfigureAwait(true));
+                SentinelEntry = await SentinelEntryService.GetById(Id.Value).ConfigureAwait(true);
             }
             else
             {
