@@ -22,7 +22,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
 
-        public OtherLaboratoryNumbers(ISentinelEntryRepository sentinelEntryRepository, IOptions<ApplicationSettings> config)
+        public OtherLaboratoryNumbers(ISentinelEntryRepository sentinelEntryRepository)
         {
             _sentinelEntryRepository = sentinelEntryRepository;
         }
@@ -35,14 +35,11 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<List<string>>> HandleAsync()
         {
-
             var organizationId = User.Claims.OrganizationId();
             if (string.IsNullOrEmpty(organizationId))
             {
                 return Forbid();
             }
-
-            var response = new ListPagedSentinelEntryResponse();
 
             var entriesForOrganization = await _sentinelEntryRepository.ListAsync(new SentinelEntryFilterSpecification(organizationId)).ConfigureAwait(false);
             var otherLaboratoryNumbers = entriesForOrganization.Select(e => e.LaboratoryNumber).Distinct().ToList();

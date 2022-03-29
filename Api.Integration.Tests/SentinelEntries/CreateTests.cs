@@ -21,10 +21,9 @@ namespace Api.Integration.Tests.SentinelEntries
 
             var response = await client.PostAsJsonAsync("api/sentinel-entries", request).ConfigureAwait(true);
             var createdEntryPath = response.Headers.Location?.AbsolutePath;
-            var test = await client.GetAsync(createdEntryPath);
             var createdEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(createdEntryPath).ConfigureAwait(true);
             
-            createdEntry.Id.Should().BeGreaterThan(0);
+            createdEntry?.Id.Should().BeGreaterThan(0);
             response.StatusCode.Should().Be(HttpStatusCode.Created);
         }
 
@@ -37,7 +36,7 @@ namespace Api.Integration.Tests.SentinelEntries
             var predecessorResponse = await client.PostAsJsonAsync("api/sentinel-entries", predecessor).ConfigureAwait(true);
             var predecessorPath = predecessorResponse.Headers.Location?.AbsolutePath;
             var predecessorEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(predecessorPath).ConfigureAwait(true);
-            predecessorEntry.Id.Should().BeGreaterThan(0);
+            predecessorEntry?.Id.Should().BeGreaterThan(0);
             
             //Follow-up entry
             var followUp = CreateValidRequest();
@@ -46,7 +45,7 @@ namespace Api.Integration.Tests.SentinelEntries
             var followUpPath = followUpResponse.Headers.Location?.AbsolutePath;
             var followUpEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(followUpPath).ConfigureAwait(true);
 
-            followUpEntry.PredecessorLaboratoryNumber.Should().Be(predecessorEntry.LaboratoryNumber);
+            followUpEntry?.PredecessorLaboratoryNumber.Should().Be(predecessorEntry.LaboratoryNumber);
         }
 
         
@@ -60,7 +59,7 @@ namespace Api.Integration.Tests.SentinelEntries
             var predecessorResponse = await client.PostAsJsonAsync("api/sentinel-entries", predecessor).ConfigureAwait(true);
             var predecessorPath = predecessorResponse.Headers.Location?.AbsolutePath;
             var predecessorEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(predecessorPath).ConfigureAwait(true);
-            predecessorEntry.Id.Should().BeGreaterThan(0);
+            predecessorEntry?.Id.Should().BeGreaterThan(0);
             var followUp = CreateValidRequest();
             followUp.PredecessorLaboratoryNumber = predecessorEntry.LaboratoryNumber;
             var followUpResponse = await client.PostAsJsonAsync("api/sentinel-entries", followUp).ConfigureAwait(true);
@@ -75,7 +74,7 @@ namespace Api.Integration.Tests.SentinelEntries
             
             circleResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             predecessorEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(predecessorPath).ConfigureAwait(true);
-            predecessorEntry.PredecessorLaboratoryNumber.Should().Be(followUpEntry.LaboratoryNumber);
+            predecessorEntry?.PredecessorLaboratoryNumber.Should().Be(followUpEntry.LaboratoryNumber);
         }
 
         [Test]
@@ -88,7 +87,7 @@ namespace Api.Integration.Tests.SentinelEntries
             var response = await client.PostAsJsonAsync("api/sentinel-entries", request).ConfigureAwait(true);
             
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
             content.Should().Contain("PredecessorLaboratoryNumber");
             content.Should().Contain("Laboratory number can not be found");
         }

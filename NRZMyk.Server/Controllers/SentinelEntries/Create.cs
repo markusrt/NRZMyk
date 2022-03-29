@@ -23,7 +23,6 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
         private readonly IMapper _mapper;
-        private readonly IOptions<ApiBehaviorOptions> _apiBehaviorOptions;
 
         public string OrganizationId => User.Claims.OrganizationId();
 
@@ -61,12 +60,6 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
 
             var storedEntry = await _sentinelEntryRepository.AddAsync(newEntry).ConfigureAwait(false);
             return Created(new Uri($"{Request.GetUri()}/{storedEntry.Id}"), storedEntry);
-        }
-
-        private class Error
-        {
-            public string ErrorField { get; set; }
-            public string ErrorDescription { get; set; }
         }
     }
 }
