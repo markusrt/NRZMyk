@@ -26,6 +26,7 @@ namespace HaemophilusWeb.Tools
             AddField(s => s.SpeciesIdentificationMethodWithPcrDetails(), "Methode Speziesidentifikation");
             AddField(s => s.SpeciesOrOther(), "Spezies");
             AddField(s => ResolveSender(s), "Einsender");
+            AddField(s => s.PredecessorLaboratoryNumber, "Labornummer Vorgänger");
         }
 
         private static string ToReportFormat(DateTime? dateTime)

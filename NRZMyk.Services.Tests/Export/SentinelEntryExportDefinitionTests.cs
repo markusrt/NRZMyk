@@ -43,7 +43,7 @@ namespace NRZMyk.Services.Tests.Export
 
             var export = sut.ToDataTable(SentinelEntries);
 
-            export.Columns.Count.Should().Be(13);
+            export.Columns.Count.Should().Be(14);
         }
 
         [Test]
@@ -63,6 +63,8 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.YearlySequentialEntryNumber = 123;
             SentinelEntry.CryoBoxNumber = 5;
             SentinelEntry.CryoBoxSlot = 67;
+            SentinelEntry.PredecessorEntry.Year = 2006;
+            SentinelEntry.PredecessorEntry.YearlySequentialEntryNumber = 6;
 
             var export = sut.ToDataTable(SentinelEntries);
 
@@ -76,6 +78,7 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Material"].Should().Be("Blutkultur zentral - ZVK");
             export.Rows[0]["Labnr. Einsender"].Should().Be("LabNr. 123");
             export.Rows[0]["Methode Speziesidentifikation"].Should().Be("BBL Crystal (Becton-Dickinson)");
+            export.Rows[0]["Labornummer Vorgänger"].Should().Be("SN-2006-0006");
         }
 
         [Test]
@@ -128,6 +131,19 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Methode Speziesidentifikation"].Should().Be("PCR: Details");
             export.Rows[0]["Station"].Should().Be("urologic");
             export.Rows[0]["Geschlecht"].Should().Be("weiblich");
+        }
+
+        
+        [Test]
+        public void DataTable_DoesNotContainEmptyPredecessor()
+        {
+            var sut = CreateExportDefinition(out _);
+
+            SentinelEntry.PredecessorEntry = null;
+            
+            var export = sut.ToDataTable(SentinelEntries);
+
+            export.Rows[0]["Labornummer Vorgänger"].Should().Be(DBNull.Value);
         }
 
         private SentinelEntryExportDefinition CreateExportDefinition(out IProtectKeyToOrganizationResolver organizationResolver)
