@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
 using NRZMyk.Services.Data.Entities;
@@ -10,6 +11,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
     {
         [Inject]
         private IAccountService AccountService { get; set; } = default!;
+        
+        [Inject]
+        private IMapper Mapper { get; set; } = default!;
 
         [Inject]
         private ISentinelEntryService SentinelEntryService { get; set; } = default!;
@@ -19,12 +23,14 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         internal ICollection<Organization> Organizations { get; set; } = default!;
 
-        protected List<SentinelEntry> SentinelEntries { get; set; } = default!;
+        internal List<SentinelEntryResponse> SentinelEntries { get; set; } = default!;
 
         internal int SelectedOrganization { get; set; }
         
         protected LoadState LoadState { get; set; }
-        
+
+        private readonly List<int> _updatingItems = new();
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -33,7 +39,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
                 Organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
                 SelectedOrganization = Organizations.First().Id;
-                SentinelEntries = new List<SentinelEntry>();
+                SentinelEntries = new List<SentinelEntryResponse>();
 
                 await InvokeAsync(CallRequestRefresh).ConfigureAwait(true);
             }
@@ -41,41 +47,48 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             await base.OnAfterRenderAsync(firstRender).ConfigureAwait(true);
         }
 
-        internal async Task PutToCryoStorage(SentinelEntry entry)
+        internal Task PutToCryoStorage(SentinelEntryResponse entry)
         {
-            LoadState = LoadState.Loading;
+            return CryoStore(entry, true);
+        }
+
+        internal Task ReleaseFromCryoStorage(SentinelEntryResponse entry)
+        {
+            return CryoStore(entry, false);
+        }
+
+        private async Task CryoStore(SentinelEntryResponse entry, bool store)
+        {
+            _updatingItems.Add(entry.Id);
             await SentinelEntryService.CryoArchive(new CryoArchiveRequest
             {
                 Id = entry.Id,
-                CryoDate = DateTime.Now,
+                CryoDate = store ? DateTime.Now : null,
                 CryoRemark = entry.CryoRemark
             }).ConfigureAwait(true);
-            await LoadData().ConfigureAwait(true);
+
+            var index = SentinelEntries.IndexOf(entry);
+            var updatedEntry = await SentinelEntryService.GetById(entry.Id).ConfigureAwait(true);
+            SentinelEntries[index] =  updatedEntry;
+            _updatingItems.Remove(entry.Id);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(true);
         }
-
-
-        internal async Task ReleaseFromCryoStorage(SentinelEntry entry)
-        {
-            LoadState = LoadState.Loading;
-            await SentinelEntryService.CryoArchive(new CryoArchiveRequest
-            {
-                Id = entry.Id,
-                CryoDate = null,
-                CryoRemark = entry.CryoRemark
-            }).ConfigureAwait(true);
-            await LoadData().ConfigureAwait(true);
-        }
-
 
         internal async Task LoadData()
         {
             LoadState = LoadState.Loading;
 
-            SentinelEntries = await SentinelEntryService.ListByOrganization(SelectedOrganization).ConfigureAwait(true);
+            SentinelEntries = Mapper.Map<List<SentinelEntryResponse>>(
+                await SentinelEntryService.ListByOrganization(SelectedOrganization).ConfigureAwait(true));
 
             LoadState = LoadState.Loaded;
 
             await InvokeAsync(StateHasChanged).ConfigureAwait(true);
+        }
+
+        internal bool IsUpdating(SentinelEntryResponse entry)
+        {
+            return _updatingItems.Contains(entry.Id);
         }
     }
 }

@@ -9,4 +9,6 @@ public class SentinelEntryResponse : SentinelEntryRequest
     public string CryoBox { get; set; }
 
     public DateTime? CryoDate { get; set; }
+
+    public string CryoRemark { get; set; }
 }
