@@ -55,6 +55,7 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.SamplingDate = new DateTime(2005, 8, 31);
             SentinelEntry.HospitalDepartmentType = HospitalDepartmentType.NormalUnit;
             SentinelEntry.HospitalDepartment = HospitalDepartment.Anaesthetics;
+            SentinelEntry.InternalHospitalDepartmentType = InternalHospitalDepartmentType.NoInternalDepartment;
             SentinelEntry.IdentifiedSpecies = Species.CandidaDubliniensis;
             SentinelEntry.Material = Material.CentralBloodCultureCvc;
             SentinelEntry.SenderLaboratoryNumber = "LabNr. 123";
@@ -122,6 +123,7 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.PcrDetails = "Details";
             SentinelEntry.HospitalDepartment = HospitalDepartment.Other;
             SentinelEntry.OtherHospitalDepartment = "urologic";
+            SentinelEntry.InternalHospitalDepartmentType = InternalHospitalDepartmentType.NoInternalDepartment;
             SentinelEntry.Gender = Gender.Female;
             
             var export = sut.ToDataTable(SentinelEntries);

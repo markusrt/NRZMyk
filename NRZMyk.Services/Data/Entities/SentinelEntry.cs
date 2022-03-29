@@ -21,6 +21,9 @@ namespace NRZMyk.Services.Data.Entities
         [Display(Name = "Stationstyp")]
         public HospitalDepartmentType HospitalDepartmentType { get; set; }
 
+        [Display(Name = "Stationstyp")]
+        public InternalHospitalDepartmentType InternalHospitalDepartmentType { get; set; }
+
         [Display(Name = "Station")]
         public HospitalDepartment HospitalDepartment { get; set; }
         

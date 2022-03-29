@@ -21,11 +21,17 @@ namespace NRZMyk.Services.ModelExtensions
                 : EnumUtils.GetEnumDescription(sentinelEntry.IdentifiedSpecies);
         }
 
-        public static string HospitalDepartementOrOther(this ISentinelEntry sentinelEntry)
+        public static string HospitalDepartmentOrOther(this ISentinelEntry sentinelEntry)
         {
-            return sentinelEntry.HospitalDepartment == HospitalDepartment.Other
+            var department = sentinelEntry.HospitalDepartment == HospitalDepartment.Other
                 ? sentinelEntry.OtherHospitalDepartment
                 : EnumUtils.GetEnumDescription(sentinelEntry.HospitalDepartment);
+
+            if (sentinelEntry.InternalHospitalDepartmentType != InternalHospitalDepartmentType.NoInternalDepartment)
+            {
+                department += $", {EnumUtils.GetEnumDescription(sentinelEntry.InternalHospitalDepartmentType)}";
+            }
+            return department;
         }
 
         public static string SpeciesIdentificationMethodWithPcrDetails(this ISentinelEntry sentinelEntry)

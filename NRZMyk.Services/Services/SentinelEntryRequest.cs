@@ -24,8 +24,11 @@ namespace NRZMyk.Services.Services
 
         [OtherValue((int) Material.Other, nameof(Material), ErrorMessage = "Das Feld Anderes Material ist erforderlich")]
         public string OtherMaterial { get; set; }
-
+        
         public HospitalDepartmentType HospitalDepartmentType { get; set; }
+
+        [RequiredForNormalInternalUnit]
+        public InternalHospitalDepartmentType InternalHospitalDepartmentType { get; set; }
 
         public HospitalDepartment HospitalDepartment { get; set; }
         

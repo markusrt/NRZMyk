@@ -195,6 +195,34 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             sensitivityTest.Resistance.Should().Be(Resistance.NotDetermined);
         }
 
+        [Test]
+        public void WhenNormalInternalUnitSelected_NormalTypeIsVisible()
+        {
+            var component = CreateSut();
+            var sut = component.Instance;
+
+            sut.SentinelEntry.HospitalDepartment = HospitalDepartment.Internal;
+            sut.SentinelEntry.HospitalDepartmentType = HospitalDepartmentType.NormalUnit;
+
+            sut.CheckInternalNormalTypeVisibility().Should().BeTrue();
+        }
+
+        [Test]
+        public void WhenNormalInternalUnitDeSelected_NormalTypeIsCleared()
+        {
+            var component = CreateSut();
+            var sut = component.Instance;
+            sut.SentinelEntry.HospitalDepartment = HospitalDepartment.Internal;
+            sut.SentinelEntry.HospitalDepartmentType = HospitalDepartmentType.NormalUnit;
+            sut.SentinelEntry.InternalHospitalDepartmentType = InternalHospitalDepartmentType.Gastroenterological;
+
+            sut.SentinelEntry.HospitalDepartment = HospitalDepartment.Dermatology;
+
+            sut.CheckInternalNormalTypeVisibility().Should().BeFalse();
+            sut.SentinelEntry.InternalHospitalDepartmentType.Should()
+                .Be(InternalHospitalDepartmentType.NoInternalDepartment);
+        }
+
         [TestCase(0.01f, "bg-danger", Resistance.Resistant)]
         [TestCase(0f, "bg-warning", Resistance.Intermediate)]
         [TestCase(-0.01f, "bg-warning", Resistance.Intermediate)]
