@@ -68,7 +68,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             }).ConfigureAwait(true);
 
             var index = SentinelEntries.IndexOf(entry);
-            var updatedEntry = await SentinelEntryService.GetById(entry.Id);
+            var updatedEntry = await SentinelEntryService.GetById(entry.Id).ConfigureAwait(true);
             SentinelEntries[index] =  updatedEntry;
             _updatingItems.Remove(entry.Id);
             await InvokeAsync(StateHasChanged).ConfigureAwait(true);
