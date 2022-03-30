@@ -5,6 +5,7 @@ using Ardalis.ApiEndpoints;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NRZMyk.Server.Authorization;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
@@ -15,7 +16,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
-    [Authorize(Roles = nameof(Role.User))]
+    [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
     public class Update : BaseAsyncEndpoint<SentinelEntryRequest, SentinelEntry>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
@@ -40,11 +41,6 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request)
         {
             var organizationId = User.Claims.OrganizationId();
-            if (string.IsNullOrEmpty(organizationId))
-            {
-                return Forbid();
-            }
-
             var existingItem = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(request.Id)));
 

@@ -7,6 +7,7 @@ using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using NRZMyk.Server.Authorization;
 using NRZMyk.Services.Data;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
@@ -18,13 +19,13 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
-    [Authorize(Roles = nameof(Role.User))]
+    [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
     public class Create : BaseAsyncEndpoint<SentinelEntryRequest, SentinelEntry>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
         private readonly IMapper _mapper;
 
-        public string OrganizationId => User.Claims.OrganizationId();
+        private string OrganizationId => User.Claims.OrganizationId();
 
         public Create(ISentinelEntryRepository sentinelEntryRepository, IMapper mapper)
         {
@@ -40,12 +41,6 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request )
         {
-            if (string.IsNullOrEmpty(OrganizationId))
-            {
-                return Forbid();
-            }
-
-      
             var newEntry = _mapper.Map<SentinelEntry>(request);
 
             var error = await Utils.ResolvePredecessor(request, newEntry, _sentinelEntryRepository, OrganizationId, ModelState).ConfigureAwait(false);

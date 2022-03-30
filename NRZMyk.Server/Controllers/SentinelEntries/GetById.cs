@@ -3,6 +3,7 @@ using Ardalis.ApiEndpoints;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NRZMyk.Server.Authorization;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
@@ -13,7 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
-    [Authorize(Roles = nameof(Role.User))]
+    [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
     public class GetById : BaseAsyncEndpoint<int, SentinelEntryResponse>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
@@ -33,11 +34,9 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<SentinelEntryResponse>> HandleAsync([FromRoute] int sentinelEntryId)
         {
-            var organizationId = User.Claims.OrganizationId();
-            if (string.IsNullOrEmpty(organizationId))
-            {
-                return Forbid();
-            }
+            var userClaims = User.Claims;
+            var super = User.IsInRole(nameof(Role.SuperUser));
+            var organizationId = userClaims.OrganizationId();
             var sentinelEntry = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(sentinelEntryId)));
             if (sentinelEntry is null || sentinelEntry.ProtectKey != organizationId)

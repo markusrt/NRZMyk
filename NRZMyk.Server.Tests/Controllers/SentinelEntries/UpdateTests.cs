@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Mocks.TestUtils;
+using NRZMyk.Server.Authorization;
 using NRZMyk.Server.Controllers.SentinelEntries;
 using NRZMyk.Services.Data;
 using NRZMyk.Services.Data.Entities;
@@ -23,16 +26,15 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
     public class UpdateTests
     {
         [Test]
-        public async Task WhenNoOrganizationAssigned_DeniesAccess()
+        public void WhePerformingAuthorization_RestrictsToUsersWithinAnOrganization()
         {
-            var sut = CreateSut(out var repository, out _, out _);
-            repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 123))
-                .Returns(Task.FromResult((SentinelEntry)null));
+            var type = typeof(Update);
 
-            var action = await sut.HandleAsync(new SentinelEntryRequest {Id = 123}).ConfigureAwait(true);
+            var attribute = type.GetCustomAttribute(typeof(AuthorizeAttribute)).As<AuthorizeAttribute>();
 
-            action.Result.Should().BeOfType<ForbidResult>();
-            await repository.Received(0).UpdateAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
+            attribute.Should().NotBeNull();
+            attribute.Policy.Should().Be(Policies.AssignedToOrganization);
+            attribute.Roles.Should().Contain(nameof(Role.User));
         }
 
         [Test]
