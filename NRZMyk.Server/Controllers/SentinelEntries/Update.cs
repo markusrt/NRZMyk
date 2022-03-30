@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Server.Authorization;
+using NRZMyk.Server.Utils;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
@@ -44,7 +45,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             var existingItem = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(request.Id)));
 
-            if (existingItem == null || existingItem.ProtectKey != organizationId)
+            if (existingItem.IsNullOrProtected(User, Role.SuperUser))
             {
                 return NotFound();
             }

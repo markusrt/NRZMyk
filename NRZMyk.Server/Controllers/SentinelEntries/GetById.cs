@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Server.Authorization;
+using NRZMyk.Server.Utils;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
@@ -34,12 +35,9 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<SentinelEntryResponse>> HandleAsync([FromRoute] int sentinelEntryId)
         {
-            var userClaims = User.Claims;
-            var super = User.IsInRole(nameof(Role.SuperUser));
-            var organizationId = userClaims.OrganizationId();
             var sentinelEntry = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(sentinelEntryId)));
-            if (sentinelEntry is null || sentinelEntry.ProtectKey != organizationId)
+            if (sentinelEntry.IsNullOrProtected(User, Role.SuperUser))
             {
                 return NotFound();
             }
