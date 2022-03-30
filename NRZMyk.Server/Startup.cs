@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
+using NRZMyk.Server.Authorization;
 using NRZMyk.Server.Utils;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data;
@@ -20,6 +21,7 @@ using NRZMyk.Services.Services;
 using NRZMyk.Services.Utils;
 using SendGrid;
 using SendGrid.Extensions.DependencyInjection;
+using ClaimTypes = NRZMyk.Services.Models.ClaimTypes;
 
 namespace NRZMyk.Server
 {
@@ -53,6 +55,9 @@ namespace NRZMyk.Server
                 //    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 //});
             services.AddRazorPages();
+
+            services.AddAuthorization(options => options.AddPolicy(Policies.AssignedToOrganization,
+                policy => policy.RequireClaim(ClaimTypes.Organization)));
 
             services.AddMvc().AddRazorPagesOptions(options => { options.RootDirectory = "/"; });
             services.AddDbContext<ApplicationDbContext>(options =>

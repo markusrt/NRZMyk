@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NRZMyk.Server.Authorization;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
@@ -12,7 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
-    [Authorize(Roles = nameof(Role.User))]
+    [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
     public class ListPaged : BaseAsyncEndpoint<ListPagedSentinelEntryRequest, ListPagedSentinelEntryResponse>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
@@ -31,11 +32,6 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         public override async Task<ActionResult<ListPagedSentinelEntryResponse>> HandleAsync([FromQuery]ListPagedSentinelEntryRequest request)
         {
             var organizationId = User.Claims.OrganizationId();
-            if (string.IsNullOrEmpty(organizationId))
-            {
-                return Forbid();
-            }
-
             var response = new ListPagedSentinelEntryResponse();
 
             var totalItems = await _sentinelEntryRepository.CountAsync(new SentinelEntryFilterSpecification(organizationId)).ConfigureAwait(false);

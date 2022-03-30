@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Mocks.TestUtils;
+using NRZMyk.Server.Authorization;
 using NRZMyk.Server.Controllers.SentinelEntries;
 using NRZMyk.Services.Data;
 using NRZMyk.Services.Data.Entities;
@@ -22,18 +25,16 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
     public class CreateTests
     {
         [Test]
-        public async Task WhenCreatedWithoutOrganization_AccessDenied()
+        public void WhePerformingAuthorization_RestrictsToUsersWithinAnOrganization()
         {
-            var sut = CreateSut(out var repository, out var mapper);
-            var createSentinelEntryRequest = new SentinelEntryRequest();
-            var sentinelEntry = new SentinelEntry {Id = 123};
+            var type = typeof(Create);
 
-            var action = await sut.HandleAsync(createSentinelEntryRequest).ConfigureAwait(true);
-            
-            action.Result.Should().BeOfType<ForbidResult>();
-            await repository.Received(0).AddAsync(sentinelEntry).ConfigureAwait(true);
+            var attribute = type.GetCustomAttribute(typeof(AuthorizeAttribute)).As<AuthorizeAttribute>();
+
+            attribute.Should().NotBeNull();
+            attribute.Policy.Should().Be(Policies.AssignedToOrganization);
+            attribute.Roles.Should().Contain(nameof(Role.User));
         }
-
 
         [Test]
         public async Task WhenCreatedWithInvalidPredecessorNumber_BadRequest()

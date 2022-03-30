@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Mocks.TestUtils;
+using NRZMyk.Server.Authorization;
 using NRZMyk.Server.Controllers.SentinelEntries;
 using NRZMyk.Services.Data;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
+using NRZMyk.Services.Models;
 using NRZMyk.Services.Specifications;
 using NSubstitute;
 using NUnit.Framework;
@@ -57,14 +61,15 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         }
 
         [Test]
-        public async Task WhenNoOrganization_AccessDenied()
+        public void WhePerformingAuthorization_RestrictsToUsersWithinAnOrganization()
         {
-            var sut = CreateSut(out var repository, "");
+            var type = typeof(OtherLaboratoryNumbers);
 
-            var action = await sut.HandleAsync().ConfigureAwait(true);
+            var attribute = type.GetCustomAttribute(typeof(AuthorizeAttribute)).As<AuthorizeAttribute>();
 
-            action.Result.Should().BeOfType<ForbidResult>();
-            await repository.Received(0).ListAsync(Arg.Any<SentinelEntryFilterSpecification>()).ConfigureAwait(true);
+            attribute.Should().NotBeNull();
+            attribute.Policy.Should().Be(Policies.AssignedToOrganization);
+            attribute.Roles.Should().Contain(nameof(Role.User));
         }
 
         private static OtherLaboratoryNumbers CreateSut(out ISentinelEntryRepository repository, string organizationId)
