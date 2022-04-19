@@ -76,7 +76,6 @@ namespace NRZMyk.Server
 
             services.Configure<DatabaseSeedSettings>(Configuration);
             services.Configure<ApplicationSettings>(Configuration);
-            services.Configure<BreakpointSettings>(Configuration);
 
             services.AddDatabaseDeveloperPageExceptionFilter();
         }

@@ -120,6 +120,30 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         }
 
         [Test]
+        public async Task WhenFoundButAlreadyArchived_AllowsAccessForSuperUser()
+        {
+            var user = new ClaimsPrincipal();
+            var identity = new ClaimsIdentity();
+            identity.AddClaim(new Claim(identity.RoleClaimType, nameof(Role.SuperUser)));
+            user.AddIdentity(identity);
+            var sut = CreateSut(out var repository, out _, out _, "12", user);
+            var updateSentinelEntry = new SentinelEntryRequest { Id = 567 };
+            var sentinelEntry = new SentinelEntry
+            {
+                ProtectKey = "12",
+                CryoDate = new DateTime(2010,10,10),
+                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>()
+            };
+            repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
+                .Returns(Task.FromResult(sentinelEntry));
+
+            var action = await sut.HandleAsync(updateSentinelEntry).ConfigureAwait(true);
+
+            action.Result.Should().BeOfType<OkObjectResult>();
+            await repository.Received(1).UpdateAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
+        }
+
+        [Test]
         public async Task WhenFoundAndUpdateWithoutPredecessor_ClearsPredecessor()
         {
             var sut = CreateSut(out var repository, out var sensitivityTestRepository, out var mapper, "12");
@@ -169,7 +193,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
 
         private static Update CreateSut(out IAsyncRepository<SentinelEntry> sentinelEntryRepository,
             out IAsyncRepository<AntimicrobialSensitivityTest> sensitivityTestRepository, out IMapper map,
-            string organizationId = null)
+            string organizationId = null, ClaimsPrincipal user = null)
         {
             sentinelEntryRepository = Substitute.For<IAsyncRepository<SentinelEntry>>();
             sensitivityTestRepository = Substitute.For<IAsyncRepository<AntimicrobialSensitivityTest>>();
@@ -177,7 +201,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
 
             return new Update(sentinelEntryRepository, sensitivityTestRepository, map)
             {
-                ControllerContext = new MockControllerContext(organizationId: organizationId)
+                ControllerContext = new MockControllerContext(organizationId: organizationId, user: user)
             };
         }
     }

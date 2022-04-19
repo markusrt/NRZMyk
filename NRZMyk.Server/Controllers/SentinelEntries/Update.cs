@@ -50,7 +50,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
                 return NotFound();
             }
 
-            if (existingItem.CryoDate.HasValue)
+            if (existingItem.CryoDate.HasValue && !User.IsInRole(Role.SuperUser.ToString()))
             {
                 return Forbid();
             }

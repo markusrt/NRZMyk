@@ -21,9 +21,9 @@ else
     {
         <div class="mb-3 row">
             <div class="col-sm-3">
-                <button class="btn btn-primary" @onclick="@CreateClick">
+                <a href="sentinel-entry/" class="btn btn-primary">
                     Neu anlegen
-                </button>
+                </a>
             </div>
             <div class="offset-3 col-sm-6 text-end">
                 <AuthorizeView Roles=@nameof(Role.SuperUser)>
@@ -73,7 +73,7 @@ else
                                 }
                                 else
                                 {
-                                    <a title="Eintrag bearbeiten" href="" @onclick="() => EditClick(item.Id)" @onclick:preventDefault class="btn btn-primary">
+                                    <a title="Eintrag bearbeiten" href="@($"sentinel-entry/{item.Id}")" class="btn btn-primary">
                                         <i class="oi oi-pencil"></i>
                                     </a>
                                     <a title="Eintrag löschen" href="" @onclick="() => DeleteClick(item.Id)" @onclick:preventDefault class="btn btn-danger">
@@ -92,7 +92,7 @@ else
         <Details Id="@selectedId" OnCloseClick="CloseDetailsHandler"></Details>
     }
 
-    @if (showEdit)
+@*    @if (showEdit)
     {
         <Create Id="@selectedId" OnCloseClick="CloseEditHandler"></Create>
     }
@@ -100,7 +100,7 @@ else
     @if (showCreate)
     {
         <Create OnCloseClick="CloseCreateHandler"></Create>
-    }
+    }*@
 
     @if (showDelete)
     {

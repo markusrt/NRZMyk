@@ -16,7 +16,7 @@
 {
     <p><em>Daten werden geladen...</em></p>
 }
-else
+else 
 {
     <EditForm Model="SentinelEntries">
 
@@ -32,7 +32,7 @@ else
                 </InputSelectNumber>
             </div>
             <div class="col-sm-3">
-                @if (LoadState  == LoadState.Loading)
+                @if (LoadState == LoadState.Loading)
                 {
                     <button class="btn btn-primary" type="button" disabled>
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -51,77 +51,80 @@ else
         {
             <table class="table table-striped table-hover table-sm">
                 <thead>
-                    <tr>
-                        <th>Sentinel Labornummer</th>
-                        <th>Kryobox</th>
-                        <th>Einsender Labornummer</th>
-                        <th>Material</th>
-                        <th>Probennahme</th>
-                        <th>Spezies</th>
-                        <th>Asservierung</th>
-                        <th>Zusätzliche Info</th>
-                        <th></th>
-                    </tr>
+                <tr>
+                    <th>Sentinel Labornummer</th>
+                    <th>Kryobox</th>
+                    <th>Einsender Labornummer</th>
+                    <th>Material</th>
+                    <th>Probennahme</th>
+                    <th>Spezies</th>
+                    <th>Asservierung</th>
+                    <th>Zusätzliche Info</th>
+                    <th></th>
+                </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in SentinelEntries)
-                    {
-                        <tr>
-                            <td>@item.LaboratoryNumber</td>
-                            <td>@item.CryoBox</td>
-                            <td>@item.SenderLaboratoryNumber</td>
-                            <td>@item.MaterialOrOther()</td>
-                            <td>
-                                @if(IsUpdating(item))
-                                {
-                                    <div class="spinner-border spinner-border-sm text-secondary" role="status">
-                                    </div>
-                                }
-                                else if (item.SamplingDate.HasValue)
-                                {
-                                    @item.SamplingDate.Value.ToShortDateString()
-                                    ;
-                                }
-                            </td>
-                            <td>@item.SpeciesOrOther()</td>
-                            <td>@item.CryoDate?.ToShortDateString()</td>
-                            <td>
-                                @if(IsUpdating(item))
-                                {
-                                    <div class="spinner-border spinner-border-sm text-secondary" role="status">
-                                    </div>
-                                }
-                                else if (item.CryoDate.HasValue)
-                                {
-                                    @item.CryoRemark
-                                }
-                                else
-                                {
-                                    <InputText class="form-control form-control-sm" @bind-Value="item.CryoRemark"/>
-                                }
-                            </td>
-                            <td>
-                                @if(IsUpdating(item))
-                                {
-                                    <a title="Lädt" href="#" @onclick="() => { }" @onclick:preventDefault class="disabled btn btn-sm btn-secondary">
-                                        <i class="oi oi-clock" ></i>
-                                    </a>
-                                }
-                                else if(item.CryoDate.HasValue)
-                                {
-                                    <a title="Aus Cryobox entfernen" href="" @onclick="() => ReleaseFromCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-danger">
-                                        <i class="oi oi-data-transfer-upload"></i>
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a title="In Cryobox einlagern" href="" @onclick="() => PutToCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-success">
-                                        <i class="oi oi-data-transfer-download"></i>
-                                    </a>
-                                }
-                            </td>
-                        </tr>
-                    }
+                @foreach (var item in SentinelEntries)
+                {
+                    <tr>
+                        <td>
+                            <a href="" @onclick="() => EditClick(item.Id)" data-bs-toggle="modal" data-bs-target="#editModal">
+                                @item.LaboratoryNumber
+                            </a>
+                        </td>
+                        <td>@item.CryoBox</td>
+                        <td>@item.SenderLaboratoryNumber</td>
+                        <td>@item.MaterialOrOther()</td>
+                        <td>
+                            @if (IsUpdating(item))
+                            {
+                                <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                                </div>
+                            }
+                            else if (item.SamplingDate.HasValue)
+                            {
+                                @item.SamplingDate.Value.ToShortDateString()
+                            }
+                        </td>
+                        <td>@item.SpeciesOrOther()</td>
+                        <td>@item.CryoDate?.ToShortDateString()</td>
+                        <td>
+                            @if (IsUpdating(item))
+                            {
+                                <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                                </div>
+                            }
+                            else if (item.CryoDate.HasValue)
+                            {
+                                @item.CryoRemark
+                            }
+                            else
+                            {
+                                <InputText class="form-control form-control-sm" @bind-Value="item.CryoRemark"/>
+                            }
+                        </td>
+                        <td>
+                            @if (IsUpdating(item))
+                            {
+                                <a title="Lädt" href="#" @onclick="() => { }" @onclick:preventDefault class="disabled btn btn-sm btn-secondary">
+                                    <i class="oi oi-clock"></i>
+                                </a>
+                            }
+                            else if (item.CryoDate.HasValue)
+                            {
+                                <a title="Aus Cryobox entfernen" href="" @onclick="() => ReleaseFromCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-danger">
+                                    <i class="oi oi-data-transfer-upload"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a title="In Cryobox einlagern" href="" @onclick="() => PutToCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-success">
+                                    <i class="oi oi-data-transfer-download"></i>
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
                 </tbody>
             </table>
 
@@ -131,4 +134,23 @@ else
             }
         }
     </EditForm>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-body">
+                    @if (ShowEdit)
+                    {
+                        <div class="alert alert-warning" role="alert">
+                            Achtung, Sie bearbeiten gerade einen Datensatz mit der speziellen Berechtigung des koordinierenden Labors.
+                            Bitte ändern sie Daten nur in Absprache mit dem beteiligen Sentinel-Labors.
+                        </div>
+                        
+                        <Create Id="@SelectedId" OnCloseClick="CloseEditHandler"></Create>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 }

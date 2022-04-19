@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -21,7 +22,7 @@ namespace NRZMyk.Mocks.MockServices
 
         private int _id = 1;
 
-        private readonly List<SentinelEntry> _repository = new List<SentinelEntry>();
+        private readonly List<SentinelEntry> _repository = new();
 
         public MockSentinelEntryServiceImpl(IMapper mapper, ILogger<MockSentinelEntryServiceImpl> logger)
         {
@@ -31,6 +32,8 @@ namespace NRZMyk.Mocks.MockServices
             _repository.Add(new SentinelEntry
             {
                 Id = _id++,
+                Year = 2020,
+                YearlySequentialEntryNumber = _id,
                 AgeGroup = AgeGroup.ElevenToFifteen,
                 IdentifiedSpecies = Species.CandidaDubliniensis,
                 Material = Material.CentralBloodCultureCvc,
@@ -38,6 +41,7 @@ namespace NRZMyk.Mocks.MockServices
                 HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
                 HospitalDepartment =  HospitalDepartment.Neurology,
                 SamplingDate = new DateTime(2020,5,1),
+                CryoDate = new DateTime(2020,10,11),
                 SenderLaboratoryNumber = "SLN-123456",
                 ProtectKey = "1",
                 AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>
@@ -59,6 +63,8 @@ namespace NRZMyk.Mocks.MockServices
             _repository.Add(new SentinelEntry
             {
                 Id = _id++,
+                Year = 2020,
+                YearlySequentialEntryNumber = _id,
                 AgeGroup = AgeGroup.ElevenToFifteen,
                 IdentifiedSpecies = Species.CandidaGuilliermondii,
                 Material = Material.CentralBloodCulturePort,

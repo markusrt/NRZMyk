@@ -28,7 +28,6 @@ namespace NRZMyk.Components.Playground
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<BreakpointSettings>(Configuration);
             services.AddAutoMapper(typeof(Startup).Assembly, typeof(ISentinelEntryService).Assembly);
             services.AddRazorPages();
             services.AddServerSideBlazor();
