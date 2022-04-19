@@ -1,0 +1,8 @@
+﻿@page "/sentinel-entry/{Id:int?}"
+
+<NRZMyk.Components.Pages.SentinelEntryPage.Create Id="@Id" />
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+}

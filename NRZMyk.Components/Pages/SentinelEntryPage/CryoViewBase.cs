@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using NRZMyk.Components.Helpers;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Services;
@@ -11,6 +12,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
     {
         [Inject]
         private IAccountService AccountService { get; set; } = default!;
+
+        [Inject]
+        internal IJSRuntime JsRuntime { get; set; } = default!;  
         
         [Inject]
         private IMapper Mapper { get; set; } = default!;
@@ -26,11 +30,15 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         internal List<SentinelEntryResponse> SentinelEntries { get; set; } = default!;
 
         internal int SelectedOrganization { get; set; }
+
+        internal bool ShowEdit { get; private set; }
+
+        internal int SelectedId { get; private set; }
         
         protected LoadState LoadState { get; set; }
 
         private readonly List<int> _updatingItems = new();
-
+        
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -71,6 +79,23 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             var updatedEntry = await SentinelEntryService.GetById(entry.Id).ConfigureAwait(true);
             SentinelEntries[index] =  updatedEntry;
             _updatingItems.Remove(entry.Id);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(true);
+        }
+
+        internal void EditClick(int id)
+        {
+            SelectedId = id;
+            ShowEdit = true;
+        }
+        
+        internal async Task CloseEditHandler(string action)
+        {
+            var updatedEntry = await SentinelEntryService.GetById(SelectedId).ConfigureAwait(true);
+            var index = SentinelEntries.IndexOf(SentinelEntries.Single(s => s.Id == SelectedId));
+            SentinelEntries[index] =  updatedEntry;
+            await JsRuntime.InvokeAsync<object>("closeBootstrapModal", new object[] { "editModal" }).ConfigureAwait(true);
+            ShowEdit = false;
+            SelectedId = 0;
             await InvokeAsync(StateHasChanged).ConfigureAwait(true);
         }
 

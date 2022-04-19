@@ -20,6 +20,8 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         [Parameter]
         public EventCallback<string> OnCloseClick { get; set; }
 
+        private bool OnCloseSet => OnCloseClick.HasDelegate;
+
         [Parameter]
         public EventCallback<ChangeEventArgs> ValueChanged { get; set; }
 
@@ -36,7 +38,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         private IClinicalBreakpointService ClinicalBreakpointService { get; set; } = default!;
         
         [Inject]
-        private IMapper Mapper { get; set; } = default!;
+        private NavigationManager NavigationManager { get; set; } = default!;
 
         public SentinelEntryRequest SentinelEntry { get; private set; } = default!;
 
@@ -55,6 +57,10 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         public bool SaveFailed => !string.IsNullOrEmpty(LastError);
 
         public string LastError { get; set; } = string.Empty;
+
+        internal string CryoBox { get; set; } = string.Empty;
+
+        internal string LaboratoryNumber { get; set; } = string.Empty;
 
         internal void AddAntimicrobialSensitivityTest()
         {
@@ -250,7 +256,19 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
             if (!SaveFailed)
             {
+                await BackToList().ConfigureAwait(true);
+            }
+        }
+
+        protected async Task BackToList()
+        {
+            if (OnCloseSet)
+            {
                 await OnCloseClick.InvokeAsync(null).ConfigureAwait(true);
+            }
+            else
+            {
+                NavigationManager.NavigateTo("sentinel-entries", replace: true);
             }
         }
 
@@ -272,7 +290,13 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
             if (Id.HasValue)
             {
-                SentinelEntry = await SentinelEntryService.GetById(Id.Value).ConfigureAwait(true);
+                var response = await SentinelEntryService.GetById(Id.Value).ConfigureAwait(true);
+                LaboratoryNumber = response.LaboratoryNumber;
+                if (response.CryoDate.HasValue)
+                {
+                    CryoBox = response.CryoBox;
+                }
+                SentinelEntry = response;
             }
             else
             {

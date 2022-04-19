@@ -1,7 +1,10 @@
-﻿@using NRZMyk.Services.Data.Entities
+﻿@page "/sentinel-entry/{Id:int?}"
+
+@using NRZMyk.Services.Data.Entities
 @using NRZMyk.Components.SharedComponents.Input
 @using NRZMyk.Services.Utils
 @inherits CreateBase
+
 
 <h2>@Title</h2>
 
@@ -20,33 +23,51 @@ else
                 <p>UTC-Zeitstempel: @DateTime.UtcNow.ToString("s")</p>
             </div>
         }
+        @if (!string.IsNullOrEmpty(CryoBox))
+        {
+            <div class="alert alert-info" role="alert">
+                Die Probe wurde bereits eingesendet und in der Kryo-Box @CryoBox asserviert.
+            </div>
+        }
+       
         <EditForm Model="SentinelEntry" OnValidSubmit="@SubmitClick">
-            <DataAnnotationsValidator />
+            
+            @if(!string.IsNullOrEmpty(LaboratoryNumber))
+            {
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-4">Sentinel Labornummer</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="@LaboratoryNumber">
+                    </div> 
+                </div>
+            }
+
+            <DataAnnotationsValidator/>
             <SelectEnumOrOther Label="Material" Key="materials" Other="Material.Other" OtherLabel="Anderes Material"
                                @bind-OtherValue="@SentinelEntry.OtherMaterial" @bind-Value="@SentinelEntry.Material"
                                ValidationFor="() => SentinelEntry.Material" ValidationForOther="() => SentinelEntry.OtherMaterial"/>
-            <SelectEnum Label="Alter des Patienten" @bind-Value="SentinelEntry.AgeGroup" ValidationFor="() => SentinelEntry.AgeGroup" />
-            <SelectEnum Label="Geschlecht" @bind-Value="SentinelEntry.Gender" ValidationFor="() => SentinelEntry.Gender" />
+            <SelectEnum Label="Alter des Patienten" @bind-Value="SentinelEntry.AgeGroup" ValidationFor="() => SentinelEntry.AgeGroup"/>
+            <SelectEnum Label="Geschlecht" @bind-Value="SentinelEntry.Gender" ValidationFor="() => SentinelEntry.Gender"/>
 
             <div class="mb-3 row">
                 <label class="control-label col-sm-4">Probenentnahme</label>
                 <div class="col-sm-6">
-                    <InputDate class="form-control" @bind-Value="SentinelEntry.SamplingDate" />
-                    <ValidationMessage For="() => SentinelEntry.SamplingDate" />
+                    <InputDate class="form-control" @bind-Value="SentinelEntry.SamplingDate"/>
+                    <ValidationMessage For="() => SentinelEntry.SamplingDate"/>
                 </div>
             </div>
 
-            <InputTextWithValidation FieldName="Labornummer Einsender" @bind-Value="SentinelEntry.SenderLaboratoryNumber" For="() => SentinelEntry.SenderLaboratoryNumber" />
+            <InputTextWithValidation FieldName="Labornummer Einsender" @bind-Value="SentinelEntry.SenderLaboratoryNumber" For="() => SentinelEntry.SenderLaboratoryNumber"/>
 
             <div class="mb-3 row">
                 <SelectEnum Label="Station" AddFormRow="false" SelectClass="col-sm-3"
-                            @bind-Value="@SentinelEntry.HospitalDepartmentType" ValidationFor="() => SentinelEntry.HospitalDepartmentType" />
+                            @bind-Value="@SentinelEntry.HospitalDepartmentType" ValidationFor="() => SentinelEntry.HospitalDepartmentType"/>
                 <SelectEnumOrOther AddFormRow="false" SelectClass="col-sm-3" Other="HospitalDepartment.Other" OtherLabel="Andere Abteilung"
                                    @bind-OtherValue="@SentinelEntry.OtherHospitalDepartment" @bind-Value="@SentinelEntry.HospitalDepartment"
-                                   Key="hospital-departments" ValidationFor="() => SentinelEntry.HospitalDepartment" 
+                                   Key="hospital-departments" ValidationFor="() => SentinelEntry.HospitalDepartment"
                                    ValidationForOther="() => SentinelEntry.OtherHospitalDepartment"/>
             </div>
-            
+
             @if (CheckInternalNormalTypeVisibility())
             {
                 <SelectEnum Label="Internistische Normalstation" @bind-Value="@SentinelEntry.InternalHospitalDepartmentType" ValidationFor="() => SentinelEntry.InternalHospitalDepartmentType"/>
@@ -54,8 +75,8 @@ else
 
             <SelectEnumOrOther Label="Spezies" Key="species" Other="Species.Other" OtherLabel="Andere Spezies"
                                @bind-OtherValue="@SentinelEntry.OtherIdentifiedSpecies" @bind-Value="@SentinelEntry.IdentifiedSpecies"
-                               ValidationFor="() => SentinelEntry.IdentifiedSpecies" ValidationForOther="() => SentinelEntry.OtherIdentifiedSpecies" />
-            
+                               ValidationFor="() => SentinelEntry.IdentifiedSpecies" ValidationForOther="() => SentinelEntry.OtherIdentifiedSpecies"/>
+
             <SelectEnumOrOther Label="Methode Speziesidentifikation" Key="pcr-details" Other="SpeciesIdentificationMethod.Pcr" OtherLabel="PCR Details"
                                @bind-OtherValue="@SentinelEntry.PcrDetails" @bind-Value="@SentinelEntry.SpeciesIdentificationMethod"
                                ValidationFor="() => SentinelEntry.SpeciesIdentificationMethod" ValidationForOther="() => SentinelEntry.PcrDetails"/>
@@ -64,18 +85,18 @@ else
                 <label class="col-form-label col-sm-4">Anmerkungen</label>
                 <div class="col-sm-6">
                     @if (SentinelEntry.SpeciesIdentificationMethod == SpeciesIdentificationMethod.Other)
-                    {	                   
-                        <span class="badge bg-warning">Bitte geben Sie in den Details zu der anderen Methode der Speziesidentifikation an.</span>	
+                    {
+                        <span class="badge bg-warning">Bitte geben Sie in den Details zu der anderen Methode der Speziesidentifikation an.</span>
                     }
                     <InputTextArea class="form-control" @bind-Value="SentinelEntry.Remark"/>
                     <ValidationMessage For="() => SentinelEntry.Remark"/>
                 </div>
             </div>
-            
+
             <SelectEnumOrOther Label="Folgeisolat" Key="laboratory-numbers" Other="YesNo.Yes" OtherLabel="Labornummer Vorgänger"
                                @bind-OtherValue="@SentinelEntry.PredecessorLaboratoryNumber" @bind-Value="@SentinelEntry.HasPredecessor"
                                ValidationFor="() => SentinelEntry.HasPredecessor" ValidationForOther="() => SentinelEntry.PredecessorLaboratoryNumber"/>
-            
+
             <h3>Tests</h3>
             <div class="mb-3 row">
                 <div class="col-sm-3 col-lg-2">
@@ -108,7 +129,7 @@ else
                 <div class="col-sm-3 col-lg-3">
                     <button type="button" id="addAntimicrobialSensitivityTest" class="btn btn-sm btn-outline-secondary" @onclick="AddAntimicrobialSensitivityTest">Neue MHK Einträge</button>
                 </div>
-                <div class="col-12"><span class="small">*einzelne MHK Einträge können mit <i class="oi oi-trash" /> gelöscht werden</span></div>
+                <div class="col-12"><span class="small">*einzelne MHK Einträge können mit <i class="oi oi-trash"/> gelöscht werden</span></div>
             </div>
             <ValidationMessage For="() => SentinelEntry.AntimicrobialSensitivityTests"></ValidationMessage>
             @foreach (var sensitivityTest in RecalculateResistance())
@@ -148,9 +169,9 @@ else
                         <div class="col-sm-4 col-md-3 col-lg-4 col-xl-3">
                             <InputSelectNumber class="form-select form-select-sm" @bind-Value="sensitivityTest.ClinicalBreakpointId">
                                 @foreach (var breakpoint in ApplicableBreakpoints(sensitivityTest))
-                                 {
+                                {
                                     <option value="@breakpoint.Id">@breakpoint.Title</option>
-                                 }
+                                }
                             </InputSelectNumber>
                         </div>
                         <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1">
@@ -175,7 +196,7 @@ else
 
             <div class="mb-3 row">
                 <div class="col-sm-6">
-                    <a href="" @onclick="() => OnCloseClick.InvokeAsync(null)" @onclick:preventDefault class="btn btn-secondary">
+                    <a href="" @onclick="() => BackToList()" @onclick:preventDefault class="btn btn-secondary">
                         Abbrechen
                     </a>
                     <button type="submit" class="btn btn-primary">

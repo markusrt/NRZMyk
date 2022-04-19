@@ -55,17 +55,31 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             _context.Dispose();
         }
 
-        [TestCase(null)]
-        [TestCase(1)]
-        public void WhenCreated_DoesInitializeData(int? id)
+        [Test]
+        public void WhenCreatedWithoutId_DoesInitializeData()
         {
-            var component = CreateSut(builder => builder.Add(c => c.Id, id));
+            var component = CreateSut(builder => builder.Add(c => c.Id, null));
             var sut = component.Instance;
 
             component.Markup.Should().NotBeEmpty();
             sut.AllBreakpoints.Should().NotBeEmpty();
             sut.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
             sut.AntifungalAgent.Should().Be(AntifungalAgent.Micafungin);
+            sut.LaboratoryNumber.Should().BeEmpty();
+            sut.CryoBox.Should().BeEmpty();
+        }
+
+        [Test]
+        public void WhenCreatedWith_DoesInitializeData()
+        {
+            var component = CreateSut(builder => builder.Add(c => c.Id, 1));
+            var sut = component.Instance;
+
+            component.Markup.Should().NotBeEmpty();
+            sut.AllBreakpoints.Should().NotBeEmpty();
+            sut.TestingMethods().Should().NotBeEmpty();
+            sut.LaboratoryNumber.Should().Be("SN-2020-0002");
+            sut.CryoBox.Should().Be("SN-0000");
         }
 
         [Test]
