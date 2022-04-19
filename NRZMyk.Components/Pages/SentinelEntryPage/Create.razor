@@ -93,7 +93,7 @@ else
                 </div>
             </div>
 
-            <SelectEnumOrOther Label="Folgeisolat" Key="laboratory-numbers" Other="YesNo.Yes" OtherLabel="Labornummer Vorgänger"
+            <SelectEnumOrOther Label="Folgeisolat" Key="laboratory-numbers" Other="YesNo.Yes" OtherLabel="SN-Labornummer Vorgänger"
                                @bind-OtherValue="@SentinelEntry.PredecessorLaboratoryNumber" @bind-Value="@SentinelEntry.HasPredecessor"
                                ValidationFor="() => SentinelEntry.HasPredecessor" ValidationForOther="() => SentinelEntry.PredecessorLaboratoryNumber"/>
 

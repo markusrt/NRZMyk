@@ -43,12 +43,14 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         {
             byte[] reportBytes;
             var entriesExport = new SentinelEntryExportDefinition(_organizationResolver);
+            var followUpEntriesExport = new SentinelEntryWithPredecessorExportDefinition(_organizationResolver);
             var testsExport = new AntimicrobialSensitivityTestExportDefinition(_micStepsService);
             
             using(var package = new ExcelPackage())
             {
                 var entries = await _sentinelEntryRepository.ListAsync(new SentinelEntriesIncludingTestsSpecification()).ConfigureAwait(false);
-                package.AddSheet("Sentinel Daten", entriesExport, entries);
+                package.AddSheet("Sentinel Daten", entriesExport, entries.Where(e => e.PredecessorEntry==null).ToList());
+                package.AddSheet("Folgeisolate", followUpEntriesExport, entries.Where(e => e.PredecessorEntry!=null).ToList());
                 package.AddSheet("Resistenztestung", testsExport, entries.SelectMany(e => e.AntimicrobialSensitivityTests).ToList());
                 reportBytes = await package.GetAsByteArrayAsync().ConfigureAwait(false);
             }

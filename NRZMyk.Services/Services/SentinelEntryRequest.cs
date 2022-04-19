@@ -55,7 +55,7 @@ namespace NRZMyk.Services.Services
 
         public YesNo HasPredecessor { get; set; }
 
-        [OtherValue((int) YesNo.Yes, nameof(HasPredecessor), ErrorMessage = "Das Feld Labornummer Vorgänger ist erforderlich")]
+        [OtherValue((int) YesNo.Yes, nameof(HasPredecessor), ErrorMessage = "Das Feld SN-Labornummer Vorgänger ist erforderlich")]
         public string PredecessorLaboratoryNumber { get; set; }
         
         [SensitivityTestNotEmptyWithoutComment(
