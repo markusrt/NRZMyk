@@ -118,7 +118,8 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             sut.JsRuntime = jsRuntime;
             sut.SelectedOrganization = 1;
             await sut.LoadData().ConfigureAwait(true);
-            var updatedEntry = _sentinelEntryService.Repository.Single(s => s.Id == 1);
+            var allEntries = await _sentinelEntryService.ListPaged(100).ConfigureAwait(true);
+            var updatedEntry = allEntries.Single(s => s.Id == 1);
             updatedEntry.Remark = "Updated by test";
 
             sut.EditClick(1);

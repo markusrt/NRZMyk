@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -21,14 +22,14 @@ namespace NRZMyk.Mocks.MockServices
 
         private int _id = 1;
 
-        public readonly List<SentinelEntry> Repository = new List<SentinelEntry>();
+        private readonly List<SentinelEntry> _repository = new();
 
         public MockSentinelEntryServiceImpl(IMapper mapper, ILogger<MockSentinelEntryServiceImpl> logger)
         {
             _mapper = mapper;
             _logger = logger;
 
-            Repository.Add(new SentinelEntry
+            _repository.Add(new SentinelEntry
             {
                 Id = _id++,
                 Year = 2020,
@@ -59,7 +60,7 @@ namespace NRZMyk.Mocks.MockServices
                     }
                 }
             });
-            Repository.Add(new SentinelEntry
+            _repository.Add(new SentinelEntry
             {
                 Id = _id++,
                 Year = 2020,
@@ -80,32 +81,32 @@ namespace NRZMyk.Mocks.MockServices
             _logger.LogInformation("Create sentinel entry: {request}", createRequest);
             var sentinelEntry = _mapper.Map<SentinelEntry>(createRequest);
             sentinelEntry.Id = _id++;
-            Repository.Add(sentinelEntry);
+            _repository.Add(sentinelEntry);
             return Task.FromResult(sentinelEntry);
         }
 
         public Task<List<SentinelEntry>> ListPaged(int pageSize)
         {
-            return Task.FromResult(Repository);
+            return Task.FromResult(_repository);
         }
 
         public async Task<List<SentinelEntry>> ListByOrganization(int organizationId)
         {
             await Task.Delay(Delay);
             return organizationId == -1
-                ? Repository.ToList()
-                : Repository.Where(s => s.ProtectKey == organizationId.ToString()).ToList();
+                ? _repository.ToList()
+                : _repository.Where(s => s.ProtectKey == organizationId.ToString()).ToList();
         }
 
         public async Task<SentinelEntryResponse> GetById(int id)
         {
             await Task.Delay(Delay);
-            return _mapper.Map<SentinelEntryResponse>(Repository.FirstOrDefault(e => e.Id == id));
+            return _mapper.Map<SentinelEntryResponse>(_repository.FirstOrDefault(e => e.Id == id));
         }
 
         public Task<SentinelEntry> Update(SentinelEntryRequest updateRequest)
         {
-            var entry = Repository.FirstOrDefault(e => e.Id == updateRequest.Id);
+            var entry = _repository.FirstOrDefault(e => e.Id == updateRequest.Id);
             _mapper.Map(updateRequest, entry);
             return Task.FromResult(entry);
         }
@@ -113,7 +114,7 @@ namespace NRZMyk.Mocks.MockServices
         public async Task<SentinelEntry> CryoArchive(CryoArchiveRequest archiveRequest)
         {
             await Task.Delay(Delay);
-            var entry = Repository.FirstOrDefault(e => e.Id == archiveRequest.Id);
+            var entry = _repository.FirstOrDefault(e => e.Id == archiveRequest.Id);
             entry.CryoRemark = archiveRequest.CryoRemark;
             entry.CryoDate = archiveRequest.CryoDate;
             return entry;
@@ -135,8 +136,8 @@ namespace NRZMyk.Mocks.MockServices
 
         public Task Delete(int id)
         {
-            var entry = Repository.FirstOrDefault(e => e.Id == id);
-            Repository.Remove(entry);
+            var entry = _repository.FirstOrDefault(e => e.Id == id);
+            _repository.Remove(entry);
             return Task.CompletedTask;
         }
     }
