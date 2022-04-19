@@ -27,11 +27,6 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IClinicalBreakpointService, ClinicalBreakpointService>();
 builder.Services.AddTransient<IMicStepsService, MicStepsService>();
 
-builder.Services.Configure<BreakpointSettings>(options =>
-{
-    builder.Configuration.Bind(options);
-});
-
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);

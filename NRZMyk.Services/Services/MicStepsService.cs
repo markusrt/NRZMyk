@@ -2,10 +2,13 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
@@ -16,17 +19,23 @@ namespace NRZMyk.Services.Services
 {
     public class MicStepsService : IMicStepsService
     {
+        private const string Config = "NRZMyk.Services.Configuration.BreakpointSettings.json";
+
         private readonly ILogger<MicStepsService> _logger;
         private readonly Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>> _micSteps;
         private readonly List<SpeciesTestingMethod> _multiAgentSystems;
         private readonly Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>> _standards;
 
-        public MicStepsService(IOptions<BreakpointSettings> config, ILogger<MicStepsService> logger)
+        public MicStepsService(ILogger<MicStepsService> logger) : this(LoadSettingsFromResource(), logger)
+        {
+        }
+
+        public MicStepsService(BreakpointSettings settings, ILogger<MicStepsService> logger)
         {
             _logger = logger;
-            _micSteps = config.Value?.Breakpoint?.MicSteps??new Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>>();
-            _multiAgentSystems = config.Value?.Breakpoint?.MultiAgentSystems ?? new List<SpeciesTestingMethod>();
-            _standards = config.Value?.Breakpoint?.Standards ??
+            _micSteps = settings.Breakpoint?.MicSteps??new Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>>();
+            _multiAgentSystems = settings.Breakpoint?.MultiAgentSystems ?? new List<SpeciesTestingMethod>();
+            _standards = settings.Breakpoint?.Standards ??
                          new Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>>();
         }
 
@@ -69,6 +78,15 @@ namespace NRZMyk.Services.Services
         public bool IsMultiAgentSystem(SpeciesTestingMethod testingMethod)
         {
             return _multiAgentSystems.Contains(testingMethod);
+        }
+
+        private static BreakpointSettings LoadSettingsFromResource()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream(Config);
+            using var reader = new StreamReader(stream);
+            var json = reader.ReadToEnd();
+            return JsonConvert.DeserializeObject<BreakpointSettings>(json);
         }
     }
 }

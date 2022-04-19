@@ -142,7 +142,6 @@ namespace NRZMyk.Services.Tests.Services
             antifungalAgents.Should().BeEquivalentTo(new List<AntifungalAgent>{AntifungalAgent.Fluconazole});
         }
 
-
         [Test]
         public void WhenConfiguredWithSteps_ReturnsAntifungalAgentsInPreferredOrder()
         {
@@ -152,6 +151,16 @@ namespace NRZMyk.Services.Tests.Services
             
             antifungalAgents.Should().HaveCount(2);
             antifungalAgents.First().Should().Be(AntifungalAgent.Caspofungin);
+        }
+
+        [Test]
+        public void WhenNotConfiguredFromAssembly_ReturnsNonEmptyList()
+        {
+            var sut = new MicStepsService(new NullLogger<MicStepsService>());
+
+            var steps = sut.StepsByTestingMethodAndAgent(SpeciesTestingMethod.ETest, AntifungalAgent.Caspofungin);
+            
+            steps.Should().NotBeEmpty();
         }
 
         private MicStepsService CreateSutWithSteps(int microNautCount = 0)
@@ -207,7 +216,7 @@ namespace NRZMyk.Services.Tests.Services
 
         private MicStepsService CreateSut(IOptions<BreakpointSettings> option)
         {
-            return new MicStepsService(option, new NullLogger<MicStepsService>());
+            return new MicStepsService(option.Value, new NullLogger<MicStepsService>());
         }
     }
 }
