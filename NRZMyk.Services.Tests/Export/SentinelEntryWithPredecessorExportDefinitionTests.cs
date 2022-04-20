@@ -11,7 +11,7 @@ using Tynamix.ObjectFiller;
 
 namespace NRZMyk.Services.Tests.Export
 {
-    public class SentinelEntryExportDefinitionTests
+    public class SentinelEntryWithPredecessorExportDefinitionTests
     {
         private IEnumerable<SentinelEntry> SentinelEntries { get; set; }
         
@@ -43,7 +43,7 @@ namespace NRZMyk.Services.Tests.Export
 
             var export = sut.ToDataTable(SentinelEntries);
 
-            export.Columns.Count.Should().Be(13);
+            export.Columns.Count.Should().Be(14);
         }
 
         [Test]
@@ -79,65 +79,25 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Material"].Should().Be("Blutkultur zentral - ZVK");
             export.Rows[0]["Labnr. Einsender"].Should().Be("LabNr. 123");
             export.Rows[0]["Methode Speziesidentifikation"].Should().Be("BBL Crystal (Becton-Dickinson)");
+            export.Rows[0]["SN-Labornummer Vorgänger"].Should().Be("SN-2006-0006");
         }
-
+        
         [Test]
-        public void DataTable_ContainsSender()
-        {
-            var sut = CreateExportDefinition(out var organizationResolver);
-
-            SentinelEntry.ProtectKey = "12345";
-            organizationResolver.ResolveOrganization("12345").Returns("Laboratory 1");
-
-            var export = sut.ToDataTable(SentinelEntries);
-
-            export.Rows[0]["Einsender"].Should().Be("Laboratory 1");
-        }
-
-        [TestCase(null)]
-        [TestCase("")]
-        public void DataTable_ContainsUnknownSender(string organization)
-        {
-            var sut = CreateExportDefinition(out var organizationResolver);
-
-            SentinelEntry.ProtectKey = "12345";
-            organizationResolver.ResolveOrganization("12345").Returns(organization);
-
-            var export = sut.ToDataTable(SentinelEntries);
-
-            export.Rows[0]["Einsender"].Should().Be("Unbekannt");
-        }
-
-
-        [Test]
-        public void DataTable_ContainsOtherValues()
+        public void DataTable_DoesNotContainEmptyPredecessor()
         {
             var sut = CreateExportDefinition(out _);
 
-            SentinelEntry.Material = Material.Other;
-            SentinelEntry.OtherMaterial = "Some other material";
-            SentinelEntry.IdentifiedSpecies = Species.Other;
-            SentinelEntry.OtherIdentifiedSpecies = "Candida fructus";
-            SentinelEntry.SpeciesIdentificationMethod = SpeciesIdentificationMethod.Pcr;
-            SentinelEntry.PcrDetails = "Details";
-            SentinelEntry.HospitalDepartment = HospitalDepartment.Other;
-            SentinelEntry.OtherHospitalDepartment = "urologic";
-            SentinelEntry.InternalHospitalDepartmentType = InternalHospitalDepartmentType.NoInternalDepartment;
-            SentinelEntry.Gender = Gender.Female;
+            SentinelEntry.PredecessorEntry = null;
             
             var export = sut.ToDataTable(SentinelEntries);
 
-            export.Rows[0]["Material"].Should().Be("Some other material");
-            export.Rows[0]["Spezies"].Should().Be("Candida fructus");
-            export.Rows[0]["Methode Speziesidentifikation"].Should().Be("PCR: Details");
-            export.Rows[0]["Station"].Should().Be("urologic");
-            export.Rows[0]["Geschlecht"].Should().Be("weiblich");
+            export.Rows[0]["SN-Labornummer Vorgänger"].Should().Be(DBNull.Value);
         }
 
-        private SentinelEntryExportDefinition CreateExportDefinition(out IProtectKeyToOrganizationResolver organizationResolver)
+        private SentinelEntryWithPredecessorExportDefinition CreateExportDefinition(out IProtectKeyToOrganizationResolver organizationResolver)
         {
             organizationResolver = Substitute.For<IProtectKeyToOrganizationResolver>();
-            return new SentinelEntryExportDefinition(organizationResolver);
+            return new SentinelEntryWithPredecessorExportDefinition(organizationResolver);
         }
     }
 }
