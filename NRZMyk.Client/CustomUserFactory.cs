@@ -51,7 +51,7 @@ namespace NRZMyk.Client
                 {
                     var connectedAccount = await response.Content.ReadFromJsonAsync<ConnectedAccount>().ConfigureAwait(true);
 
-                    _logger.LogInformation($"Connect success, {connectedAccount.Account.DisplayName}, IsGuest={connectedAccount.IsGuest}");
+                    _logger.LogInformation($"Connect success, {connectedAccount?.Account.DisplayName}, IsGuest={connectedAccount.IsGuest}");
                     if (!connectedAccount.IsGuest && !userIdentity.HasClaim(ClaimTypes.Role, nameof(Role.User)))
                     {
                         userIdentity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.User)));

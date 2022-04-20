@@ -13,7 +13,8 @@
         {
         }
 
-        public event Action RefreshRequested;
+        public event Action RefreshRequested = default!;
+
         public void CallRequestRefresh()
         {
             RefreshRequested?.Invoke();
