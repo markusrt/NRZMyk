@@ -29,7 +29,9 @@ namespace NRZMyk.Client
             var token = await TokenProvider.RequestAccessToken().ConfigureAwait(true);
             var tokenStatus = token.Status;
 
-            if (!(initialUser.Identity is ClaimsIdentity userIdentity) || tokenStatus != AccessTokenResultStatus.Success || !userIdentity.IsAuthenticated)
+            if (initialUser.Identity is not ClaimsIdentity userIdentity 
+                || tokenStatus != AccessTokenResultStatus.Success
+                || !userIdentity.IsAuthenticated)
             {
                 return initialUser;
             }
@@ -49,7 +51,7 @@ namespace NRZMyk.Client
 
                     if (connectedAccount != null)
                     {
-                        _logger.LogInformation($"Connect success, {connectedAccount.Account.DisplayName}, IsGuest={connectedAccount.IsGuest}");
+                        _logger.LogInformation("Connect success, {displayName}, IsGuest={isGuest}", connectedAccount.Account.DisplayName, connectedAccount.IsGuest);
                         if (!connectedAccount.IsGuest && !userIdentity.HasClaim(ClaimTypes.Role, nameof(Role.User)))
                         {
                             userIdentity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.User)));
@@ -59,8 +61,7 @@ namespace NRZMyk.Client
                     }
                     else
                     {
-                        var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
-                        _logger.LogError("Failed to connect account with response {responseContent}", responseContent);
+                        _logger.LogError("Failed to connect account as it deserialized as 'null'");
                     }
                 }
                 else
