@@ -5,6 +5,7 @@ namespace NRZMyk.Components.SharedComponents.Input
 {
     public class InputSelectNumber<T> : InputSelect<T>
     {
+        /// <inheritdoc />
         protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out T result, [NotNullWhen(false)] out string? validationErrorMessage)
         {
             validationErrorMessage = null;
