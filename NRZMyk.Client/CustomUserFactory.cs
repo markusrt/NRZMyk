@@ -1,12 +1,8 @@
-using System;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Claims;
-using System.Threading.Tasks;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication.Internal;
-using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Utils;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
@@ -33,8 +29,9 @@ namespace NRZMyk.Client
             var token = await TokenProvider.RequestAccessToken().ConfigureAwait(true);
             var tokenStatus = token.Status;
 
-            if (account == null || !(initialUser.Identity is ClaimsIdentity userIdentity) 
-                                || tokenStatus != AccessTokenResultStatus.Success || !userIdentity.IsAuthenticated)
+            if (initialUser.Identity is not ClaimsIdentity userIdentity 
+                || tokenStatus != AccessTokenResultStatus.Success
+                || !userIdentity.IsAuthenticated)
             {
                 return initialUser;
             }
@@ -49,13 +46,22 @@ namespace NRZMyk.Client
                 var response = await client.GetAsync("api/user/connect").ConfigureAwait(true);
                 if (response.IsSuccessStatusCode)
                 {
-                    var connectedAccount = await response.Content.ReadFromJsonAsync<ConnectedAccount>().ConfigureAwait(true);
+                    var connectedAccount =
+                        await response.Content.ReadFromJsonAsync<ConnectedAccount>().ConfigureAwait(true);
 
-                    _logger.LogInformation($"Connect success, {connectedAccount.Account.DisplayName}, IsGuest={connectedAccount.IsGuest}");
-                    if (!connectedAccount.IsGuest && !userIdentity.HasClaim(ClaimTypes.Role, nameof(Role.User)))
+                    if (connectedAccount != null)
                     {
-                        userIdentity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.User)));
-                        userIdentity.RemoveClaim(userIdentity.Claims.FirstOrDefault(c=> c.Type == ClaimTypes.Role && c.Value == nameof(Role.Guest)));
+                        _logger.LogInformation("Connect success, {displayName}, IsGuest={isGuest}", connectedAccount.Account.DisplayName, connectedAccount.IsGuest);
+                        if (!connectedAccount.IsGuest && !userIdentity.HasClaim(ClaimTypes.Role, nameof(Role.User)))
+                        {
+                            userIdentity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.User)));
+                            userIdentity.RemoveClaim(userIdentity.Claims.FirstOrDefault(c =>
+                                c.Type == ClaimTypes.Role && c.Value == nameof(Role.Guest)));
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogError("Failed to connect account as it deserialized as 'null'");
                     }
                 }
                 else

@@ -1,0 +1,21 @@
+name: Release
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tag docker imate
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        shell: bash
+        run: |
+          docker login sivregistrymr.azurecr.io --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
+          docker pull sivregistrymr.azurecr.io/nrzmyk:latest
+          docker tag sivregistrymr.azurecr.io/nrzmyk:latest sivregistrymr.azurecr.io/nrzmyk:stable
+          docker tag sivregistrymr.azurecr.io/nrzmyk:latest sivregistrymr.azurecr.io/nrzmyk:${{ github.event.release.tag_name }}
+          docker push sivregistrymr.azurecr.io/nrzmyk:stable
+          docker push sivregistrymr.azurecr.io/nrzmyk:${{ github.event.release.tag_name }}

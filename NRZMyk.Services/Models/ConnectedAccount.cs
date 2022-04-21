@@ -4,8 +4,8 @@ namespace NRZMyk.Services.Models
 {
     public class ConnectedAccount
     {
-        public RemoteAccount Account { get; set; }
+        public RemoteAccount Account { get; init; }
 
-        public bool IsGuest { get; set; } = true;
+        public bool IsGuest { get; init; } = true;
     }
 }

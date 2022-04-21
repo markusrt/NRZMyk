@@ -27,14 +27,25 @@ namespace NRZMyk.ComponentsTests.SharedComponents.Input
         [TestCase("-1", -1)]
         [TestCase("0", 0)]
         [TestCase("1000000", 1000000)]
-        [TestCase("", null)]
-        [TestCase(null, null)]
         public void WhenNumberSelected_NullableIntegerValueIsParsed(string valueAsString, int? expectedValue)
         {
             var sut = CreateSut<int?>("TeamSize");
 
             sut.InvokeTryParseValueFromString(valueAsString, out var actualValue, out var errorMessage)
                 .Should().BeTrue();
+
+            actualValue.Should().Be(expectedValue);
+            errorMessage.Should().BeNull();
+        }
+
+        [TestCase("", null)]
+        [TestCase(null, null)]
+        public void WhenNumberSelected_NullableIntegerValueIsParsedAsNull(string valueAsString, int? expectedValue)
+        {
+            var sut = CreateSut<int?>("TeamSize");
+
+            sut.InvokeTryParseValueFromString(valueAsString, out var actualValue, out var errorMessage)
+                .Should().BeFalse();
 
             actualValue.Should().Be(expectedValue);
             errorMessage.Should().BeNull();
@@ -81,7 +92,7 @@ namespace NRZMyk.ComponentsTests.SharedComponents.Input
             var sut = CreateSut<float?>("Measurement");
 
             sut.InvokeTryParseValueFromString(valueAsString, out var actualValue, out var errorMessage)
-                .Should().BeTrue();
+                .Should().BeFalse();
 
             actualValue.Should().BeNull();
             errorMessage.Should().BeNull();

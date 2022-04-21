@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace NRZMyk.Components.SharedComponents.Input
 {
     public class InputSelectNumber<T> : InputSelect<T>
     {
-        protected override bool TryParseValueFromString(string value, out T result, out string validationErrorMessage)
+        /// <inheritdoc />
+        protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out T result, [NotNullWhen(false)] out string? validationErrorMessage)
         {
             validationErrorMessage = null;
             if ((typeof(T) == typeof(int) || typeof(T) == typeof(int?)) && int.TryParse(value, out var resultInt))
@@ -20,7 +22,7 @@ namespace NRZMyk.Components.SharedComponents.Input
             if ((typeof(T) == typeof(int?) || typeof(T) == typeof(float?)) && string.IsNullOrEmpty(value))
             {
                 result = default;
-                return true;
+                return result != null;
             }
 
             result = default;
