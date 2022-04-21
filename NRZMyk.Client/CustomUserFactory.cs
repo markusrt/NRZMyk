@@ -21,33 +21,6 @@ namespace NRZMyk.Client
             _logger = logger;
         }
 
-
-        public ValueTask<ClaimsPrincipal> CreateUserAAsync(
-            RemoteUserAccount account,
-            RemoteAuthenticationUserOptions options)
-        {
-            var identity = account != null ? new ClaimsIdentity(
-                options.AuthenticationType,
-                options.NameClaim,
-                options.RoleClaim) : new ClaimsIdentity();
-
-            if (account != null)
-            {
-                foreach (var kvp in account.AdditionalProperties)
-                {
-                    var name = kvp.Key;
-                    var value = kvp.Value;
-                    if (value != null ||
-                        (value is JsonElement element && element.ValueKind != JsonValueKind.Undefined && element.ValueKind != JsonValueKind.Null))
-                    {
-                        identity.AddClaim(new Claim(name, value.ToString()));
-                    }
-                }
-            }
-
-            return new ValueTask<ClaimsPrincipal>(new ClaimsPrincipal(identity));
-        }
-
         public override async ValueTask<ClaimsPrincipal> CreateUserAsync(
             RemoteUserAccount account,
             RemoteAuthenticationUserOptions options)
@@ -86,7 +59,7 @@ namespace NRZMyk.Client
                     }
                     else
                     {
-                        var responseContent = await response.Content.ReadAsStringAsync();
+                        var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
                         _logger.LogError("Failed to connect account with response {responseContent}", responseContent);
                     }
                 }
