@@ -1,12 +1,8 @@
-using System;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Claims;
-using System.Threading.Tasks;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication.Internal;
-using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Utils;
 using ClaimTypes = System.Security.Claims.ClaimTypes;
@@ -25,6 +21,33 @@ namespace NRZMyk.Client
             _logger = logger;
         }
 
+
+        public ValueTask<ClaimsPrincipal> CreateUserAAsync(
+            RemoteUserAccount account,
+            RemoteAuthenticationUserOptions options)
+        {
+            var identity = account != null ? new ClaimsIdentity(
+                options.AuthenticationType,
+                options.NameClaim,
+                options.RoleClaim) : new ClaimsIdentity();
+
+            if (account != null)
+            {
+                foreach (var kvp in account.AdditionalProperties)
+                {
+                    var name = kvp.Key;
+                    var value = kvp.Value;
+                    if (value != null ||
+                        (value is JsonElement element && element.ValueKind != JsonValueKind.Undefined && element.ValueKind != JsonValueKind.Null))
+                    {
+                        identity.AddClaim(new Claim(name, value.ToString()));
+                    }
+                }
+            }
+
+            return new ValueTask<ClaimsPrincipal>(new ClaimsPrincipal(identity));
+        }
+
         public override async ValueTask<ClaimsPrincipal> CreateUserAsync(
             RemoteUserAccount account,
             RemoteAuthenticationUserOptions options)
@@ -33,8 +56,7 @@ namespace NRZMyk.Client
             var token = await TokenProvider.RequestAccessToken().ConfigureAwait(true);
             var tokenStatus = token.Status;
 
-            if (account == null || !(initialUser.Identity is ClaimsIdentity userIdentity) 
-                                || tokenStatus != AccessTokenResultStatus.Success || !userIdentity.IsAuthenticated)
+            if (!(initialUser.Identity is ClaimsIdentity userIdentity) || tokenStatus != AccessTokenResultStatus.Success || !userIdentity.IsAuthenticated)
             {
                 return initialUser;
             }
@@ -49,13 +71,23 @@ namespace NRZMyk.Client
                 var response = await client.GetAsync("api/user/connect").ConfigureAwait(true);
                 if (response.IsSuccessStatusCode)
                 {
-                    var connectedAccount = await response.Content.ReadFromJsonAsync<ConnectedAccount>().ConfigureAwait(true);
+                    var connectedAccount =
+                        await response.Content.ReadFromJsonAsync<ConnectedAccount>().ConfigureAwait(true);
 
-                    _logger.LogInformation($"Connect success, {connectedAccount?.Account.DisplayName}, IsGuest={connectedAccount.IsGuest}");
-                    if (!connectedAccount.IsGuest && !userIdentity.HasClaim(ClaimTypes.Role, nameof(Role.User)))
+                    if (connectedAccount != null)
                     {
-                        userIdentity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.User)));
-                        userIdentity.RemoveClaim(userIdentity.Claims.FirstOrDefault(c=> c.Type == ClaimTypes.Role && c.Value == nameof(Role.Guest)));
+                        _logger.LogInformation($"Connect success, {connectedAccount.Account.DisplayName}, IsGuest={connectedAccount.IsGuest}");
+                        if (!connectedAccount.IsGuest && !userIdentity.HasClaim(ClaimTypes.Role, nameof(Role.User)))
+                        {
+                            userIdentity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.User)));
+                            userIdentity.RemoveClaim(userIdentity.Claims.FirstOrDefault(c =>
+                                c.Type == ClaimTypes.Role && c.Value == nameof(Role.Guest)));
+                        }
+                    }
+                    else
+                    {
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        _logger.LogError("Failed to connect account with response {responseContent}", responseContent);
                     }
                 }
                 else

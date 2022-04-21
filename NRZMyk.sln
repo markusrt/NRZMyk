@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRZMyk.Server.Tests", "NRZM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Integration.Tests", "Api.Integration.Tests\Api.Integration.Tests.csproj", "{4177D798-2211-441C-A8BB-9B8671B353EC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NRZMyk.Client.Tests", "NRZMyk.Client.Tests\NRZMyk.Client.Tests.csproj", "{2AA107BC-3295-4C36-9687-F70D25B7CE64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{4177D798-2211-441C-A8BB-9B8671B353EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4177D798-2211-441C-A8BB-9B8671B353EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4177D798-2211-441C-A8BB-9B8671B353EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AA107BC-3295-4C36-9687-F70D25B7CE64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AA107BC-3295-4C36-9687-F70D25B7CE64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AA107BC-3295-4C36-9687-F70D25B7CE64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AA107BC-3295-4C36-9687-F70D25B7CE64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
