@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
@@ -10,6 +11,11 @@ namespace NRZMyk.Services.Services
 {
     public class SentinelEntryRequest : ISentinelEntry
     {
+        public SentinelEntryRequest()
+        {
+            Subs = new List<Sub> { new Sub() };
+        }
+
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Das Feld Probenentnahme ist erforderlich")]
@@ -35,18 +41,6 @@ namespace NRZMyk.Services.Services
         [OtherValue((int) HospitalDepartment.Other, nameof(HospitalDepartment), ErrorMessage = "Das Feld Andere Abteilung ist erforderlich")]
         public string OtherHospitalDepartment { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Das Feld Spezies ist erforderlich")]
-        public Species IdentifiedSpecies { get; set; }
-
-        [OtherValue((int) Material.Other, nameof(IdentifiedSpecies), ErrorMessage = "Das Feld Andere Spezies ist erforderlich")]
-        public string OtherIdentifiedSpecies { get; set; }
-
-        [Range(1, int.MaxValue, ErrorMessage = "Das Feld Methode Speziesidentifikation ist erforderlich")]
-        public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }
-        
-        [OtherValue((int) SpeciesIdentificationMethod.Pcr, nameof(SpeciesIdentificationMethod), ErrorMessage = "Das Feld PCR Details ist erforderlich")]
-        public string PcrDetails { get; set; }
-
         public AgeGroup AgeGroup { get; set; }
         
         public string Remark { get; set; }
@@ -57,15 +51,42 @@ namespace NRZMyk.Services.Services
 
         [OtherValue((int) YesNo.Yes, nameof(HasPredecessor), ErrorMessage = "Das Feld SN-Labornummer Vorgänger ist erforderlich")]
         public string PredecessorLaboratoryNumber { get; set; }
+
+
+        public List<Sub> Subs { get; set;} = new List<Sub>();
+
+        private static int GetMaterial(SentinelEntryRequest sentinelEntryRequest)
+        {
+            return (int) sentinelEntryRequest.Material;
+        }
+
+        public Species IdentifiedSpecies => Subs.FirstOrDefault().IdentifiedSpecies;
+
+        public string OtherIdentifiedSpecies => Subs.FirstOrDefault().OtherIdentifiedSpecies;
+
+        public string PcrDetails  => Subs.FirstOrDefault().PcrDetails;
+
+        public SpeciesIdentificationMethod SpeciesIdentificationMethod  => Subs.FirstOrDefault().SpeciesIdentificationMethod;
+    }
+
+    public class Sub
+    {
+        [Range(1, int.MaxValue, ErrorMessage = "Das Feld Spezies ist erforderlich")]
+        public Species IdentifiedSpecies { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "Das Feld Methode Speziesidentifikation ist erforderlich")]
+        public SpeciesIdentificationMethod SpeciesIdentificationMethod { get; set; }
+
+        [OtherValue((int) SpeciesIdentificationMethod.Pcr, nameof(SpeciesIdentificationMethod), ErrorMessage = "Das Feld PCR Details ist erforderlich")]
+        public string PcrDetails { get; set; }
+
+        [OtherValue((int) Material.Other, nameof(IdentifiedSpecies), ErrorMessage = "Das Feld Andere Spezies ist erforderlich")]
+        public string OtherIdentifiedSpecies { get; set; }
         
         [SensitivityTestNotEmptyWithoutComment(
             ErrorMessage = "Mindestens ein MHK Eintrag ist erforderlich. Schreiben sie bitte einen Erklärung in die Anmerkungen, falls es keine MHKs ermitteln konnten." )]
         [SensitivityTest(ErrorMessage = "Bitte tragen sie für jeden MHK einen Messwert ein")]
         public List<AntimicrobialSensitivityTestRequest> AntimicrobialSensitivityTests { get; set;} = new List<AntimicrobialSensitivityTestRequest>();
 
-        private static int GetMaterial(SentinelEntryRequest sentinelEntryRequest)
-        {
-            return (int) sentinelEntryRequest.Material;
-        }
     }
 }

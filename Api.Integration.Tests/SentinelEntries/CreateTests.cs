@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -146,8 +147,8 @@ namespace Api.Integration.Tests.SentinelEntries
             request.Material = Material.CentralBloodCultureOther;
             request.HospitalDepartment = HospitalDepartment.GeneralSurgery;
             request.InternalHospitalDepartmentType = InternalHospitalDepartmentType.NoInternalDepartment;
-            request.IdentifiedSpecies = Species.CandidaDubliniensis;
-            request.SpeciesIdentificationMethod = SpeciesIdentificationMethod.BBL;
+            request.Subs.First().IdentifiedSpecies = Species.CandidaDubliniensis;
+            request.Subs.First().SpeciesIdentificationMethod = SpeciesIdentificationMethod.BBL;
             request.SamplingDate = DateTime.Now.AddDays(-3);
             request.PredecessorLaboratoryNumber = string.Empty;
             request.HasPredecessor = YesNo.No;

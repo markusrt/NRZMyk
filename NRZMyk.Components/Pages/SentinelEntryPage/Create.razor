@@ -73,18 +73,10 @@ else
                 <SelectEnum Label="Internistische Normalstation" @bind-Value="@SentinelEntry.InternalHospitalDepartmentType" ValidationFor="() => SentinelEntry.InternalHospitalDepartmentType"/>
             }
 
-            <SelectEnumOrOther Label="Spezies" Key="species" Other="Species.Other" OtherLabel="Andere Spezies"
-                               @bind-OtherValue="@SentinelEntry.OtherIdentifiedSpecies" @bind-Value="@SentinelEntry.IdentifiedSpecies"
-                               ValidationFor="() => SentinelEntry.IdentifiedSpecies" ValidationForOther="() => SentinelEntry.OtherIdentifiedSpecies"/>
-
-            <SelectEnumOrOther Label="Methode Speziesidentifikation" Key="pcr-details" Other="SpeciesIdentificationMethod.Pcr" OtherLabel="PCR Details"
-                               @bind-OtherValue="@SentinelEntry.PcrDetails" @bind-Value="@SentinelEntry.SpeciesIdentificationMethod"
-                               ValidationFor="() => SentinelEntry.SpeciesIdentificationMethod" ValidationForOther="() => SentinelEntry.PcrDetails"/>
-
             <div class="mb-3 row">
                 <label class="col-form-label col-sm-4">Anmerkungen</label>
                 <div class="col-sm-6">
-                    @if (SentinelEntry.SpeciesIdentificationMethod == SpeciesIdentificationMethod.Other)
+                    @if (SentinelEntry.Subs.Any(s => s.SpeciesIdentificationMethod == SpeciesIdentificationMethod.Other))
                     {
                         <span class="badge bg-warning">Bitte geben Sie in den Details zu der anderen Methode der Speziesidentifikation an.</span>
                     }
@@ -92,107 +84,147 @@ else
                     <ValidationMessage For="() => SentinelEntry.Remark"/>
                 </div>
             </div>
-
+            
             <SelectEnumOrOther Label="Folgeisolat" Key="laboratory-numbers" Other="YesNo.Yes" OtherLabel="SN-Labornummer Vorgänger"
                                @bind-OtherValue="@SentinelEntry.PredecessorLaboratoryNumber" @bind-Value="@SentinelEntry.HasPredecessor"
                                ValidationFor="() => SentinelEntry.HasPredecessor" ValidationForOther="() => SentinelEntry.PredecessorLaboratoryNumber"/>
 
-            <h3>Tests</h3>
-            <div class="mb-3 row">
-                <div class="col-sm-3 col-lg-2">
-                    <select class="form-select form-select-sm" @bind="TestingMethod">
-                        @foreach (var testingMethod in TestingMethods())
-                        {
-                            <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
-                        }
-                    </select>
-                </div>
-                @if (!MicStepsService.IsMultiAgentSystem(TestingMethod))
+        <button type="button" id="addSub" class="btn btn-sm btn-outline-secondary" @onclick="AddSub">Neue Mischkultur</button>
+
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                @{ var active = "active";}
+                @for (int i = 0; i < @SentinelEntry.Subs.Count; i++)
                 {
-                    <div class="col-sm-3 col-lg-2">
-                        <select class="form-select form-select-sm" @bind="AntifungalAgent">
-                            @foreach (var antifungalAgent in AntifungalAgents())
+                    <button class="nav-link @active" id="nav-home-tab-@i" data-bs-toggle="tab" data-bs-target="#nav-home-@i" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Home</button>
+                    { active = "";}
+                }
+            </div>
+        </nav>
+            
+
+
+            
+           
+            <div class="tab-content" id="nav-tabContent">
+                @{
+                    var ii = 0;
+                    active = "active";
+                }
+                @foreach (var sub in @SentinelEntry.Subs)
+                {
+                    <div class="tab-pane fade show @active" id="nav-home-@ii" role="tabpanel" aria-labelledby="nav-home-tab-@ii">
+                        @{ ii++; }
+                        @{ active = ""; }
+
+                        <SelectEnumOrOther Label="Spezies" Key="species" Other="Species.Other" OtherLabel="Andere Spezies"
+                                           @bind-OtherValue="@sub.OtherIdentifiedSpecies" @bind-Value="@sub.IdentifiedSpecies"
+                                           ValidationFor="() => sub.IdentifiedSpecies" ValidationForOther="() => sub.OtherIdentifiedSpecies"/>
+
+                        <SelectEnumOrOther Label="Methode Speziesidentifikation" Key="pcr-details" Other="SpeciesIdentificationMethod.Pcr" OtherLabel="PCR Details"
+                                           @bind-OtherValue="@sub.PcrDetails" @bind-Value="@sub.SpeciesIdentificationMethod"
+                                           ValidationFor="() => sub.SpeciesIdentificationMethod" ValidationForOther="() => sub.PcrDetails"/>
+
+                        <h3>Tests</h3>
+                        <div class="mb-3 row">
+                            <div class="col-sm-3 col-lg-2">
+                                <select class="form-select form-select-sm" @bind="TestingMethod">
+                                    @foreach (var testingMethod in TestingMethods())
+                                    {
+                                        <option value="@testingMethod">@EnumUtils.GetEnumDescription(testingMethod)</option>
+                                    }
+                                </select>
+                            </div>
+                            @if (!MicStepsService.IsMultiAgentSystem(TestingMethod))
                             {
-                                <option value="@antifungalAgent">@EnumUtils.GetEnumDescription(antifungalAgent)</option>
+                                <div class="col-sm-3 col-lg-2">
+                                    <select class="form-select form-select-sm" @bind="AntifungalAgent">
+                                        @foreach (var antifungalAgent in AntifungalAgents())
+                                        {
+                                            <option value="@antifungalAgent">@EnumUtils.GetEnumDescription(antifungalAgent)</option>
+                                        }
+                                    </select>
+                                </div>
                             }
-                        </select>
+                            <div class="col-sm-3 col-lg-2">
+                                <select class="form-select form-select-sm" @bind="Standard">
+                                    @foreach (var standard in Standards())
+                                    {
+                                        <option value="@standard">@EnumUtils.GetEnumDescription(standard)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-sm-3 col-lg-3">
+                                <button type="button" id="addAntimicrobialSensitivityTest" class="btn btn-sm btn-outline-secondary" @onclick="() => AddAntimicrobialSensitivityTest(sub)">Neue MHK Einträge</button>
+                            </div>
+                            <div class="col-12"><span class="small">*einzelne MHK Einträge können mit <i class="oi oi-trash"/> gelöscht werden</span></div>
+                        </div>
+                        <ValidationMessage For="() => sub.AntimicrobialSensitivityTests"></ValidationMessage>
+                        @foreach (var sensitivityTest in RecalculateResistance(sub))
+                        {
+                            <div class="mb-3 row">
+                                <div class="col-sm-4 col-md-5 col-lg-4 col-xl-3 @DuplicateClass(sub, sensitivityTest)">
+                                    <p class="form-control-plaintext form-control-sm">
+                                        <a class="btn btn-sm btn-delete" @onclick="() => RemoveAntimicrobialSensitivityTest(sub, sensitivityTest)" title="MHK Eintrag löschen"><i class="oi oi-trash"></i></a>
+                                        <b>@EnumUtils.GetEnumDescription(sensitivityTest.TestingMethod)</b> - @EnumUtils.GetEnumDescription(sensitivityTest.AntifungalAgent) -
+                                        <span class="badge rounded-pill">
+                                            @EnumUtils.GetEnumDescription(sensitivityTest.Standard)
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-2">
+                                    <div class="input-group mb-2 mr-sm-2 input-group-sm">
+                                        <div class="input-group-text">MHK</div>
+                                        @if (MicSteps(sensitivityTest).Any())
+                                        {
+                                            <InputSelectNumber class="form-select" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration">
+                                                <option>-</option>
+                                                @foreach (var micStep in MicSteps(sensitivityTest))
+                                                {
+                                                    <option value="@micStep.Value">@micStep.Title</option>
+                                                }
+                                            </InputSelectNumber>
+                                        }
+                                        else
+                                        {
+                                            <InputNumber class="form-control" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration"></InputNumber>
+                                        }
+                                    </div>
+                                </div>
+                                @if (ApplicableBreakpoints(sensitivityTest).Any())
+                                {
+                                    <div class="col-sm-4 col-md-3 col-lg-4 col-xl-3">
+                                        <InputSelectNumber class="form-select form-select-sm" @bind-Value="sensitivityTest.ClinicalBreakpointId">
+                                            @foreach (var breakpoint in ApplicableBreakpoints(sensitivityTest))
+                                            {
+                                                <option value="@breakpoint.Id">@breakpoint.Title</option>
+                                            }
+                                        </InputSelectNumber>
+                                    </div>
+                                    <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                        <p class="form-control-plaintext form-control-sm">
+                                            <span class="badge @(ResistanceBadge(sensitivityTest))">
+                                                @EnumUtils.GetEnumDescription(sensitivityTest.Resistance)
+                                            </span>
+                                        </p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-sm-5 col-md-4 col-lg-5 col-xl-4">
+                                        <p class="form-control-plaintext form-control-sm">
+                                            Kein Breakpoint für Antimykotikum <i>"@EnumUtils.GetEnumDescription(sensitivityTest.AntifungalAgent)"</i>
+                                            und Spezies <i>"@EnumUtils.GetEnumDescription(sub.IdentifiedSpecies)"</i> verfügbar.
+                                        </p>
+                                    </div>
+                                }
+                            </div>
+                        }
                     </div>
                 }
-                <div class="col-sm-3 col-lg-2">
-                    <select class="form-select form-select-sm" @bind="Standard">
-                        @foreach (var standard in Standards())
-                        {
-                            <option value="@standard">@EnumUtils.GetEnumDescription(standard)</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-sm-3 col-lg-3">
-                    <button type="button" id="addAntimicrobialSensitivityTest" class="btn btn-sm btn-outline-secondary" @onclick="AddAntimicrobialSensitivityTest">Neue MHK Einträge</button>
-                </div>
-                <div class="col-12"><span class="small">*einzelne MHK Einträge können mit <i class="oi oi-trash"/> gelöscht werden</span></div>
+            
             </div>
-            <ValidationMessage For="() => SentinelEntry.AntimicrobialSensitivityTests"></ValidationMessage>
-            @foreach (var sensitivityTest in RecalculateResistance())
-            {
-                <div class="mb-3 row">
-                    <div class="col-sm-4 col-md-5 col-lg-4 col-xl-3 @DuplicateClass(sensitivityTest)">
-                        <p class="form-control-plaintext form-control-sm">
-                            <a class="btn btn-sm btn-delete" @onclick="() => RemoveAntimicrobialSensitivityTest(sensitivityTest)" title="MHK Eintrag löschen"><i class="oi oi-trash"></i></a>
-                            <b>@EnumUtils.GetEnumDescription(sensitivityTest.TestingMethod)</b> - @EnumUtils.GetEnumDescription(sensitivityTest.AntifungalAgent) -
-                            <span class="badge rounded-pill">
-                                @EnumUtils.GetEnumDescription(sensitivityTest.Standard)
-                            </span>
-                        </p>
-                    </div>
-
-                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-2">
-                        <div class="input-group mb-2 mr-sm-2 input-group-sm">
-                            <div class="input-group-text">MHK</div>
-                            @if (MicSteps(sensitivityTest).Any())
-                            {
-                                <InputSelectNumber class="form-select" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration">
-                                    <option>-</option>
-                                    @foreach (var micStep in MicSteps(sensitivityTest))
-                                    {
-                                        <option value="@micStep.Value">@micStep.Title</option>
-                                    }
-                                </InputSelectNumber>
-                            }
-                            else
-                            {
-                                <InputNumber class="form-control" @bind-Value="sensitivityTest.MinimumInhibitoryConcentration"></InputNumber>
-                            }
-                        </div>
-                    </div>
-                    @if (ApplicableBreakpoints(sensitivityTest).Any())
-                    {
-                        <div class="col-sm-4 col-md-3 col-lg-4 col-xl-3">
-                            <InputSelectNumber class="form-select form-select-sm" @bind-Value="sensitivityTest.ClinicalBreakpointId">
-                                @foreach (var breakpoint in ApplicableBreakpoints(sensitivityTest))
-                                {
-                                    <option value="@breakpoint.Id">@breakpoint.Title</option>
-                                }
-                            </InputSelectNumber>
-                        </div>
-                        <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1">
-                            <p class="form-control-plaintext form-control-sm">
-                                <span class="badge @(ResistanceBadge(sensitivityTest))">
-                                    @EnumUtils.GetEnumDescription(sensitivityTest.Resistance)
-                                </span>
-                            </p>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="col-sm-5 col-md-4 col-lg-5 col-xl-4">
-                            <p class="form-control-plaintext form-control-sm">
-                                Kein Breakpoint für Antimykotikum <i>"@EnumUtils.GetEnumDescription(sensitivityTest.AntifungalAgent)"</i>
-                                und Spezies <i>"@EnumUtils.GetEnumDescription(SentinelEntry.IdentifiedSpecies)"</i> verfügbar.
-                            </p>
-                        </div>
-                    }
-                </div>
-            }
 
             <div class="mb-3 row">
                 <div class="col-sm-6">

@@ -62,7 +62,12 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         internal string LaboratoryNumber { get; set; } = string.Empty;
 
-        internal void AddAntimicrobialSensitivityTest()
+        internal void AddSub()
+        {
+            SentinelEntry.Subs.Add(new Sub());
+        }
+
+        internal void AddAntimicrobialSensitivityTest(Sub sub)
         {
             var antifungalAgents = MicStepsService.IsMultiAgentSystem(TestingMethod)
                 ? MicStepsService.AntifungalAgents(TestingMethod)
@@ -70,7 +75,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             
             foreach (var antifungalAgent in antifungalAgents)
             {
-                AddAntimicrobialSensitivityTest(new AntimicrobialSensitivityTestRequest
+                AddAntimicrobialSensitivityTest(sub, new AntimicrobialSensitivityTestRequest
                 {
                     TestingMethod = TestingMethod,
                     AntifungalAgent = antifungalAgent,
@@ -79,15 +84,15 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             }
         }
 
-        private void AddAntimicrobialSensitivityTest(AntimicrobialSensitivityTestRequest sensitivityTest)
+        private void AddAntimicrobialSensitivityTest(Sub sub, AntimicrobialSensitivityTestRequest sensitivityTest)
         {
-            SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+            sub.AntimicrobialSensitivityTests.Add(sensitivityTest);
             sensitivityTest.ClinicalBreakpointId = ApplicableBreakpoints(sensitivityTest).FirstOrDefault()?.Id;
         }
 
-        internal void RemoveAntimicrobialSensitivityTest(AntimicrobialSensitivityTestRequest sensitivityTest)
+        internal void RemoveAntimicrobialSensitivityTest(Sub sub, AntimicrobialSensitivityTestRequest sensitivityTest)
         {
-            SentinelEntry.AntimicrobialSensitivityTests.Remove(sensitivityTest);
+            sub.AntimicrobialSensitivityTests.Remove(sensitivityTest);
         }
 
         internal IEnumerable<MicStep> MicSteps(AntimicrobialSensitivityTestRequest sensitivityTest)
@@ -143,9 +148,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             return applicableBreakpoints;
         }
 
-        internal string DuplicateClass(AntimicrobialSensitivityTestRequest sensitivityTest)
+        internal string DuplicateClass(Sub sub, AntimicrobialSensitivityTestRequest sensitivityTest)
         {
-            var isDuplicate = SentinelEntry.AntimicrobialSensitivityTests.Count(
+            var isDuplicate = sub.AntimicrobialSensitivityTests.Count(
                 s => s.AntifungalAgent == sensitivityTest.AntifungalAgent
                      && s.Standard == sensitivityTest.Standard
                      && s.TestingMethod == sensitivityTest.TestingMethod) > 1;
@@ -272,9 +277,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             }
         }
 
-        internal IEnumerable<AntimicrobialSensitivityTestRequest> RecalculateResistance()
+        internal IEnumerable<AntimicrobialSensitivityTestRequest> RecalculateResistance(Sub sub)
         {
-            return SentinelEntry.AntimicrobialSensitivityTests
+            return sub.AntimicrobialSensitivityTests
                 .OrderBy(a => a.TestingMethod)
                 .ThenBy(a => a.AntifungalAgent, new AntifungalAgentComparer());
         }

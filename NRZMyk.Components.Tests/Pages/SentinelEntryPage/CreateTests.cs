@@ -133,8 +133,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             var addTestButton = component.Find("#addAntimicrobialSensitivityTest");
             addTestButton.Click();
 
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Should().HaveCount(1);
-            var sensitivityTest = sut.SentinelEntry.AntimicrobialSensitivityTests.First();
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Should().HaveCount(1);
+            var sensitivityTest = sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.First();
 
             sensitivityTest.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
             sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.AmphotericinB);
@@ -153,8 +153,8 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 var addTestButton = component.Find("#addAntimicrobialSensitivityTest");
                 addTestButton.Click();
 
-                sut.SentinelEntry.AntimicrobialSensitivityTests.Should().HaveCount(1);
-                var sensitivityTest = sut.SentinelEntry.AntimicrobialSensitivityTests.First();
+                sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Should().HaveCount(1);
+                var sensitivityTest = sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.First();
 
                 sensitivityTest.TestingMethod.Should().Be(SpeciesTestingMethod.Vitek);
                 sensitivityTest.AntifungalAgent.Should().Be(AntifungalAgent.AmphotericinB);
@@ -182,7 +182,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             };
             var component = CreateSut();
             var sut = component.Instance;
-            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
+            sut.SentinelEntry.Subs.First().IdentifiedSpecies = Species.CandidaAlbicans;
 
             var breakpoints = sut.ApplicableBreakpoints(sensitivityTest).ToList();
 
@@ -202,7 +202,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             };
             var component = CreateSut();
             var sut = component.Instance;
-            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaTropicalis;
+            sut.SentinelEntry.Subs.First().IdentifiedSpecies = Species.CandidaTropicalis;
 
             sut.ApplicableBreakpoints(sensitivityTest);
 
@@ -245,7 +245,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         {
             var component = CreateSut();
             var sut = component.Instance;
-            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
+            sut.SentinelEntry.Subs.First().IdentifiedSpecies = Species.CandidaAlbicans;
             var firstBreakpoint = sut.AllBreakpoints.Single(b => 
                     b.AntifungalAgent == AntifungalAgent.Voriconazole
                     && b.Species == Species.CandidaDubliniensis
@@ -256,7 +256,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 ClinicalBreakpointId = firstBreakpoint.Id,
                 MinimumInhibitoryConcentration = firstBreakpoint.MicBreakpointResistent.Value + deltaToResistance
             };
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Add(sensitivityTest);
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
@@ -272,7 +272,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         {
             var component = CreateSut();
             var sut = component.Instance;
-            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaGlabrata;
+            sut.SentinelEntry.Subs.First().IdentifiedSpecies = Species.CandidaGlabrata;
             var breakpoint = sut.AllBreakpoints.Single(b => 
                 b.AntifungalAgent == AntifungalAgent.Caspofungin
                 && b.Species == Species.CandidaGlabrata
@@ -284,7 +284,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 MinimumInhibitoryConcentration = breakpoint.MicBreakpointResistent.Value + deltaToResistance
 
             };
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Add(sensitivityTest);
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
@@ -312,7 +312,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 MinimumInhibitoryConcentration = _mockMicStepsService.StepsByTestingMethodAndAgent(SpeciesTestingMethod.Vitek, AntifungalAgent.Flucytosine).First().Value
             };
 
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Add(sensitivityTest);
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
@@ -340,7 +340,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 MinimumInhibitoryConcentration = _mockMicStepsService.StepsByTestingMethodAndAgent(SpeciesTestingMethod.Vitek, AntifungalAgent.Flucytosine).Last().Value
             };
 
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Add(sensitivityTest);
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
@@ -368,7 +368,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 MinimumInhibitoryConcentration = _mockMicStepsService.StepsByTestingMethodAndAgent(SpeciesTestingMethod.Vitek, AntifungalAgent.Flucytosine).First().Value
             };
 
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Add(sensitivityTest);
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
@@ -381,7 +381,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         {
             var component = CreateSut();
             var sut = component.Instance;
-            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
+            sut.SentinelEntry.Subs.First().IdentifiedSpecies = Species.CandidaAlbicans;
             var firstBreakpoint = sut.AllBreakpoints.First(b => 
                 !b.MicBreakpointResistent.HasValue && !b.MicBreakpointSusceptible.HasValue);
             var sensitivityTest = new AntimicrobialSensitivityTestRequest
@@ -389,7 +389,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 ClinicalBreakpointId = firstBreakpoint.Id,
                 MinimumInhibitoryConcentration = 0.25f
             };
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Add(sensitivityTest);
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
@@ -408,7 +408,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 MinimumInhibitoryConcentration = 0.25f
 
             };
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Add(sensitivityTest);
 
             var badge = sut.ResistanceBadge(sensitivityTest);
 
@@ -421,30 +421,30 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         {
             var component = CreateSut();
             var sut = component.Instance;
-            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
+            sut.SentinelEntry.Subs.First().IdentifiedSpecies = Species.CandidaAlbicans;
             var firstBreakpoint = sut.AllBreakpoints.First(b => 
                 !b.MicBreakpointResistent.HasValue && !b.MicBreakpointSusceptible.HasValue);
 
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(new AntimicrobialSensitivityTestRequest
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Add(new AntimicrobialSensitivityTestRequest
             {
                 ClinicalBreakpointId = firstBreakpoint.Id,
                 TestingMethod = SpeciesTestingMethod.ETest,
                 AntifungalAgent = AntifungalAgent.Fluorouracil
             });
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(new AntimicrobialSensitivityTestRequest
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Add(new AntimicrobialSensitivityTestRequest
             {
                 ClinicalBreakpointId = firstBreakpoint.Id,
                 TestingMethod = SpeciesTestingMethod.ETest,
                 AntifungalAgent = AntifungalAgent.AmphotericinB
             });
-            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(new AntimicrobialSensitivityTestRequest
+            sut.SentinelEntry.Subs.First().AntimicrobialSensitivityTests.Add(new AntimicrobialSensitivityTestRequest
             {
                 ClinicalBreakpointId = firstBreakpoint.Id,
                 TestingMethod = SpeciesTestingMethod.Micronaut,
                 AntifungalAgent = AntifungalAgent.Fluconazole
             });
 
-            var viewOrder = sut.RecalculateResistance().ToList();
+            var viewOrder = sut.RecalculateResistance(sut.SentinelEntry.Subs.First()).ToList();
 
             viewOrder[0].TestingMethod.Should().Be(SpeciesTestingMethod.Micronaut);
             viewOrder[1].TestingMethod.Should().Be(SpeciesTestingMethod.ETest);

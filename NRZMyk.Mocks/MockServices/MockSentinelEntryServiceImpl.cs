@@ -81,6 +81,15 @@ namespace NRZMyk.Mocks.MockServices
             _logger.LogInformation("Create sentinel entry: {request}", createRequest);
             var sentinelEntry = _mapper.Map<SentinelEntry>(createRequest);
             sentinelEntry.Id = _id++;
+
+            sentinelEntry.AntimicrobialSensitivityTests =
+                _mapper.Map<ICollection<AntimicrobialSensitivityTest>>(createRequest.Subs.First()
+                    .AntimicrobialSensitivityTests);
+            sentinelEntry.SpeciesIdentificationMethod = createRequest.Subs.First().SpeciesIdentificationMethod;
+            sentinelEntry.PcrDetails = createRequest.Subs.First().PcrDetails;
+            sentinelEntry.IdentifiedSpecies = createRequest.Subs.First().IdentifiedSpecies;
+            sentinelEntry.OtherIdentifiedSpecies = createRequest.Subs.First().OtherIdentifiedSpecies;
+
             _repository.Add(sentinelEntry);
             return Task.FromResult(sentinelEntry);
         }
@@ -101,13 +110,28 @@ namespace NRZMyk.Mocks.MockServices
         public async Task<SentinelEntryResponse> GetById(int id)
         {
             await Task.Delay(Delay);
-            return _mapper.Map<SentinelEntryResponse>(_repository.FirstOrDefault(e => e.Id == id));
+            var entry = _repository.FirstOrDefault(e => e.Id == id);
+            var response = _mapper.Map<SentinelEntryResponse>(entry);
+            response.Subs.First().AntimicrobialSensitivityTests =
+                _mapper.Map<List<AntimicrobialSensitivityTestRequest>>(entry.AntimicrobialSensitivityTests);
+            response.Subs.First().SpeciesIdentificationMethod = entry.SpeciesIdentificationMethod;
+            response.Subs.First().PcrDetails = entry.PcrDetails;
+            response.Subs.First().IdentifiedSpecies = entry.IdentifiedSpecies;
+            response.Subs.First().OtherIdentifiedSpecies = entry.OtherIdentifiedSpecies;
+            return response;
         }
 
         public Task<SentinelEntry> Update(SentinelEntryRequest updateRequest)
         {
             var entry = _repository.FirstOrDefault(e => e.Id == updateRequest.Id);
             _mapper.Map(updateRequest, entry);
+            entry.AntimicrobialSensitivityTests =
+                _mapper.Map<ICollection<AntimicrobialSensitivityTest>>(updateRequest.Subs.First()
+                    .AntimicrobialSensitivityTests);
+            entry.SpeciesIdentificationMethod = updateRequest.Subs.First().SpeciesIdentificationMethod;
+            entry.PcrDetails = updateRequest.Subs.First().PcrDetails;
+            entry.IdentifiedSpecies = updateRequest.Subs.First().IdentifiedSpecies;
+            entry.OtherIdentifiedSpecies = updateRequest.Subs.First().OtherIdentifiedSpecies;
             return Task.FromResult(entry);
         }
 

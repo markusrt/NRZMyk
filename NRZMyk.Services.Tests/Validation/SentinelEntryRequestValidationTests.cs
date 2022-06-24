@@ -23,78 +23,78 @@ namespace NRZMyk.Services.Tests.Validation
             Assert.That(isValid, Is.True);
         }
 
-        [Test]
-        public void WhenMissingTestsAndNoComment_IsTreatedAsValid()
-        {
-            var target = new SentinelEntryRequest {AntimicrobialSensitivityTests = null};
-            var context = new ValidationContext(target);
-            var results = new List<ValidationResult>();
+        //[Test]
+        //public void WhenMissingTestsAndNoComment_IsTreatedAsValid()
+        //{
+        //    var target = new SentinelEntryRequest {AntimicrobialSensitivityTests = null};
+        //    var context = new ValidationContext(target);
+        //    var results = new List<ValidationResult>();
             
-            Validator.TryValidateObject(target, context, results, true);
+        //    Validator.TryValidateObject(target, context, results, true);
 
-            var result = results.SingleOrDefault(r =>
-                r.MemberNames.Contains(nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)));
-            result.Should().BeNull();
-        }
+        //    var result = results.SingleOrDefault(r =>
+        //        r.MemberNames.Contains(nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)));
+        //    result.Should().BeNull();
+        //}
 
-        [TestCase(null)]
-        [TestCase("")]
-        [TestCase("   ")]
-        public void WhenEmptyTestsAndNoComment_IsTreatedAsInvalid(string remark)
-        {
-            var target = new SentinelEntryRequest()
-            {
-                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTestRequest>(),
-                Remark = remark
-            };
-            var context = new ValidationContext(target);
-            var results = new List<ValidationResult>();
+        //[TestCase(null)]
+        //[TestCase("")]
+        //[TestCase("   ")]
+        //public void WhenEmptyTestsAndNoComment_IsTreatedAsInvalid(string remark)
+        //{
+        //    var target = new SentinelEntryRequest()
+        //    {
+        //        AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTestRequest>(),
+        //        Remark = remark
+        //    };
+        //    var context = new ValidationContext(target);
+        //    var results = new List<ValidationResult>();
             
-            Validator.TryValidateObject(target, context, results, true);
+        //    Validator.TryValidateObject(target, context, results, true);
 
-            var result = results.SingleOrDefault(r =>
-                r.MemberNames.Contains(nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)));
-            result.Should().NotBe(null, $"{nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)} should be invalid");
-        }
+        //    var result = results.SingleOrDefault(r =>
+        //        r.MemberNames.Contains(nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)));
+        //    result.Should().NotBe(null, $"{nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)} should be invalid");
+        //}
 
-        [Test]
-        public void WhenEmptyTestsWithComment_IsTreatedAsValid()
-        {
-            var target = new SentinelEntryRequest()
-            {
-                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTestRequest>(),
-                Remark = "We were to lazy for sensitivity tests :/"
-            };
-            var context = new ValidationContext(target);
-            var results = new List<ValidationResult>();
+        //[Test]
+        //public void WhenEmptyTestsWithComment_IsTreatedAsValid()
+        //{
+        //    var target = new SentinelEntryRequest()
+        //    {
+        //        AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTestRequest>(),
+        //        Remark = "We were to lazy for sensitivity tests :/"
+        //    };
+        //    var context = new ValidationContext(target);
+        //    var results = new List<ValidationResult>();
             
-            Validator.TryValidateObject(target, context, results, true);
+        //    Validator.TryValidateObject(target, context, results, true);
 
-            var result = results.SingleOrDefault(r =>
-                r.MemberNames.Contains(nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)));
-            result.Should().BeNull();
-        }
+        //    var result = results.SingleOrDefault(r =>
+        //        r.MemberNames.Contains(nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)));
+        //    result.Should().BeNull();
+        //}
 
-        [Test]
-        public void WhenNonEmptyTestsWithoutComment_IsTreatedAsValid()
-        {
-            var target = new SentinelEntryRequest()
-            {
-                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTestRequest>
-                {
-                    new(){ MinimumInhibitoryConcentration = 1.0f }
-                },
-                Remark = ""
-            };
-            var context = new ValidationContext(target);
-            var results = new List<ValidationResult>();
+        //[Test]
+        //public void WhenNonEmptyTestsWithoutComment_IsTreatedAsValid()
+        //{
+        //    var target = new SentinelEntryRequest()
+        //    {
+        //        AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTestRequest>
+        //        {
+        //            new(){ MinimumInhibitoryConcentration = 1.0f }
+        //        },
+        //        Remark = ""
+        //    };
+        //    var context = new ValidationContext(target);
+        //    var results = new List<ValidationResult>();
             
-            Validator.TryValidateObject(target, context, results, true);
+        //    Validator.TryValidateObject(target, context, results, true);
 
-            var result = results.SingleOrDefault(r =>
-                r.MemberNames.Contains(nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)));
-            result.Should().BeNull();
-        }
+        //    var result = results.SingleOrDefault(r =>
+        //        r.MemberNames.Contains(nameof(SentinelEntryRequest.AntimicrobialSensitivityTests)));
+        //    result.Should().BeNull();
+        //}
 
         [Test]
         public void WhenSamplingDateIsMissing_IsTreatedAsInvalid()
