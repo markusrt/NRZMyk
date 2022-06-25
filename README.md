@@ -33,7 +33,7 @@ be possible to apply entity framework migrations.
 
 ### Azure ADB2C
 
-This app authenticates with Azure ADB2C. In order to run it locally you need 
+This app authenticates with Azure ADB2C. In order to run it locally you need
 to setup client and server apps according to this documentation:
 
 <https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant>
@@ -75,14 +75,13 @@ Flag based authentication on client side is still WIP.
 
 ### Base tools to install
 
-```
+```shell
 dotnet tool install --global dotnet-ef
 ```
 
 ## Deployment setup
 
-Make sure above mentioned secrets are also set correctly in your deployment environment. Usually this 
-can be done via environment variables:
+Make sure above mentioned secrets are also set correctly in your deployment environment. Usually this can be done via environment variables:
 
 - `AzureAdB2C__Domain=contoso.onmicrosoft.com`
 - `AzureAdB2C__ClientId=acc6f10a-484d-4e56-a0fa-1536d7b2df0b
@@ -94,19 +93,24 @@ can be done via environment variables:
 
 List migrations in project `NRZMyk.Services` using
 
-```
+```shell
 dotnet ef migrations --startup-project ../NRZMyk.Server/NRZMyk.Server.csproj list 
 ```
 
 Add a new migration using
 
-```
+```shell
 dotnet ef migrations --startup-project ../NRZMyk.Server/NRZMyk.Server.csproj add Entity_MigrationDetails 
 ```
 
+### Clean registry
+
+```shell
+az acr run -r <yourregistry> --cmd="acr purge --ago 40d --dry-run --untagged --filter 'nrzmyk:xxxx.*'" /dev/null
+```
 
 ## Reference to third party licenses
 
 - Used architecutral patters based on <https://github.com/dotnet-architecture/eShopOnWeb>
-  - MIT License: https://github.com/dotnet-architecture/eShopOnWeb/blob/master/LICENSE
+  - MIT License: <https://github.com/dotnet-architecture/eShopOnWeb/blob/master/LICENSE>
   - Last checked 2020-07-25
