@@ -12,3 +12,9 @@ window.closeBootstrapModal = function (id)
     var modal = window.bootstrap.Modal.getInstance(document.getElementById(id));
     modal.hide();
 }
+
+window.selectTabBootstrap = function (number) {
+    var someTabTriggerEl = document.querySelector('#nav-home-tab-' + i);
+    var tab = new window.bootstrap.Tab(someTabTriggerEl);
+    tab.show();
+}

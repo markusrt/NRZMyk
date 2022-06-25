@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using NRZMyk.Components.Helpers;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
@@ -36,6 +37,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         [Inject]
         private IClinicalBreakpointService ClinicalBreakpointService { get; set; } = default!;
+
+        [Inject]
+        internal IJSRuntime JsRuntime { get; set; } = default!;   
         
         [Inject]
         private NavigationManager NavigationManager { get; set; } = default!;
@@ -62,9 +66,17 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         internal string LaboratoryNumber { get; set; } = string.Empty;
 
-        internal void AddSub()
+        internal async Task AddSub()
         {
             SentinelEntry.Subs.Add(new Sub());
+            await JsRuntime.InvokeAsync<object>("selectTabBootstrap", new object[] { SentinelEntry.Subs.Count }).ConfigureAwait(true);
+            
+        }
+
+        internal async Task RemoveSub(Sub sub)
+        {
+            SentinelEntry.Subs.Remove(sub);
+            await JsRuntime.InvokeAsync<object>("selectTabBootstrap", new object[] {1 }).ConfigureAwait(true);
         }
 
         internal void AddAntimicrobialSensitivityTest(Sub sub)

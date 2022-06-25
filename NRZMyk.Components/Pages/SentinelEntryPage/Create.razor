@@ -89,34 +89,50 @@ else
                                @bind-OtherValue="@SentinelEntry.PredecessorLaboratoryNumber" @bind-Value="@SentinelEntry.HasPredecessor"
                                ValidationFor="() => SentinelEntry.HasPredecessor" ValidationForOther="() => SentinelEntry.PredecessorLaboratoryNumber"/>
 
-        <button type="button" id="addSub" class="btn btn-sm btn-outline-secondary" @onclick="AddSub">Neue Mischkultur</button>
-
+        @*<button type="button" id="addSub" class="btn btn-sm btn-outline-secondary" @onclick="AddSub">Neue Mischkultur</button>*@
+        
+        
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                @{ var active = "active";}
-                @for (int i = 0; i < @SentinelEntry.Subs.Count; i++)
-                {
-                    <button class="nav-link @active" id="nav-home-tab-@i" data-bs-toggle="tab" data-bs-target="#nav-home-@i" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Home</button>
-                    { active = "";}
+                @{
+                    var active = "active";
+                    var selected = true;
                 }
+                @for (var i = 1; i <= @SentinelEntry.Subs.Count; i++)
+                {
+                    <button class="nav-link @active" id="nav-home-tab-@i" data-bs-toggle="tab" data-bs-target="#nav-home-@i" type="button" role="tab" aria-controls="nav-home-@i" aria-selected="@selected">Kultur @i</button>
+                    
+                    @if (i == 1)
+                    {
+                        active = "";
+                        selected = false;
+                    }
+                }
+                <button class="nav-link" type="button" role="tab" @onclick="AddSub"><i class="oi oi-plus"></i> Mischkultur</button>
             </div>
         </nav>
-            
-
-
             
            
             <div class="tab-content" id="nav-tabContent">
                 @{
-                    var ii = 0;
-                    active = "active";
+                    var ii = 1;
+                    active = "fade show active";
                 }
                 @foreach (var sub in @SentinelEntry.Subs)
                 {
-                    <div class="tab-pane fade show @active" id="nav-home-@ii" role="tabpanel" aria-labelledby="nav-home-tab-@ii">
+                    <div class="pt-2 tab-pane @active" id="nav-home-@ii" role="tabpanel" aria-labelledby="nav-home-tab-@ii">
+                        
+                        @if (ii > 1)
+                        {
+                            <div class="row mb-3">
+                                <div class="col-sm-9"></div>
+                                <div class="col-sm-3 align-self-end">
+                                    <button type="button" id="removeSub" class="btn btn-sm btn-danger" @onclick="() => RemoveSub(sub)"><i class="oi oi-trash"></i>-Mischkultur</button>
+                                </div>
+                            </div>
+                        }
                         @{ ii++; }
                         @{ active = ""; }
-
                         <SelectEnumOrOther Label="Spezies" Key="species" Other="Species.Other" OtherLabel="Andere Spezies"
                                            @bind-OtherValue="@sub.OtherIdentifiedSpecies" @bind-Value="@sub.IdentifiedSpecies"
                                            ValidationFor="() => sub.IdentifiedSpecies" ValidationForOther="() => sub.OtherIdentifiedSpecies"/>

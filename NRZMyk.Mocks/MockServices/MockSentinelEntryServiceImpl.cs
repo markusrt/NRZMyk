@@ -24,17 +24,20 @@ namespace NRZMyk.Mocks.MockServices
 
         private readonly List<SentinelEntry> _repository = new();
 
+        private readonly Dictionary<int, List<Sub>> Subs = new();
+
         public MockSentinelEntryServiceImpl(IMapper mapper, ILogger<MockSentinelEntryServiceImpl> logger)
         {
             _mapper = mapper;
             _logger = logger;
 
-            _repository.Add(new SentinelEntry
+            var entry1 = new SentinelEntry
             {
                 Id = _id++,
                 Year = 2020,
                 YearlySequentialEntryNumber = _id,
                 AgeGroup = AgeGroup.ElevenToFifteen,
+                SpeciesIdentificationMethod = SpeciesIdentificationMethod.API,
                 IdentifiedSpecies = Species.CandidaDubliniensis,
                 Material = Material.CentralBloodCultureCvc,
                 Remark = "Some notes",
@@ -59,13 +62,23 @@ namespace NRZMyk.Mocks.MockServices
                         MinimumInhibitoryConcentration = 0.12f
                     }
                 }
-            });
-            _repository.Add(new SentinelEntry
+            };
+            _repository.Add(entry1);
+            Subs.Add(_id, new List<Sub>{new Sub()
+            {
+                SpeciesIdentificationMethod = entry1.SpeciesIdentificationMethod,
+                IdentifiedSpecies = entry1.IdentifiedSpecies,
+                AntimicrobialSensitivityTests =  _mapper.Map<List<AntimicrobialSensitivityTestRequest>>(entry1.AntimicrobialSensitivityTests)
+
+            }});
+
+            var entry2 = new SentinelEntry
             {
                 Id = _id++,
                 Year = 2020,
                 YearlySequentialEntryNumber = _id,
                 AgeGroup = AgeGroup.ElevenToFifteen,
+                SpeciesIdentificationMethod = SpeciesIdentificationMethod.BBL,
                 IdentifiedSpecies = Species.CandidaGuilliermondii,
                 Material = Material.CentralBloodCulturePort,
                 HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
@@ -73,7 +86,13 @@ namespace NRZMyk.Mocks.MockServices
                 SamplingDate = new DateTime(2020, 5, 1),
                 SenderLaboratoryNumber = "SLO-123456",
                 ProtectKey = "2"
-            });
+            };
+            _repository.Add(entry2);
+            Subs.Add(_id, new List<Sub>{new Sub()
+            {
+                SpeciesIdentificationMethod = entry2.SpeciesIdentificationMethod,
+                IdentifiedSpecies = entry2.IdentifiedSpecies,
+            }});
         }
 
         public Task<SentinelEntry> Create(SentinelEntryRequest createRequest)
@@ -89,6 +108,8 @@ namespace NRZMyk.Mocks.MockServices
             sentinelEntry.PcrDetails = createRequest.Subs.First().PcrDetails;
             sentinelEntry.IdentifiedSpecies = createRequest.Subs.First().IdentifiedSpecies;
             sentinelEntry.OtherIdentifiedSpecies = createRequest.Subs.First().OtherIdentifiedSpecies;
+
+            Subs.Add(sentinelEntry.Id, createRequest.Subs);
 
             _repository.Add(sentinelEntry);
             return Task.FromResult(sentinelEntry);
@@ -114,10 +135,12 @@ namespace NRZMyk.Mocks.MockServices
             var response = _mapper.Map<SentinelEntryResponse>(entry);
             response.Subs.First().AntimicrobialSensitivityTests =
                 _mapper.Map<List<AntimicrobialSensitivityTestRequest>>(entry.AntimicrobialSensitivityTests);
-            response.Subs.First().SpeciesIdentificationMethod = entry.SpeciesIdentificationMethod;
-            response.Subs.First().PcrDetails = entry.PcrDetails;
-            response.Subs.First().IdentifiedSpecies = entry.IdentifiedSpecies;
-            response.Subs.First().OtherIdentifiedSpecies = entry.OtherIdentifiedSpecies;
+
+            response.Subs = Subs[entry.Id];
+            //response.Subs.First().SpeciesIdentificationMethod = entry.SpeciesIdentificationMethod;
+            //response.Subs.First().PcrDetails = entry.PcrDetails;
+            //response.Subs.First().IdentifiedSpecies = entry.IdentifiedSpecies;
+            //response.Subs.First().OtherIdentifiedSpecies = entry.OtherIdentifiedSpecies;
             return response;
         }
 
@@ -132,6 +155,7 @@ namespace NRZMyk.Mocks.MockServices
             entry.PcrDetails = updateRequest.Subs.First().PcrDetails;
             entry.IdentifiedSpecies = updateRequest.Subs.First().IdentifiedSpecies;
             entry.OtherIdentifiedSpecies = updateRequest.Subs.First().OtherIdentifiedSpecies;
+            Subs[entry.Id] = updateRequest.Subs;
             return Task.FromResult(entry);
         }
 
