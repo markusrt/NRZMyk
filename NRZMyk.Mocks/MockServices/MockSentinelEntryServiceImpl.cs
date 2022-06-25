@@ -33,7 +33,7 @@ namespace NRZMyk.Mocks.MockServices
 
             var entry1 = new SentinelEntry
             {
-                Id = _id++,
+                Id = _id,
                 Year = 2020,
                 YearlySequentialEntryNumber = _id,
                 AgeGroup = AgeGroup.ElevenToFifteen,
@@ -71,10 +71,10 @@ namespace NRZMyk.Mocks.MockServices
                 AntimicrobialSensitivityTests =  _mapper.Map<List<AntimicrobialSensitivityTestRequest>>(entry1.AntimicrobialSensitivityTests)
 
             }});
-
+            _id++;
             var entry2 = new SentinelEntry
             {
-                Id = _id++,
+                Id = _id,
                 Year = 2020,
                 YearlySequentialEntryNumber = _id,
                 AgeGroup = AgeGroup.ElevenToFifteen,
@@ -137,10 +137,6 @@ namespace NRZMyk.Mocks.MockServices
                 _mapper.Map<List<AntimicrobialSensitivityTestRequest>>(entry.AntimicrobialSensitivityTests);
 
             response.Subs = Subs[entry.Id];
-            //response.Subs.First().SpeciesIdentificationMethod = entry.SpeciesIdentificationMethod;
-            //response.Subs.First().PcrDetails = entry.PcrDetails;
-            //response.Subs.First().IdentifiedSpecies = entry.IdentifiedSpecies;
-            //response.Subs.First().OtherIdentifiedSpecies = entry.OtherIdentifiedSpecies;
             return response;
         }
 
