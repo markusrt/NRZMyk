@@ -12,8 +12,12 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<NRZMyk.Components.App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHttpClient("NRZMyk.ServerAPI", 
-    client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-                .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+    client =>
+    {
+        client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+        client.Timeout = TimeSpan.FromMinutes(5);
+    })
+    .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
     .CreateClient("NRZMyk.ServerAPI"));
 builder.Services.AddScoped<IHttpClient, LoggingJsonHttpClient>();
