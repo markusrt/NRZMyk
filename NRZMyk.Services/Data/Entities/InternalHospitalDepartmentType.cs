@@ -14,6 +14,7 @@ namespace NRZMyk.Services.Data.Entities
         [Description("nephrologisch")] Nephrological = 70,
         [Description("angiologisch")] Angiological = 80,
         [Description("rheumatologisch")] Rheumatological = 90,
+        [Description("unbekannt")] Unknwown = 9000,
         [Description("andere")] Other = 10000,
     }
 }
