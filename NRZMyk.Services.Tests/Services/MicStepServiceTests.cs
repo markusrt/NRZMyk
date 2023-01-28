@@ -26,6 +26,37 @@ namespace NRZMyk.Services.Tests.Services
         }
 
         [Test]
+        public void FloorToClosesReferenceValue_WhenNotConfigured_KeepsValueAsIs()
+        {
+            var sut = CreateSut(Options.Create(new BreakpointSettings()));
+
+            sut.FloorToClosestReferenceValue(0.64f).Should().Be(0.64f);
+        }
+
+        [TestCase(null, null)]
+        [TestCase(0.064f, 0.06f)]
+        [TestCase(0.004f, 0.004f)]
+        [TestCase(0.004f, 0.004f)]
+        [TestCase(0.001f, 0.001f)]
+        [TestCase(16f, 8.001f)]
+        public void FloorToClosesReferenceValue_WithRefValuesConfigured_FloorsCorrectly(float? micValue, float? expectedFlooredValue)
+        {
+            var sut = CreateSut(Options.Create(
+                new BreakpointSettings
+                {
+                    Breakpoint = new Breakpoint
+                    {
+                        ReferenceMethodMicValues = new List<float>
+                        {
+                            0.002f, 0.008f,  0.016f, 0.03f, 0.06f, 0.12f, 0.25f, 0.5f, 1f, 2f, 4f, 8f, 8.001f, 0.004f
+                        }
+                    }
+                }));
+
+            sut.FloorToClosestReferenceValue(micValue).Should().Be(expectedFlooredValue);
+        }
+
+        [Test]
         public void WhenStandardsNotConfigured_ReturnsAllValues()
         {
             var expectedStandards = EnumUtils.AllEnumValues<BrothMicrodilutionStandard>().ToList();

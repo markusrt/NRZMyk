@@ -264,6 +264,30 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             sensitivityTest.Resistance.Should().Be(expectedResistance);
         }
 
+        [Test]
+        public void WhenCalculateResistanceBadge_FloorsMicToClosestReferenceValue()
+        {
+            var component = CreateSut();
+            var sut = component.Instance;
+            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaKrusei;
+            var breakpoint = sut.AllBreakpoints.Single(b => 
+                b.AntifungalAgent == AntifungalAgent.Anidulafungin
+                && b.Species == Species.CandidaKrusei
+                && b.Standard == BrothMicrodilutionStandard.Eucast
+                && b.Version == "10.0");
+            var sensitivityTest = new AntimicrobialSensitivityTestRequest
+            {
+                ClinicalBreakpointId = breakpoint.Id,
+                MinimumInhibitoryConcentration = 0.064f
+            };
+            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(sensitivityTest);
+
+            var badge = sut.ResistanceBadge(sensitivityTest);
+
+            badge.Should().Be("bg-success");
+            sensitivityTest.Resistance.Should().Be(Resistance.Susceptible);
+        }
+
         [TestCase(0.01f, "bg-danger", Resistance.Resistant)]
         [TestCase(0f, "bg-danger", Resistance.Resistant)]
         [TestCase(-0.01f, "bg-warning", Resistance.Intermediate)]

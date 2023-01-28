@@ -40,6 +40,9 @@ namespace NRZMyk.Mocks.MockServices
             return true;
         }
 
-
+        public float? FloorToClosestReferenceValue(float? micValue)
+        {
+            return micValue.Equals(0.064f) ? 0.06f : micValue;
+        }
     }
 }

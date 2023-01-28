@@ -1,13 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data.Entities;
@@ -25,6 +21,7 @@ namespace NRZMyk.Services.Services
         private readonly Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>> _micSteps;
         private readonly List<SpeciesTestingMethod> _multiAgentSystems;
         private readonly Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>> _standards;
+        private readonly List<float> _referenceMethodMicValues;
 
         public MicStepsService(ILogger<MicStepsService> logger) : this(LoadSettingsFromResource(), logger)
         {
@@ -35,6 +32,7 @@ namespace NRZMyk.Services.Services
             _logger = logger;
             _micSteps = settings.Breakpoint?.MicSteps??new Dictionary<SpeciesTestingMethod, Dictionary<AntifungalAgent, List<MicStep>>>();
             _multiAgentSystems = settings.Breakpoint?.MultiAgentSystems ?? new List<SpeciesTestingMethod>();
+            _referenceMethodMicValues = settings.Breakpoint?.ReferenceMethodMicValues ?? new List<float>();
             _standards = settings.Breakpoint?.Standards ??
                          new Dictionary<SpeciesTestingMethod, List<BrothMicrodilutionStandard>>();
         }
@@ -87,6 +85,19 @@ namespace NRZMyk.Services.Services
             using var reader = new StreamReader(stream);
             var json = reader.ReadToEnd();
             return JsonConvert.DeserializeObject<BreakpointSettings>(json);
+        }
+
+        public float? FloorToClosestReferenceValue(float? micValue)
+        {
+            var flooredValue = micValue;
+            foreach (var referenceMethodMicValue in _referenceMethodMicValues.OrderBy(v => v))
+            {
+                if (referenceMethodMicValue <= micValue)
+                {
+                    flooredValue = referenceMethodMicValue;
+                }
+            }
+            return flooredValue;
         }
     }
 }

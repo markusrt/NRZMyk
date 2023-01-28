@@ -187,7 +187,8 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
             Logger.LogInformation($"Found breakpoint for {sensitivityTest.TestingMethod}/{sensitivityTest.AntifungalAgent} where id is {sensitivityTest.ClinicalBreakpointId}: {breakpoint.Title}");
 
-            var mic = sensitivityTest.MinimumInhibitoryConcentration;
+            var mic = MicStepsService.FloorToClosestReferenceValue(sensitivityTest.MinimumInhibitoryConcentration);
+            
             if (IsResistantAccordingToEucastDefinition(mic, breakpoint))
             {
                 sensitivityTest.Resistance = Resistance.Resistant;
