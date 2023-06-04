@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Extensions;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Models;
@@ -184,21 +185,21 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 }
             }
 
-
             Logger.LogInformation($"Found breakpoint for {sensitivityTest.TestingMethod}/{sensitivityTest.AntifungalAgent} where id is {sensitivityTest.ClinicalBreakpointId}: {breakpoint.Title}");
 
-            var mic = sensitivityTest.MinimumInhibitoryConcentration;
-            if (IsResistantAccordingToEucastDefinition(mic, breakpoint))
+            var mic = MicStepsService.FloorToClosestReferenceValue(sensitivityTest.MinimumInhibitoryConcentration);
+            
+            if (mic.IsResistantAccordingToEucastDefinition(breakpoint))
             {
                 sensitivityTest.Resistance = Resistance.Resistant;
                 return "bg-danger";
             }
-            if (IsResistantAccordingToClsiDefinition(mic, breakpoint))
+            if (mic.IsResistantAccordingToClsiDefinition(breakpoint))
             {
                 sensitivityTest.Resistance = Resistance.Resistant;
                 return "bg-danger";
             }
-            if (IsSusceptibleAccordingToBothDefinitions(mic, breakpoint))
+            if (mic.IsSusceptibleAccordingToBothDefinitions(breakpoint))
             {
                 sensitivityTest.Resistance = Resistance.Susceptible;
                 return "bg-success";
@@ -218,20 +219,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             return isInternalNormalUnit;
         }
 
-        private static bool IsResistantAccordingToEucastDefinition(float? mic, ClinicalBreakpoint breakpoint)
-        {
-            return mic > breakpoint.MicBreakpointResistent && breakpoint.Standard == BrothMicrodilutionStandard.Eucast;
-        }
-
-        private static bool IsResistantAccordingToClsiDefinition(float? mic, ClinicalBreakpoint breakpoint)
-        {
-            return mic >= breakpoint.MicBreakpointResistent && breakpoint.Standard == BrothMicrodilutionStandard.Clsi;
-        }
-
-        private static bool IsSusceptibleAccordingToBothDefinitions(float? mic, ClinicalBreakpoint breakpoint)
-        {
-            return mic <= breakpoint.MicBreakpointSusceptible;
-        }
+       
 
         internal async Task SubmitClick()
         {

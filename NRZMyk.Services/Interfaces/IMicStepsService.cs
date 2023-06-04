@@ -11,5 +11,6 @@ namespace NRZMyk.Services.Interfaces
         IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod testingMethod);
         IEnumerable<BrothMicrodilutionStandard> Standards(SpeciesTestingMethod testingMethod);
         bool IsMultiAgentSystem(SpeciesTestingMethod testingMethod);
+        float? FloorToClosestReferenceValue(float? micValue);
     }
 }

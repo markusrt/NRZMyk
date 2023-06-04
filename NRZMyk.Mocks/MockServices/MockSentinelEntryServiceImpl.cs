@@ -114,7 +114,7 @@ namespace NRZMyk.Mocks.MockServices
         public async Task<SentinelEntry> CryoArchive(CryoArchiveRequest archiveRequest)
         {
             await Task.Delay(Delay);
-            var entry = _repository.FirstOrDefault(e => e.Id == archiveRequest.Id);
+            var entry = _repository.First(e => e.Id == archiveRequest.Id);
             entry.CryoRemark = archiveRequest.CryoRemark;
             entry.CryoDate = archiveRequest.CryoDate;
             return entry;
