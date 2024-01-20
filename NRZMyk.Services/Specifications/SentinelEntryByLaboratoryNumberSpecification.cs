@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using Ardalis.Specification;
 using NRZMyk.Services.Data.Entities;
 
@@ -6,7 +7,8 @@ namespace NRZMyk.Services.Specifications
 {
     public sealed class SentinelEntryByLaboratoryNumberSpecification : SentinelEntryFilterSpecification
     {
-        private static readonly Regex LaboratoryNumberFormat = new Regex("SN-(\\d\\d\\d\\d)-(\\d\\d\\d\\d)", RegexOptions.Compiled);
+        private static readonly Regex LaboratoryNumberFormat = 
+            new("SN-(\\d\\d\\d\\d)-(\\d\\d\\d\\d)", RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
         public int Year { get; }
 
