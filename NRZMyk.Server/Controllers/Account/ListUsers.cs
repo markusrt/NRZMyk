@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.Account
 {
     [Authorize(Roles = nameof(Role.Admin))]
-    public class ListUsers : BaseAsyncEndpoint<List<RemoteAccount>>
+    public class ListUsers : EndpointBaseAsync.WithoutRequest.WithActionResult<List<RemoteAccount>>
     {
         private readonly IAsyncRepository<RemoteAccount> _accountRepository;
         private readonly IUserService _userService;
@@ -29,7 +30,7 @@ namespace NRZMyk.Server.Controllers.Account
             OperationId = "account.list",
             Tags = new[] { "AccountEndpoints" })
         ]
-        public override async Task<ActionResult<List<RemoteAccount>>> HandleAsync()
+        public override async Task<ActionResult<List<RemoteAccount>>> HandleAsync(CancellationToken cancellationToken = new())
         {
             var items = await _accountRepository.ListAllAsync().ConfigureAwait(false);
             await _userService.GetRolesViaGraphApi(items);

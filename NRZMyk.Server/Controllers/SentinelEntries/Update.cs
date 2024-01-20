@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
@@ -18,7 +19,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
-    public class Update : BaseAsyncEndpoint<SentinelEntryRequest, SentinelEntry>
+    public class Update : EndpointBaseAsync.WithRequest<SentinelEntryRequest>.WithActionResult<SentinelEntry>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
         private readonly IAsyncRepository<AntimicrobialSensitivityTest> _sensitivityTestRepository;
@@ -39,7 +40,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.update",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request)
+        public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request, CancellationToken cancellationToken = new())
         {
             var organizationId = User.Claims.OrganizationId();
             var existingItem = (await _sentinelEntryRepository.FirstOrDefaultAsync(

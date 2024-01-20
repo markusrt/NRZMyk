@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.Account
 {
     [Authorize(Roles = nameof(Role.Admin))]
-    public class AssignOrganization : BaseAsyncEndpoint<List<RemoteAccount>, int>
+    public class AssignOrganization : EndpointBaseAsync.WithRequest<List<RemoteAccount>>.WithActionResult<int>
     {
         private readonly IAsyncRepository<RemoteAccount> _accountRepository;
         private readonly ILogger<AssignOrganization> _logger;
@@ -30,7 +31,7 @@ namespace NRZMyk.Server.Controllers.Account
             OperationId = "account.assign-organization",
             Tags = new[] { "AccountEndpoints" })
         ]
-        public override async Task<ActionResult<int>> HandleAsync(List<RemoteAccount> accountsToUpdate)
+        public override async Task<ActionResult<int>> HandleAsync(List<RemoteAccount> accountsToUpdate, CancellationToken cancellationToken = new())
         {
             var updateCount = 0;
             foreach (var accountToUpdate in accountsToUpdate)

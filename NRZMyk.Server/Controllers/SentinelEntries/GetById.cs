@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
-    public class GetById : BaseAsyncEndpoint<int, SentinelEntryResponse>
+    public class GetById : EndpointBaseAsync.WithRequest<int>.WithActionResult<SentinelEntryResponse>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
         private readonly IMapper _mapper;
@@ -33,7 +34,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.GetById",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<SentinelEntryResponse>> HandleAsync([FromRoute] int sentinelEntryId)
+        public override async Task<ActionResult<SentinelEntryResponse>> HandleAsync([FromRoute] int sentinelEntryId, CancellationToken cancellationToken = new())
         {
             var sentinelEntry = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(sentinelEntryId)));

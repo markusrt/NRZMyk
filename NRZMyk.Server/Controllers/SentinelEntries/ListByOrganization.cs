@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Ardalis.Specification;
@@ -13,7 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.SuperUser))]
-    public class ListByOrganization : BaseAsyncEndpoint<int, List<SentinelEntry>>
+    public class ListByOrganization : EndpointBaseAsync.WithRequest<int>.WithActionResult<List<SentinelEntry>>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
 
@@ -28,7 +29,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.ListByOrganization",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<List<SentinelEntry>>> HandleAsync([FromRoute] int organizationId)
+        public override async Task<ActionResult<List<SentinelEntry>>> HandleAsync([FromRoute] int organizationId, CancellationToken cancellationToken = new())
         {
             var filter = organizationId == -1 
                 ? (ISpecification<SentinelEntry>) new AllSentinelEntriesFilterSpecification()
