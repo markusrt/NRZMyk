@@ -44,7 +44,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             _context.Services.AddSingleton<IMicStepsService>(_mockMicStepsService);
             _context.Services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
             _context.Services.AddScoped<SignOutSessionStateManager>();
-            _context.Services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
+            _context.Services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
             _sentinelEntryService = _context.Services.GetService<ISentinelEntryService>();
         }
