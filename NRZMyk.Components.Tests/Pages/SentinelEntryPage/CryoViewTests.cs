@@ -31,7 +31,7 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             _context.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
             _context.Services.AddSingleton<ISentinelEntryService, MockSentinelEntryServiceImpl>();
             _context.Services.AddSingleton<IAccountService, MockAccountService>();
-            _context.Services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
+            _context.Services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
              
             _sentinelEntryService = _context.Services.GetService<ISentinelEntryService>() as MockSentinelEntryServiceImpl;
             _renderedComponent = CreateSut(_context);
