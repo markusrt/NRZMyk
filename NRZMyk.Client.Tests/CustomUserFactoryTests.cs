@@ -126,7 +126,7 @@ public class CustomUserFactoryTests
     private static CustomUserFactory CreateSut(out IAccessTokenProviderAccessor accessTokenProviderAccessor, out MockHttpMessageHandler mockHttp, out ILogger<CustomUserFactory> logger)
     {
         accessTokenProviderAccessor = Substitute.For<IAccessTokenProviderAccessor>();
-        mockHttp = new MockHttpMessageHandler(BackendDefinitionBehavior.Always);
+        mockHttp = new MockHttpMessageHandler();
         logger = Substitute.For<MockLogger<CustomUserFactory>>();
         
         var httpClient = mockHttp.ToHttpClient();
