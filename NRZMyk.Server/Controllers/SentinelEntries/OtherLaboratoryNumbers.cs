@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
-    public class OtherLaboratoryNumbers : BaseAsyncEndpoint<List<string>>
+    public class OtherLaboratoryNumbers : EndpointBaseAsync.WithoutRequest.WithActionResult<List<string>>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
 
@@ -34,7 +35,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.OtherLaboratoryNumbers",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<List<string>>> HandleAsync()
+        public override async Task<ActionResult<List<string>>> HandleAsync(CancellationToken cancellationToken = new())
         {
             var organizationId = User.Claims.OrganizationId();
             var entriesForOrganization = await _sentinelEntryRepository.ListAsync(new SentinelEntryFilterSpecification(organizationId)).ConfigureAwait(false);

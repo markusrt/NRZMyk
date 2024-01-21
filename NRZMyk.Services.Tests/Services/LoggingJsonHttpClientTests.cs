@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -46,7 +47,8 @@ public class LoggingJsonHttpClientTests
 
         var getAction = async () => await sut.Get<Product>("/api/products/42").ConfigureAwait(true);
 
-        getAction.Should().Throw<Exception>();
+        var exception = getAction.Should().ThrowAsync<Exception>().Result.Subject;
+        exception.Should().NotBeNull();
         logger.Received(1).LogError(Arg.Any<Exception>(),
             "GET Product on http://localhost/api/products/42 failed with status {statusCode} during {method}",
            statusCode, nameof(WhenGetFails_ErrorIsLogged));
@@ -107,7 +109,8 @@ public class LoggingJsonHttpClientTests
 
         var postAction = async () => await sut.Post<Product, IdResponse>("/api/products", new Product()).ConfigureAwait(true);
 
-        postAction.Should().Throw<Exception>();
+        var exception = postAction.Should().ThrowAsync<Exception>().Result.Subject;
+        exception.Should().NotBeNull();
         logger.Received(1).LogError(Arg.Any<Exception>(),
             "POST Product on http://localhost/api/products failed with status {statusCode} during {method}",
             statusCode, nameof(WhenPostFails_ErrorIsLogged));
@@ -139,7 +142,8 @@ public class LoggingJsonHttpClientTests
 
         var postAction = async () => await sut.Put<Product, IdResponse>("/api/products", new Product()).ConfigureAwait(true);
 
-        postAction.Should().Throw<Exception>();
+        var exception = postAction.Should().ThrowAsync<Exception>().Result.Subject;
+        exception.Should().NotBeNull();
         logger.Received(1).LogError(Arg.Any<Exception>(),
             "PUT Product on http://localhost/api/products failed with status {statusCode} during {method}",
             statusCode, nameof(WhenPutFails_ErrorIsLogged));
@@ -152,7 +156,7 @@ public class LoggingJsonHttpClientTests
         mockHttp.When(HttpMethod.Delete, "http://localhost/api/products/42")
             .Respond(HttpStatusCode.OK);
 
-        sut.Invoking(async s => await s.Delete<Product>("/api/products/42").ConfigureAwait(true)).Should().NotThrow();
+        sut.Invoking(async s => await s.Delete<Product>("/api/products/42").ConfigureAwait(true)).Should().NotThrowAsync();
     }
 
     [TestCase(HttpStatusCode.Unauthorized)]
@@ -166,7 +170,8 @@ public class LoggingJsonHttpClientTests
 
         var deleteAction = async () => await sut.Delete<Product>("/api/products/42").ConfigureAwait(true);
 
-        deleteAction.Should().Throw<Exception>();
+        var exception = deleteAction.Should().ThrowAsync<Exception>().Result.Subject;
+        exception.Should().NotBeNull();
         logger.Received(1).LogError(Arg.Any<Exception>(),
             "DELETE Product on http://localhost/api/products/42 failed with status {status} during {method}",
             statusCode, nameof(WhenDeleteFails_ErrorIsLogged));

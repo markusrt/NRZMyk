@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.SuperUser))]
-    public class CryoArchive : BaseAsyncEndpoint<CryoArchiveRequest, SentinelEntry>
+    public class CryoArchive : EndpointBaseAsync.WithRequest<CryoArchiveRequest>.WithActionResult<SentinelEntry>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
         private readonly IMapper _mapper;
@@ -31,7 +32,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.cryo-archive",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<SentinelEntry>> HandleAsync(CryoArchiveRequest request)
+        public override async Task<ActionResult<SentinelEntry>> HandleAsync(CryoArchiveRequest request, CancellationToken cancellationToken = new())
         {
             var existingItem = await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(request.Id));

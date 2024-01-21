@@ -1,109 +1,107 @@
 ﻿using System;
-using BlazorApplicationInsights;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
+using BlazorApplicationInsights.Interfaces;
+using BlazorApplicationInsights.Models;
 
 namespace NRZMyk.Components.Playground
 {
     internal class NullApplicationInsights : IApplicationInsights
     {
-        public Task InitBlazorApplicationInsightsAsync(IJSRuntime jSRuntime)
+        public CookieMgr GetCookieMgr()
         {
-             return Task.CompletedTask;
+            return null;
         }
 
-        public Task TrackEvent(string name, Dictionary<string, object> properties = null)
+        public Task TrackEvent(EventTelemetry @event)
         {
-             return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public Task TrackTrace(string message, SeverityLevel? severityLevel = null, Dictionary<string, object> properties = null)
+        public Task TrackPageView(PageViewTelemetry pageView = null)
         {
-             return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public Task TrackException(Error exception, string id = null, SeverityLevel? severityLevel = null,
-            Dictionary<string, object> properties = null)
+        public Task TrackException(ExceptionTelemetry exception)
         {
-             return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public Task TrackPageView(string name = null, string uri = null, string refUri = null, string pageType = null,
-            bool? isLoggedIn = null, Dictionary<string, object> properties = null)
+        public Task TrackTrace(TraceTelemetry trace)
         {
-             return Task.CompletedTask;
+            return Task.CompletedTask;
+        }
+
+        public Task TrackMetric(MetricTelemetry metric)
+        {
+            return Task.CompletedTask;
         }
 
         public Task StartTrackPage(string name = null)
         {
-             return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public Task StopTrackPage(string name = null, string url = null, Dictionary<string, string> properties = null,
+        public Task StopTrackPage(string name = null, string url = null, Dictionary<string, object> customProperties = null,
             Dictionary<string, decimal> measurements = null)
         {
-             return Task.CompletedTask;
-        }
-
-        public Task TrackMetric(string name, double average, double? sampleCount = null, double? min = null, double? max = null,
-            Dictionary<string, object> properties = null)
-        {
-             return Task.CompletedTask;
-        }
-
-        public Task TrackDependencyData(string id, string name, decimal? duration = null, bool? success = null,
-            DateTime? startTime = null, int? responseCode = null, string correlationContext = null, string type = null,
-            string data = null, string target = null)
-        {
-             return Task.CompletedTask;
-        }
-
-        public Task Flush(bool? async)
-        {
-             return Task.CompletedTask;
-        }
-
-        public Task ClearAuthenticatedUserContext()
-        {
-             return Task.CompletedTask;
-        }
-
-        public Task SetAuthenticatedUserContext(string authenticatedUserId, string accountId = null, bool storeInCookie = false)
-        {
-             return Task.CompletedTask;
-        }
-
-        public Task AddTelemetryInitializer(TelemetryItem telemetryItem)
-        {
-             return Task.CompletedTask;
-        }
-
-        public Task TrackPageViewPerformance(PageViewPerformanceTelemetry pageViewPerformance)
-        {
-             return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
         public Task StartTrackEvent(string name)
         {
-             return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public Task StopTrackEvent(string name, Dictionary<string, string> properties = null, Dictionary<string, decimal> measurements = null)
+        public Task StopTrackEvent(string name, Dictionary<string, object> properties = null, Dictionary<string, decimal> measurements = null)
         {
-             return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public Task SetInstrumentationKey(string key)
+        public Task AddTelemetryInitializer(TelemetryItem telemetryItem)
         {
-             return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public Task LoadAppInsights()
+        public Task TrackPageViewPerformance(PageViewPerformanceTelemetry pageViewPerformance)
         {
-             return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public bool EnableAutoRouteTracking { get; set; }
+        public Task TrackDependencyData(DependencyTelemetry dependency)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task<TelemetryContext> Context()
+        {
+            return Task.FromResult(new TelemetryContext());
+        }
+
+        public Task Flush()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task ClearAuthenticatedUserContext()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task SetAuthenticatedUserContext(string authenticatedUserId, string accountId = null, bool? storeInCookie = null)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateCfg(Config newConfig, bool mergeExisting = true)
+        {
+            return Task.CompletedTask;
+        }
+
+        public void InitJSRuntime(IJSRuntime jSRuntime)
+        {
+        }
     }
 }

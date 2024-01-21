@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
@@ -20,7 +21,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
-    public class Create : BaseAsyncEndpoint<SentinelEntryRequest, SentinelEntry>
+    public class Create : EndpointBaseAsync.WithRequest<SentinelEntryRequest>.WithActionResult<SentinelEntry>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
         private readonly IMapper _mapper;
@@ -39,7 +40,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "catalog-entries.create",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request )
+        public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request, CancellationToken cancellationToken = new())
         {
             var newEntry = _mapper.Map<SentinelEntry>(request);
 

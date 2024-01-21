@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
-    public class ListPaged : BaseAsyncEndpoint<ListPagedSentinelEntryRequest, ListPagedSentinelEntryResponse>
+    public class ListPaged : EndpointBaseAsync.WithRequest<ListPagedSentinelEntryRequest>.WithActionResult<ListPagedSentinelEntryResponse>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
 
@@ -29,7 +30,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.ListPaged",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<ListPagedSentinelEntryResponse>> HandleAsync([FromQuery]ListPagedSentinelEntryRequest request)
+        public override async Task<ActionResult<ListPagedSentinelEntryResponse>> HandleAsync([FromQuery]ListPagedSentinelEntryRequest request, CancellationToken cancellationToken = new())
         {
             var organizationId = User.Claims.OrganizationId();
             var response = new ListPagedSentinelEntryResponse();

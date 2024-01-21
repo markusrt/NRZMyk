@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.Account
 {
     [Authorize]
-    public class Connect : BaseAsyncEndpoint<ConnectedAccount>
+    public class Connect : EndpointBaseAsync.WithoutRequest.WithActionResult<ConnectedAccount>
     {
         private readonly IAsyncRepository<RemoteAccount> _accountRepository;
         private readonly IMapper _mapper;
@@ -32,7 +33,7 @@ namespace NRZMyk.Server.Controllers.Account
             OperationId = "account.connect",
             Tags = new[] { "AccountEndpoints" })
         ]
-        public override async Task<ActionResult<ConnectedAccount>> HandleAsync()
+        public override async Task<ActionResult<ConnectedAccount>> HandleAsync(CancellationToken cancellationToken = new())
         {
             var connectingAccount = _mapper.Map<RemoteAccount>(User);
             var storedAccount = await _accountRepository.FirstOrDefaultAsync(

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User))]
-    public class OtherHospitalDepartment : BaseAsyncEndpoint<List<string>>
+    public class OtherHospitalDepartment : EndpointBaseAsync.WithoutRequest.WithActionResult<List<string>>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
 
@@ -28,7 +29,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.OtherHospitalDepartment",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<List<string>>> HandleAsync()
+        public override async Task<ActionResult<List<string>>> HandleAsync(CancellationToken cancellationToken = new())
         {
             var otherMaterials =  await _sentinelEntryRepository.Other(s => s.OtherHospitalDepartment).ConfigureAwait(false);
             return Ok(otherMaterials);

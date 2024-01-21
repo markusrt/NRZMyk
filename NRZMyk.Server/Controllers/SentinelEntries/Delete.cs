@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
-    public class Delete : BaseAsyncEndpoint<int, int>
+    public class Delete : EndpointBaseAsync.WithRequest<int>.WithActionResult<int>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
         private readonly IAsyncRepository<AntimicrobialSensitivityTest> _sensitivityTestRepository;
@@ -33,7 +34,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.DeleteById",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<int>> HandleAsync([FromRoute] int sentinelEntryId)
+        public override async Task<ActionResult<int>> HandleAsync([FromRoute] int sentinelEntryId, CancellationToken cancellationToken = new())
         {
             var sentinelEntry = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(sentinelEntryId)));
