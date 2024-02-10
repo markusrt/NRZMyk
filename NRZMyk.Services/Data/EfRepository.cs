@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Ardalis.Specification;
+using Ardalis.Specification.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
@@ -34,13 +35,13 @@ namespace NRZMyk.Services.Data
 
         public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
         {
-            var specificationResult = await ApplySpecification(spec).ConfigureAwait(false);
+            var specificationResult = ApplySpecification(spec);
             return await specificationResult.ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
-            var specificationResult = await ApplySpecification(spec).ConfigureAwait(false);
+            var specificationResult = ApplySpecification(spec);
             return await specificationResult.CountAsync().ConfigureAwait(false);
         }
 
@@ -66,19 +67,20 @@ namespace NRZMyk.Services.Data
 
         public async Task<T> FirstAsync(ISpecification<T> spec)
         {
-            var specificationResult = await ApplySpecification(spec).ConfigureAwait(false);
+            var specificationResult = ApplySpecification(spec);
             return await specificationResult.FirstAsync().ConfigureAwait(false);
         }
 
         public async Task<T> FirstOrDefaultAsync(ISpecification<T> spec)
         {
-            var specificationResult = await ApplySpecification(spec).ConfigureAwait(false);
+            var specificationResult = ApplySpecification(spec);
             return await specificationResult.FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
-        private async Task<IQueryable<T>> ApplySpecification(ISpecification<T> spec)
+        private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {
-            return await EfSpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>().AsQueryable(), spec).ConfigureAwait(false);
+            var evaluator = new SpecificationEvaluator();
+            return evaluator.GetQuery(_dbContext.Set<T>().AsQueryable(), spec);
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using FluentAssertions;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Validation;
-using NSubstitute;
 using NUnit.Framework;
 
 namespace NRZMyk.Services.Tests.Validation
@@ -99,7 +98,7 @@ namespace NRZMyk.Services.Tests.Validation
         [Test]
         public void WhenSamplingDateIsMissing_IsTreatedAsInvalid()
         {
-            var target = new SentinelEntryRequest()
+            var target = new SentinelEntryRequest
             {
                 SamplingDate = null
             };
@@ -111,11 +110,6 @@ namespace NRZMyk.Services.Tests.Validation
             var result = results.SingleOrDefault(r =>
                 r.MemberNames.Contains(nameof(SentinelEntryRequest.SamplingDate)));
             result.Should().NotBe(null, $"{nameof(SentinelEntryRequest.SamplingDate)} should be required");
-        }
-
-        private SensitivityTestNotEmptyWithoutCommentAttribute CreateSut()
-        {
-            return new SensitivityTestNotEmptyWithoutCommentAttribute();
         }
 
         private class InvalidType

@@ -136,14 +136,4 @@ public class CustomUserFactoryTests
         
         return new CustomUserFactory(accessTokenProviderAccessor, clientFactory, logger);
     }
-
-    private class Product
-    {
-        public string Name { get; set; }
-    }
-
-    private class IdResponse
-    {
-        public int Id { get; set; }
-    }
 }

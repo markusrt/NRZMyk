@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Numerics;
 using System.Text.RegularExpressions;
 using Ardalis.Specification;
 using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Specifications
 {
-    public sealed class SentinelEntryByLaboratoryNumberSpecification : SentinelEntryFilterSpecification
+    public sealed class SentinelEntryByLaboratoryNumberSpecification : Specification<SentinelEntry>
     {
         private static readonly Regex LaboratoryNumberFormat = 
             new("SN-(\\d\\d\\d\\d)-(\\d\\d\\d\\d)", RegexOptions.None, TimeSpan.FromMilliseconds(100));
@@ -14,12 +15,17 @@ namespace NRZMyk.Services.Specifications
 
         public int SequentialNumber { get; }
 
-        public SentinelEntryByLaboratoryNumberSpecification(string laboratoryNumber, string protectKey) : base(protectKey)
+        public string ProtectKey { get; }
+
+        public SentinelEntryByLaboratoryNumberSpecification(string laboratoryNumber, string protectKey)
         {
             Year = ParseYear(laboratoryNumber);
             SequentialNumber = ParseSequentialNumber(laboratoryNumber);
-
-            AddCriteria(s => s.Year == Year && s.YearlySequentialEntryNumber == SequentialNumber);
+            ProtectKey = protectKey;
+            Query
+                .Where(s => s.ProtectKey == protectKey)
+                .Where(s => s.Year == Year && s.YearlySequentialEntryNumber == SequentialNumber)
+                .OrderByDescending(s => s.Id);
         }
 
         private static int ParseYear(string laboratoryNumber)

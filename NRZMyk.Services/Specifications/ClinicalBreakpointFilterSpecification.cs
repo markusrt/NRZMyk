@@ -3,11 +3,11 @@ using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Specifications
 {
-    public class ClinicalBreakpointFilterSpecification : BaseSpecification<ClinicalBreakpoint>
+    public sealed class ClinicalBreakpointFilterSpecification : Specification<ClinicalBreakpoint>
     {
         public ClinicalBreakpointFilterSpecification(Species? species)
-            : base(i => !species.HasValue || i.Species == species)
         {
+            Query.Where(i => !species.HasValue || i.Species == species);
         }
     }
 }
