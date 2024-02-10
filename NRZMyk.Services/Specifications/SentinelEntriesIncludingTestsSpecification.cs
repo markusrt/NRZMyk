@@ -3,12 +3,13 @@ using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Specifications
 {
-    public sealed class SentinelEntriesIncludingTestsSpecification : BaseSpecification<SentinelEntry>
+    public sealed class SentinelEntriesIncludingTestsSpecification : Specification<SentinelEntry>
     {
         public SentinelEntriesIncludingTestsSpecification()
         {
-            AddInclude(b => b.AntimicrobialSensitivityTests);
-            AddInclude($"{nameof(SentinelEntry.AntimicrobialSensitivityTests)}.{nameof(AntimicrobialSensitivityTest.ClinicalBreakpoint)}");
+            Query
+                .Include(b => b.AntimicrobialSensitivityTests)
+                .ThenInclude(s => s.ClinicalBreakpoint);
         }
     }
 }

@@ -4,13 +4,14 @@ using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Specifications
 {
-    public class RemoteAccountByObjectIdSpecification : BaseSpecification<RemoteAccount>
+    public sealed class RemoteAccountByObjectIdSpecification : Specification<RemoteAccount>
     {
         public Guid ObjectId { get; set; }
 
-        public RemoteAccountByObjectIdSpecification(Guid objectId) : base(a => a.ObjectId == objectId)
+        public RemoteAccountByObjectIdSpecification(Guid objectId)
         {
             ObjectId = objectId;
+            Query.Where(a => a.ObjectId == objectId);
         }
     }
 }

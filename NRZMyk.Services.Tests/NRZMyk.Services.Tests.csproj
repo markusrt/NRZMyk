@@ -33,6 +33,5 @@
 
   <ItemGroup>
     <Folder Include="ModelExtensions\" />
-    <Folder Include="Specifications\" />
   </ItemGroup>
 </Project>

@@ -3,11 +3,11 @@ using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Specifications
 {
-    public class AllSentinelEntriesFilterSpecification : BaseSpecification<SentinelEntry>
+    public sealed class AllSentinelEntriesFilterSpecification : Specification<SentinelEntry>
     {
         public AllSentinelEntriesFilterSpecification()
         {
-            ApplyOrderByDescending(s => s.Id);
+            Query.OrderByDescending(s => s.Id);
         }
     }
 }
