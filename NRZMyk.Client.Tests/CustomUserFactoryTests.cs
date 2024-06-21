@@ -73,8 +73,9 @@ public class CustomUserFactoryTests
         };
         var accessToken = new AccessTokenResult(AccessTokenResultStatus.Success, new AccessToken(), "");
         var options = new RemoteAuthenticationUserOptions {AuthenticationType = "Basic"};
-        var sut = CreateSut(out var tokenProvider, out _, out var logger);
+        var sut = CreateSut(out var tokenProvider, out var mockHttp, out var logger);
         tokenProvider.TokenProvider.RequestAccessToken().Returns(accessToken);
+        mockHttp.When(HttpMethod.Get, "http://localhost/api/user/connect").Respond(HttpStatusCode.NotFound);
 
         var claims = await sut.CreateUserAsync(remoteAccount, options).ConfigureAwait(true);
 
@@ -134,15 +135,5 @@ public class CustomUserFactoryTests
         clientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
         
         return new CustomUserFactory(accessTokenProviderAccessor, clientFactory, logger);
-    }
-
-    private class Product
-    {
-        public string Name { get; set; }
-    }
-
-    private class IdResponse
-    {
-        public int Id { get; set; }
     }
 }

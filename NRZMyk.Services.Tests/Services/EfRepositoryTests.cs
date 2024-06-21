@@ -122,10 +122,11 @@ public class EfRepositoryTests
         return new EfRepository<Organization>(_context);
     }
 
-    private class Org1Spec : BaseSpecification<Organization>
+    private sealed class Org1Spec : Specification<Organization>
     {
-        public Org1Spec() : base(o => o.Name == "Org1")
+        public Org1Spec()
         {
+            Query.Where(o => o.Name == "Org1");
         }
     }
 }

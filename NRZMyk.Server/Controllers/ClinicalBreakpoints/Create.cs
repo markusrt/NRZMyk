@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
@@ -12,7 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
 {
     [Authorize(Roles=nameof(Role.Admin))]
-    public class Create : BaseAsyncEndpoint<CreateClinicalBreakpointRequest, ClinicalBreakpoint>
+    public class Create : EndpointBaseAsync.WithRequest<CreateClinicalBreakpointRequest>.WithActionResult<ClinicalBreakpoint>
     {
         private readonly IAsyncRepository<ClinicalBreakpoint> _clinicalBreakpointRepository;
         private readonly IMapper _mapper;
@@ -29,7 +30,7 @@ namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
             OperationId = "clinical-breakpoints.create",
             Tags = new[] { "SharedEndpoints" })
         ]
-        public override async Task<ActionResult<ClinicalBreakpoint>> HandleAsync(CreateClinicalBreakpointRequest request)
+        public override async Task<ActionResult<ClinicalBreakpoint>> HandleAsync(CreateClinicalBreakpointRequest request, CancellationToken cancellationToken = new())
         {
             var newEntry = _mapper.Map<ClinicalBreakpoint>(request);
             return await _clinicalBreakpointRepository.AddAsync(newEntry).ConfigureAwait(false);

@@ -1,5 +1,4 @@
-using AutoMapper;
-using BlazorApplicationInsights;
+using BlazorApplicationInsights.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User))]
-    public class OtherSpecies : BaseAsyncEndpoint<List<string>>
+    public class OtherSpecies : EndpointBaseAsync.WithoutRequest.WithActionResult<List<string>>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
         private readonly List<string> _configuredOtherSpecies;
@@ -31,7 +32,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             OperationId = "sentinel-entries.OtherSpecies",
             Tags = new[] { "SentinelEndpoints" })
         ]
-        public override async Task<ActionResult<List<string>>> HandleAsync()
+        public override async Task<ActionResult<List<string>>> HandleAsync(CancellationToken cancellationToken = new())
         {
             var otherSpecies =  await _sentinelEntryRepository.Other(s => s.OtherIdentifiedSpecies).ConfigureAwait(false);
             return Ok(otherSpecies.Union(_configuredOtherSpecies).Distinct().OrderBy(s=>s));

@@ -8,8 +8,7 @@ namespace NRZMyk.Services.Export
 {
     public class ExportDefinition<T>
     {
-        private readonly List<Tuple<Expression<Func<T, object>>, string, Type>> exportedFields =
-            new List<Tuple<Expression<Func<T, object>>, string, Type>>();
+        private readonly List<Tuple<Func<T, object>, string, Type>> exportedFields = new();
 
         public void AddField<TMember>(Expression<Func<T, TMember>> field)
         {
@@ -18,8 +17,9 @@ namespace NRZMyk.Services.Export
 
         public void AddField<TMember>(Expression<Func<T, TMember>> field, string headerName)
         {
-            Expression<Func<T, object>> wrapExpression = arg => field.Compile()(arg);
-            exportedFields.Add(Tuple.Create(wrapExpression, headerName, typeof (TMember)));
+            var compiledField = field.Compile();
+            Func<T, object> wrappedExpression = arg => compiledField(arg);
+            exportedFields.Add(Tuple.Create(wrappedExpression, headerName, typeof(TMember)));
         }
 
         public DataTable ToDataTable(IEnumerable<T> entries)
@@ -91,7 +91,7 @@ namespace NRZMyk.Services.Export
             foreach (var exportedField in exportedFields)
             {
                 var columnName = exportedField.Item2;
-                var expression = exportedField.Item1.Compile();
+                var expression = exportedField.Item1;
                 row[columnName] = expression(entry) ?? DBNull.Value;
             }
             dataTable.Rows.Add(row);
