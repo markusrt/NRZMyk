@@ -6,59 +6,35 @@ using System.Collections.Generic;
 using FluentAssertions;
 using NRZMyk.Services.Services;
 
-namespace NRZMyk.Services.Tests.Data;
+namespace NRZMyk.Services.Tests.Services;
 
-public class OrganizationTests
+public class ReminderServiceTests
 {
-    [Test]
-    public void CheckDataAndSendReminders_NoDataEntered_Last12Months_SendEmail()
-    {
-        var org = new Organization
-        {
-            Id = 0,
-            Name = null,
-            Members = null,
-            Email = null,
-            DispatchMonth = MonthToDispatch.None,
-            LatestDataEntryDate = default,
-            LatestStrainArrivalDate = default
-        };
-        org.Email = "example@example.com";
-        org.DispatchMonth = MonthToDispatch.January;
-        org.LatestDataEntryDate = new DateTime(2022, 1, 1);
-        org.LatestStrainArrivalDate = new DateTime(2022, 1, 15);
-
-        var emailService = Substitute.For<IEmailNotificationService>();
-
-        org.CheckDataAndSendReminders(emailService);
-
-        emailService.Received(1).SendEmail("example@example.com", "No data was entered during the last 12 months.");
-    }
-
     [Test]
     public void CheckDataAndSendReminders_DataEntered_NoStrainArrived_SendEmail()
     {
+        var emailNotificationServiceMock = Substitute.For<IEmailNotificationService>();
+        var sut = CreateSut(emailNotificationServiceMock);
         var org = CreateOrganization();
         org.DispatchMonth = MonthToDispatch.January;
         org.LatestDataEntryDate = new DateTime(2023, 1, 5);
         org.LatestStrainArrivalDate = new DateTime(2022, 12, 20);
 
-        var emailService = Substitute.For<IEmailNotificationService>();
+        sut.CheckDataAndSendReminders(org);
 
-        org.CheckDataAndSendReminders(emailService);
-
-        emailService.Received(1).SendEmail("example@example.com", "Data was entered, but no strain has arrived yet.");
+        emailNotificationServiceMock.Received(1).SendEmail("example@example.com", "Data was entered, but no strain has arrived yet.");
     }
 
     [Test]
     public void WhenExpectedNextSendingIsThisMonth_ShowsHumanReadableInformation()
     {
+        var sut = CreateSut();
         var org = CreateOrganization();
         var today = DateTime.Today;
         org.DispatchMonth = (MonthToDispatch)today.Month;
         org.LatestStrainArrivalDate = today.Subtract(TimeSpan.FromDays(200));
 
-        org.ExpectedNextSending.Should().Be("diesen Monat");
+        sut.HumanReadableExpectedNextSending(org).Should().Be("diesen Monat");
     }
 
     [TestCase(1, 6, "in 5 Monaten")]
@@ -74,12 +50,13 @@ public class OrganizationTests
     [TestCase(10, 2, "in einem Monat")]
     public void WhenExpectedNextSendingIsChecked_ShowsHumanReadableInformation(int monthSinceLatestStrainArrival, int monthUntilNextArrival, string expectedNextSending)
     {
+        var sut = CreateSut();
         var org = CreateOrganization();
         var todayInSixMonths = DateTime.Today.AddMonths(monthUntilNextArrival);
         org.DispatchMonth = (MonthToDispatch)todayInSixMonths.Month;
-        org.LatestStrainArrivalDate = DateTime.Today.AddMonths(-1*monthSinceLatestStrainArrival);
+        org.LatestStrainArrivalDate = DateTime.Today.AddMonths(-1 * monthSinceLatestStrainArrival);
 
-        org.ExpectedNextSending.Should().Be(expectedNextSending);
+        sut.HumanReadableExpectedNextSending(org).Should().Be(expectedNextSending);
     }
 
     private static Organization CreateOrganization()
@@ -92,5 +69,10 @@ public class OrganizationTests
             Email = "example@example.com",
             DispatchMonth = MonthToDispatch.None,
         };
+    }
+
+    private ReminderService CreateSut(IEmailNotificationService emailNotificationServiceMock = null)
+    {
+        return new ReminderService(emailNotificationServiceMock ?? Substitute.For<IEmailNotificationService>());
     }
 }
