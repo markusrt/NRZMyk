@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Text.Json.Serialization;
 using Humanizer;
@@ -16,8 +18,13 @@ namespace NRZMyk.Services.Data.Entities
         [JsonIgnore] public ICollection<RemoteAccount> Members { get; set; }
 
         public string Email { get; set; }
+
         public MonthToDispatch DispatchMonth { get; set; }
-        public DateTime LatestDataEntryDate { get; set; }
-        public DateTime LatestStrainArrivalDate { get; set; }
+
+        [NotMapped]
+        public DateTime? LatestDataEntryDate { get; set; }
+
+        [NotMapped]
+        public DateTime? LatestStrainArrivalDate { get; set; }
     }
 }
