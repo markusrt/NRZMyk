@@ -26,7 +26,7 @@ public class ReminderServiceTests
     }
 
     [Test]
-    public void WhenExpectedNextSendingIsThisMonth_ShowsHumanReadableInformation()
+    public void WhenExpectedNextSendingIsThisMonth_HumanReadableExpectedNextSendingShowsValidInformation()
     {
         var sut = CreateSut();
         var org = CreateOrganization();
@@ -48,15 +48,37 @@ public class ReminderServiceTests
     [TestCase(18, 6, "vor einem Jahr")]
     [TestCase(48, 6, "vor 3 Jahren")]
     [TestCase(10, 2, "in einem Monat")]
-    public void WhenExpectedNextSendingIsChecked_ShowsHumanReadableInformation(int monthSinceLatestStrainArrival, int monthUntilNextArrival, string expectedNextSending)
+    public void WhenExpectedNextSendingIsChecked_HumanReadableExpectedNextSendingShowsValidInformation(int monthSinceLatestStrainArrival, int monthUntilNextArrival, string expectedNextSending)
     {
         var sut = CreateSut();
         var org = CreateOrganization();
-        var todayInSixMonths = DateTime.Today.AddMonths(monthUntilNextArrival);
-        org.DispatchMonth = (MonthToDispatch)todayInSixMonths.Month;
+        var expectedNextArrival = DateTime.Today.AddMonths(monthUntilNextArrival);
+        org.DispatchMonth = (MonthToDispatch)expectedNextArrival.Month;
         org.LatestStrainArrivalDate = DateTime.Today.AddMonths(-1 * monthSinceLatestStrainArrival);
 
         sut.HumanReadableExpectedNextSending(org).Should().Be(expectedNextSending);
+    }
+
+    [Test]
+    public void WhenMonthToDispatchIsNone_HumanReadableExpectedNextSendingShowsNoDispatchMonthSet()
+    {
+        var sut = CreateSut();
+        var org = CreateOrganization();
+        org.DispatchMonth = MonthToDispatch.None;
+        org.LatestStrainArrivalDate = DateTime.MinValue;
+
+        sut.HumanReadableExpectedNextSending(org).Should().Be("Kein Einsendemonat festgelegt");
+    }
+
+    [Test]
+    public void WhenMonthToDispatchIsNone_CalculateExpectedNextSendingReturnsNull()
+    {
+        var sut = CreateSut();
+        var org = CreateOrganization();
+        org.DispatchMonth = MonthToDispatch.None;
+        org.LatestStrainArrivalDate = DateTime.MinValue;
+
+        sut.CalculateExpectedNextSending(org).Should().BeNull();
     }
 
     private static Organization CreateOrganization()

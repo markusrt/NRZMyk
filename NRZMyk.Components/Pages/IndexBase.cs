@@ -12,16 +12,20 @@ namespace NRZMyk.Components.Pages
         private IAccountService AccountService { get; set; } = default!;
 
         [Inject]
+        internal IReminderService ReminderService { get; set; } = default!;
+
+        [Inject]
         private ILogger<IndexBase> Logger { get; set; } = default!;
 
-        internal ICollection<Organization> Organizations { get; set; } = default!;
+        internal ICollection<Organization> Organizations { get; private set; } = new List<Organization>();
         
-        internal SaveState SaveState { get; set; }
-
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Now loading... /Index");
-            Organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
+            if (!Organizations.Any())
+            {
+                Organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
+            }
             await base.OnInitializedAsync().ConfigureAwait(true);
         }
     }

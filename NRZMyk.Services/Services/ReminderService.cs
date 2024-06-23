@@ -16,9 +16,17 @@ public class ReminderService : IReminderService
 
     public string HumanReadableExpectedNextSending(Organization organization)
     {
+        
+
         var expectedNextSending = CalculateExpectedNextSending(organization);
-        var isExpectedThisMonth = expectedNextSending.Month == DateTime.Today.Month &&
-                                  expectedNextSending.Year == DateTime.Today.Year;
+
+        if (expectedNextSending == null)
+        {
+            return "Kein Einsendemonat festgelegt";
+        }
+
+        var isExpectedThisMonth = expectedNextSending?.Month == DateTime.Today.Month &&
+                                  expectedNextSending?.Year == DateTime.Today.Year;
 
         return isExpectedThisMonth
             ? "diesen Monat"
@@ -26,11 +34,16 @@ public class ReminderService : IReminderService
     }
 
 
-    public DateTime CalculateExpectedNextSending(Organization organization)
+    public DateTime? CalculateExpectedNextSending(Organization organization)
     {
+        if (organization.DispatchMonth == MonthToDispatch.None || organization.LatestStrainArrivalDate == null)
+        {
+            return null;
+        }
+
         var today = DateTime.Today;
         var expectedArrival = new DateTime(today.Year, (int)organization.DispatchMonth, 15);
-        var timeSinceLastArrival = expectedArrival.Subtract(organization.LatestStrainArrivalDate);
+        var timeSinceLastArrival = expectedArrival.Subtract(organization.LatestStrainArrivalDate.Value);
 
         if (timeSinceLastArrival.TotalDays < 365)
         {
@@ -41,7 +54,7 @@ public class ReminderService : IReminderService
         }
         else
         {
-            expectedArrival = new DateTime(Math.Min(today.Year - 1, organization.LatestStrainArrivalDate.Year),
+            expectedArrival = new DateTime(Math.Min(today.Year - 1, organization.LatestStrainArrivalDate.Value.Year),
                 (int)organization.DispatchMonth, 21);
         }
 
