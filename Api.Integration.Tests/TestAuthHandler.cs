@@ -24,6 +24,7 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
         var claims = new[] { new Claim(NRZMyk.Services.Models.ClaimTypes.Organization, "1") };
         var identity = new ClaimsIdentity(claims, AuthenticationScheme);
         identity.AddClaim(new Claim(identity.RoleClaimType, Role.SuperUser.ToString()));
+        identity.AddClaim(new Claim(identity.RoleClaimType, Role.User.ToString()));
         var principal = new ClaimsPrincipal(identity);
         var ticket = new AuthenticationTicket(principal, AuthenticationScheme);
 
