@@ -22,10 +22,7 @@ namespace NRZMyk.Components.Pages
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Now loading... /Index");
-            if (!Organizations.Any())
-            {
-                Organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
-            }
+            Organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
             await base.OnInitializedAsync().ConfigureAwait(true);
         }
     }

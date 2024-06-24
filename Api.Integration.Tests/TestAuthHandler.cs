@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NRZMyk.Services.Models;
+using NRZMyk.Services.Utils;
 
 namespace Api.Integration.Tests;
 
@@ -21,7 +23,7 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
     {
         var claims = new[] { new Claim(NRZMyk.Services.Models.ClaimTypes.Organization, "1") };
         var identity = new ClaimsIdentity(claims, AuthenticationScheme);
-        identity.AddClaim(new Claim(identity.RoleClaimType, "User"));
+        identity.AddClaim(new Claim(identity.RoleClaimType, Role.SuperUser.ToString()));
         var principal = new ClaimsPrincipal(identity);
         var ticket = new AuthenticationTicket(principal, AuthenticationScheme);
 
