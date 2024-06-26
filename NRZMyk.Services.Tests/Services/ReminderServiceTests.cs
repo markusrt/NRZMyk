@@ -93,7 +93,7 @@ public class ReminderServiceTests
         };
     }
 
-    private ReminderService CreateSut(IEmailNotificationService emailNotificationServiceMock = null)
+    private static ReminderService CreateSut(IEmailNotificationService emailNotificationServiceMock = null)
     {
         return new ReminderService(emailNotificationServiceMock ?? Substitute.For<IEmailNotificationService>());
     }

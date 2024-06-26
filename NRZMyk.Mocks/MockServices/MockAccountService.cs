@@ -44,7 +44,7 @@ namespace NRZMyk.Mocks.MockServices
             {
                 var randomDayOffset = Random.Next(365 * 2);
                 var latestStrainArrivalDate = DateTime.Today.AddDays(-1 * randomDayOffset);
-                var latestDataEntryDate = latestStrainArrivalDate.AddDays(randomDayOffset/2);
+                var latestDataEntryDate = latestStrainArrivalDate.AddDays(randomDayOffset/2.0);
                 _organization.Add(new Organization
                 {
                     Id = id++,
