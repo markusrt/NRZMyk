@@ -6,6 +6,7 @@ using BlazorApplicationInsights;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using NRZMyk.Client.Services;
 using NRZMyk.Services.Interfaces;
+using System.Globalization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<NRZMyk.Components.App>("#app");
@@ -41,5 +42,6 @@ builder.Services.AddMsalAuthentication(options =>
 }).AddAccountClaimsPrincipalFactory<RemoteAuthenticationState, RemoteUserAccount, CustomUserFactory>();
 
 // Custom services end
-
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("de-DE");
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("de-DE");
 await builder.Build().RunAsync().ConfigureAwait(true);
