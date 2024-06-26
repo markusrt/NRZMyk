@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using NRZMyk.Client;
-using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Services;
-using AutoMapper;
 using BlazorApplicationInsights;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using NRZMyk.Client.Services;
 using NRZMyk.Services.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -30,6 +29,8 @@ builder.Services.AddTransient<ISentinelEntryService, SentinelEntryServiceImpl>()
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IClinicalBreakpointService, ClinicalBreakpointService>();
 builder.Services.AddTransient<IMicStepsService, MicStepsService>();
+builder.Services.AddTransient<IReminderService, ReminderService>();
+builder.Services.AddTransient<IEmailNotificationService, ClientEmailNotificationService>();
 
 builder.Services.AddMsalAuthentication(options =>
 {

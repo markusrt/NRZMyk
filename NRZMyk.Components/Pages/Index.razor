@@ -57,9 +57,13 @@ else
                         <tr>
                             <th scope="col">Monat</th>
                             <th scope="col">Mikrobiologie</th>
-                            <th scope="col">Letzte Datenerfassung</th>
-                            <th scope="col">Letzte Einsendung</th>
-                            <th scope="col">Nächstes Einsendefenster</th>
+                                <AuthorizeView Roles="@nameof(Role.SuperUser)" Context="innerContext">
+                                <Authorized>
+                                    <th scope="col">Letzte Datenerfassung</th>
+                                    <th scope="col">Letzte Einsendung</th>
+                                    <th scope="col">Nächstes Einsendefenster</th>
+                                </Authorized>
+                            </AuthorizeView>
                         </tr>
                         </thead>
                         <tbody>
@@ -68,18 +72,22 @@ else
                             <tr>
                                 <td>@EnumUtils.GetEnumDescription(organization.DispatchMonth)</td>
                                 <td>@organization.Name</td>
-                                <td>@organization.LatestDataEntryDate.ToReportFormat("-")</td>
-                                <td>@organization.LatestStrainArrivalDate.ToReportFormat("-")</td>
-                                <td>
-                                    @if (ReminderService.CalculateExpectedNextSending(organization) < DateTime.Today)
-                                    {
-                                        <span class="badge bg-warning">@ReminderService.HumanReadableExpectedNextSending(organization)</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-success">@ReminderService.HumanReadableExpectedNextSending(organization)</span>
-                                    }
-                                </td>
+                                    <AuthorizeView Roles="@nameof(Role.SuperUser)" Context="innerContext">
+                                        <Authorized>
+                                            <td>@organization.LatestDataEntryDate.ToReportFormat("-")</td>
+                                            <td>@organization.LatestStrainArrivalDate.ToReportFormat("-")</td>
+                                            <td>
+                                                @if (ReminderService.CalculateExpectedNextSending(organization) < DateTime.Today)
+                                                {
+                                                    <span class="badge bg-warning">@ReminderService.HumanReadableExpectedNextSending(organization)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success">@ReminderService.HumanReadableExpectedNextSending(organization)</span>
+                                                }
+                                            </td>
+                                        </Authorized>
+                                </AuthorizeView>
                             </tr>
                         }
                         </tbody>

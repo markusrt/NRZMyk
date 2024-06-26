@@ -1,13 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Graph;
 using NRZMyk.Components.Helpers;
-using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Services;
+using Organization = NRZMyk.Services.Data.Entities.Organization;
 
 namespace NRZMyk.Components.Pages
 {
     public class IndexBase : BlazorComponent
     {
+        [Inject]
+        AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
         [Inject]
         private IAccountService AccountService { get; set; } = default!;
 
@@ -22,7 +27,11 @@ namespace NRZMyk.Components.Pages
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Now loading... /Index");
-            Organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
+            var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            if (authenticationState.User.Identity.IsAuthenticated)
+            {
+                Organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
+            }
             await base.OnInitializedAsync().ConfigureAwait(true);
         }
     }
