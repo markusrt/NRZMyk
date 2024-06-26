@@ -16,8 +16,6 @@ public class ReminderService : IReminderService
 
     public string HumanReadableExpectedNextSending(Organization organization)
     {
-        
-
         var expectedNextSending = CalculateExpectedNextSending(organization);
 
         if (expectedNextSending == null)
@@ -30,20 +28,20 @@ public class ReminderService : IReminderService
 
         return isExpectedThisMonth
             ? "diesen Monat"
-            : expectedNextSending.Humanize(culture: CultureInfo.GetCultureInfo("de-de"));
+            : expectedNextSending.Humanize(culture: CultureInfo.GetCultureInfo("de"));
     }
 
 
     public DateTime? CalculateExpectedNextSending(Organization organization)
     {
-        if (organization.DispatchMonth == MonthToDispatch.None || organization.LatestStrainArrivalDate == null)
+        if (organization.DispatchMonth == MonthToDispatch.None || organization.LatestCryoDate == null)
         {
             return null;
         }
 
         var today = DateTime.Today;
         var expectedArrival = new DateTime(today.Year, (int)organization.DispatchMonth, 15);
-        var timeSinceLastArrival = expectedArrival.Subtract(organization.LatestStrainArrivalDate.Value);
+        var timeSinceLastArrival = expectedArrival.Subtract(organization.LatestCryoDate.Value);
 
         if (timeSinceLastArrival.TotalDays < 365)
         {
@@ -54,7 +52,7 @@ public class ReminderService : IReminderService
         }
         else
         {
-            expectedArrival = new DateTime(Math.Min(today.Year - 1, organization.LatestStrainArrivalDate.Value.Year),
+            expectedArrival = new DateTime(Math.Min(today.Year - 1, organization.LatestCryoDate.Value.Year),
                 (int)organization.DispatchMonth, 21);
         }
 

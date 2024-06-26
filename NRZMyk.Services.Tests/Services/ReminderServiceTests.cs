@@ -17,8 +17,8 @@ public class ReminderServiceTests
         var sut = CreateSut(emailNotificationServiceMock);
         var org = CreateOrganization();
         org.DispatchMonth = MonthToDispatch.January;
-        org.LatestDataEntryDate = new DateTime(2023, 1, 5);
-        org.LatestStrainArrivalDate = new DateTime(2022, 12, 20);
+        org.LatestSamplingDate = new DateTime(2023, 1, 5);
+        org.LatestCryoDate = new DateTime(2022, 12, 20);
 
         sut.CheckDataAndSendReminders(org);
 
@@ -32,7 +32,7 @@ public class ReminderServiceTests
         var org = CreateOrganization();
         var today = DateTime.Today;
         org.DispatchMonth = (MonthToDispatch)today.Month;
-        org.LatestStrainArrivalDate = today.Subtract(TimeSpan.FromDays(200));
+        org.LatestCryoDate = today.Subtract(TimeSpan.FromDays(200));
 
         sut.HumanReadableExpectedNextSending(org).Should().Be("diesen Monat");
     }
@@ -54,7 +54,7 @@ public class ReminderServiceTests
         var org = CreateOrganization();
         var expectedNextArrival = DateTime.Today.AddMonths(monthUntilNextArrival);
         org.DispatchMonth = (MonthToDispatch)expectedNextArrival.Month;
-        org.LatestStrainArrivalDate = DateTime.Today.AddMonths(-1 * monthSinceLatestStrainArrival);
+        org.LatestCryoDate = DateTime.Today.AddMonths(-1 * monthSinceLatestStrainArrival);
 
         sut.HumanReadableExpectedNextSending(org).Should().Be(expectedNextSending);
     }
@@ -65,7 +65,7 @@ public class ReminderServiceTests
         var sut = CreateSut();
         var org = CreateOrganization();
         org.DispatchMonth = MonthToDispatch.None;
-        org.LatestStrainArrivalDate = DateTime.MinValue;
+        org.LatestCryoDate = DateTime.MinValue;
 
         sut.HumanReadableExpectedNextSending(org).Should().Be("Kein Einsendemonat festgelegt");
     }
@@ -76,7 +76,7 @@ public class ReminderServiceTests
         var sut = CreateSut();
         var org = CreateOrganization();
         org.DispatchMonth = MonthToDispatch.None;
-        org.LatestStrainArrivalDate = DateTime.MinValue;
+        org.LatestCryoDate = DateTime.MinValue;
 
         sut.CalculateExpectedNextSending(org).Should().BeNull();
     }

@@ -74,8 +74,8 @@ else
                                 <td>@organization.Name</td>
                                     <AuthorizeView Roles="@nameof(Role.SuperUser)" Context="innerContext">
                                         <Authorized>
-                                            <td>@organization.LatestDataEntryDate.ToReportFormat("-")</td>
-                                            <td>@organization.LatestStrainArrivalDate.ToReportFormat("-")</td>
+                                            <td>@organization.LatestSamplingDate.ToReportFormat("-")</td>
+                                            <td>@organization.LatestCryoDate.ToReportFormat("-")</td>
                                             <td>
                                                 @if (ReminderService.CalculateExpectedNextSending(organization) < DateTime.Today)
                                                 {

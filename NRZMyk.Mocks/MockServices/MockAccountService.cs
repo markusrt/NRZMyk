@@ -50,8 +50,8 @@ namespace NRZMyk.Mocks.MockServices
                     Id = id++,
                     Name = organization.Item1,
                     DispatchMonth = organization.Item2,
-                    LatestStrainArrivalDate = latestStrainArrivalDate,
-                    LatestDataEntryDate = latestDataEntryDate
+                    LatestCryoDate = latestStrainArrivalDate,
+                    LatestSamplingDate = latestDataEntryDate
                 });
             }
         }

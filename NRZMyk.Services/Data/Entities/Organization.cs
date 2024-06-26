@@ -22,9 +22,9 @@ namespace NRZMyk.Services.Data.Entities
         public MonthToDispatch DispatchMonth { get; set; }
 
         [NotMapped]
-        public DateTime? LatestDataEntryDate { get; set; }
+        public DateTime? LatestSamplingDate { get; set; }
 
         [NotMapped]
-        public DateTime? LatestStrainArrivalDate { get; set; }
+        public DateTime? LatestCryoDate { get; set; }
     }
 }
