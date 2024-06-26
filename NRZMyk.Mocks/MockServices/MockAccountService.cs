@@ -12,9 +12,9 @@ namespace NRZMyk.Mocks.MockServices
     {
         public static int Delay = 2000;
 
-        public static Random Random = new Random();
+        private static readonly Random Random = new();
 
-        private static List<Tuple<string, MonthToDispatch>> Organizations = new List<Tuple<string, MonthToDispatch>>
+        private static readonly List<Tuple<string, MonthToDispatch>> Organizations = new()
         {
             Tuple.Create("München (TU)", MonthToDispatch.January),
             Tuple.Create("Düsseldorf", MonthToDispatch.February),
@@ -30,9 +30,9 @@ namespace NRZMyk.Mocks.MockServices
             Tuple.Create("Würzburg", MonthToDispatch.December)
         };
 
-        private List<RemoteAccount> _accounts = new List<RemoteAccount>();
+        private List<RemoteAccount> _accounts = new();
 
-        private List<Organization> _organization = new List<Organization>();
+        private List<Organization> _organization = new();
 
         public MockAccountService()
         {
@@ -44,7 +44,7 @@ namespace NRZMyk.Mocks.MockServices
             {
                 var randomDayOffset = Random.Next(365 * 2);
                 var latestStrainArrivalDate = DateTime.Today.AddDays(-1 * randomDayOffset);
-                var latestDataEntryDate = latestStrainArrivalDate.AddDays((int)(randomDayOffset/2));
+                var latestDataEntryDate = latestStrainArrivalDate.AddDays(randomDayOffset/2);
                 _organization.Add(new Organization
                 {
                     Id = id++,
