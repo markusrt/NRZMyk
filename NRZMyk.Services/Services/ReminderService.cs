@@ -23,8 +23,8 @@ public class ReminderService : IReminderService
             return "Kein Einsendemonat festgelegt";
         }
 
-        var isExpectedThisMonth = expectedNextSending?.Month == DateTime.Today.Month &&
-                                  expectedNextSending?.Year == DateTime.Today.Year;
+        var isExpectedThisMonth = expectedNextSending.Value.Month == DateTime.Today.Month &&
+                                  expectedNextSending.Value.Year == DateTime.Today.Year;
 
         return isExpectedThisMonth
             ? "diesen Monat"

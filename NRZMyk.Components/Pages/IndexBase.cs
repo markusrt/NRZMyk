@@ -11,7 +11,7 @@ namespace NRZMyk.Components.Pages
     public class IndexBase : BlazorComponent
     {
         [Inject]
-        AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+        private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
         [Inject]
         private IAccountService AccountService { get; set; } = default!;

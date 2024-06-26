@@ -30,9 +30,9 @@ namespace NRZMyk.Mocks.MockServices
             Tuple.Create("Würzburg", MonthToDispatch.December)
         };
 
-        private List<RemoteAccount> _accounts = new();
+        private readonly List<RemoteAccount> _accounts = new();
 
-        private List<Organization> _organization = new();
+        private readonly List<Organization> _organization = new();
 
         public MockAccountService()
         {

@@ -1,12 +1,7 @@
 ﻿using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Bunit;
 using Bunit.TestDoubles;
 using FluentAssertions;
-using FluentAssertions.Common;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -17,7 +12,6 @@ using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
 using NSubstitute;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using TestContext = Bunit.TestContext;
 
 namespace NRZMyk.Components.Tests.Pages
@@ -67,7 +61,7 @@ namespace NRZMyk.Components.Tests.Pages
             _renderedComponent.FindAll("tr").Should().HaveCount(organizations.Count+1);
         }
 
-        private IRenderedComponent<Index> CreateSut(TestContext context)
+        private static IRenderedComponent<Index> CreateSut(TestContext context)
         {
             return context.RenderComponent<Index>();
         }
