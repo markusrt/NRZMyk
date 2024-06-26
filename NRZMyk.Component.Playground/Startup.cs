@@ -35,6 +35,8 @@ namespace NRZMyk.Components.Playground
             services.AddSingleton<IAccountService, MockAccountService>();
             services.AddSingleton<IClinicalBreakpointService, MockClinicalBreakpointService>();
             services.AddSingleton<IMicStepsService, MicStepsService>();
+            services.AddSingleton<IEmailNotificationService, MockEmailNotificationService>();
+            services.AddSingleton<IReminderService, ReminderService>();
 
             services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
             services.AddScoped<SignOutSessionStateManager>();

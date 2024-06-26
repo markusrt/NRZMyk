@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <VersionPrefix>1.0.$([System.DateTime]::UtcNow.ToString(`yyMM`)).$([System.DateTime]::UtcNow.ToString(`ddHH`))</VersionPrefix>
+    <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
+    <EnableNETAnalyzers>False</EnableNETAnalyzers>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +32,7 @@
 
   <ItemGroup>
     <Watch Remove="Helpers\LoadState.cs" />
+    <Watch Remove="Pages\IndexBase.cs" />
     <Watch Remove="Pages\SentinelEntryPage\CryoView.razor" />
     <Watch Remove="Pages\SentinelEntryPage\CryoViewBase.cs" />
     <Watch Remove="Pages\SentinelEntryPage\Details.razor" />

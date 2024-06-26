@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NRZMyk.Services.Data.Entities;
@@ -11,25 +12,48 @@ namespace NRZMyk.Mocks.MockServices
     {
         public static int Delay = 2000;
 
-        private List<RemoteAccount> _accounts = new List<RemoteAccount>();
+        private static readonly Random Random = new();
 
-        private List<Organization> _organization = new List<Organization>();
+        private static readonly List<Tuple<string, MonthToDispatch>> Organizations = new()
+        {
+            Tuple.Create("München (TU)", MonthToDispatch.January),
+            Tuple.Create("Düsseldorf", MonthToDispatch.February),
+            Tuple.Create("München (LMU)", MonthToDispatch.March),
+            Tuple.Create("Essen", MonthToDispatch.April),
+            Tuple.Create("Freiburg", MonthToDispatch.May),
+            Tuple.Create("Berlin", MonthToDispatch.June),
+            Tuple.Create("Oldenburg", MonthToDispatch.July),
+            Tuple.Create("Frankfurt", MonthToDispatch.August),
+            Tuple.Create("Erlangen", MonthToDispatch.September),
+            Tuple.Create("Aachen", MonthToDispatch.October),
+            Tuple.Create("Nürnberg", MonthToDispatch.November),
+            Tuple.Create("Würzburg", MonthToDispatch.December)
+        };
+
+        private readonly List<RemoteAccount> _accounts = new();
+
+        private readonly List<Organization> _organization = new();
 
         public MockAccountService()
         {
             var filler = new Filler<RemoteAccount>();
             _accounts.AddRange(filler.Create(10));
 
-            _organization.Add(new Organization
+            int id = 1;
+            foreach (var organization in Organizations)
             {
-                Id = 1,
-                Name = "Organization 1"
-            });
-            _organization.Add(new Organization
-            {
-                Id = 2,
-                Name = "Organization 2"
-            });
+                var randomDayOffset = Random.Next(365 * 2);
+                var latestStrainArrivalDate = DateTime.Today.AddDays(-1 * randomDayOffset);
+                var latestDataEntryDate = latestStrainArrivalDate.AddDays(randomDayOffset/2.0);
+                _organization.Add(new Organization
+                {
+                    Id = id++,
+                    Name = organization.Item1,
+                    DispatchMonth = organization.Item2,
+                    LatestCryoDate = latestStrainArrivalDate,
+                    LatestSamplingDate = latestDataEntryDate
+                });
+            }
         }
 
         public async Task<ICollection<RemoteAccount>> ListAccounts()

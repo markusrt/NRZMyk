@@ -50,5 +50,9 @@ namespace NRZMyk.Services.Services
 
             }
         }
+
+        public void SendEmail(string email, string message)
+        {
+        }
     }
 }
