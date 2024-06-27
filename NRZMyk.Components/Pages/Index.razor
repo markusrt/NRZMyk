@@ -1,95 +1,101 @@
 ﻿@page "/"
 @using NRZMyk.Services.Models
+@using NRZMyk.Services.Utils
+@using Humanizer
 
-<p>
-    Das vom Robert Koch-Institut und dem Bundesministerium für Gesundheit berufene
-    <strong>Nationale Referenzzentrum für Invasive Pilzinfektionen (NRZMyk)</strong> ist
-    Ansprechpartner für Ärzte und Mikrobiologen aus ganz Deutschland bei Fragen
-    zur Diagnostik und Behandlung invasiver Pilzinfektionen. Neben einer gezielten
-    Beratung bietet das NRZMyk auch spezielle diagnostische Verfahren zum Nachweis
-    von invasiven Pilzerkrankungen an. Es kooperiert dabei mit anderen Referenzlabors weltweit.
-</p>
+@inherits IndexBase
 
-<p>
-    Das NRZMyk ist angesiedelt am
-    <a href="http://www.leibniz-hki.de" rel="noopener" target="_blank">Leibniz-Institut für Naturstoff-Forschung und
-        Infektionsbiologie - Hans-Knöll-Institut (HKI)</a>
-    in Jena. Einige Untersuchungen werden am
-    <a href="https://www.hygiene.uni-wuerzburg.de/startseite/" rel="noopener" target="_blank">Institut für Hygiene und
-        Mikrobiologie</a>
-    der Universität Würzburg (Lehrstuhl für Medizinische Mikrobiologie &amp; Mykologie, Prof. Kurzai) durchgeführt.
-</p>
+@if (Organizations == null)
+{
+    <p><em>Lädt...</em></p>
+}
+else
+{
+    <p>
+        Das vom Robert Koch-Institut und dem Bundesministerium für Gesundheit berufene
+        <strong>Nationale Referenzzentrum für Invasive Pilzinfektionen (NRZMyk)</strong> ist
+        Ansprechpartner für Ärzte und Mikrobiologen aus ganz Deutschland bei Fragen
+        zur Diagnostik und Behandlung invasiver Pilzinfektionen. Neben einer gezielten
+        Beratung bietet das NRZMyk auch spezielle diagnostische Verfahren zum Nachweis
+        von invasiven Pilzerkrankungen an. Es kooperiert dabei mit anderen Referenzlabors weltweit.
+    </p>
 
-<AuthorizeView Roles="@nameof(Role.Guest)">
-    <Authorized>
-        <div class="alert alert-warning mr-5 ml-5" role="alert">
-            <span class="oi oi-lock-locked mr-2" aria-hidden="true"></span>
-            <strong>Eingeschränkter Gastzugang!</strong>
-            <p>
-                Sie sind als <string>Gast</string> mit dem Benutzernamen <i>@context.User.Identity.Name</i> angemeldet.
-                Bitte <a
-                    href="mailto:alexander.aldejohann@hygiene.uni-wuerzburg.de?subject=Sentinel Netzwerk: Freischaltung des Accounts [@context.User.Identity.Name]">kontaktieren
-                    Sie das koordinierende Labor</a>
-                um ihren Account für die Datenerfassung freizuschalten
-            </p>
-        </div>
-    </Authorized>
-</AuthorizeView>
+    <p>
+        Das NRZMyk ist angesiedelt am
+        <a href="http://www.leibniz-hki.de" rel="noopener" target="_blank">Leibniz-Institut für Naturstoff-Forschung und
+            Infektionsbiologie - Hans-Knöll-Institut (HKI)</a>
+        in Jena. Einige Untersuchungen werden am
+        <a href="https://www.hygiene.uni-wuerzburg.de/startseite/" rel="noopener" target="_blank">Institut für Hygiene und
+            Mikrobiologie</a>
+        der Universität Würzburg (Lehrstuhl für Medizinische Mikrobiologie &amp; Mykologie, Prof. Kurzai) durchgeführt.
+    </p>
 
-<AuthorizeView Roles="@nameof(Role.User)">
-    <Authorized>
-        <h2>Feste Monate der Einsendung</h2>
-        <div class="row">
-            <div class="col-9">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">Monat</th>
-                        <th scope="col">Mikrobiologie</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Januar</td><td>München (TU)</td>
-                    </tr>
-                    <tr>
-                        <td>Februar</td><td>Düsseldorf</td>
-                    </tr>
-                    <tr>
-                        <td>März</td><td>München (LMU)</td>
-                    </tr>
-                    <tr>
-                        <td>April</td><td>Essen</td>
-                    </tr>
-                    <tr>
-                        <td>Mai</td><td>Freiburg</td>
-                    </tr>
-                    <tr>
-                        <td>Juni</td><td>Berlin</td>
-                    </tr>
-                    <tr>
-                        <td>Juli</td><td>Oldenburg</td>
-                    </tr>
-                    <tr>
-                        <td>August</td><td>Frankfurt</td>
-                    </tr>
-                    <tr>
-                        <td>September</td><td>Erlangen</td>
-                    </tr>
-                    <tr>
-                        <td>Oktober</td><td>Aachen</td>
-                    </tr>
-                    <tr>
-                        <td>November</td><td>Nürnberg</td>
-                    </tr>
-                    <tr>
-                        <td>Dezember</td><td>Würzburg</td>
-                    </tr>
-                    </tbody>
-                </table>
+    <AuthorizeView Roles="@nameof(Role.Guest)">
+        <Authorized>
+            <div class="alert alert-warning mr-5 ml-5" role="alert">
+                <span class="oi oi-lock-locked mr-2" aria-hidden="true"></span>
+                <strong>Eingeschränkter Gastzugang!</strong>
+                <p>
+                    Sie sind als <string>Gast</string> mit dem Benutzernamen <i>@context.User.Identity.Name</i> angemeldet.
+                    Bitte
+                    <a
+                        href="mailto:alexander.aldejohann@hygiene.uni-wuerzburg.de?subject=Sentinel Netzwerk: Freischaltung des Accounts [@context.User.Identity.Name]">kontaktieren
+                        Sie das koordinierende Labor</a>
+                    um ihren Account für die Datenerfassung freizuschalten
+                </p>
             </div>
-        </div>
-    </Authorized>
-</AuthorizeView>
+        </Authorized>
+    </AuthorizeView>
 
-<SendSamples Title="Probeneinsendung" />
+    <AuthorizeView Roles="@nameof(Role.User)">
+        <Authorized>
+            <h2>Feste Monate der Einsendung</h2>
+            <div class="row">
+                <div class="col-9">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Monat</th>
+                            <th scope="col">Mikrobiologie</th>
+                                <AuthorizeView Roles="@nameof(Role.SuperUser)" Context="innerContext">
+                                <Authorized>
+                                    <th scope="col">Letzte Datenerfassung</th>
+                                    <th scope="col">Letzte Einsendung</th>
+                                    <th scope="col">Nächstes Einsendefenster</th>
+                                </Authorized>
+                            </AuthorizeView>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var organization in Organizations)
+                        {
+                            <tr>
+                                <td>@EnumUtils.GetEnumDescription(organization.DispatchMonth)</td>
+                                <td>@organization.Name</td>
+                                    <AuthorizeView Roles="@nameof(Role.SuperUser)" Context="innerContext">
+                                        <Authorized>
+                                            <td>@organization.LatestSamplingDate.ToReportFormat("-")</td>
+                                            <td>@organization.LatestCryoDate.ToReportFormat("-")</td>
+                                            <td>
+                                                @if (ReminderService.CalculateExpectedNextSending(organization) < DateTime.Today)
+                                                {
+                                                    <span class="badge bg-warning">@ReminderService.HumanReadableExpectedNextSending(organization)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success">@ReminderService.HumanReadableExpectedNextSending(organization)</span>
+                                                }
+                                            </td>
+                                        </Authorized>
+                                </AuthorizeView>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </Authorized>
+    </AuthorizeView>
+
+    <SendSamples Title="Probeneinsendung"/>
+}

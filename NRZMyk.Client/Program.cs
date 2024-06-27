@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using NRZMyk.Client;
-using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Services;
-using AutoMapper;
 using BlazorApplicationInsights;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using NRZMyk.Client.Services;
 using NRZMyk.Services.Interfaces;
+using System.Globalization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<NRZMyk.Components.App>("#app");
@@ -30,6 +30,8 @@ builder.Services.AddTransient<ISentinelEntryService, SentinelEntryServiceImpl>()
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IClinicalBreakpointService, ClinicalBreakpointService>();
 builder.Services.AddTransient<IMicStepsService, MicStepsService>();
+builder.Services.AddTransient<IReminderService, ReminderService>();
+builder.Services.AddTransient<IEmailNotificationService, ClientEmailNotificationService>();
 
 builder.Services.AddMsalAuthentication(options =>
 {
@@ -40,5 +42,6 @@ builder.Services.AddMsalAuthentication(options =>
 }).AddAccountClaimsPrincipalFactory<RemoteAuthenticationState, RemoteUserAccount, CustomUserFactory>();
 
 // Custom services end
-
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("de-DE");
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("de-DE");
 await builder.Build().RunAsync().ConfigureAwait(true);

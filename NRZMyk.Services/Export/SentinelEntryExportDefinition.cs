@@ -3,6 +3,7 @@ using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Export;
 using NRZMyk.Services.ModelExtensions;
 using NRZMyk.Services.Services;
+using NRZMyk.Services.Utils;
 
 namespace HaemophilusWeb.Tools
 {
@@ -17,7 +18,7 @@ namespace HaemophilusWeb.Tools
             AddField(s => s.LaboratoryNumber);
             AddField(s => s.CryoBox);
             AddField(s => ExportToString(s.SenderLaboratoryNumber));
-            AddField(s => ToReportFormat(s.SamplingDate));
+            AddField(s => s.SamplingDate.ToReportFormat(""));
             AddField(s => ExportToString(s.AgeGroup));
             AddField(s => ExportToString(s.Gender));
             AddField(s => ExportToString(s.HospitalDepartmentType));
@@ -26,16 +27,6 @@ namespace HaemophilusWeb.Tools
             AddField(s => s.SpeciesIdentificationMethodWithPcrDetails(), "Methode Speziesidentifikation");
             AddField(s => s.SpeciesOrOther(), "Spezies");
             AddField(s => ResolveSender(s), "Einsender");
-        }
-
-        private static string ToReportFormat(DateTime? dateTime)
-        {
-            return !dateTime.HasValue ? string.Empty : ToReportFormat(dateTime.Value);
-        }
-
-        private static string ToReportFormat(DateTime dateTime)
-        {
-            return dateTime.ToString("dd.MM.yyyy");
         }
         
         private string ResolveSender(SentinelEntry sentinelEntry)

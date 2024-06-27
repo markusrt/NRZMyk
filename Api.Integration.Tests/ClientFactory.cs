@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -11,12 +12,14 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using NRZMyk.Server;
 using NRZMyk.Services.Data;
+using NRZMyk.Services.Data.Entities;
 
 namespace PublicApiIntegrationTests
 {
     public static class ClientFactory
     {
         private static readonly WebApplicationFactory<Program> _factory;
+        public static IServiceProvider ServiceProvider => _factory.Services;
 
         static ClientFactory()
         {
