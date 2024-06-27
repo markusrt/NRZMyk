@@ -69,6 +69,7 @@ namespace NRZMyk.Server
             services.AddScoped<ISentinelEntryRepository, SentinelEntryRepository>();
             services.AddScoped<IProtectKeyToOrganizationResolver, ProtectKeyToOrganizationResolver>();
             services.AddScoped<IMicStepsService, MicStepsService>();
+            services.AddScoped<IReminderService, ReminderService>();
 
             services.AddScoped<IEmailNotificationService, EmailNotificationService>();
             services.Configure<SendGridClientOptions>(Configuration.GetSection("SendGrid"));
