@@ -29,6 +29,6 @@ namespace NRZMyk.Services.Models
 
     public static class Roles
     {
-        public const string RegularUsers = nameof(Role.User) + "," + nameof(Role.Admin) + "," + nameof(Role.Admin);
+        public const string RegularUsers = nameof(Role.User) + "," + nameof(Role.Admin) + "," + nameof(Role.SuperUser);
     }
 }
