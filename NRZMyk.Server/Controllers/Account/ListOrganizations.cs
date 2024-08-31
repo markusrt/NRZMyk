@@ -5,6 +5,7 @@ using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Server.Controllers.SentinelEntries;
+using NRZMyk.Server.Utils;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
@@ -33,19 +34,9 @@ namespace NRZMyk.Server.Controllers.Account
         ]
         public override async Task<ActionResult<List<Organization>>> HandleAsync(CancellationToken cancellationToken = new())
         {
-            var organizations = await _organizationRepository.ListAllAsync().ConfigureAwait(false);
-            foreach (var organization in organizations)
-            {
-                var latestEntryBySamplingDate =
-                    await _sentinelEntryRepository.FirstOrDefaultAsync(new SentinelEntryBySamplingDateSpecification(1, $"{organization.Id}"));
-                organization.LatestSamplingDate = latestEntryBySamplingDate?.SamplingDate;
-
-                var latestEntryByCryoDate =
-                    await _sentinelEntryRepository.FirstOrDefaultAsync(new SentinelEntryByCryoDateSpecification(1, $"{organization.Id}"));
-                organization.LatestCryoDate = latestEntryByCryoDate?.CryoDate;
-            }
-            
+            var organizations = await _organizationRepository.ListAllWithDatesAsync(_sentinelEntryRepository);
             return Ok(organizations);
         }
+
     }
 }
