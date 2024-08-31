@@ -1,19 +1,13 @@
 ﻿using NRZMyk.Services.Data.Entities;
 using System.Globalization;
 using System;
+using System.Threading.Tasks;
 using Humanizer;
 
 namespace NRZMyk.Services.Services;
 
 public class ReminderService : IReminderService
 {
-    private readonly IEmailNotificationService _emailNotificationService;
-
-    public ReminderService(IEmailNotificationService emailNotificationService)
-    {
-        _emailNotificationService = emailNotificationService;
-    }
-
     public string HumanReadableExpectedNextSending(Organization organization)
     {
         var expectedNextSending = CalculateExpectedNextSending(organization);
@@ -59,13 +53,8 @@ public class ReminderService : IReminderService
         return expectedArrival;
     }
 
-    public void CheckDataAndSendReminders(Organization organization)
+    public async Task CheckDataAndSendReminders(Organization organization)
     {
-        var expectedNextSending = CalculateExpectedNextSending(organization);
-        if (DateTime.Today > expectedNextSending)
-        {
-            string message = "Data was entered, but no strain has arrived yet.";
-            _emailNotificationService.SendEmail(organization.Email, message);
-        }
+        
     }
 }

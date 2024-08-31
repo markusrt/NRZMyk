@@ -13,8 +13,9 @@ namespace NRZMyk.Mocks.MockServices
             return Task.CompletedTask;
         }
 
-        public void SendEmail(string email, string message)
+        public Task SendEmail(string email, string message)
         {
+            return Task.CompletedTask;
         }
     }
 }

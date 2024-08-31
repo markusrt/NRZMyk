@@ -51,8 +51,25 @@ namespace NRZMyk.Services.Services
             }
         }
 
-        public void SendEmail(string email, string message)
+        public async Task SendEmail(string email, string message)
         {
+            var sendGridMessage = new SendGridMessage();
+            sendGridMessage.SetFrom(_appSettings.SendGridSenderEmail);
+            sendGridMessage.AddTo("mk.reinhardt@gmail.com");
+            sendGridMessage.SetSubject("Coravel Test");
+            sendGridMessage.AddContent("text/plain", message);
+            
+            var response = await _sendGridClient.SendEmailAsync(sendGridMessage).ConfigureAwait(false);
+            if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
+            {
+                _logger.LogInformation($"Email notification on Coravel test was sent via SendGrid to {"mk.reinhardt@gmail.com"}");
+            }
+            else
+            {
+                var errorDetails = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
+                _logger.LogError($"Email notification on Coravel test via SendGrid failed with status {response.StatusCode}, error details: '{errorDetails}'");
+
+            }
         }
     }
 }

@@ -4,7 +4,6 @@ using NRZMyk.Client;
 using NRZMyk.Services.Services;
 using BlazorApplicationInsights;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using NRZMyk.Client.Services;
 using NRZMyk.Services.Interfaces;
 using System.Globalization;
 
@@ -31,7 +30,6 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IClinicalBreakpointService, ClinicalBreakpointService>();
 builder.Services.AddTransient<IMicStepsService, MicStepsService>();
 builder.Services.AddTransient<IReminderService, ReminderService>();
-builder.Services.AddTransient<IEmailNotificationService, ClientEmailNotificationService>();
 
 builder.Services.AddMsalAuthentication(options =>
 {
