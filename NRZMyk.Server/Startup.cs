@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using AutoMapper;
+using Coravel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using NRZMyk.Server.Authorization;
+using NRZMyk.Server.Invocables;
 using NRZMyk.Server.Utils;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data;
@@ -79,6 +81,9 @@ namespace NRZMyk.Server
             services.Configure<ApplicationSettings>(Configuration);
 
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddScheduler();
+            services.AddScoped<SentinelEntryReminderEmailJob>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

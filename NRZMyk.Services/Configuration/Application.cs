@@ -9,5 +9,6 @@ namespace NRZMyk.Services.Configuration
         public string SendGridSenderEmail { get; set; }
         public string SendGridDynamicTemplateId { get; set; }
         public string AdministratorEmail { get; set; }
+        public bool SentinelReminderEnabled { get; set; }
     }
 }

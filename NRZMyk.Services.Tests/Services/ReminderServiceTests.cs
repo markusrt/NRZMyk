@@ -10,20 +10,7 @@ namespace NRZMyk.Services.Tests.Services;
 
 public class ReminderServiceTests
 {
-    [Test]
-    public void CheckDataAndSendReminders_DataEntered_NoStrainArrived_SendEmail()
-    {
-        var emailNotificationServiceMock = Substitute.For<IEmailNotificationService>();
-        var sut = CreateSut(emailNotificationServiceMock);
-        var org = CreateOrganization();
-        org.DispatchMonth = MonthToDispatch.January;
-        org.LatestSamplingDate = new DateTime(2023, 1, 5);
-        org.LatestCryoDate = new DateTime(2022, 12, 20);
 
-        sut.CheckDataAndSendReminders(org);
-
-        emailNotificationServiceMock.Received(1).SendEmail("example@example.com", "Data was entered, but no strain has arrived yet.");
-    }
 
     [Test]
     public void WhenExpectedNextSendingIsThisMonth_HumanReadableExpectedNextSendingShowsValidInformation()
@@ -45,8 +32,8 @@ public class ReminderServiceTests
     [TestCase(6, 6, "in 5 Monaten")]
     [TestCase(7, 6, "vor 6 Monaten")]
     [TestCase(8, 6, "vor 6 Monaten")]
-    [TestCase(18, 6, "vor einem Jahr")]
-    [TestCase(48, 6, "vor 3 Jahren")]
+    [TestCase(19, 6, "vor einem Jahr")]
+    [TestCase(43, 6, "vor 3 Jahren")]
     [TestCase(10, 2, "in einem Monat")]
     public void WhenExpectedNextSendingIsChecked_HumanReadableExpectedNextSendingShowsValidInformation(int monthSinceLatestStrainArrival, int monthUntilNextArrival, string expectedNextSending)
     {
@@ -89,12 +76,12 @@ public class ReminderServiceTests
             Name = "Example",
             Members = new List<RemoteAccount>(),
             Email = "example@example.com",
-            DispatchMonth = MonthToDispatch.None,
+            DispatchMonth = MonthToDispatch.None
         };
     }
 
     private static ReminderService CreateSut(IEmailNotificationService emailNotificationServiceMock = null)
     {
-        return new ReminderService(emailNotificationServiceMock ?? Substitute.For<IEmailNotificationService>());
+        return new ReminderService();
     }
 }

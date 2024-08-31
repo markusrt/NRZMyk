@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Coravel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NRZMyk.Server.Invocables;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data;
 
@@ -36,6 +38,7 @@ namespace NRZMyk.Server
                 }
             }
 
+            host.Services.UseScheduler(scheduler => scheduler.Schedule<SentinelEntryReminderEmailJob>().DailyAt(8,30));
             host.Run();
         }
 
