@@ -40,10 +40,11 @@ public class SentinelEntryReminderEmailJob : IInvocable
             _logger.LogInformation($"Sentinel reminder job was skipped invoked at {DateTime.UtcNow} (disabled)");
             return;
         }
+        
+        var numberOfRemindedOrganizations = 0;
         foreach (var organization in await _organizationRepository.ListAllWithDatesAsync(_sentinelEntryRepository))
         {
             var expectedNextSending = _reminderService.CalculateExpectedNextSending(organization);
-            var numberOfRemindedOrganizations = 0;
 
             if (DateTime.Today > expectedNextSending)
             {
@@ -51,8 +52,8 @@ public class SentinelEntryReminderEmailJob : IInvocable
                 await _emailNotificationService.SendEmail(organization.Email, message);
                 numberOfRemindedOrganizations++;
             }
-            _logger.LogInformation($"Sentinel reminder job invoked at {DateTime.UtcNow} for {numberOfRemindedOrganizations} organizations");
         }
+        _logger.LogInformation($"Sentinel reminder job invoked at {DateTime.UtcNow} for {numberOfRemindedOrganizations} organizations");
     }
 
     /*

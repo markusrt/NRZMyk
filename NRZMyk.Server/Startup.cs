@@ -131,7 +131,7 @@ namespace NRZMyk.Server
                 endpoints.MapFallbackToFile("index.html");
             });
 
-            serviceProvider.UseScheduler(scheduler => scheduler.Schedule<SentinelEntryReminderEmailJob>().EveryFiveMinutes());
+            serviceProvider.UseScheduler(scheduler => scheduler.Schedule<SentinelEntryReminderEmailJob>().DailyAt(7,30));
         }
 
         private void ConfigureAzureAdB2C(IServiceCollection services)
