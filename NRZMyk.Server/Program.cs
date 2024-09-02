@@ -37,8 +37,7 @@ namespace NRZMyk.Server
                     logger.LogError(ex, "An error occurred seeding the DB.");
                 }
             }
-
-            host.Services.UseScheduler(scheduler => scheduler.Schedule<SentinelEntryReminderEmailJob>().EveryFiveMinutes());
+            
             host.Run();
         }
 

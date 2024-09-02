@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using AutoMapper;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Graph;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using NRZMyk.Server.Authorization;
@@ -87,7 +89,7 @@ namespace NRZMyk.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -128,6 +130,8 @@ namespace NRZMyk.Server
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
             });
+
+            serviceProvider.UseScheduler(scheduler => scheduler.Schedule<SentinelEntryReminderEmailJob>().EveryFiveMinutes());
         }
 
         private void ConfigureAzureAdB2C(IServiceCollection services)
