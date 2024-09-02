@@ -18,7 +18,7 @@ public class SentinelEntryReminderEmailJob : IInvocable
     private readonly IAsyncRepository<Organization> _organizationRepository;
     private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
     private readonly IEmailNotificationService _emailNotificationService;
-    private readonly bool _enabled;
+    private readonly JobSetting _jobSetting;
 
     public SentinelEntryReminderEmailJob(
         ILogger<SentinelEntryReminderEmailJob> logger, IOptions<ApplicationSettings> config, IReminderService reminderService, 
@@ -30,12 +30,12 @@ public class SentinelEntryReminderEmailJob : IInvocable
         _sentinelEntryRepository = sentinelEntryRepository;
         _emailNotificationService = emailNotificationService;
         _logger = logger;
-        _enabled = config?.Value?.Application?.SentinelReminderEnabled ?? false;
+        _jobSetting = config?.Value?.Application?.SentinelReminderJob ?? JobSetting.Disabled;
     }
  
     public async Task Invoke()
     {
-        if (_enabled)
+        if (_jobSetting == JobSetting.Disabled)
         {
             _logger.LogInformation($"Sentinel reminder job was skipped invoked at {DateTime.UtcNow} (disabled)");
             return;

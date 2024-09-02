@@ -62,7 +62,7 @@ namespace NRZMyk.Services.Services
             var response = await _sendGridClient.SendEmailAsync(sendGridMessage).ConfigureAwait(false);
             if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
             {
-                _logger.LogInformation($"Email notification on Coravel test was sent via SendGrid to {"mk.reinhardt@gmail.com"}");
+                _logger.LogInformation($"Email notification on Coravel test was sent via SendGrid");
             }
             else
             {
