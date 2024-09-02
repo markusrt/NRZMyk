@@ -38,7 +38,7 @@ namespace NRZMyk.Server
                 }
             }
 
-            host.Services.UseScheduler(scheduler => scheduler.Schedule<SentinelEntryReminderEmailJob>().DailyAt(8,30));
+            host.Services.UseScheduler(scheduler => scheduler.Schedule<SentinelEntryReminderEmailJob>().EveryFiveMinutes());
             host.Run();
         }
 
