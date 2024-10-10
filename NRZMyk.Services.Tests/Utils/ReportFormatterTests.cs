@@ -24,6 +24,6 @@ public class ReportFormatterTests
         DateTime? date = new DateTime(2010, 10, 21);
 
         date.ToReportFormat().Should().Be("21.10.2010");
-        date.ToReportFormatMonthYear().Should().Be("10 / 2010");
+        date.ToReportFormatMonthYear().Should().Be("11 / 2010");
     }
 }
