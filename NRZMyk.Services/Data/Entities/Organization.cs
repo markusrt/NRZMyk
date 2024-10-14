@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using Humanizer;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
+using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Services.Data.Entities
 {
@@ -17,9 +18,9 @@ namespace NRZMyk.Services.Data.Entities
 
         [JsonIgnore] public ICollection<RemoteAccount> Members { get; set; }
 
-        public string Email { get; set; }
-
         public MonthToDispatch DispatchMonth { get; set; }
+
+        public DateTime? LastReminderSent { get; set; }
 
         [NotMapped]
         public DateTime? LatestSamplingDate { get; set; }

@@ -24,24 +24,27 @@ public class ReminderServiceTests
         sut.HumanReadableExpectedNextSending(org).Should().Be("diesen Monat");
     }
 
-    [TestCase(1, 6, "in 5 Monaten")]
-    [TestCase(2, 6, "in 5 Monaten")]
-    [TestCase(3, 6, "in 5 Monaten")]
-    [TestCase(4, 6, "in 5 Monaten")]
-    [TestCase(5, 6, "in 5 Monaten")]
-    [TestCase(6, 6, "in 5 Monaten")]
+    [TestCase(1, 6, "in 6 Monaten")]
+    [TestCase(2, 6, "in 6 Monaten")]
+    [TestCase(3, 6, "in 6 Monaten")]
+    [TestCase(4, 6, "in 6 Monaten")]
+    [TestCase(5, 6, "in 6 Monaten")]
+    [TestCase(6, 6, "in 6 Monaten")]
     [TestCase(7, 6, "vor 6 Monaten")]
     [TestCase(8, 6, "vor 6 Monaten")]
     [TestCase(19, 6, "vor einem Jahr")]
     [TestCase(43, 6, "vor 3 Jahren")]
-    [TestCase(10, 2, "in einem Monat")]
+    [TestCase(10, 2, "in 2 Monaten")]
     public void WhenExpectedNextSendingIsChecked_HumanReadableExpectedNextSendingShowsValidInformation(int monthSinceLatestStrainArrival, int monthUntilNextArrival, string expectedNextSending)
     {
         var sut = CreateSut();
         var org = CreateOrganization();
         var expectedNextArrival = DateTime.Today.AddMonths(monthUntilNextArrival);
+        expectedNextArrival = new DateTime(expectedNextArrival.Year, expectedNextArrival.Month,
+            DateTime.DaysInMonth(expectedNextArrival.Year, expectedNextArrival.Month));
         org.DispatchMonth = (MonthToDispatch)expectedNextArrival.Month;
-        org.LatestCryoDate = DateTime.Today.AddMonths(-1 * monthSinceLatestStrainArrival);
+        org.LatestCryoDate = DateTime.Today.AddMonths(-1 * monthSinceLatestStrainArrival).AddMonths(1);
+        org.LatestCryoDate = new DateTime(org.LatestCryoDate.Value.Year, org.LatestCryoDate.Value.Month, 5);
 
         sut.HumanReadableExpectedNextSending(org).Should().Be(expectedNextSending);
     }
@@ -75,7 +78,6 @@ public class ReminderServiceTests
             Id = 1,
             Name = "Example",
             Members = new List<RemoteAccount>(),
-            Email = "example@example.com",
             DispatchMonth = MonthToDispatch.None
         };
     }
