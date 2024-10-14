@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Services;
 
 namespace NRZMyk.Mocks.MockServices
@@ -13,7 +14,7 @@ namespace NRZMyk.Mocks.MockServices
             return Task.CompletedTask;
         }
 
-        public Task SendEmail(string email, string message)
+        public Task RemindOrganizationOnDispatchMonth(Organization organization)
         {
             return Task.CompletedTask;
         }

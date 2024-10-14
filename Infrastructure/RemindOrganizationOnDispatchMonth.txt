@@ -1,0 +1,14 @@
+Subject: Sentinel Netzwerk: Erinnerung zur Einsendung im {{DispatchMonth}}
+Preheader: Ihre letzte Sentinel Netzwerk Einsendung erfolgte am {{LatestCryoDate}}. Hiermit möchten wir sie freundlich an Ihre nun folgende Einsendung erinnern.
+
+Mikrobiologie: {{OrganizationName}} 
+Sehr geehrtes Einsender Team,
+
+vielen Dank für die rege Teilnahme an unserem Sentinel Netzwerk Invasive Mykosen: Modul Candidämie. Ihre letzte Einsendung erfolgte am {{LatestCryoDate}}. Hiermit möchten wir sie freundlich an Ihre nun folgende Einsendung im Monat {{DispatchMonth}} erinnern.
+
+Für weitere Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung!
+
+Herzliche Grüße aus Würzburg
+Alexander Aldejohann und das NRZMyk Team
+
+Box Slot manuell eingeben mit Validierung

@@ -12,7 +12,8 @@ public static class OrganizationRepositoryExtensions
         this IAsyncRepository<Organization> organizationRepository,
         IAsyncRepository<SentinelEntry> sentinelEntryRepository)
     {
-        var organizations = await organizationRepository.ListAllAsync().ConfigureAwait(false);
+        var organizations = await organizationRepository.ListAsync(
+            new OrganizationsIncludingRemoteAccountSpecification()).ConfigureAwait(false);
         foreach (var organization in organizations)
         {
             var latestEntryBySamplingDate =
