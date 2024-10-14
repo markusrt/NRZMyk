@@ -1,0 +1,8 @@
+Subject: Sentinel Netzwerk: Neue Registrierung ({{UserName}})
+Preheader: Ein neuer Benutzer hat sich bei der Sentinel Datenbank registriert
+
+{{UserName}} ({{UserEmail}}) aus {{UserCity}} hat sich am {{Date}} um {{Time}} neu registiert. Der Account muss noch einer Organisation zugeordnet werden, um das System nutzen zu können.
+
+Button:
+  Text: Benutzeradminstration öffnen
+  URL: https://nrzmyk.azurewebsites.net/admin 

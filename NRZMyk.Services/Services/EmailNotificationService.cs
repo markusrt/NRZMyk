@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NRZMyk.Services.Configuration;
+using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Models;
+using NRZMyk.Services.Models.EmailTemplates;
+using NRZMyk.Services.Utils;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
@@ -25,51 +30,55 @@ namespace NRZMyk.Services.Services
         public async Task NotifyNewUserRegistered(string userName, string userEmail, string userCity)
         {
             var now = DateTime.Now;
-            var sendGridMessage = new SendGridMessage();
-            sendGridMessage.SetFrom(_appSettings.SendGridSenderEmail);
-            sendGridMessage.AddTo(_appSettings.AdministratorEmail);
-            sendGridMessage.SetTemplateId(_appSettings.SendGridDynamicTemplateId);
-            sendGridMessage.SetTemplateData(new NewUserRegisteredNotification
+            var newUserRegisteredNotification = new NotifyNewUserRegistered
             {
                 UserName = userName,
                 UserEmail = userEmail,
                 UserCity = userCity,
                 Date = now.ToString("dd.MM.yyyy"),
                 Time = now.ToString("HH:mm")
-            });
-
-            var response = await _sendGridClient.SendEmailAsync(sendGridMessage).ConfigureAwait(false);
-            if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
-            {
-                _logger.LogInformation($"Email notification on new user registration was sent via SendGrid to {_appSettings.AdministratorEmail}");
-            }
-            else
-            {
-                var errorDetails = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
-                _logger.LogError($"Email notification via SendGrid failed with status {response.StatusCode}, error details: '{errorDetails}'");
-
-            }
+            };
+            var toAddresses = new List<string> { _appSettings.AdministratorEmail };
+            await SendEmail(newUserRegisteredNotification, toAddresses, _appSettings.SendGridSenderEmail, _appSettings.SendGridDynamicTemplateId);
         }
 
-        public async Task SendEmail(string email, string message)
+        public async Task RemindOrganizationOnDispatchMonth(Organization organization)
+        {
+            var remindOrganizationOnDispatchMonth = new RemindOrganizationOnDispatchMonth
+            {
+                OrganizationName = organization.Name,
+                DispatchMonth = EnumUtils.GetEnumDescription(organization.DispatchMonth),
+                LatestCryoDate = organization.LatestCryoDate.ToReportFormat()
+            };
+            var toAddresses = new List<string> { _appSettings.AdministratorEmail };
+            toAddresses.AddRange(organization.Members.Select(m => m.Email));
+            await SendEmail(remindOrganizationOnDispatchMonth, toAddresses, _appSettings.AdministratorEmail, _appSettings.SendGridRemindOrganizationOnDispatchMonthTemplateId);
+        }
+
+        private async Task SendEmail(object templateData, List<string> toAddresses, string fromAddress, string templateId)
         {
             var sendGridMessage = new SendGridMessage();
-            sendGridMessage.SetFrom(_appSettings.SendGridSenderEmail);
-            sendGridMessage.AddTo("mk.reinhardt@gmail.com");
-            sendGridMessage.SetSubject("Coravel Test");
-            sendGridMessage.AddContent("text/plain", message);
+            sendGridMessage.SetFrom(fromAddress);
+            foreach (var address in toAddresses)
+            {
+                sendGridMessage.AddTo(address);
+            }
+            sendGridMessage.SetTemplateId(templateId);
             
+            sendGridMessage.SetTemplateData(templateData);
+
             var response = await _sendGridClient.SendEmailAsync(sendGridMessage).ConfigureAwait(false);
             if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
             {
-                _logger.LogInformation($"Email notification on Coravel test was sent via SendGrid");
+                _logger.LogInformation("{templateType} email was sent via SendGrid with data {templateData}", templateData.GetType(), templateData);
             }
             else
             {
                 var errorDetails = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
-                _logger.LogError($"Email notification on Coravel test via SendGrid failed with status {response.StatusCode}, error details: '{errorDetails}'");
-
+                _logger.LogError("Email notification via SendGrid failed with status {statusCode}, error details: '{errorDetails}'", response.StatusCode, errorDetails);
             }
         }
+
+        
     }
 }
