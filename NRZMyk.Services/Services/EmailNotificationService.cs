@@ -48,7 +48,7 @@ namespace NRZMyk.Services.Services
             {
                 OrganizationName = organization.Name,
                 DispatchMonth = EnumUtils.GetEnumDescription(organization.DispatchMonth),
-                LatestCryoDate = ReportFormatter.ToReportFormat(organization.LatestCryoDate)
+                LatestCryoDate = organization.LatestCryoDate.ToReportFormat()
             };
             var toAddresses = new List<string> { _appSettings.AdministratorEmail };
             toAddresses.AddRange(organization.Members.Select(m => m.Email));
@@ -70,13 +70,12 @@ namespace NRZMyk.Services.Services
             var response = await _sendGridClient.SendEmailAsync(sendGridMessage).ConfigureAwait(false);
             if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
             {
-                _logger.LogInformation($"{templateData.GetType()} email was sent via SendGrid with data {templateData}");
+                _logger.LogInformation("{templateType} email was sent via SendGrid with data {templateData}", templateData.GetType(), templateData);
             }
             else
             {
                 var errorDetails = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
-                _logger.LogError($"Email notification via SendGrid failed with status {response.StatusCode}, error details: '{errorDetails}'");
-
+                _logger.LogError("Email notification via SendGrid failed with status {statusCode}, error details: '{errorDetails}'", response.StatusCode, errorDetails);
             }
         }
 

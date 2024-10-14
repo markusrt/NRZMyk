@@ -34,7 +34,7 @@ public class SentinelEntryReminderEmailJob : IInvocable
     {
         if (_jobSetting == JobSetting.Disabled)
         {
-            _logger.LogInformation($"Sentinel reminder job was skipped at {DateTime.UtcNow} (disabled)");
+            _logger.LogInformation("Sentinel reminder job was skipped (disabled)");
             return;
         }
         
@@ -53,6 +53,6 @@ public class SentinelEntryReminderEmailJob : IInvocable
                 numberOfRemindedOrganizations++;
             }
         }
-        _logger.LogInformation($"Sentinel reminder job invoked at {DateTime.UtcNow} for {numberOfRemindedOrganizations} organizations");
+        _logger.LogInformation("Sentinel reminder job invoked for {numberOfOrganizations} organizations", numberOfRemindedOrganizations);
     }
 }
