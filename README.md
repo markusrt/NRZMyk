@@ -50,6 +50,7 @@ dotnet user-secrets set "AzureAdB2C:SignUpSignInPolicyId" "Your signin policy na
 dotnet user-secrets set "APPINSIGHTS:INSTRUMENTATIONKEY" "Your application insights key"
 dotnet user-secrets set "Application:SendGridSenderEmail" "Address used to send messages to other users"
 dotnet user-secrets set "Application:SendGridDynamicTemplateId" "Sendgrid dynamic template id"
+dotnet user-secrets set "Application:SendGridRemindOrganizationOnDispatchMonthTemplateId" "Sendgrid dynamic template id"
 dotnet user-secrets set "Application:AdministratorEmail" "Address of admin to receive registration requests"
 dotnet user-secrets set "SendGrid:ApiKey" "Sendgrid API key"
 dotnet user-secrets set "AzureAdB2C:ClientSecret" "Client secret for GraphAPI access"

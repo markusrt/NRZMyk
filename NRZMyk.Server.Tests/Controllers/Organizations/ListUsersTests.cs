@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ardalis.Specification;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Mocks.TestUtils;
 using NRZMyk.Server.Controllers.Account;
-using NRZMyk.Server.Controllers.SentinelEntries;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
-using NRZMyk.Services.Services;
 using NRZMyk.Services.Specifications;
 using NSubstitute;
 using NUnit.Framework;
-using Tynamix.ObjectFiller;
 
 namespace NRZMyk.Server.Tests.Controllers.Organizations
 {
@@ -20,14 +18,14 @@ namespace NRZMyk.Server.Tests.Controllers.Organizations
     {
         private readonly List<Organization> _organizations = new()
         {
-            new Organization { Id = 1, DispatchMonth = MonthToDispatch.January, Email = "one@org.de", Members = new List<RemoteAccount>() },
-            new Organization { Id = 2, DispatchMonth = MonthToDispatch.February, Email = "two@org.de", Members = new List<RemoteAccount>() }
+            new Organization { Id = 1, DispatchMonth = MonthToDispatch.January, Members = new List<RemoteAccount>() },
+            new Organization { Id = 2, DispatchMonth = MonthToDispatch.February, Members = new List<RemoteAccount>() }
         };
 
         [Test]
         public async Task WhenQueryingOrganizationsWithExistingEntries_AddsLatestCryoAndSamplingDates()
         {
-            var sut = CreateSut(out _, out var sentinelEntryRepository);
+            var sut = CreateSut(out var sentinelEntryRepository);
             var samplingDate = new DateTime(2010, 10, 10);
             sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryBySamplingDateSpecification>()).Returns(
                 new SentinelEntry { SamplingDate = samplingDate });
@@ -52,7 +50,7 @@ namespace NRZMyk.Server.Tests.Controllers.Organizations
         [Test]
         public async Task WhenQueryingOrganizationsWithNoEntries_LeavesCryoAndSamplingDateEmpty()
         {
-            var sut = CreateSut(out _, out var sentinelEntryRepository);
+            var sut = CreateSut(out var sentinelEntryRepository);
             sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryBySamplingDateSpecification>()).Returns((SentinelEntry)null);
             sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryByCryoDateSpecification>()).Returns((SentinelEntry)null);
             
@@ -65,13 +63,11 @@ namespace NRZMyk.Server.Tests.Controllers.Organizations
             organizations.Should().BeEquivalentTo(expectedResult);
         }
 
-
-
-        private ListOrganizations CreateSut(out IAsyncRepository<Organization> organizationRepository, out IAsyncRepository<SentinelEntry> sentinelEntryRepository)
+        private ListOrganizations CreateSut(out IAsyncRepository<SentinelEntry> sentinelEntryRepository)
         {
-            organizationRepository = Substitute.For<IAsyncRepository<Organization>>();
-            organizationRepository.ListAllAsync()
-                .Returns(Task.FromResult((IReadOnlyList<Organization>)_organizations));
+            var organizationRepository = Substitute.For<IAsyncRepository<Organization>>();
+            organizationRepository.ListAsync(Arg.Any<ISpecification<Organization>>())
+                .Returns(Task.FromResult<IReadOnlyList<Organization>>(_organizations));
 
             sentinelEntryRepository = Substitute.For<IAsyncRepository<SentinelEntry>>();
             
