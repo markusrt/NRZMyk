@@ -26,9 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        versionVar: [10, 12, 14]
+        project: ["project1", "project2", "project3"]
     steps:
-      - run: echo "The matrix ${{ matrix.versionVar }}"
+      - run: echo "Building ${{ matrix.project }}"
   
   build:
     runs-on: ubuntu-latest
