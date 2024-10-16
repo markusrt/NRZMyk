@@ -21,7 +21,7 @@ jobs:
     steps:
       - id: set_var
         run: echo "::set-output name=version::v1.0.$(date +'%y%m.%d%H')"
-      - run: echo "Job 1 output: ${{ steps.set_var.outputs.version }}"  # Optional: to check the output
+      - run: echo "Job 1 output: ${{ steps.set_var.outputs.version }}"
 
   job2:
     needs: job1
