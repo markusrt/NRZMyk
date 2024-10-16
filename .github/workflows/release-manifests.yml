@@ -23,7 +23,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
         with:
-          repository: kustomize-sample
+          repository: markusrt/kustomize-sample
           ref: main
       - name: Set the version
         run: echo "version=v1.0.$(date +'%y%m.%d%H')" >> "$GITHUB_ENV"
