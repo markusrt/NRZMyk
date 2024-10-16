@@ -14,30 +14,25 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  job1:
+  set_version:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.set_var.outputs.version }}
+      version: ${{ steps.set_version.outputs.version }}
     steps:
-      - id: set_var
+      - id: set_version
         run: echo "version=v1.0.$(date +'%y%m.%d%H')" >> $GITHUB_OUTPUT 
-      - run: echo "Job 1 output ${{ steps.set_var.outputs.version }}"
-
-  job2:
-    needs: job1
-    runs-on: ubuntu-latest
-    steps: 
-      - run: echo "The variable from job1 is ${{ needs.job1.outputs.version }}"
+      - run: echo "Releasing version ${{ steps.set_version.outputs.version }}"
   build:
     runs-on: ubuntu-latest
+    needs: set_version
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file NRZMyk.Server/Dockerfile --tag my-image-name:$(date +%s)
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: docker build . --file NRZMyk.Server/Dockerfile --tag my-image-name:${{ needs.set_version.outputs.version }}
   release-manifests:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    needs: set_version
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -46,8 +41,8 @@ jobs:
           repository: markusrt/kustomize-sample
           ref: main
           token:  ${{ secrets.GH_TOKEN }}
-      - name: Set the version
-        run: echo "version=v1.0.$(date +'%y%m.%d%H')" >> "$GITHUB_ENV"
+      - name: Add version to env
+        run: echo "version=${{ needs.set_version.outputs.version }}" >> "$GITHUB_ENV"
       - name: Update image tag
         run: |
           yq e -i ".spec.template.spec.containers[0].image |= (. | split(\":\"))[0] + \":$version\"" overlays/staging/nginxhello-deployment-patch.yaml
