@@ -25,7 +25,7 @@ jobs:
         with:
           repository: markusrt/kustomize-sample
           ref: main
-          token:  ${{ secrets.GITHUB_TOKEN }}
+          token:  ${{ secrets.GH_TOKEN }}
       - name: Set the version
         run: echo "version=v1.0.$(date +'%y%m.%d%H')" >> "$GITHUB_ENV"
       - name: Update image tag
@@ -34,10 +34,10 @@ jobs:
           cat overlays/staging/nginxhello-deployment-patch.yaml
       - name: Create branch for changes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name "Markus Reinhardt (Bot)"
+          git config user.email tuxxilla@gmail.com
           git checkout -b "release/$version"
           git add *
           git commit -m "Release version $version"
@@ -45,4 +45,4 @@ jobs:
       - name: Create pull request
         run: gh pr create --title "Merge release/$version into main" --body "Release version $version"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
