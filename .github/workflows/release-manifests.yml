@@ -22,6 +22,14 @@ jobs:
       - id: set_version
         run: echo "version=v1.0.$(date +'%y%m.%d%H')" >> $GITHUB_OUTPUT 
       - run: echo "Releasing version ${{ steps.set_version.outputs.version }}"
+  example_matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        versionVar: [10, 12, 14]
+    steps:
+      - run: echo "The matrix ${{ matrix.versionVar }}"
+  
   build:
     runs-on: ubuntu-latest
     needs: set_version
