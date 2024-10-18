@@ -19,11 +19,6 @@ namespace NRZMyk.Components.SharedComponents.Input
                 result = (T)(object)resultFloat;
                 return true;
             }
-            if ((typeof(T) == typeof(int?) || typeof(T) == typeof(float?)) && string.IsNullOrEmpty(value))
-            {
-                result = default;
-                return result != null;
-            }
 
             result = default;
             validationErrorMessage = $"The field '{FieldIdentifier.FieldName}' does not contain a valid number.";
