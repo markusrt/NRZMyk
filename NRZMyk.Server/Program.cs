@@ -38,7 +38,7 @@ namespace NRZMyk.Server
                 }
             }
             
-            host.Run();
+            await host.RunAsync();
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>

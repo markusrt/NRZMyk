@@ -39,9 +39,9 @@ namespace NRZMyk.Services.Export
 
         protected object ExportChildProperty<TProperty>(TProperty property, Func<TProperty, object> accessValue, string nullValue)
         {
-            return property != null
-                ? ExportToString(accessValue(property))
-                : nullValue;
+            return EqualityComparer<TProperty>.Default.Equals(property, default)
+                ? nullValue
+                : ExportToString(accessValue(property));
         }
 
         protected static string ExportToString<TValue>(TValue value)

@@ -18,7 +18,7 @@ namespace NRZMyk.Services.Data
             int retryForAvailability = retry.Value;
             try
             {
-                context.Database.Migrate();
+                await context.Database.MigrateAsync();
 
                 if (!await context.ClinicalBreakpoints.AnyAsync()
                         && databaseSeed?.ClinicalBreakpoints?.Any() == true)
