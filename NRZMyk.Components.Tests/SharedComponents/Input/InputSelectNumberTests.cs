@@ -48,7 +48,7 @@ namespace NRZMyk.ComponentsTests.SharedComponents.Input
                 .Should().BeFalse();
 
             actualValue.Should().Be(expectedValue);
-            errorMessage.Should().BeNull();
+            errorMessage.Should().Be("The field 'TeamSize' does not contain a valid number.");
         }
 
         [TestCase("-100.000")]
@@ -95,7 +95,7 @@ namespace NRZMyk.ComponentsTests.SharedComponents.Input
                 .Should().BeFalse();
 
             actualValue.Should().BeNull();
-            errorMessage.Should().BeNull();
+            errorMessage.Should().Be("The field 'Measurement' does not contain a valid number.");
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace NRZMyk.ComponentsTests.SharedComponents.Input
             errorMessage.Should().Be("The field 'TeamSize' does not contain a valid number.");
         }
 
-        private TestableInputSelectNumber<T> CreateSut<T>(string fieldName)
+        private static TestableInputSelectNumber<T> CreateSut<T>(string fieldName)
         {
             return new TestableInputSelectNumber<T>(fieldName);
         }

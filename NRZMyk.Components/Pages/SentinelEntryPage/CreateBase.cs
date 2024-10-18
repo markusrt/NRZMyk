@@ -94,7 +94,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         internal IEnumerable<MicStep> MicSteps(AntimicrobialSensitivityTestRequest sensitivityTest)
         {
             var matchingSteps = MicStepsService.StepsByTestingMethodAndAgent(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent);
-            if (sensitivityTest.MinimumInhibitoryConcentration.HasValue && matchingSteps.Any() && matchingSteps.All(s => !s.Value.Equals(sensitivityTest.MinimumInhibitoryConcentration)))
+            if (sensitivityTest.MinimumInhibitoryConcentration.HasValue && matchingSteps.Any() && matchingSteps.TrueForAll(s => !s.Value.Equals(sensitivityTest.MinimumInhibitoryConcentration)))
             {
                 sensitivityTest.MinimumInhibitoryConcentration = matchingSteps.First().Value;
             }
@@ -131,11 +131,13 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             
             if (applicableBreakpoints.All(b => b.Id != sensitivityTest.ClinicalBreakpointId))
             {
-                Logger.LogInformation($"Update test {sensitivityTest.AntifungalAgent} to breakpoint id {applicableBreakpoints.FirstOrDefault()?.Id}");
+                Logger.LogInformation("Update test {sensitivityTest} to breakpoint id {breakpoint}",
+                    sensitivityTest.AntifungalAgent, applicableBreakpoints.FirstOrDefault()?.Id);
                 sensitivityTest.ClinicalBreakpointId = applicableBreakpoints.FirstOrDefault()?.Id;
             }
 
-            Logger.LogInformation($"Found {applicableBreakpoints.Count} applicable breakpoints for {antifungalAgent} and {SentinelEntry.IdentifiedSpecies}");
+            Logger.LogInformation("Found {NumberOfApplicableBreakpoints} applicable breakpoints for {AntifungalAgent} and {IdentifiedSpecies}",
+                applicableBreakpoints.Count, antifungalAgent, SentinelEntry.IdentifiedSpecies);
             
             if (!applicableBreakpoints.Any())
             {

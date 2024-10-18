@@ -132,7 +132,7 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             sut.SentinelEntries.Single(s => s.Id == 1).Remark.Should().Be("Updated by test");
         }
 
-        private IRenderedComponent<CryoView> CreateSut(TestContext context)
+        private static IRenderedComponent<CryoView> CreateSut(TestContext context)
         {
             return context.RenderComponent<CryoView>();
         }

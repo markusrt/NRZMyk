@@ -94,9 +94,61 @@ namespace NRZMyk.Services.Tests.Export
             dataTable.Rows[0][0].Should().Be("Read");
         }
 
+        
+        [Test]
+        public void ToDataTable_ChildPropertiesAreExported()
+        {
+            var parents = new List<Parent>
+            {
+                new()
+                {
+                    Name = "Charles, Prince of Wales",
+                    Child = new Child {Name = "William, Prince of Wales"}
+                },
+                new()
+                {
+                    Name = "Prince George of Wales",
+                    Child = null
+                }
+            };
+            var sut = new ParentExportDefinition();
+            
+            var dataTable = sut.ToDataTable(parents);
+
+            dataTable.Rows.Count.Should().Be(2);
+            dataTable.Columns.Count.Should().Be(2);
+
+            dataTable.Columns[0].ColumnName.Should().Be("Parent Name");
+            dataTable.Columns[1].ColumnName.Should().Be("Child Name");
+            dataTable.Rows[0][0].Should().Be("Charles, Prince of Wales");
+            dataTable.Rows[0][1].Should().Be("William, Prince of Wales");
+            dataTable.Rows[1][0].Should().Be("Prince George of Wales");
+            dataTable.Rows[1][1].Should().Be(DBNull.Value);
+        }
+
         private ExportDefinition<Person> CreateExportDefinition()
         {
             return new ExportDefinition<Person>();
         }
+    }
+
+    class ParentExportDefinition : ExportDefinition<Parent>
+    {
+        public ParentExportDefinition()
+        {
+            AddField(parent => parent.Name, "Parent Name");
+            AddField(parent => ExportChildProperty(parent.Child, child => child.Name), "Child Name");
+        }
+    }
+
+    class Parent
+    {
+        public string Name { get; set; }
+        public Child Child { get; set; }
+    }
+
+    class Child
+    {
+        public string Name { get; set; }
     }
 }

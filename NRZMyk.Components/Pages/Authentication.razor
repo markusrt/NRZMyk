@@ -21,7 +21,7 @@
 
             if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("message", out var loginError))
             {
-                Logger.LogInformation($"Login failed with message: {loginError.Single()}");
+                Logger.LogInformation("Login failed with message: {error}", loginError.Single());
                 if (loginError.Single().Contains("AADB2C90118"))
                 {
                     Logger.LogInformation("Login error code indicates request for password reset");
@@ -43,7 +43,7 @@
             }
             else
             {
-                Logger.LogError($"Login failed with Uri: {uri}");
+                Logger.LogError("Login failed with Uri: {uri}", uri);
                 NavManager.NavigateTo(NavManager.BaseUri, true);
             }
         }

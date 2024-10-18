@@ -151,6 +151,7 @@ namespace NRZMyk.Services.Tests.Utils
         Flag3 = 8,
     }
 
+    [AttributeUsage(AttributeTargets.All)]
     public class MockAttribute : Attribute
     {
     }
