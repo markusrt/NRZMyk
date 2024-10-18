@@ -110,7 +110,7 @@ namespace NRZMyk.ComponentsTests.SharedComponents.Input
             errorMessage.Should().Be("The field 'TeamSize' does not contain a valid number.");
         }
 
-        private TestableInputSelectNumber<T> CreateSut<T>(string fieldName)
+        private static TestableInputSelectNumber<T> CreateSut<T>(string fieldName)
         {
             return new TestableInputSelectNumber<T>(fieldName);
         }

@@ -46,7 +46,7 @@ namespace NRZMyk.Services.Export
 
         protected static string ExportToString<TValue>(TValue value)
         {
-            if (value == null)
+            if (EqualityComparer<TValue>.Default.Equals(value, default))
             {
                 return string.Empty;
             }

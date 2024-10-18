@@ -66,12 +66,12 @@ namespace NRZMyk.Client
                 }
                 else
                 {
-                    _logger.LogError("Connect API request failed with status code: " + response.StatusCode);
+                    _logger.LogError("Connect API request failed with status code: {statusCode}", response.StatusCode);
                 }
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, "Connect API request failed: " + exception.Message);
+                _logger.LogError(exception, "Connect API request failed: {errorMessage}", exception.Message);
             }
 
             return initialUser;

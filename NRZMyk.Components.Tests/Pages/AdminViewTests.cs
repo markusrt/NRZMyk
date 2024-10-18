@@ -54,7 +54,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                _renderedComponent.Markup.Should().Contain(account.DisplayName);
             }
         }
-        private IRenderedComponent<Admin> CreateSut(TestContext context)
+        private static IRenderedComponent<Admin> CreateSut(TestContext context)
         {
             return context.RenderComponent<Admin>();
         }

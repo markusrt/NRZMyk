@@ -1,5 +1,5 @@
 ﻿window.saveAsFile = function (fileName, byteBase64) {
-    var link = this.document.createElement('a');
+    const link = this.document.createElement('a');
     link.download = fileName;
     link.href = "data:application/octet-stream;base64," + byteBase64;
     this.document.body.appendChild(link);
@@ -9,6 +9,6 @@
 
 window.closeBootstrapModal = function (id)
 {
-    var modal = window.bootstrap.Modal.getInstance(document.getElementById(id));
+    const modal = window.bootstrap.Modal.getInstance(document.getElementById(id));
     modal.hide();
 }
