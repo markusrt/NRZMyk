@@ -1,8 +1,10 @@
-﻿namespace NRZMyk.Server.Controllers.SentinelEntries
+﻿using System.Text.Json.Serialization;
+
+namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     public class ListPagedSentinelEntryRequest : BaseRequest 
     {
-        public int PageSize { get; set; }
-        public int PageIndex { get; set; }
+        [JsonRequired] public int PageSize { get; set; }
+        [JsonRequired] public int PageIndex { get; set; }
     }
 }
