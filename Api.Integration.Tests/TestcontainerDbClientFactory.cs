@@ -43,7 +43,10 @@ namespace Api.Integration.Tests
                     var descriptor = services.SingleOrDefault(
                         d => d.ServiceType ==
                              typeof(DbContextOptions<ApplicationDbContext>));
-                    services.Remove(descriptor);
+                    if (descriptor != null)
+                    {
+                        services.Remove(descriptor);
+                    }
 
                     services.AddDbContext<ApplicationDbContext>(options =>
                     {
@@ -74,7 +77,7 @@ namespace Api.Integration.Tests
             AppDomain.CurrentDomain.ProcessExit += Dispose;
         }
 
-        static void Dispose(object sender, EventArgs e) {
+        private static void Dispose(object? sender, EventArgs e) {
             var disposeContainerTask = _dbContainer.DisposeAsync().AsTask();
             disposeContainerTask.Wait();
             _factory.Dispose();
