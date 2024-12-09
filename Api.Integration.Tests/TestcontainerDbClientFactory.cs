@@ -77,6 +77,7 @@ namespace Api.Integration.Tests
         static void Dispose(object sender, EventArgs e) {
             var disposeContainerTask = _dbContainer.DisposeAsync().AsTask();
             disposeContainerTask.Wait();
+            _factory.Dispose();
         }
 
         public static HttpClient CreateClient()
