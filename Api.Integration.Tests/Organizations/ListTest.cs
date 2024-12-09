@@ -7,7 +7,6 @@ using NRZMyk.Services.Data;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NUnit.Framework;
-using PublicApiIntegrationTests;
 using Organization = NRZMyk.Services.Data.Entities.Organization;
 
 namespace Api.Integration.Tests.Organizations
@@ -17,7 +16,7 @@ namespace Api.Integration.Tests.Organizations
         [OneTimeSetUp]
         protected void SeedData()
         {
-            using (var scope = ClientFactory.ServiceProvider.CreateScope())
+            using (var scope = TestcontainerDbClientFactory.ServiceProvider.CreateScope())
             {
                 var db = scope.ServiceProvider.GetService<ApplicationDbContext>();
                 db.Organizations.Add(new Organization
@@ -29,7 +28,7 @@ namespace Api.Integration.Tests.Organizations
         [Test]
         public async Task WhenCreatingValidSentinelEntry_RespondsWithCreate()
         {
-            var client = ClientFactory.CreateClient();
+            var client = TestcontainerDbClientFactory.CreateClient();
 
             var organizations = await client.GetFromJsonAsync<List<Organization>>("api/organizations").ConfigureAwait(true);
             

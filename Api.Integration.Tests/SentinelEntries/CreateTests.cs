@@ -8,7 +8,6 @@ using FluentAssertions;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Services;
 using NUnit.Framework;
-using PublicApiIntegrationTests;
 using Tynamix.ObjectFiller;
 
 namespace Api.Integration.Tests.SentinelEntries
@@ -18,7 +17,7 @@ namespace Api.Integration.Tests.SentinelEntries
         [Test]
         public async Task WhenCreatingValidSentinelEntry_RespondsWithCreate()
         {
-            var client = ClientFactory.CreateClient();
+            var client = TestcontainerDbClientFactory.CreateClient();
             var request = CreateValidRequest();
 
             var createdEntry = await CreateValidEntry(client, request).ConfigureAwait(true);
@@ -30,7 +29,7 @@ namespace Api.Integration.Tests.SentinelEntries
         [Test]
         public async Task WhenCreatingWithValidPredecessorEntry_RespondsWithCreate()
         {
-            var client = ClientFactory.CreateClient();
+            var client = TestcontainerDbClientFactory.CreateClient();
             var predecessor = CreateValidRequest();
 
             var predecessorEntry = await CreateValidEntry(client, predecessor).ConfigureAwait(true);
@@ -47,7 +46,7 @@ namespace Api.Integration.Tests.SentinelEntries
         [Test]
         public async Task WhenCreatingPredecessorCircle_RespondsWithCreate()
         {
-            var client = ClientFactory.CreateClient();
+            var client = TestcontainerDbClientFactory.CreateClient();
             var predecessorRequest = CreateValidRequest();
 
             // Arrange: Create entry with follow-up
@@ -74,7 +73,7 @@ namespace Api.Integration.Tests.SentinelEntries
         [Test]
         public async Task WhenCreatingUnknownPredecessorEntry_RespondsWithBadRequest()
         {
-            var client = ClientFactory.CreateClient();
+            var client = TestcontainerDbClientFactory.CreateClient();
             var request = CreateValidRequest();
             request.PredecessorLaboratoryNumber = "SN-4242-0042";
 
@@ -89,7 +88,7 @@ namespace Api.Integration.Tests.SentinelEntries
         [Test]
         public async Task WhenCreatingWithMissingSamplingDate_RespondsWithBadRequest()
         {
-            var client = ClientFactory.CreateClient();
+            var client = TestcontainerDbClientFactory.CreateClient();
             var request = CreateValidRequest();
             request.SamplingDate = null;
 
@@ -103,7 +102,7 @@ namespace Api.Integration.Tests.SentinelEntries
         [Test]
         public async Task WhenCreatingWithInvalidDepartmentCombination_RespondsWithBadRequest()
         {
-            var client = ClientFactory.CreateClient();
+            var client = TestcontainerDbClientFactory.CreateClient();
             var request = CreateValidRequest();
             request.InternalHospitalDepartmentType = InternalHospitalDepartmentType.Angiological;
 
@@ -117,7 +116,7 @@ namespace Api.Integration.Tests.SentinelEntries
         [Test]
         public async Task WhenCreatingWithFutureSamplingDate_RespondsWithBadRequest()
         {
-            var client = ClientFactory.CreateClient();
+            var client = TestcontainerDbClientFactory.CreateClient();
             var request = CreateValidRequest();
             request.SamplingDate = DateTime.Now.AddDays(1);
 
@@ -151,6 +150,8 @@ namespace Api.Integration.Tests.SentinelEntries
             request.SamplingDate = DateTime.Now.AddDays(-3);
             request.PredecessorLaboratoryNumber = string.Empty;
             request.HasPredecessor = YesNo.No;
+            request.AntimicrobialSensitivityTests = null;
+            request.Id = 0;
             return request;
         }
     }
