@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
-using PublicApiIntegrationTests;
 
 namespace Api.Integration.Tests.Swagger
 {
@@ -11,7 +10,7 @@ namespace Api.Integration.Tests.Swagger
         [Test]
         public async Task WhenAccessingIndex_ReturnsPage()
         {
-            var client = ClientFactory.CreateClient();
+            var client = TestcontainerDbClientFactory.CreateClient();
 
             var response = await client.GetAsync("swagger/index.html").ConfigureAwait(true);
 

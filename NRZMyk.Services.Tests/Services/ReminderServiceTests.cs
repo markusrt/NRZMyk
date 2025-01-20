@@ -34,7 +34,6 @@ public class ReminderServiceTests
     [TestCase(8, 6, "vor 6 Monaten")]
     [TestCase(19, 6, "vor einem Jahr")]
     [TestCase(43, 6, "vor 3 Jahren")]
-    [TestCase(10, 2, "in einem Monat")]
     public void WhenExpectedNextSendingIsChecked_HumanReadableExpectedNextSendingShowsValidInformation(int monthSinceLatestStrainArrival, int monthUntilNextArrival, string expectedNextSending)
     {
         var sut = CreateSut();

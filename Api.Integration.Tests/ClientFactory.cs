@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Api.Integration.Tests;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 using NRZMyk.Server;
 using NRZMyk.Services.Data;
-using NRZMyk.Services.Data.Entities;
 
-namespace PublicApiIntegrationTests
+namespace Api.Integration.Tests
 {
     public static class ClientFactory
     {
