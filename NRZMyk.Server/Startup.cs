@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using AutoMapper;
 using Coravel;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.AzureADB2C.UI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Graph;
+using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using NRZMyk.Server.Authorization;
@@ -136,26 +135,23 @@ namespace NRZMyk.Server
 
         private void ConfigureAzureAdB2C(IServiceCollection services)
         {
-            services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
-                .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
-            services.Configure<JwtBearerOptions>(
-                AzureADB2CDefaults.JwtBearerAuthenticationScheme, options =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApi(Configuration, "AzureAdB2C");
+            services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters.NameClaimType = "name";
+                options.Events = new JwtBearerEvents
                 {
-                    options.TokenValidationParameters.NameClaimType = "name";
-                    options.Events = new JwtBearerEvents
+                    OnTokenValidated = async ctx =>
                     {
-                        OnTokenValidated = async ctx =>
+                        if (ctx.Principal.Identity is ClaimsIdentity identity)
                         {
-                            if (ctx.Principal.Identity is ClaimsIdentity identity)
-                            {
-                                identity.AddRolesFromExtensionClaim();
-                                await identity.AddOrganizationClaim(ctx).ConfigureAwait(false);
-                            }
+                            identity.AddRolesFromExtensionClaim();
+                            await identity.AddOrganizationClaim(ctx).ConfigureAwait(false);
                         }
-                    };
-                }
-            );
-
+                    }
+                };
+            });
             services.Configure<AzureAdB2CSettings>(Configuration);
             services.AddScoped<IGraphServiceClient, GraphServiceClientWrapper>();
             services.AddScoped<IUserService, UserService>();
