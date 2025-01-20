@@ -59,8 +59,8 @@ namespace NRZMyk.Server
                 //});
             services.AddRazorPages();
 
-            services.AddAuthorization(options => options.AddPolicy(Policies.AssignedToOrganization,
-                policy => policy.RequireClaim(ClaimTypes.Organization)));
+            services.AddAuthorizationBuilder()
+                .AddPolicy(Policies.AssignedToOrganization, policy => policy.RequireClaim(ClaimTypes.Organization));
 
             services.AddMvc().AddRazorPagesOptions(options => { options.RootDirectory = "/"; });
             services.AddDbContext<ApplicationDbContext>(options =>
