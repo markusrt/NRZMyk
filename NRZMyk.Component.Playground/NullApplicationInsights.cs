@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.JSInterop;
-using BlazorApplicationInsights.Interfaces;
+﻿using BlazorApplicationInsights.Interfaces;
 using BlazorApplicationInsights.Models;
+using Microsoft.JSInterop;
 
 namespace NRZMyk.Components.Playground
 {
