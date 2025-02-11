@@ -1,4 +1,5 @@
 ﻿@inherits ExportButtonBase
+@attribute [Authorize(Roles = nameof(Role.SuperUser))]
 
 @if (DownloadInProgress)
 {

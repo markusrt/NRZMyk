@@ -24,17 +24,17 @@ public class ReminderServiceTests
         sut.HumanReadableExpectedNextSending(org).Should().Be("diesen Monat");
     }
 
-    [TestCase(1, 6, "in 5 Monaten")]
-    [TestCase(2, 6, "in 5 Monaten")]
-    [TestCase(3, 6, "in 5 Monaten")]
-    [TestCase(4, 6, "in 5 Monaten")]
-    [TestCase(5, 6, "in 5 Monaten")]
-    [TestCase(6, 6, "in 5 Monaten")]
-    [TestCase(7, 6, "vor 6 Monaten")]
-    [TestCase(8, 6, "vor 6 Monaten")]
+    [TestCase(1, 6, "in 6 Monaten")]
+    [TestCase(2, 6, "in 6 Monaten")]
+    [TestCase(3, 6, "in 6 Monaten")]
+    [TestCase(4, 6, "in 6 Monaten")]
+    [TestCase(5, 6, "in 6 Monaten")]
+    [TestCase(6, 6, "in 6 Monaten")]
+    [TestCase(7, 6, "vor 5 Monaten")]
+    [TestCase(8, 6, "vor 5 Monaten")]
     [TestCase(19, 6, "vor einem Jahr")]
     [TestCase(43, 6, "vor 3 Jahren")]
-    [TestCase(10, 2, "in einem Monat")]
+    [TestCase(10, 2, "in 2 Monaten")]
     public void WhenExpectedNextSendingIsChecked_HumanReadableExpectedNextSendingShowsValidInformation(int monthSinceLatestStrainArrival, int monthUntilNextArrival, string expectedNextSending)
     {
         var sut = CreateSut();

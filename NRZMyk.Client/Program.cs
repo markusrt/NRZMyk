@@ -6,16 +6,19 @@ using BlazorApplicationInsights;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using NRZMyk.Services.Interfaces;
 using System.Globalization;
+using NRZMyk.Components;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<NRZMyk.Components.App>("#app");
+
+builder.RootComponents.Add<Routes>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+
 builder.Services.AddHttpClient("NRZMyk.ServerAPI", 
-    client =>
-    {
-        client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-        client.Timeout = TimeSpan.FromMinutes(5);
-    })
+        client =>
+        {
+            client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+            client.Timeout = TimeSpan.FromMinutes(5);
+        })
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
     .CreateClient("NRZMyk.ServerAPI"));
@@ -30,6 +33,7 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IClinicalBreakpointService, ClinicalBreakpointService>();
 builder.Services.AddTransient<IMicStepsService, MicStepsService>();
 builder.Services.AddTransient<IReminderService, ReminderService>();
+
 
 builder.Services.AddMsalAuthentication(options =>
 {

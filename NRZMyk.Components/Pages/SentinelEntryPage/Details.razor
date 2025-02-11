@@ -1,7 +1,4 @@
-﻿@namespace NRZMyk.Components.Pages.SentinelEntryPage
-
-@using NRZMyk.Services.ModelExtensions
-@using NRZMyk.Services.Utils
+﻿@attribute [Authorize(Roles = nameof(Role.User))]
 @inherits DetailsBase
 
 <h2>Detailansicht Einsendung</h2>

@@ -4,6 +4,8 @@
     <UserSecretsId>aspnet-NRZMykServer-18B2E2D4-3174-4F74-B35E-876A891FBF01</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <VersionPrefix>1.0.$([System.DateTime]::UtcNow.ToString(`yyMM`)).$([System.DateTime]::UtcNow.ToString(`ddHH`))</VersionPrefix>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Ardalis.ApiEndpoints" Version="4.1.0" />
@@ -16,10 +18,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.12" />
     <PackageReference Include="Microsoft.Graph" Version="4.11.0" />
     <PackageReference Include="SendGrid.Extensions.DependencyInjection" Version="1.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
     <PackageReference Include="Azure.Identity" Version="1.11.4" />
     <PackageReference Include="Microsoft.Identity.Web" Version="3.6.0" />

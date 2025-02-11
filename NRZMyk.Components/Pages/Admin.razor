@@ -1,11 +1,6 @@
 ﻿@page "/admin"
-@using NRZMyk.Services.Models
-@using NRZMyk.Components.SharedComponents.Input
-@using NRZMyk.Components.Helpers
 @attribute [Authorize(Roles = nameof(Role.Admin))]
-
 @inherits AdminBase
-
 
 <h1>Administration</h1>
 

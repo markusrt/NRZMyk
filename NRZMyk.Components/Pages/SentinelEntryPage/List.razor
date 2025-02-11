@@ -1,13 +1,8 @@
-﻿@namespace NRZMyk.Components.Pages.SentinelEntryPage
-@page "/sentinel-entries"
+﻿@page "/sentinel-entries"
 @attribute [Authorize(Roles = nameof(Role.User))]
-@inject ISentinelEntryService SentinelEntryService
-@using NRZMyk.Services.Data.Entities
-@using NRZMyk.Services.ModelExtensions
-@using NRZMyk.Services.Models
-@using NRZMyk.Services.Services
-@using NRZMyk.Services.Utils
 @inherits NRZMyk.Components.Helpers.BlazorComponent
+
+@inject ISentinelEntryService SentinelEntryService
 
 <h1>Sentinel Daten</h1>
 
