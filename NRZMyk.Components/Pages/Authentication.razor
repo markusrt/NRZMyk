@@ -15,6 +15,7 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
+        Logger.LogInformation($"Executing authentication action: {Action}");
         if (Action == "login-failed")
         {
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);

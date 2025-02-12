@@ -1,10 +1,7 @@
-﻿@namespace NRZMyk.Components.Pages.SentinelEntryPage
-
-@using NRZMyk.Services.ModelExtensions
+﻿@attribute [Authorize(Roles = nameof(Role.User))]
 @inherits DeleteBase
 
 <h2>Löschen bestätigen</h2>
-
 
 @if (SentinelEntry == null)
 {

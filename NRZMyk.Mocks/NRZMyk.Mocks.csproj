@@ -1,27 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Data\ClinicalBreakpoints.json" />
     <None Remove="Data\Export.xlsx" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Data\ClinicalBreakpoints.json" />
     <EmbeddedResource Include="Data\Export.xlsx" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.25" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.12" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Tynamix.ObjectFiller" Version="1.5.8" />
+    <PackageReference Include="Tynamix.ObjectFiller" Version="1.5.9" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\NRZMyk.Services\NRZMyk.Services.csproj" />
   </ItemGroup>
-
 </Project>

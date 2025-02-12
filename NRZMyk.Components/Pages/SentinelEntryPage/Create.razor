@@ -1,10 +1,6 @@
 ﻿@page "/sentinel-entry/{Id:int?}"
-
-@using NRZMyk.Services.Data.Entities
-@using NRZMyk.Components.SharedComponents.Input
-@using NRZMyk.Services.Utils
+@attribute [Authorize(Roles = nameof(Role.User))]
 @inherits CreateBase
-
 
 <h2>@Title</h2>
 

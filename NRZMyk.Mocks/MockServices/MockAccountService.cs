@@ -39,6 +39,7 @@ namespace NRZMyk.Mocks.MockServices
             var filler = new Filler<RemoteAccount>();
             _accounts.AddRange(filler.Create(10));
 
+
             int id = 1;
             foreach (var organization in Organizations)
             {
@@ -53,6 +54,13 @@ namespace NRZMyk.Mocks.MockServices
                     LatestCryoDate = latestStrainArrivalDate,
                     LatestSamplingDate = latestDataEntryDate
                 });
+            }
+
+            foreach (var account in _accounts)
+            {
+                var organization = _organization[Random.Next(Organizations.Count)];
+                account.Organization = organization;
+                account.OrganizationId = organization.Id;
             }
         }
 
