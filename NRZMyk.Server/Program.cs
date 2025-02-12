@@ -148,4 +148,4 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-public partial class Program { } // so you can reference it from tests
+public partial class Program; // for being able to be referenced from tests
