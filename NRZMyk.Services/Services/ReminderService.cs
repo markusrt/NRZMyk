@@ -28,32 +28,34 @@ public class ReminderService : IReminderService
 
     public DateTime? CalculateExpectedNextSending(Organization organization)
     {
-        if (organization.DispatchMonth == MonthToDispatch.None || organization.LatestCryoDate == null)
+        if (organization.DispatchMonth == MonthToDispatch.None)
         {
             return null;
         }
 
         var today = DateTime.Today;
-        var expectedArrival = new DateTime(today.Year, (int)organization.DispatchMonth, 15);
+        var dispatchMonth = (int)organization.DispatchMonth;
+        var expectedYear = today.Year;
+        if (today.Month > dispatchMonth)
+        {
+            expectedYear++;
+        }
+        var expectedArrival = new DateTime(expectedYear, dispatchMonth, 1);
+
+        if (organization.LatestCryoDate == null)
+        {
+            return expectedArrival;
+        }
+
         var timeSinceLastArrival = expectedArrival.Subtract(organization.LatestCryoDate.Value);
 
-        if (timeSinceLastArrival.TotalDays < 0)
+        if (timeSinceLastArrival.TotalDays > -30 && timeSinceLastArrival.TotalDays < 30 )
         {
-            expectedArrival = new DateTime(today.Year+1, (int)organization.DispatchMonth, 15);
-            timeSinceLastArrival = expectedArrival.Subtract(organization.LatestCryoDate.Value);
+            expectedArrival = new DateTime(today.Year + 1, (int)organization.DispatchMonth, 1);
         }
-
-        if (timeSinceLastArrival.TotalDays < 365)
+        else if (timeSinceLastArrival.TotalDays > 365)
         {
-            if (organization.DispatchMonth == (MonthToDispatch)today.Month)
-            {
-                return new DateTime(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month));
-            }
-        }
-        else
-        {
-            expectedArrival = new DateTime(Math.Min(today.Year - 1, organization.LatestCryoDate.Value.Year),
-                (int)organization.DispatchMonth, 21);
+            expectedArrival = new DateTime(organization.LatestCryoDate.Value.Year +1, (int)organization.DispatchMonth, 1);
         }
 
         return expectedArrival;
