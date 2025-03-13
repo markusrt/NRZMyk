@@ -51,11 +51,11 @@ public class ReminderService : IReminderService
 
         if (timeSinceLastArrival.TotalDays > -30 && timeSinceLastArrival.TotalDays < 30 )
         {
-            expectedArrival = new DateTime(today.Year + 1, (int)organization.DispatchMonth, 1);
+            expectedArrival = new DateTime(today.AddYears(1).Year, (int)organization.DispatchMonth, 1);
         }
         else if (timeSinceLastArrival.TotalDays > 365)
         {
-            expectedArrival = new DateTime(organization.LatestCryoDate.Value.Year +1, (int)organization.DispatchMonth, 1);
+            expectedArrival = new DateTime(organization.LatestCryoDate.Value.AddYears(1).Year, (int)organization.DispatchMonth, 1);
         }
 
         return expectedArrival;
