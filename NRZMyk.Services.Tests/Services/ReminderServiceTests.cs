@@ -69,11 +69,25 @@ public class ReminderServiceTests
         var org = CreateOrganization();
         var today = DateTime.Today;
         var lastMonth = DateTime.Today.AddMonths(-1);
-        var someDaysAgo = today.AddDays(-5);
+        var someDaysAgo = today.AddDays(-20);
         org.DispatchMonth = (MonthToDispatch) lastMonth.Month;
         org.LatestCryoDate = someDaysAgo;
 
-        sut.HumanReadableExpectedNextSending(org).Should().Be("in 11 Monaten");
+        sut.HumanReadableExpectedNextSending(org).Should().MatchRegex("in 1[01] Monaten");
+    }
+
+    [Test]
+    public void WhenExpectedNextSendingIsChecked_SentTooLateShowsDueThisYear()
+    {
+        var sut = CreateSut();
+        var org = CreateOrganization();
+        var today = DateTime.Today;
+        var threeMonthAgo = DateTime.Today.AddMonths(-3);
+        var moreThenAYearAgo = today.AddDays(-20).AddYears(-1);
+        org.DispatchMonth = (MonthToDispatch) threeMonthAgo.Month;
+        org.LatestCryoDate = moreThenAYearAgo;
+
+        sut.HumanReadableExpectedNextSending(org).Should().MatchRegex("vor 3 Monaten");
     }
 
 

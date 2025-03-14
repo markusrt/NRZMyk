@@ -146,6 +146,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.Services.UseScheduler(scheduler => scheduler.Schedule<SentinelEntryReminderEmailJob>().DailyAt(8,30));
 app.Run();
 
 public partial class Program; // for being able to be referenced from tests

@@ -36,10 +36,6 @@ public class ReminderService : IReminderService
         var today = DateTime.Today;
         var dispatchMonth = (int)organization.DispatchMonth;
         var expectedYear = today.Year;
-        if (today.Month > dispatchMonth)
-        {
-            expectedYear++;
-        }
         var expectedArrival = new DateTime(expectedYear, dispatchMonth, 1);
 
         if (organization.LatestCryoDate == null)
@@ -47,15 +43,25 @@ public class ReminderService : IReminderService
             return expectedArrival;
         }
 
-        var timeSinceLastArrival = expectedArrival.Subtract(organization.LatestCryoDate.Value);
+        var latestCryoDate = organization.LatestCryoDate.Value;
+        var timeSinceLastArrival = expectedArrival.Subtract(latestCryoDate);
 
         if (timeSinceLastArrival.TotalDays > -30 && timeSinceLastArrival.TotalDays < 30 )
         {
-            expectedArrival = new DateTime(today.AddYears(1).Year, (int)organization.DispatchMonth, 1);
+            expectedArrival = new DateTime(today.AddYears(1).Year, dispatchMonth, 1);
         }
         else if (timeSinceLastArrival.TotalDays > 365)
         {
-            expectedArrival = new DateTime(organization.LatestCryoDate.Value.AddYears(1).Year, (int)organization.DispatchMonth, 1);
+            var expectedLastTime = new DateTime(latestCryoDate.Year, dispatchMonth, 1);
+            var timeDelayLastTime = expectedLastTime.Subtract(latestCryoDate);
+            if (timeDelayLastTime.TotalDays > -30 && timeDelayLastTime.TotalDays < 30 )
+            {
+                expectedArrival = new DateTime(latestCryoDate.AddYears(1).Year, dispatchMonth, 1);
+            }
+            else
+            {
+                expectedArrival = expectedLastTime;
+            }
         }
 
         return expectedArrival;
