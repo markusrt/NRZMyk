@@ -18,13 +18,28 @@ namespace NRZMyk.Services.Data
             int retryForAvailability = retry.Value;
             try
             {
-                await context.Database.MigrateAsync();
-
-                if (!await context.ClinicalBreakpoints.AnyAsync()
-                        && databaseSeed?.ClinicalBreakpoints?.Any() == true)
+                if (context.Database.IsRelational())
                 {
-                    await context.ClinicalBreakpoints.AddRangeAsync(databaseSeed.ClinicalBreakpoints).ConfigureAwait(false);
-                    await context.SaveChangesAsync().ConfigureAwait(false);
+                    await context.Database.MigrateAsync();
+                }
+
+                var configuredBreakpoints = databaseSeed?.ClinicalBreakpoints;
+                if (configuredBreakpoints?.Any() == true)
+                {
+                    var databaseCount = await context.ClinicalBreakpoints.CountAsync();
+                    if (databaseCount < databaseSeed.ClinicalBreakpoints.Count)
+                    {
+                        var databaseBreakpoints = await context.ClinicalBreakpoints.ToListAsync();
+                        var newBreakpoints = configuredBreakpoints.Where(
+                            breakpoint => !databaseBreakpoints.Any(
+                                b => b.AntifungalAgent == breakpoint.AntifungalAgent
+                                     && b.Standard == breakpoint.Standard
+                                     && b.Version == breakpoint.Version
+                                     && b.AntifungalAgentDetails == breakpoint.AntifungalAgentDetails)
+                            ).ToList();
+                        await context.ClinicalBreakpoints.AddRangeAsync(newBreakpoints).ConfigureAwait(false);
+                        await context.SaveChangesAsync().ConfigureAwait(false);
+                    }
                 }
                 if (!await context.Organizations.AnyAsync()
                     && !string.IsNullOrEmpty(databaseSeed?.MainOrganization))
