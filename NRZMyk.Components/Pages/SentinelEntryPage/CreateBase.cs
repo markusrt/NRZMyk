@@ -127,7 +127,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             var applicableBreakpoints = AllBreakpoints.Where(b => 
                 b.AntifungalAgent == antifungalAgent 
                 && b.Species == SentinelEntry.IdentifiedSpecies
-                && b.Standard == sensitivityTest.Standard).ToList();
+                && b.Standard == sensitivityTest.Standard).OrderByDescending(b=>b.Version).ToList();
             
             if (applicableBreakpoints.All(b => b.Id != sensitivityTest.ClinicalBreakpointId))
             {

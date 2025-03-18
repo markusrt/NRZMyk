@@ -186,9 +186,26 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
             var breakpoints = sut.ApplicableBreakpoints(sensitivityTest).ToList();
 
-            breakpoints.Should().HaveCount(1);
+            breakpoints.Should().HaveCount(2);
+            breakpoints.Select(b => b.Version).Should().BeInDescendingOrder();
             breakpoints.Should().OnlyContain(
                 b => b.AntifungalAgent == AntifungalAgent.Micafungin && b.Standard == BrothMicrodilutionStandard.Eucast);
+        }
+
+        [Test]
+        public void WhenIdentifiedSpeciesIsChangedAfterAddingTests_BreakpointWithLatestVersionIsSelected()
+        {
+            var component = CreateSut();
+            var sut = component.Instance;
+            sut.TestingMethod = SpeciesTestingMethod.ETest;
+            sut.AntifungalAgent = AntifungalAgent.Flucytosine;
+            sut.AddAntimicrobialSensitivityTest();
+            sut.SentinelEntry.IdentifiedSpecies = Species.CandidaAlbicans;
+
+            var breakpoints = sut.ApplicableBreakpoints(sut.SentinelEntry.AntimicrobialSensitivityTests.Single()).ToList();
+
+            var breakpointId = sut.SentinelEntry.AntimicrobialSensitivityTests.Single().ClinicalBreakpointId;
+            breakpoints.Single(b=>b.Id == breakpointId).Version.Should().Be("11.0");
         }
 
         [Test]
