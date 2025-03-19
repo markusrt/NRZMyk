@@ -26,7 +26,7 @@ builder.Services.AddSingleton<IEmailNotificationService, MockEmailNotificationSe
 builder.Services.AddSingleton<IReminderService, ReminderService>();
 
 builder.Services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
-builder.Services.AddScoped<SignOutSessionStateManager>();
+builder.Services.AddSingleton(TimeProvider.System);
 
 
 var app = builder.Build();

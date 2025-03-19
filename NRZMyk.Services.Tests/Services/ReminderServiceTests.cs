@@ -4,14 +4,14 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using Humanizer;
+using Microsoft.Extensions.Time.Testing;
 using NRZMyk.Services.Services;
 
 namespace NRZMyk.Services.Tests.Services;
 
 public class ReminderServiceTests
 {
-
-
     [Test]
     public void WhenExpectedNextSendingIsThisMonth_HumanReadableExpectedNextSendingShowsValidInformation()
     {
@@ -33,14 +33,16 @@ public class ReminderServiceTests
     [TestCase(7, 6, "in 5 Monaten")]
     [TestCase(8, 6, "in 5 Monaten")]
     [TestCase(19, 6, "vor 6 Monaten")]
-    [TestCase(44, 6, "vor 2 Jahren")]
+    [TestCase(44, 6, "vor 3 Jahren")]
     [TestCase(10, 2, "in einem Monat")]
     public void WhenExpectedNextSendingIsChecked_HumanReadableExpectedNextSendingShowsValidInformation(int monthSinceLatestStrainArrival, int monthUntilNextArrival, string expectedNextSending)
     {
-        var sut = CreateSut();
+        var fakeToday = new DateTime(2021, 7, 15);
+        var fakeTimeProvider = new FakeTimeProvider(fakeToday);
+        var sut = CreateSut(fakeTimeProvider);
         var org = CreateOrganization();
-        var latestCryoDate = DateTime.Today.AddMonths(-1 * monthSinceLatestStrainArrival).AddMonths(1);
-        var expectedNextArrival = DateTime.Today.AddMonths(monthUntilNextArrival);
+        var latestCryoDate = fakeToday.AddMonths(-1 * monthSinceLatestStrainArrival).AddMonths(1);
+        var expectedNextArrival = fakeToday.AddMonths(monthUntilNextArrival);
         expectedNextArrival = new DateTime(expectedNextArrival.Year, expectedNextArrival.Month,
             DateTime.DaysInMonth(expectedNextArrival.Year, expectedNextArrival.Month));
         org.DispatchMonth = (MonthToDispatch)expectedNextArrival.Month;
@@ -77,17 +79,33 @@ public class ReminderServiceTests
     }
 
     [Test]
-    public void WhenExpectedNextSendingIsChecked_SentTooLateShowsDueThisYear()
+    public void WhenExpectedNextSendingIsChecked_SentSlightlyEarlyLastTimeShowsDueTheYearAfter()
     {
-        var sut = CreateSut();
+        var fakeToday = new DateTime(2021, 8, 15);
+        var fakeTimeProvider = new FakeTimeProvider(fakeToday);
+        var sut = CreateSut(fakeTimeProvider);
         var org = CreateOrganization();
-        var today = DateTime.Today;
-        var threeMonthAgo = DateTime.Today.AddMonths(-3);
-        var moreThenAYearAgo = today.AddDays(-20).AddYears(-1);
-        org.DispatchMonth = (MonthToDispatch) threeMonthAgo.Month;
-        org.LatestCryoDate = moreThenAYearAgo;
 
-        sut.HumanReadableExpectedNextSending(org).Should().MatchRegex("vor 3 Monaten");
+        var december2020 = new DateTime(2020, 12, 25);
+        org.DispatchMonth = MonthToDispatch.January;
+        org.LatestCryoDate = december2020;
+
+        sut.HumanReadableExpectedNextSending(org).Should().Be("in 4 Monaten");
+    }
+
+    [Test]
+    public void WhenExpectedNextSendingIsChecked_SentTooEarlyButOnTheCorrectYearShowsDueTheYearAfter()
+    {
+        var fakeToday = new DateTime(2021, 7, 15);
+        var fakeTimeProvider = new FakeTimeProvider(fakeToday);
+        var sut = CreateSut(fakeTimeProvider);
+        var org = CreateOrganization();
+
+        var march2021 = new DateTime(2021, 3, 20);
+        org.DispatchMonth = MonthToDispatch.July;
+        org.LatestCryoDate = march2021;
+
+        sut.CalculateExpectedNextSending(org).Should().Be(new DateTime(2022, 7, 1));
     }
 
 
@@ -137,8 +155,8 @@ public class ReminderServiceTests
         };
     }
 
-    private static ReminderService CreateSut()
+    private static ReminderService CreateSut(TimeProvider timeProvider = null)
     {
-        return new ReminderService();
+        return new ReminderService(timeProvider ?? TimeProvider.System);
     }
 }
