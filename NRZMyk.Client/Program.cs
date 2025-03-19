@@ -23,6 +23,7 @@ builder.Services.AddHttpClient("NRZMyk.ServerAPI",
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
     .CreateClient("NRZMyk.ServerAPI"));
 builder.Services.AddScoped<IHttpClient, LoggingJsonHttpClient>();
+builder.Services.AddSingleton(TimeProvider.System);
 
 // Custom services start
 

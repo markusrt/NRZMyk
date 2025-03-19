@@ -51,6 +51,8 @@ builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(ISentinelEntryService).Assembly);
 
+
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<IGraphServiceClient, GraphServiceClientWrapper>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));

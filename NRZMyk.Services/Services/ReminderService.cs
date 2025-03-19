@@ -6,7 +6,7 @@ using Humanizer;
 
 namespace NRZMyk.Services.Services;
 
-public class ReminderService : IReminderService
+public class ReminderService(TimeProvider timeProvider) : IReminderService
 {
     public string HumanReadableExpectedNextSending(Organization organization)
     {
@@ -17,12 +17,13 @@ public class ReminderService : IReminderService
             return "Kein Einsendemonat festgelegt";
         }
 
-        var isExpectedThisMonth = expectedNextSending.Value.Month == DateTime.Today.Month &&
-                                  expectedNextSending.Value.Year == DateTime.Today.Year;
+        var today = timeProvider.GetLocalNow().DateTime;
+        var isExpectedThisMonth = expectedNextSending.Value.Month == today.Month &&
+                                  expectedNextSending.Value.Year == today.Year;
 
         return isExpectedThisMonth
             ? "diesen Monat"
-            : expectedNextSending.Humanize(culture: CultureInfo.GetCultureInfo("de"));
+            : expectedNextSending.Humanize(culture: CultureInfo.GetCultureInfo("de"), dateToCompareAgainst: today);
     }
 
 
@@ -33,7 +34,7 @@ public class ReminderService : IReminderService
             return null;
         }
 
-        var today = DateTime.Today;
+        var today = timeProvider.GetLocalNow().DateTime;
         var dispatchMonth = (int)organization.DispatchMonth;
         var expectedYear = today.Year;
         var expectedArrival = new DateTime(expectedYear, dispatchMonth, 1);
@@ -45,23 +46,20 @@ public class ReminderService : IReminderService
 
         var latestCryoDate = organization.LatestCryoDate.Value;
         var timeSinceLastArrival = expectedArrival.Subtract(latestCryoDate);
-
-        if (timeSinceLastArrival.TotalDays > -30 && timeSinceLastArrival.TotalDays < 30 )
+        var isOffByNoMoreThen40Days = timeSinceLastArrival.TotalDays is > -40 and < 40;
+        var isSentAlreadyThisYear = expectedArrival.Year == latestCryoDate.Year;
+        
+        if (isOffByNoMoreThen40Days || isSentAlreadyThisYear)
         {
             expectedArrival = new DateTime(today.AddYears(1).Year, dispatchMonth, 1);
         }
         else if (timeSinceLastArrival.TotalDays > 365)
         {
             var expectedLastTime = new DateTime(latestCryoDate.Year, dispatchMonth, 1);
-            var timeDelayLastTime = expectedLastTime.Subtract(latestCryoDate);
-            if (timeDelayLastTime.TotalDays > -30 && timeDelayLastTime.TotalDays < 30 )
-            {
-                expectedArrival = new DateTime(latestCryoDate.AddYears(1).Year, dispatchMonth, 1);
-            }
-            else
-            {
-                expectedArrival = expectedLastTime;
-            }
+            var wasSentTheCorrectYearLastTime = expectedLastTime.Year == latestCryoDate.Year;
+            expectedArrival = wasSentTheCorrectYearLastTime 
+                ? new DateTime(latestCryoDate.AddYears(1).Year, dispatchMonth, 1)
+                : expectedLastTime;
         }
 
         return expectedArrival;
