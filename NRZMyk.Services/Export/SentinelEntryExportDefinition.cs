@@ -17,6 +17,7 @@ namespace HaemophilusWeb.Tools
             AddField(s => s.Id);
             AddField(s => s.LaboratoryNumber);
             AddField(s => s.CryoBox);
+            AddField(s => s.CryoDate.ToReportFormat(""));
             AddField(s => ExportToString(s.SenderLaboratoryNumber));
             AddField(s => s.SamplingDate.ToReportFormat(""));
             AddField(s => ExportToString(s.AgeGroup));

@@ -43,7 +43,7 @@ namespace NRZMyk.Services.Tests.Export
 
             var export = sut.ToDataTable(SentinelEntries);
 
-            export.Columns.Count.Should().Be(14);
+            export.Columns.Count.Should().Be(15);
         }
 
         [Test]
@@ -64,6 +64,7 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.YearlySequentialEntryNumber = 123;
             SentinelEntry.CryoBoxNumber = 5;
             SentinelEntry.CryoBoxSlot = 67;
+            SentinelEntry.CryoDate = new DateTime(2015, 10, 5);
             SentinelEntry.PredecessorEntry.Year = 2006;
             SentinelEntry.PredecessorEntry.YearlySequentialEntryNumber = 6;
 
@@ -80,6 +81,7 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Labnr. Einsender"].Should().Be("LabNr. 123");
             export.Rows[0]["Methode Speziesidentifikation"].Should().Be("BBL Crystal (Becton-Dickinson)");
             export.Rows[0]["SN-Labornummer Vorgänger"].Should().Be("SN-2006-0006");
+            export.Rows[0]["Kryo-Datum"].Should().Be("05.10.2015");
         }
         
         [Test]
