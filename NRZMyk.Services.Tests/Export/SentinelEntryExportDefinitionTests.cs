@@ -43,7 +43,7 @@ namespace NRZMyk.Services.Tests.Export
 
             var export = sut.ToDataTable(SentinelEntries);
 
-            export.Columns.Count.Should().Be(13);
+            export.Columns.Count.Should().Be(14);
         }
 
         [Test]
@@ -66,6 +66,7 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.CryoBoxSlot = 67;
             SentinelEntry.PredecessorEntry.Year = 2006;
             SentinelEntry.PredecessorEntry.YearlySequentialEntryNumber = 6;
+            SentinelEntry.CryoDate = new DateTime(2020, 10, 5);
 
             var export = sut.ToDataTable(SentinelEntries);
 
@@ -79,6 +80,21 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Material"].Should().Be("Blutkultur zentral - ZVK");
             export.Rows[0]["Labnr. Einsender"].Should().Be("LabNr. 123");
             export.Rows[0]["Methode Speziesidentifikation"].Should().Be("BBL Crystal (Becton-Dickinson)");
+            export.Rows[0]["Kryo-Datum"].Should().Be("05.10.2020");
+        }
+
+        [Test]
+        public void DataTable_AllowsEmptyCryoDate()
+        {
+            var sut = CreateExportDefinition(out _);
+
+            SentinelEntry.SenderLaboratoryNumber = "LabNr. 234";
+            SentinelEntry.CryoDate = null;
+
+            var export = sut.ToDataTable(SentinelEntries);
+
+            export.Rows[0]["Labnr. Einsender"].Should().Be("LabNr. 234");
+            export.Rows[0]["Kryo-Datum"].Should().Be("");
         }
 
         [Test]
