@@ -18,10 +18,9 @@ jobs:
       statuses: write
 
     steps:
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.101
+      - name: Remove global.json
+        run: |
+          rm -f global.json
       - name: Checkout code
         uses: actions/checkout@v4
         with:
