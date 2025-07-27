@@ -74,11 +74,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 CryoRemark = entry.CryoRemark
             }).ConfigureAwait(true);
 
-            var index = SentinelEntries.IndexOf(entry);
-            var updatedEntry = await SentinelEntryService.GetById(entry.Id).ConfigureAwait(true);
-            SentinelEntries[index] = updatedEntry;
-            _updatingItems.Remove(entry.Id);
-            await InvokeAsync(StateHasChanged).ConfigureAwait(true);
+            await RefreshEntryAndUpdateState(entry).ConfigureAwait(true);
         }
 
         private async Task CryoStore(SentinelEntryResponse entry, bool store)
@@ -91,9 +87,14 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 CryoRemark = entry.CryoRemark
             }).ConfigureAwait(true);
 
+            await RefreshEntryAndUpdateState(entry).ConfigureAwait(true);
+        }
+
+        private async Task RefreshEntryAndUpdateState(SentinelEntryResponse entry)
+        {
             var index = SentinelEntries.IndexOf(entry);
             var updatedEntry = await SentinelEntryService.GetById(entry.Id).ConfigureAwait(true);
-            SentinelEntries[index] =  updatedEntry;
+            SentinelEntries[index] = updatedEntry;
             _updatingItems.Remove(entry.Id);
             await InvokeAsync(StateHasChanged).ConfigureAwait(true);
         }

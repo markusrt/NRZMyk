@@ -157,7 +157,7 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             await sut.LoadData().ConfigureAwait(true);
 
             // First entry has a CryoDate, so it should show the save button
-            _renderedComponent.Markup.Should().Contain("title=\"Kryo-Bemerkung speichern\"");
+            _renderedComponent.Markup.Should().Contain("title=\"Zusätzliche Info speichern\"");
             _renderedComponent.Markup.Should().Contain("oi-check");
         }
 
