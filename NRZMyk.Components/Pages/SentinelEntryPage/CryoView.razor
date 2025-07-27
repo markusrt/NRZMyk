@@ -96,8 +96,8 @@ else
                             else
                             {
                                 <InputText class="form-control form-control-sm" 
-                                          @bind-Value="item.CryoRemark"
-                                          @oninput="@((ChangeEventArgs e) => OnCryoRemarkInput(item))"/>
+                                  @bind-Value="item.CryoRemark"
+                                  @oninput="@(_ => OnCryoRemarkInput(item))"/>
                             }
                         </td>
                         <td style="white-space: nowrap;">
@@ -107,25 +107,29 @@ else
                                     <i class="oi oi-clock"></i>
                                 </a>
                             }
-                            else if (item.CryoDate.HasValue)
-                            {
-                                <a title="Zusätzliche Info speichern" 
-                                   href="" 
-                                   @onclick="() => UpdateCryoRemark(item)" 
-                                   @onclick:preventDefault 
-                                   class="btn btn-sm @(HasCryoRemarkChanged(item) ? "btn-primary" : "btn-secondary") me-1" 
-                                   disabled="@(!HasCryoRemarkChanged(item))">
-                                    <i class="oi oi-check"></i>
-                                </a>
-                                <a title="Aus Cryobox entfernen" href="" @onclick="() => ReleaseFromCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-danger">
-                                    <i class="oi oi-data-transfer-upload"></i>
-                                </a>
-                            }
                             else
                             {
-                                <a title="In Cryobox einlagern" href="" @onclick="() => PutToCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-success">
-                                    <i class="oi oi-data-transfer-download"></i>
+                                <a title="Zusätzliche Info aktualisieren"
+                                   href=""
+                                   @onclick="() => UpdateCryoRemark(item)"
+                                   @onclick:preventDefault
+                                   class="btn btn-sm @(HasCryoRemarkChanged(item) ? "btn-primary" : "btn-secondary") me-1"
+                                   disabled="@(!HasCryoRemarkChanged(item))">
+                                    <i class="oi oi-comment-square"></i>
                                 </a>
+
+                                if (item.CryoDate.HasValue)
+                                {
+                                    <a title="Aus Cryobox entfernen" href="" @onclick="() => ReleaseFromCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-danger">
+                                        <i class="oi oi-data-transfer-upload"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a title="In Cryobox einlagern" href="" @onclick="() => PutToCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-success">
+                                        <i class="oi oi-data-transfer-download"></i>
+                                    </a>
+                                }
                             }
                         </td>
                     </tr>
