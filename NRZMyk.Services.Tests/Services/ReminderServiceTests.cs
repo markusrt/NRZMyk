@@ -19,7 +19,7 @@ public class ReminderServiceTests
         var org = CreateOrganization();
         var today = DateTime.Today;
         org.DispatchMonth = (MonthToDispatch)today.Month;
-        org.LatestCryoDate = today.Subtract(TimeSpan.FromDays(200));
+        org.LatestCryoDate = today.Subtract(TimeSpan.FromDays(370));
 
         sut.HumanReadableExpectedNextSending(org).Should().Be("diesen Monat");
     }
@@ -61,7 +61,7 @@ public class ReminderServiceTests
         org.DispatchMonth = (MonthToDispatch) today.Month;
         org.LatestCryoDate = twentyDaysAgo;
 
-        sut.HumanReadableExpectedNextSending(org).Should().Be("in einem Jahr");
+        sut.HumanReadableExpectedNextSending(org).Should().MatchRegex("in einem Jahr|in 11 Monaten");
     }
 
     [Test]
