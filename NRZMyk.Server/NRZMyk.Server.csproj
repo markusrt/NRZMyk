@@ -26,7 +26,7 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
     <PackageReference Include="Azure.Identity" Version="1.11.4" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="3.6.0" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="3.8.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NRZMyk.Client\NRZMyk.Client.csproj" />
