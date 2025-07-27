@@ -77,7 +77,7 @@ else
                         </td>
                         <td>@item.SpeciesOrOther()</td>
                         <td>
-                            @if (IsUpdating(item))
+                            @if (IsUpdating(item) || IsUpdatingRemarkOnly(item))
                             {
                                 <div class="spinner-border spinner-border-sm text-secondary" role="status">
                                 </div>
@@ -88,7 +88,7 @@ else
                             }
                         </td>
                         <td>
-                            @if (IsUpdatingRemarkOnly(item))
+                            @if (IsUpdating(item) || IsUpdatingRemarkOnly(item))
                             {
                                 <div class="spinner-border spinner-border-sm text-secondary" role="status">
                                 </div>
