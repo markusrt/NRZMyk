@@ -120,6 +120,14 @@ namespace NRZMyk.Mocks.MockServices
             return entry;
         }
 
+        public async Task<SentinelEntry> UpdateCryoRemark(CryoRemarkUpdateRequest updateRequest)
+        {
+            await Task.Delay(Delay);
+            var entry = _repository.First(e => e.Id == updateRequest.Id);
+            entry.CryoRemark = updateRequest.CryoRemark;
+            return entry;
+        }
+
         public async Task<string> Export()
         {
             await Task.Delay(Delay);

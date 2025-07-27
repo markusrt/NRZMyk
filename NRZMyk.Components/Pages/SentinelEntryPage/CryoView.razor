@@ -50,7 +50,7 @@ else
                     <th>Kryobox</th>
                     <th>Einsender Labornummer</th>
                     <th>Material</th>
-                    <th>Probennahme</th>
+                    <th>Entnahmedatum</th>
                     <th>Spezies</th>
                     <th>Asservierung</th>
                     <th>Zusätzliche Info</th>
@@ -70,51 +70,66 @@ else
                         <td>@item.SenderLaboratoryNumber</td>
                         <td>@item.MaterialOrOther()</td>
                         <td>
-                            @if (IsUpdating(item))
-                            {
-                                <div class="spinner-border spinner-border-sm text-secondary" role="status">
-                                </div>
-                            }
-                            else if (item.SamplingDate.HasValue)
+                            @if (item.SamplingDate.HasValue)
                             {
                                 @item.SamplingDate.Value.ToShortDateString()
                             }
                         </td>
                         <td>@item.SpeciesOrOther()</td>
-                        <td>@item.CryoDate?.ToShortDateString()</td>
                         <td>
                             @if (IsUpdating(item))
                             {
                                 <div class="spinner-border spinner-border-sm text-secondary" role="status">
                                 </div>
                             }
-                            else if (item.CryoDate.HasValue)
-                            {
-                                @item.CryoRemark
-                            }
                             else
                             {
-                                <InputText class="form-control form-control-sm" @bind-Value="item.CryoRemark"/>
+                                @item.CryoDate?.ToShortDateString()
                             }
                         </td>
                         <td>
+                            @if (IsUpdating(item) || IsUpdatingRemarkOnly(item))
+                            {
+                                <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                                </div>
+                            }
+                            else
+                            {
+                                <InputText class="form-control form-control-sm" 
+                                  @bind-Value="item.CryoRemark"
+                                  @oninput="@(_ => OnCryoRemarkInput(item))"/>
+                            }
+                        </td>
+                        <td style="white-space: nowrap;">
                             @if (IsUpdating(item))
                             {
                                 <a title="Lädt" href="#" @onclick="() => { }" @onclick:preventDefault class="disabled btn btn-sm btn-secondary">
                                     <i class="oi oi-clock"></i>
                                 </a>
                             }
-                            else if (item.CryoDate.HasValue)
-                            {
-                                <a title="Aus Cryobox entfernen" href="" @onclick="() => ReleaseFromCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-danger">
-                                    <i class="oi oi-data-transfer-upload"></i>
-                                </a>
-                            }
                             else
                             {
-                                <a title="In Cryobox einlagern" href="" @onclick="() => PutToCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-success">
-                                    <i class="oi oi-data-transfer-download"></i>
+                                <a title="Zusätzliche Info aktualisieren"
+                                   href=""
+                                   @onclick="() => UpdateCryoRemark(item)"
+                                   @onclick:preventDefault
+                                   class="btn btn-sm @(HasCryoRemarkChanged(item) ? "btn-primary" : "btn-secondary") me-1"
+                                   disabled="@(!HasCryoRemarkChanged(item))">
+                                    <i class="oi oi-comment-square"></i>
                                 </a>
+
+                                if (item.CryoDate.HasValue)
+                                {
+                                    <a title="Aus Cryobox entfernen" href="" @onclick="() => ReleaseFromCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-danger">
+                                        <i class="oi oi-data-transfer-upload"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a title="In Cryobox einlagern" href="" @onclick="() => PutToCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-success">
+                                        <i class="oi oi-data-transfer-download"></i>
+                                    </a>
+                                }
                             }
                         </td>
                     </tr>

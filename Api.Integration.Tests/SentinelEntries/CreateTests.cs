@@ -19,7 +19,7 @@ namespace Api.Integration.Tests.SentinelEntries
         public async Task WhenCreatingValidSentinelEntry_RespondsWithCreate()
         {
             var client = ClientFactory.CreateClient();
-            var request = CreateValidRequest();
+            var request = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
 
             var createdEntry = await CreateValidEntry(client, request).ConfigureAwait(true);
 
@@ -31,12 +31,12 @@ namespace Api.Integration.Tests.SentinelEntries
         public async Task WhenCreatingWithValidPredecessorEntry_RespondsWithCreate()
         {
             var client = ClientFactory.CreateClient();
-            var predecessor = CreateValidRequest();
+            var predecessor = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
 
             var predecessorEntry = await CreateValidEntry(client, predecessor).ConfigureAwait(true);
             
             //Follow-up entry
-            var followUp = CreateValidRequest();
+            var followUp = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
             followUp.PredecessorLaboratoryNumber = predecessorEntry!.LaboratoryNumber;
             var followUpEntry = await CreateValidEntry(client, followUp).ConfigureAwait(true);
 
@@ -48,13 +48,13 @@ namespace Api.Integration.Tests.SentinelEntries
         public async Task WhenCreatingPredecessorCircle_RespondsWithCreate()
         {
             var client = ClientFactory.CreateClient();
-            var predecessorRequest = CreateValidRequest();
+            var predecessorRequest = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
 
             // Arrange: Create entry with follow-up
             var predecessor = await CreateValidEntry(client, predecessorRequest).ConfigureAwait(true);
             predecessor.Should().NotBeNull();
             predecessor!.Id.Should().BeGreaterThan(0);
-            var followUp = CreateValidRequest();
+            var followUp = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
             followUp.PredecessorLaboratoryNumber = predecessor!.LaboratoryNumber;
             var followUpEntry = await CreateValidEntry(client, followUp).ConfigureAwait(true);
             followUpEntry.Should().NotBeNull();
@@ -75,7 +75,7 @@ namespace Api.Integration.Tests.SentinelEntries
         public async Task WhenCreatingUnknownPredecessorEntry_RespondsWithBadRequest()
         {
             var client = ClientFactory.CreateClient();
-            var request = CreateValidRequest();
+            var request = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
             request.PredecessorLaboratoryNumber = "SN-4242-0042";
 
             var response = await client.PostAsJsonAsync("api/sentinel-entries", request).ConfigureAwait(true);
@@ -90,7 +90,7 @@ namespace Api.Integration.Tests.SentinelEntries
         public async Task WhenCreatingWithMissingSamplingDate_RespondsWithBadRequest()
         {
             var client = ClientFactory.CreateClient();
-            var request = CreateValidRequest();
+            var request = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
             request.SamplingDate = null;
 
             var response = await client.PostAsJsonAsync("api/sentinel-entries", request).ConfigureAwait(true);
@@ -104,7 +104,7 @@ namespace Api.Integration.Tests.SentinelEntries
         public async Task WhenCreatingWithInvalidDepartmentCombination_RespondsWithBadRequest()
         {
             var client = ClientFactory.CreateClient();
-            var request = CreateValidRequest();
+            var request = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
             request.InternalHospitalDepartmentType = InternalHospitalDepartmentType.Angiological;
 
             var response = await client.PostAsJsonAsync("api/sentinel-entries", request).ConfigureAwait(true);
@@ -118,7 +118,7 @@ namespace Api.Integration.Tests.SentinelEntries
         public async Task WhenCreatingWithFutureSamplingDate_RespondsWithBadRequest()
         {
             var client = ClientFactory.CreateClient();
-            var request = CreateValidRequest();
+            var request = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
             request.SamplingDate = DateTime.Now.AddDays(1);
 
             var response = await client.PostAsJsonAsync("api/sentinel-entries", request).ConfigureAwait(true);
@@ -137,21 +137,6 @@ namespace Api.Integration.Tests.SentinelEntries
             createdEntry!.Id.Should().BeGreaterThan(0);
             response.StatusCode.Should().Be(HttpStatusCode.Created);
             return createdEntry;
-        }
-
-        private static SentinelEntryRequest CreateValidRequest()
-        {
-            var filler = new Filler<SentinelEntryRequest>();
-            var request = filler.Create();
-            request.Material = Material.CentralBloodCultureOther;
-            request.HospitalDepartment = HospitalDepartment.GeneralSurgery;
-            request.InternalHospitalDepartmentType = InternalHospitalDepartmentType.NoInternalDepartment;
-            request.IdentifiedSpecies = Species.CandidaDubliniensis;
-            request.SpeciesIdentificationMethod = SpeciesIdentificationMethod.BBL;
-            request.SamplingDate = DateTime.Now.AddDays(-3);
-            request.PredecessorLaboratoryNumber = string.Empty;
-            request.HasPredecessor = YesNo.No;
-            return request;
         }
     }
 }
