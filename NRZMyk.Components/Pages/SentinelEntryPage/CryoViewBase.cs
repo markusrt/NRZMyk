@@ -38,6 +38,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         protected LoadState LoadState { get; set; }
 
         private readonly List<int> _updatingItems = new();
+        private readonly Dictionary<int, string> _originalCryoRemarks = new();
         
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -74,6 +75,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 CryoRemark = entry.CryoRemark
             }).ConfigureAwait(true);
 
+            // Update the original value after successful save
+            _originalCryoRemarks[entry.Id] = entry.CryoRemark ?? string.Empty;
+            
             await RefreshEntryAndUpdateState(entry).ConfigureAwait(true);
         }
 
@@ -123,6 +127,13 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             SentinelEntries = Mapper.Map<List<SentinelEntryResponse>>(
                 await SentinelEntryService.ListByOrganization(SelectedOrganization).ConfigureAwait(true));
 
+            // Initialize original cryo remarks for tracking changes
+            _originalCryoRemarks.Clear();
+            foreach (var entry in SentinelEntries)
+            {
+                _originalCryoRemarks[entry.Id] = entry.CryoRemark ?? string.Empty;
+            }
+
             LoadState = LoadState.Loaded;
 
             await InvokeAsync(StateHasChanged).ConfigureAwait(true);
@@ -131,6 +142,17 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         internal bool IsUpdating(SentinelEntryResponse entry)
         {
             return _updatingItems.Contains(entry.Id);
+        }
+        
+        internal bool HasCryoRemarkChanged(SentinelEntryResponse entry)
+        {
+            if (!_originalCryoRemarks.ContainsKey(entry.Id))
+            {
+                _originalCryoRemarks[entry.Id] = entry.CryoRemark ?? string.Empty;
+                return false;
+            }
+            
+            return (_originalCryoRemarks[entry.Id] ?? string.Empty) != (entry.CryoRemark ?? string.Empty);
         }
     }
 }

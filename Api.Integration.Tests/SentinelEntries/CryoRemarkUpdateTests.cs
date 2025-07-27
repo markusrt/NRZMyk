@@ -20,7 +20,7 @@ namespace Api.Integration.Tests.SentinelEntries
             var client = ClientFactory.CreateClient();
             
             // Arrange: Create a sentinel entry first
-            var createRequest = CreateValidSentinelEntryRequest();
+            var createRequest = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
             var createdEntry = await CreateValidEntry(client, createRequest).ConfigureAwait(true);
             createdEntry.Should().NotBeNull();
             
@@ -64,7 +64,7 @@ namespace Api.Integration.Tests.SentinelEntries
             var client = ClientFactory.CreateClient();
             
             // Arrange: Create a sentinel entry first
-            var createRequest = CreateValidSentinelEntryRequest();
+            var createRequest = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
             var createdEntry = await CreateValidEntry(client, createRequest).ConfigureAwait(true);
             createdEntry.Should().NotBeNull();
 
@@ -103,21 +103,6 @@ namespace Api.Integration.Tests.SentinelEntries
             var createdEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(createdEntryPath).ConfigureAwait(true);
             createdEntry!.Id.Should().BeGreaterThan(0);
             return createdEntry;
-        }
-
-        private static SentinelEntryRequest CreateValidSentinelEntryRequest()
-        {
-            var filler = new Filler<SentinelEntryRequest>();
-            var request = filler.Create();
-            request.Material = Material.CentralBloodCultureOther;
-            request.HospitalDepartment = HospitalDepartment.GeneralSurgery;
-            request.InternalHospitalDepartmentType = InternalHospitalDepartmentType.NoInternalDepartment;
-            request.IdentifiedSpecies = Species.CandidaDubliniensis;
-            request.SpeciesIdentificationMethod = SpeciesIdentificationMethod.BBL;
-            request.SamplingDate = DateTime.Now.AddDays(-3);
-            request.PredecessorLaboratoryNumber = string.Empty;
-            request.HasPredecessor = YesNo.No;
-            return request;
         }
     }
 }

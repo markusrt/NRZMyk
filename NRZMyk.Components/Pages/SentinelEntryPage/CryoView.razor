@@ -93,7 +93,7 @@ else
                                 <InputText class="form-control form-control-sm" @bind-Value="item.CryoRemark"/>
                             }
                         </td>
-                        <td>
+                        <td style="white-space: nowrap;">
                             @if (IsUpdating(item))
                             {
                                 <a title="Lädt" href="#" @onclick="() => { }" @onclick:preventDefault class="disabled btn btn-sm btn-secondary">
@@ -102,7 +102,12 @@ else
                             }
                             else if (item.CryoDate.HasValue)
                             {
-                                <a title="Zusätzliche Info speichern" href="" @onclick="() => UpdateCryoRemark(item)" @onclick:preventDefault class="btn btn-sm btn-primary me-1">
+                                <a title="Zusätzliche Info speichern" 
+                                   href="" 
+                                   @onclick="() => UpdateCryoRemark(item)" 
+                                   @onclick:preventDefault 
+                                   class="btn btn-sm @(HasCryoRemarkChanged(item) ? "btn-primary" : "btn-secondary") me-1" 
+                                   disabled="@(!HasCryoRemarkChanged(item))">
                                     <i class="oi oi-check"></i>
                                 </a>
                                 <a title="Aus Cryobox entfernen" href="" @onclick="() => ReleaseFromCryoStorage(item)" @onclick:preventDefault class="btn btn-sm btn-danger">
