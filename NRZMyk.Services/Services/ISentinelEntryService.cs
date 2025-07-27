@@ -12,6 +12,7 @@ public interface ISentinelEntryService
     Task<SentinelEntryResponse> GetById(int id);
     Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);
     Task<SentinelEntry> CryoArchive(CryoArchiveRequest archiveRequest);
+    Task<SentinelEntry> UpdateCryoRemark(CryoRemarkUpdateRequest updateRequest);
     Task<string> Export();
     Task<List<string>> Other(string other);
     Task Delete(int id);
