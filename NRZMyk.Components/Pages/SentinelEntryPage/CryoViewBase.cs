@@ -38,7 +38,8 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         protected LoadState LoadState { get; set; }
 
         private readonly List<int> _updatingItems = new();
-        private readonly Dictionary<int, string> _originalCryoRemarks = new();
+        private readonly List<int> _updatingRemarkOnly = new();
+        private readonly HashSet<int> _modifiedCryoRemarks = new();
         
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -68,15 +69,15 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         internal async Task UpdateCryoRemark(SentinelEntryResponse entry)
         {
-            _updatingItems.Add(entry.Id);
+            _updatingRemarkOnly.Add(entry.Id);
             await SentinelEntryService.UpdateCryoRemark(new CryoRemarkUpdateRequest
             {
                 Id = entry.Id,
                 CryoRemark = entry.CryoRemark
             }).ConfigureAwait(true);
 
-            // Update the original value after successful save
-            _originalCryoRemarks[entry.Id] = entry.CryoRemark ?? string.Empty;
+            // Clear the modified flag after successful save
+            _modifiedCryoRemarks.Remove(entry.Id);
             
             await RefreshEntryAndUpdateState(entry).ConfigureAwait(true);
         }
@@ -100,6 +101,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             var updatedEntry = await SentinelEntryService.GetById(entry.Id).ConfigureAwait(true);
             SentinelEntries[index] = updatedEntry;
             _updatingItems.Remove(entry.Id);
+            _updatingRemarkOnly.Remove(entry.Id);
             await InvokeAsync(StateHasChanged).ConfigureAwait(true);
         }
 
@@ -127,12 +129,8 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             SentinelEntries = Mapper.Map<List<SentinelEntryResponse>>(
                 await SentinelEntryService.ListByOrganization(SelectedOrganization).ConfigureAwait(true));
 
-            // Initialize original cryo remarks for tracking changes
-            _originalCryoRemarks.Clear();
-            foreach (var entry in SentinelEntries)
-            {
-                _originalCryoRemarks[entry.Id] = entry.CryoRemark ?? string.Empty;
-            }
+            // Clear any modification flags when loading new data
+            _modifiedCryoRemarks.Clear();
 
             LoadState = LoadState.Loaded;
 
@@ -144,15 +142,19 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             return _updatingItems.Contains(entry.Id);
         }
         
+        internal bool IsUpdatingRemarkOnly(SentinelEntryResponse entry)
+        {
+            return _updatingRemarkOnly.Contains(entry.Id);
+        }
+        
         internal bool HasCryoRemarkChanged(SentinelEntryResponse entry)
         {
-            if (!_originalCryoRemarks.ContainsKey(entry.Id))
-            {
-                _originalCryoRemarks[entry.Id] = entry.CryoRemark ?? string.Empty;
-                return false;
-            }
-            
-            return (_originalCryoRemarks[entry.Id] ?? string.Empty) != (entry.CryoRemark ?? string.Empty);
+            return _modifiedCryoRemarks.Contains(entry.Id);
+        }
+        
+        internal void OnCryoRemarkInput(SentinelEntryResponse entry)
+        {
+            _modifiedCryoRemarks.Add(entry.Id);
         }
     }
 }

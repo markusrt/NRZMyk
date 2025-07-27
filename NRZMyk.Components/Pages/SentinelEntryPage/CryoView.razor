@@ -70,18 +70,12 @@ else
                         <td>@item.SenderLaboratoryNumber</td>
                         <td>@item.MaterialOrOther()</td>
                         <td>
-                            @if (IsUpdating(item))
-                            {
-                                <div class="spinner-border spinner-border-sm text-secondary" role="status">
-                                </div>
-                            }
-                            else if (item.SamplingDate.HasValue)
+                            @if (item.SamplingDate.HasValue)
                             {
                                 @item.SamplingDate.Value.ToShortDateString()
                             }
                         </td>
                         <td>@item.SpeciesOrOther()</td>
-                        <td>@item.CryoDate?.ToShortDateString()</td>
                         <td>
                             @if (IsUpdating(item))
                             {
@@ -90,7 +84,20 @@ else
                             }
                             else
                             {
-                                <InputText class="form-control form-control-sm" @bind-Value="item.CryoRemark"/>
+                                @item.CryoDate?.ToShortDateString()
+                            }
+                        </td>
+                        <td>
+                            @if (IsUpdatingRemarkOnly(item))
+                            {
+                                <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                                </div>
+                            }
+                            else
+                            {
+                                <InputText class="form-control form-control-sm" 
+                                          @bind-Value="item.CryoRemark"
+                                          @oninput="@((ChangeEventArgs e) => OnCryoRemarkInput(item))"/>
                             }
                         </td>
                         <td style="white-space: nowrap;">

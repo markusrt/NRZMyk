@@ -173,6 +173,46 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             _renderedComponent.Markup.Should().Contain("title=\"In Cryobox einlagern\"");
         }
 
+        [Test]
+        public async Task WhenCryoRemarkInputTriggered_EnablesSaveButton()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 1;
+            await sut.LoadData().ConfigureAwait(true);
+
+            var cryoEntry = sut.SentinelEntries.First();
+            
+            // Initially save button should be disabled
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeFalse();
+            
+            // Trigger the input callback
+            sut.OnCryoRemarkInput(cryoEntry);
+            
+            // Now save button should be enabled
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task WhenCryoRemarkSaved_DisablesSaveButton()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 1;
+            await sut.LoadData().ConfigureAwait(true);
+
+            var cryoEntry = sut.SentinelEntries.First();
+            
+            // Trigger input to enable save button
+            sut.OnCryoRemarkInput(cryoEntry);
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeTrue();
+            
+            // Save the remark
+            cryoEntry.CryoRemark = "Updated remark";
+            await sut.UpdateCryoRemark(cryoEntry).ConfigureAwait(true);
+            
+            // Save button should be disabled again
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeFalse();
+        }
+
         private static IRenderedComponent<CryoView> CreateSut(TestContext context)
         {
             return context.RenderComponent<CryoView>();
