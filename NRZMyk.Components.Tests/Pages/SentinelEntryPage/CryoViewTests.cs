@@ -132,6 +132,47 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             sut.SentinelEntries.Single(s => s.Id == 1).Remark.Should().Be("Updated by test");
         }
 
+        [Test]
+        public async Task WhenUpdateCryoRemark_UpdatesRemarkOnly()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 1;
+            await sut.LoadData().ConfigureAwait(true);
+
+            var cryoEntry = sut.SentinelEntries.First();
+            var originalCryoDate = cryoEntry.CryoDate;
+            cryoEntry.CryoRemark = "Updated cryo remark";
+            await sut.UpdateCryoRemark(cryoEntry).ConfigureAwait(true);
+
+            var entry = await _sentinelEntryService.GetById(1).ConfigureAwait(true);
+            entry.CryoRemark.Should().Be("Updated cryo remark");
+            entry.CryoDate.Should().Be(originalCryoDate); // CryoDate should remain unchanged
+        }
+
+        [Test]
+        public async Task WhenEntriesInCryoStorage_ShowsSaveButton()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 1;
+            await sut.LoadData().ConfigureAwait(true);
+
+            // First entry has a CryoDate, so it should show the save button
+            _renderedComponent.Markup.Should().Contain("title=\"Kryo-Bemerkung speichern\"");
+            _renderedComponent.Markup.Should().Contain("oi-check");
+        }
+
+        [Test]
+        public async Task WhenEntriesNotInCryoStorage_DoesNotShowSaveButton()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 2; // Second entry has no CryoDate
+            await sut.LoadData().ConfigureAwait(true);
+
+            // Should not show save button for non-cryo-stored entries
+            _renderedComponent.Markup.Should().NotContain("title=\"Kryo-Bemerkung speichern\"");
+            _renderedComponent.Markup.Should().Contain("title=\"In Cryobox einlagern\"");
+        }
+
         private static IRenderedComponent<CryoView> CreateSut(TestContext context)
         {
             return context.RenderComponent<CryoView>();
