@@ -90,6 +90,16 @@ namespace NRZMyk.Mocks.MockServices
             return Task.FromResult(_repository);
         }
 
+        public Task<PagedSentinelEntryResult> ListPaged(int pageSize, int pageIndex, string searchTerm = null, int? organizationId = null)
+        {
+            var result = new PagedSentinelEntryResult
+            {
+                SentinelEntries = _repository,
+                PageCount = 1
+            };
+            return Task.FromResult(result);
+        }
+
         public async Task<List<SentinelEntry>> ListByOrganization(int organizationId)
         {
             await Task.Delay(Delay);
