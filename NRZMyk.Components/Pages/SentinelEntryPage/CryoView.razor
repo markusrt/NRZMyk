@@ -109,25 +109,13 @@ else
                             }
                             else
                             {
-                                @if (HasCryoRemarkChanged(item))
-                                {
-                                    <a title="Zusätzliche Info aktualisieren"
-                                       href=""
-                                       @onclick="() => UpdateCryoRemark(item)"
-                                       @onclick:preventDefault
-                                       class="btn btn-sm btn-primary me-1">
-                                        <i class="oi oi-comment-square"></i>
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a title="Zusätzliche Info aktualisieren"
-                                       href=""
-                                       @onclick:preventDefault
-                                       class="btn btn-sm btn-secondary disabled me-1">
-                                        <i class="oi oi-comment-square"></i>
-                                    </a>
-                                }
+                                <a title="Zusätzliche Info aktualisieren"
+                                   href=""
+                                   @onclick="HasCryoRemarkChanged(item) ? async () => await UpdateCryoRemark(item) : () => Task.CompletedTask"
+                                   @onclick:preventDefault
+                                   class="btn btn-sm @(HasCryoRemarkChanged(item) ? "btn-primary" : "btn-secondary disabled") me-1">
+                                    <i class="oi oi-comment-square"></i>
+                                </a>
 
                                 if (item.CryoDate.HasValue)
                                 {
