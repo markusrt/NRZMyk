@@ -111,10 +111,9 @@ else
                             {
                                 <a title="Zusätzliche Info aktualisieren"
                                    href=""
-                                   @onclick="() => UpdateCryoRemark(item)"
+                                   @onclick="HasCryoRemarkChanged(item) ? async () => await UpdateCryoRemark(item) : () => Task.CompletedTask"
                                    @onclick:preventDefault
-                                   class="btn btn-sm @(HasCryoRemarkChanged(item) ? "btn-primary" : "btn-secondary") me-1"
-                                   disabled="@(!HasCryoRemarkChanged(item))">
+                                   class="btn btn-sm @(HasCryoRemarkChanged(item) ? "btn-primary" : "btn-secondary disabled") me-1">
                                     <i class="oi oi-comment-square"></i>
                                 </a>
 

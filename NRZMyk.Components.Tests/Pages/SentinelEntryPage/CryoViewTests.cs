@@ -213,6 +213,28 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             sut.HasCryoRemarkChanged(cryoEntry).Should().BeFalse();
         }
 
+        [Test]
+        public async Task CheckDisabledButtonRendering()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 1;
+            await sut.LoadData().ConfigureAwait(true);
+
+            var cryoEntry = sut.SentinelEntries.First();
+            
+            // Initially save button should be disabled - check markup
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeFalse();
+            // Verify the disabled button shows correct classes and no invalid disabled attribute
+            _renderedComponent.Markup.Should().Contain("btn-secondary disabled");
+            _renderedComponent.Markup.Should().NotContain("disabled=\"");
+            
+            // Trigger the input callback to enable button
+            sut.OnCryoRemarkInput(cryoEntry);
+            
+            // Verify the state logic is working  
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeTrue();
+        }
+
         private static IRenderedComponent<CryoView> CreateSut(TestContext context)
         {
             return context.RenderComponent<CryoView>();
