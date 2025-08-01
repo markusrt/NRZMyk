@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NRZMyk.Services.Data.Entities;
 
@@ -46,6 +47,29 @@ namespace NRZMyk.Services.Services
             var pagedResult = await _httpClient
                 .Get<PagedSentinelEntryResult>($"{BaseApi}?PageSize={pageSize}").ConfigureAwait(false);
             return pagedResult.SentinelEntries;
+        }
+
+        public async Task<PagedSentinelEntryResult> ListPaged(int pageSize, int pageIndex, string searchTerm = null, int? organizationId = null)
+        {
+            var queryParams = new List<string>
+            {
+                $"PageSize={pageSize}",
+                $"PageIndex={pageIndex}"
+            };
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                queryParams.Add($"SearchTerm={Uri.EscapeDataString(searchTerm)}");
+            }
+
+            if (organizationId.HasValue)
+            {
+                queryParams.Add($"OrganizationId={organizationId.Value}");
+            }
+
+            var queryString = string.Join("&", queryParams);
+            return await _httpClient
+                .Get<PagedSentinelEntryResult>($"{BaseApi}?{queryString}").ConfigureAwait(false);
         }
     }
 }
