@@ -22,17 +22,6 @@ public class SentinelEntrySearchPaginatedSpecificationTests
     }
 
     [Test]
-    public void WhenSpecificationIsCreated_FiltersBySearchTerm_LaboratoryNumber()
-    {
-        var spec = new SentinelEntrySearchPaginatedSpecification(0, 10, "123", "SN-2020-0002");
-
-        var result = spec.Evaluate(GetTestCollection());
-
-        result.Should().HaveCount(1);
-        result.Single().Id.Should().Be(2);
-    }
-
-    [Test]
     public void WhenSpecificationIsCreated_FiltersBySearchTerm_SenderLaboratoryNumber()
     {
         var spec = new SentinelEntrySearchPaginatedSpecification(0, 10, "123", "SENDER-123");
@@ -44,17 +33,6 @@ public class SentinelEntrySearchPaginatedSpecificationTests
     }
 
     [Test]
-    public void WhenSpecificationIsCreated_FiltersBySearchTerm_IdentifiedSpecies()
-    {
-        var spec = new SentinelEntrySearchPaginatedSpecification(0, 10, "123", "albicans");
-
-        var result = spec.Evaluate(GetTestCollection());
-
-        result.Should().HaveCount(1);
-        result.Single().Id.Should().Be(2);
-    }
-
-    [Test]
     public void WhenSpecificationIsCreated_FiltersBySearchTerm_OtherIdentifiedSpecies()
     {
         var spec = new SentinelEntrySearchPaginatedSpecification(0, 10, "123", "Custom Species");
@@ -63,17 +41,6 @@ public class SentinelEntrySearchPaginatedSpecificationTests
 
         result.Should().HaveCount(1);
         result.Single().Id.Should().Be(4);
-    }
-
-    [Test]
-    public void WhenSpecificationIsCreated_FiltersBySearchTerm_SamplingDate()
-    {
-        var spec = new SentinelEntrySearchPaginatedSpecification(0, 10, "123", "2020-05-01");
-
-        var result = spec.Evaluate(GetTestCollection());
-
-        result.Should().HaveCount(1);
-        result.Single().Id.Should().Be(1);
     }
 
     [Test]

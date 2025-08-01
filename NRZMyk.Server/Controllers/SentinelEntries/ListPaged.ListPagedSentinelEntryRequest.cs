@@ -6,7 +6,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
     {
         [JsonRequired] public int PageSize { get; set; }
         [JsonRequired] public int PageIndex { get; set; }
-        public string SearchTerm { get; set; }
+        public string? SearchTerm { get; set; }
         public int? OrganizationId { get; set; }
     }
 }

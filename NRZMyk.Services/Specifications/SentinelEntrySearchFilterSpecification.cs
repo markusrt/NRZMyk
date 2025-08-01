@@ -28,14 +28,11 @@ namespace NRZMyk.Services.Specifications
             {
                 var searchTermLower = searchTerm.ToLower();
                 query = query.Where(s => 
-                    s.LaboratoryNumber.ToLower().Contains(searchTermLower) ||
                     s.SenderLaboratoryNumber.ToLower().Contains(searchTermLower) ||
-                    (s.SamplingDate.HasValue && s.SamplingDate.Value.ToString("yyyy-MM-dd").Contains(searchTermLower)) ||
-                    s.IdentifiedSpecies.ToString().ToLower().Contains(searchTermLower) ||
                     (!string.IsNullOrEmpty(s.OtherIdentifiedSpecies) && s.OtherIdentifiedSpecies.ToLower().Contains(searchTermLower)));
             }
 
-            query.OrderByDescending(s => s.Id);
+            query = query.OrderByDescending(s => s.Id);
         }
     }
 }
