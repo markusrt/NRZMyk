@@ -1,0 +1,55 @@
+﻿@if (TotalPages > 1)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item @(CurrentPage == 0 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => OnPageChange(0)" disabled="@(CurrentPage == 0)">
+                    Erste
+                </button>
+            </li>
+            <li class="page-item @(CurrentPage == 0 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => OnPageChange(CurrentPage - 1)" disabled="@(CurrentPage == 0)">
+                    Vorherige
+                </button>
+            </li>
+
+            @for (int page = StartPage; page <= EndPage; page++)
+            {
+                var pageIndex = page;
+                <li class="page-item @(pageIndex == CurrentPage ? "active" : "")">
+                    <button class="page-link" @onclick="() => OnPageChange(pageIndex)">
+                        @(pageIndex + 1)
+                    </button>
+                </li>
+            }
+
+            <li class="page-item @(CurrentPage >= TotalPages - 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => OnPageChange(CurrentPage + 1)" disabled="@(CurrentPage >= TotalPages - 1)">
+                    Nächste
+                </button>
+            </li>
+            <li class="page-item @(CurrentPage >= TotalPages - 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => OnPageChange(TotalPages - 1)" disabled="@(CurrentPage >= TotalPages - 1)">
+                    Letzte
+                </button>
+            </li>
+        </ul>
+    </nav>
+}
+
+@code {
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int TotalPages { get; set; }
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+
+    private int StartPage => Math.Max(0, CurrentPage - 2);
+    private int EndPage => Math.Min(TotalPages - 1, CurrentPage + 2);
+
+    private async Task OnPageChange(int page)
+    {
+        if (page >= 0 && page < TotalPages && page != CurrentPage)
+        {
+            await OnPageChanged.InvokeAsync(page);
+        }
+    }
+}
