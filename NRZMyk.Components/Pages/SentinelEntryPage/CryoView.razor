@@ -97,7 +97,7 @@ else
                             {
                                 <InputText class="form-control form-control-sm" 
                                   @bind-Value="item.CryoRemark"
-                                  @onchange="@(_ => OnCryoRemarkInput(item))"/>
+                                  @oninput="@(_ => OnCryoRemarkInput(item))"/>
                             }
                         </td>
                         <td style="white-space: nowrap;">
