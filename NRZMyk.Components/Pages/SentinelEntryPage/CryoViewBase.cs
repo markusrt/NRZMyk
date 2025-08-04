@@ -154,7 +154,11 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         
         internal void OnCryoRemarkInput(SentinelEntryResponse entry)
         {
-            _modifiedCryoRemarks.Add(entry.Id);
+            // Only add to the set if not already present to avoid unnecessary operations
+            if (!_modifiedCryoRemarks.Contains(entry.Id))
+            {
+                _modifiedCryoRemarks.Add(entry.Id);
+            }
         }
     }
 }
