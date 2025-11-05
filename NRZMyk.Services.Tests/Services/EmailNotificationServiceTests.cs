@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,19 +14,20 @@ using NSubstitute;
 using NUnit.Framework;
 using brevo_csharp.Client;
 using brevo_csharp.Model;
+using Task = System.Threading.Tasks.Task;
 
 namespace NRZMyk.Services.Tests.Services
 {
     public class EmailNotificationServiceTests
     {
         [Test]
-        public async System.Threading.Tasks.Task WhenNewUserRegistered_SendsEmailWithCorrespondingTemplate()
+        public async Task WhenNewUserRegistered_SendsEmailWithCorrespondingTemplate()
         {
             SendSmtpEmail emailSent = null;
             
             var sut = CreateSut(out var brevoClient, out var logger);
             brevoClient.SendTransacEmailAsync(Arg.Do<SendSmtpEmail>(e => emailSent = e))
-                .Returns(System.Threading.Tasks.Task.FromResult(new CreateSmtpEmail { MessageId = "test-message-id" }));
+                .Returns(Task.FromResult(new CreateSmtpEmail { MessageId = "test-message-id" }));
 
             await sut.NotifyNewUserRegistered("Anders Hellman", "anders.hellman@arasaka.nc", "Night City");
 
@@ -45,7 +47,7 @@ namespace NRZMyk.Services.Tests.Services
         }
 
         [Test]
-        public async System.Threading.Tasks.Task WhenOrganizationRemindedOnDispatchMonth_SendsEmailWithCorrespondingTemplate()
+        public async Task WhenOrganizationRemindedOnDispatchMonth_SendsEmailWithCorrespondingTemplate()
         {
             var organization = new Organization
             {
@@ -58,7 +60,7 @@ namespace NRZMyk.Services.Tests.Services
             
             var sut = CreateSut(out var brevoClient, out var logger);
             brevoClient.SendTransacEmailAsync(Arg.Do<SendSmtpEmail>(e => emailSent = e))
-                .Returns(System.Threading.Tasks.Task.FromResult(new CreateSmtpEmail { MessageId = "test-message-id" }));
+                .Returns(Task.FromResult(new CreateSmtpEmail { MessageId = "test-message-id" }));
 
             await sut.RemindOrganizationOnDispatchMonth(organization);
 
@@ -78,7 +80,7 @@ namespace NRZMyk.Services.Tests.Services
         }
 
         [Test]
-        public async System.Threading.Tasks.Task WhenBrevoNotificationFails_ErrorIsLogged()
+        public async Task WhenBrevoNotificationFails_ErrorIsLogged()
         {
             var sut = CreateSut(out var brevoClient, out var logger);
             var apiException = new ApiException(400, "Bad Request");

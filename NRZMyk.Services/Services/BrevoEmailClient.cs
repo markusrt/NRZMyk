@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using brevo_csharp.Api;
 using brevo_csharp.Model;
 
@@ -12,7 +13,7 @@ namespace NRZMyk.Services.Services
             _api = api;
         }
 
-        public async System.Threading.Tasks.Task<CreateSmtpEmail> SendTransacEmailAsync(SendSmtpEmail sendSmtpEmail)
+        public async Task<CreateSmtpEmail> SendTransacEmailAsync(SendSmtpEmail sendSmtpEmail)
         {
             return await _api.SendTransacEmailAsync(sendSmtpEmail);
         }

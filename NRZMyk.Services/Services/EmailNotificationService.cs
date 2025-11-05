@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Models;
-using NRZMyk.Services.Models.EmailTemplates;
 using NRZMyk.Services.Utils;
 using brevo_csharp.Api;
 using brevo_csharp.Client;
 using brevo_csharp.Model;
+using Task = System.Threading.Tasks.Task;
 
 namespace NRZMyk.Services.Services
 {
@@ -27,7 +28,7 @@ namespace NRZMyk.Services.Services
             _appSettings = config?.Value?.Application ?? new Application();
         }
 
-        public async System.Threading.Tasks.Task NotifyNewUserRegistered(string userName, string userEmail, string userCity)
+        public async Task NotifyNewUserRegistered(string userName, string userEmail, string userCity)
         {
             var now = DateTime.Now;
             var templateParams = new Dictionary<string, object>
@@ -42,7 +43,7 @@ namespace NRZMyk.Services.Services
             await SendEmail(templateParams, toAddresses, _appSettings.NewUserRegisteredTemplateId);
         }
 
-        public async System.Threading.Tasks.Task RemindOrganizationOnDispatchMonth(Organization organization)
+        public async Task RemindOrganizationOnDispatchMonth(Organization organization)
         {
             var templateParams = new Dictionary<string, object>
             {
@@ -55,7 +56,7 @@ namespace NRZMyk.Services.Services
             await SendEmail(templateParams, toAddresses, _appSettings.RemindOrganizationOnDispatchMonthTemplateId);
         }
 
-        private async System.Threading.Tasks.Task SendEmail(Dictionary<string, object> templateParams, List<string> toAddresses, long templateId)
+        private async Task SendEmail(Dictionary<string, object> templateParams, List<string> toAddresses, long templateId)
         {
             var sendSmtpEmail = new SendSmtpEmail(
                 to: toAddresses.Select(email => new SendSmtpEmailTo(email: email)).ToList(),
