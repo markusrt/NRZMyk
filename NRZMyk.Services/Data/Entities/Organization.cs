@@ -27,5 +27,17 @@ namespace NRZMyk.Services.Data.Entities
 
         [NotMapped]
         public DateTime? LatestCryoDate { get; set; }
+
+        [NotMapped]
+        public int TotalCreatedNotStoredCount { get; set; }
+
+        [NotMapped]
+        public int TotalCryoArchivedCount { get; set; }
+
+        [NotMapped]
+        public int CurrentPeriodCreatedNotStoredCount { get; set; }
+
+        [NotMapped]
+        public int CurrentPeriodCryoArchivedCount { get; set; }
     }
 }

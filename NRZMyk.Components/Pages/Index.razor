@@ -51,7 +51,7 @@ else
         <Authorized>
             <h2>Feste Monate der Einsendung</h2>
             <div class="row">
-                <div class="col-9">
+                <div class="col-12">
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -62,6 +62,10 @@ else
                                     <th scope="col">Letzte Datenerfassung</th>
                                     <th scope="col">Letzte Einsendung</th>
                                     <th scope="col">Nächstes Einsendefenster</th>
+                                    <th scope="col">Erfasst (aktuelles Jahr)</th>
+                                    <th scope="col">Kryo archiviert (aktuelles Jahr)</th>
+                                    <th scope="col">Erfasst (gesamt)</th>
+                                    <th scope="col">Kryo archiviert (gesamt)</th>
                                 </Authorized>
                             </AuthorizeView>
                         </tr>
@@ -86,6 +90,10 @@ else
                                                     <span class="badge bg-success">@ReminderService.HumanReadableExpectedNextSending(organization)</span>
                                                 }
                                             </td>
+                                            <td>@organization.CurrentPeriodCreatedNotStoredCount</td>
+                                            <td>@organization.CurrentPeriodCryoArchivedCount</td>
+                                            <td>@organization.TotalCreatedNotStoredCount</td>
+                                            <td>@organization.TotalCryoArchivedCount</td>
                                         </Authorized>
                                 </AuthorizeView>
                             </tr>

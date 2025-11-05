@@ -52,7 +52,11 @@ namespace NRZMyk.Mocks.MockServices
                     Name = organization.Item1,
                     DispatchMonth = organization.Item2,
                     LatestCryoDate = latestStrainArrivalDate,
-                    LatestSamplingDate = latestDataEntryDate
+                    LatestSamplingDate = latestDataEntryDate,
+                    TotalCreatedNotStoredCount = Random.Next(0, 50),
+                    TotalCryoArchivedCount = Random.Next(50, 200),
+                    CurrentPeriodCreatedNotStoredCount = Random.Next(0, 20),
+                    CurrentPeriodCryoArchivedCount = Random.Next(0, 50)
                 });
             }
 
