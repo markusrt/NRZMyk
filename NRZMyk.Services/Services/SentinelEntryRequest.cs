@@ -13,7 +13,7 @@ namespace NRZMyk.Services.Services
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Das Feld Probenentnahme ist erforderlich")]
-        [NotTooOldAndNotInFuture(5, ErrorMessage = "Die Probenentnahme darf nicht länger als fünf Jahre zurück und nicht in der Zukunft liegen.")]
+        [NotTooOldAndNotInFuture(6, ErrorMessage = "Die Probenentnahme darf nicht länger als sechs Jahre zurück und nicht in der Zukunft liegen.")]
         public DateTime? SamplingDate { get; set; }
 
         [Required(ErrorMessage = "Das Feld Labornummer Einsender ist erforderlich")]
