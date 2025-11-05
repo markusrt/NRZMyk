@@ -134,14 +134,16 @@ public class ReminderServiceTests
     [Test]
     public void WhenLatestCryoDateIsNull_CalculateExpectedNextSendingReturnsNull()
     {
-        var sut = CreateSut();
+        var fakeToday = new DateTime(2021, 7, 15);
+        var fakeTimeProvider = new FakeTimeProvider(fakeToday);
+        var sut = CreateSut(fakeTimeProvider);
         var org = CreateOrganization();
-        var today = DateTime.Today.AddMonths(2);
-        org.DispatchMonth = (MonthToDispatch) today.Month;
+        var futureDate = fakeToday.AddMonths(2);
+        org.DispatchMonth = (MonthToDispatch) futureDate.Month;
         org.LatestCryoDate = null;
 
         sut.CalculateExpectedNextSending(org).Should().NotBeNull();
-        sut.HumanReadableExpectedNextSending(org).Should().Be(today.Day == 1 ? "in 2 Monaten" : "in einem Monat");
+        sut.HumanReadableExpectedNextSending(org).Should().Be("in einem Monat");
     }
 
     private static Organization CreateOrganization()
