@@ -96,7 +96,7 @@ namespace NRZMyk.Services.Tests.Export
         }
 
         [Test]
-        public void ToDataTable_DefaultValueReturnsEmptyString()
+        public void ToDataTable_ZeroValueIsExported()
         {
             var parents = new List<Parent>
             {
@@ -107,6 +107,25 @@ namespace NRZMyk.Services.Tests.Export
                 }
             };
             var sut = new ParentWithAgeExportDefinition();
+
+            var dataTable = sut.ToDataTable(parents);
+
+            dataTable.Rows.Count.Should().Be(1);
+            dataTable.Rows[0][1].ToString().Should().Be("0");
+        }
+
+        [Test]
+        public void ToDataTable_NullValueReturnsEmptyString()
+        {
+            var parents = new List<Parent>
+            {
+                new()
+                {
+                    Name = "Test Parent",
+                    Child = new Child { Name = "Test Child", Score = null }
+                }
+            };
+            var sut = new ParentWithScoreExportDefinition();
 
             var dataTable = sut.ToDataTable(parents);
 
@@ -199,6 +218,15 @@ namespace NRZMyk.Services.Tests.Export
         }
     }
 
+    class ParentWithScoreExportDefinition : ExportDefinition<Parent>
+    {
+        public ParentWithScoreExportDefinition()
+        {
+            AddField(parent => parent.Name, "Parent Name");
+            AddField(parent => ExportChildProperty(parent.Child, child => child.Score), "Child Score");
+        }
+    }
+
     class Parent
     {
         public string Name { get; set; }
@@ -210,5 +238,6 @@ namespace NRZMyk.Services.Tests.Export
         public string Name { get; set; }
         public Gender Gender { get; set; }
         public int Age { get; set; }
+        public int? Score { get; set; }
     }
 }
