@@ -122,10 +122,10 @@ namespace NRZMyk.Services.Tests.Export
                 new()
                 {
                     Name = "Test Parent",
-                    Child = new Child { Name = "Test Child", Score = null }
+                    Child = new Child { Name = "Test Child", HeightInCm = null }
                 }
             };
-            var sut = new ParentWithScoreExportDefinition();
+            var sut = new ParentWithHeightExportDefinition();
 
             var dataTable = sut.ToDataTable(parents);
 
@@ -218,12 +218,12 @@ namespace NRZMyk.Services.Tests.Export
         }
     }
 
-    class ParentWithScoreExportDefinition : ExportDefinition<Parent>
+    class ParentWithHeightExportDefinition : ExportDefinition<Parent>
     {
-        public ParentWithScoreExportDefinition()
+        public ParentWithHeightExportDefinition()
         {
             AddField(parent => parent.Name, "Parent Name");
-            AddField(parent => ExportChildProperty(parent.Child, child => child.Score), "Child Score");
+            AddField(parent => ExportChildProperty(parent.Child, child => child.HeightInCm), "Child Height");
         }
     }
 
@@ -238,6 +238,6 @@ namespace NRZMyk.Services.Tests.Export
         public string Name { get; set; }
         public Gender Gender { get; set; }
         public int Age { get; set; }
-        public int? Score { get; set; }
+        public int? HeightInCm { get; set; }
     }
 }
