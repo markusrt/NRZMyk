@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
+using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Export;
 using NUnit.Framework;
 
@@ -103,27 +104,37 @@ namespace NRZMyk.Services.Tests.Export
                 new()
                 {
                     Name = "Charles, Prince of Wales",
-                    Child = new Child {Name = "William, Prince of Wales"}
+                    Child = new Child {Name = "William, Prince of Wales", Gender = Gender.Male}
                 },
                 new()
                 {
                     Name = "Prince George of Wales",
                     Child = null
+                },
+                new()
+                {
+                    Name = "Jane Doe",
+                    Child = new Child {Name = "John Doe", Gender = Gender.NotStated}
                 }
             };
             var sut = new ParentExportDefinition();
             
             var dataTable = sut.ToDataTable(parents);
 
-            dataTable.Rows.Count.Should().Be(2);
-            dataTable.Columns.Count.Should().Be(2);
+            dataTable.Rows.Count.Should().Be(3);
+            dataTable.Columns.Count.Should().Be(3);
 
             dataTable.Columns[0].ColumnName.Should().Be("Parent Name");
             dataTable.Columns[1].ColumnName.Should().Be("Child Name");
+            dataTable.Columns[2].ColumnName.Should().Be("Child Gender");
             dataTable.Rows[0][0].Should().Be("Charles, Prince of Wales");
             dataTable.Rows[0][1].Should().Be("William, Prince of Wales");
+            dataTable.Rows[0][2].Should().Be("männlich");
             dataTable.Rows[1][0].Should().Be("Prince George of Wales");
             dataTable.Rows[1][1].Should().Be(DBNull.Value);
+            dataTable.Rows[2][0].Should().Be("Jane Doe");
+            dataTable.Rows[2][1].Should().Be("John Doe");
+            dataTable.Rows[2][2].Should().Be("keine Angabe");
         }
 
         private ExportDefinition<Person> CreateExportDefinition()
@@ -138,6 +149,7 @@ namespace NRZMyk.Services.Tests.Export
         {
             AddField(parent => parent.Name, "Parent Name");
             AddField(parent => ExportChildProperty(parent.Child, child => child.Name), "Child Name");
+            AddField(parent => ExportChildProperty(parent.Child, child => child.Gender), "Child Gender");
         }
     }
 
@@ -150,5 +162,6 @@ namespace NRZMyk.Services.Tests.Export
     class Child
     {
         public string Name { get; set; }
+        public Gender Gender { get; set; }
     }
 }
