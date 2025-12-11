@@ -50,7 +50,7 @@ namespace NRZMyk.Services.Export
             {
                 return EnumUtils.GetEnumDescription(value);
             }
-            if (EqualityComparer<TValue>.Default.Equals(value, default))
+            if (value == null)
             {
                 return string.Empty;
             }
