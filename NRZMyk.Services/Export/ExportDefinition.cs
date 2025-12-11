@@ -46,13 +46,13 @@ namespace NRZMyk.Services.Export
 
         protected static string ExportToString<TValue>(TValue value)
         {
-            if (EnumUtils.GetTypeOrNullableType<TValue>().IsEnum)
-            {
-                return EnumUtils.GetEnumDescription(value);
-            }
             if (value == null)
             {
                 return string.Empty;
+            }
+            if (EnumUtils.GetTypeOrNullableType<TValue>().IsEnum)
+            {
+                return EnumUtils.GetEnumDescription(value);
             }
             return value.ToString();
         }
