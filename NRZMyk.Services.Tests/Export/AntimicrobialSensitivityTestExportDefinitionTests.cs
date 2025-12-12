@@ -108,8 +108,7 @@ namespace NRZMyk.Services.Tests.Export
         public void DataTable_ShowsTestingMethod(SpeciesTestingMethod testingMethod, string exportedTestingMethod)
         {
             var sut = CreateExportDefinition(out var micStepsService);
-            micStepsService.StepsByTestingMethodAndAgent(SpeciesTestingMethod.YeastOne, AntifungalAgent.Anidulafungin)
-                .Returns([new MicStep { Title = ">8", Value = 8.001f }]);
+            // No specific mock setup needed for StepsByTestingMethodAndAgent in this test
 
             AntimicrobialSensitivityTest.SentinelEntry.Id = 1234;
             AntimicrobialSensitivityTest.MinimumInhibitoryConcentration = 8.001f;
