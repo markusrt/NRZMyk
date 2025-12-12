@@ -134,6 +134,25 @@ namespace NRZMyk.Services.Tests.Export
         }
 
         [Test]
+        public void ToDataTable_NullableEnumReturnsEmptyString()
+        {
+            var parents = new List<Parent>
+            {
+                new()
+                {
+                    Name = "Test Parent",
+                    Child = new Child { Name = "Test Child", NullableGender = null }
+                }
+            };
+            var sut = new ParentWithNullableGenderExportDefinition();
+
+            var dataTable = sut.ToDataTable(parents);
+
+            dataTable.Rows.Count.Should().Be(1);
+            dataTable.Rows[0][1].ToString().Should().Be("");
+        }
+
+        [Test]
         public void ToDataTable_DefaultEnumValueExportsDescription()
         {
             var parents = new List<Parent>
@@ -227,6 +246,15 @@ namespace NRZMyk.Services.Tests.Export
         }
     }
 
+    class ParentWithNullableGenderExportDefinition : ExportDefinition<Parent>
+    {
+        public ParentWithNullableGenderExportDefinition()
+        {
+            AddField(parent => parent.Name, "Parent Name");
+            AddField(parent => ExportChildProperty(parent.Child, child => child.NullableGender), "Child Nullable Gender");
+        }
+    }
+
     class Parent
     {
         public string Name { get; set; }
@@ -237,6 +265,7 @@ namespace NRZMyk.Services.Tests.Export
     {
         public string Name { get; set; }
         public Gender Gender { get; set; }
+        public Gender? NullableGender { get; set; }
         public int Age { get; set; }
         public int? HeightInCm { get; set; }
     }
