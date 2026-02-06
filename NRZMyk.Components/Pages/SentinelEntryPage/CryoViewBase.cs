@@ -152,13 +152,16 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             return _modifiedCryoRemarks.Contains(entry.Id);
         }
         
-        internal void OnCryoRemarkInput(SentinelEntryResponse entry)
+        internal void OnCryoRemarkInput(SentinelEntryResponse entry, ChangeEventArgs e)
         {
-            // Only add to the set if not already present to avoid unnecessary operations
-            if (!_modifiedCryoRemarks.Contains(entry.Id))
-            {
-                _modifiedCryoRemarks.Add(entry.Id);
-            }
+            // Update the value directly without triggering StateHasChanged to avoid re-rendering
+            // the entire 4000+ entry list on every keystroke. The binding with event="onchange" 
+            // will sync the value when focus is lost, ensuring consistency.
+            entry.CryoRemark = e.Value?.ToString();
+            
+            // Track that this entry has been modified to enable the save button
+            // Using HashSet.Add is safe even if already present (idempotent operation)
+            _modifiedCryoRemarks.Add(entry.Id);
         }
     }
 }
