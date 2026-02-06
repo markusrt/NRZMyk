@@ -314,8 +314,15 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
             EditContext = new EditContext(SentinelEntry);
             _validationMessageStore = new ValidationMessageStore(EditContext);
+            EditContext.OnFieldChanged += OnFieldChanged;
 
             await base.OnInitializedAsync().ConfigureAwait(true);
+        }
+
+        private void OnFieldChanged(object? sender, FieldChangedEventArgs e)
+        {
+            _validationMessageStore.Clear(e.FieldIdentifier);
+            EditContext.NotifyValidationStateChanged();
         }
 
         private bool IsEdit()
