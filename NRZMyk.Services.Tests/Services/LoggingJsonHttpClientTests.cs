@@ -205,17 +205,18 @@ public class LoggingJsonHttpClientTests
     }
 
     [Test]
-    public async Task WhenPutFailsWithValidationError_ExceptionContainsUserFriendlyMessage()
+    public async Task WhenPutFailsWithValidationError_ThrowsServerValidationException()
     {
         var sut = CreateSut(out var mockHttp, out _);
-        var validationErrorContent = "{\"PredecessorLaboratoryNumber\":[\"Laboratory number can not be found\"]}";
+        var validationErrorContent = "{\"PredecessorLaboratoryNumber\":[\"Die Labornummer wurde nicht gefunden\"]}";
         NoErrorOnHttpMethods(mockHttp, HttpMethod.Get, HttpMethod.Post, HttpMethod.Delete);
         mockHttp.When(HttpMethod.Put, "*").Respond(HttpStatusCode.BadRequest, "application/json", validationErrorContent);
 
         var putAction = async () => await sut.Put<Product, IdResponse>("/api/products", new Product()).ConfigureAwait(true);
 
-        var exception = await putAction.Should().ThrowAsync<Exception>();
-        exception.Which.Message.Should().Be("Laboratory number can not be found");
+        var exception = await putAction.Should().ThrowAsync<ServerValidationException>();
+        exception.Which.ValidationErrors.Should().ContainKey("PredecessorLaboratoryNumber");
+        exception.Which.ValidationErrors["PredecessorLaboratoryNumber"].Should().Contain("Die Labornummer wurde nicht gefunden");
     }
 
     [Test]
@@ -228,7 +229,7 @@ public class LoggingJsonHttpClientTests
 
         var putAction = async () => await sut.Put<Product, IdResponse>("/api/products", new Product()).ConfigureAwait(true);
 
-        var exception = await putAction.Should().ThrowAsync<Exception>();
+        var exception = await putAction.Should().ThrowAsync<ServerValidationException>();
         exception.Which.Message.Should().Be("Error 1; Error 2; Error 3");
     }
 
@@ -247,7 +248,7 @@ public class LoggingJsonHttpClientTests
     }
 
     [Test]
-    public async Task WhenPostFailsWithValidationError_ExceptionContainsUserFriendlyMessage()
+    public async Task WhenPostFailsWithValidationError_ThrowsServerValidationException()
     {
         var sut = CreateSut(out var mockHttp, out _);
         var validationErrorContent = "{\"Name\":[\"Name is required\"]}";
@@ -256,7 +257,7 @@ public class LoggingJsonHttpClientTests
 
         var postAction = async () => await sut.Post<Product, IdResponse>("/api/products", new Product()).ConfigureAwait(true);
 
-        var exception = await postAction.Should().ThrowAsync<Exception>();
+        var exception = await postAction.Should().ThrowAsync<ServerValidationException>();
         exception.Which.Message.Should().Be("Name is required");
     }
 }

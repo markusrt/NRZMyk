@@ -112,7 +112,7 @@ public class LoggingJsonHttpClient : IHttpClient
             if (!response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-                throw new Exception(FormatErrorMessage(response.StatusCode, content));
+                throw CreateException(response.StatusCode, content);
             }
             return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken:cancellationToken).ConfigureAwait(false);
         }
@@ -132,17 +132,17 @@ public class LoggingJsonHttpClient : IHttpClient
             method, target, uri, status, callingMethod);
     }
 
-    private static string FormatErrorMessage(HttpStatusCode statusCode, string content)
+    private static Exception CreateException(HttpStatusCode statusCode, string content)
     {
-        var userFriendlyMessage = TryParseValidationErrors(content);
-        if (!string.IsNullOrEmpty(userFriendlyMessage))
+        var validationErrors = TryParseValidationErrors(content);
+        if (validationErrors != null)
         {
-            return userFriendlyMessage;
+            return new ServerValidationException(validationErrors);
         }
-        return $"Remote call failed with status {statusCode}, content: {content}";
+        return new Exception($"Remote call failed with status {statusCode}, content: {content}");
     }
 
-    private static string TryParseValidationErrors(string content)
+    private static Dictionary<string, string[]> TryParseValidationErrors(string content)
     {
         if (string.IsNullOrWhiteSpace(content))
         {
@@ -157,16 +157,13 @@ public class LoggingJsonHttpClient : IHttpClient
                 return null;
             }
 
-            var errorMessages = validationErrors
-                .SelectMany(kvp => kvp.Value)
-                .ToList();
-
-            if (errorMessages.Count == 0)
+            var hasMessages = validationErrors.Any(kvp => kvp.Value.Length > 0);
+            if (!hasMessages)
             {
                 return null;
             }
 
-            return string.Join("; ", errorMessages);
+            return validationErrors;
         }
         catch (JsonException)
         {

@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Components.Helpers;
 using NRZMyk.Services.Data.Entities;
@@ -62,6 +63,10 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         internal string CryoBox { get; set; } = string.Empty;
 
         internal string LaboratoryNumber { get; set; } = string.Empty;
+
+        public EditContext EditContext { get; private set; } = default!;
+        
+        private ValidationMessageStore _validationMessageStore = default!;
 
         internal void AddAntimicrobialSensitivityTest()
         {
@@ -226,6 +231,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         internal async Task SubmitClick()
         {
             LastError = string.Empty;
+            _validationMessageStore.Clear();
 
             try
             {
@@ -238,13 +244,26 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                     await SentinelEntryService.Create(SentinelEntry).ConfigureAwait(true);
                 }
             }
+            catch (ServerValidationException validationException)
+            {
+                Logger.LogError(validationException, "Server validation failed");
+                foreach (var error in validationException.ValidationErrors)
+                {
+                    var fieldIdentifier = new FieldIdentifier(SentinelEntry, error.Key);
+                    foreach (var message in error.Value)
+                    {
+                        _validationMessageStore.Add(fieldIdentifier, message);
+                    }
+                }
+                EditContext.NotifyValidationStateChanged();
+            }
             catch (Exception e)
             {
                 Logger.LogError(e, "Storing failed");
                 LastError = e.Message;
             }
 
-            if (!SaveFailed)
+            if (!SaveFailed && !EditContext.GetValidationMessages().Any())
             {
                 await BackToList().ConfigureAwait(true);
             }
@@ -292,6 +311,9 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             {
                 SentinelEntry = new SentinelEntryRequest();
             }
+
+            EditContext = new EditContext(SentinelEntry);
+            _validationMessageStore = new ValidationMessageStore(EditContext);
 
             await base.OnInitializedAsync().ConfigureAwait(true);
         }
