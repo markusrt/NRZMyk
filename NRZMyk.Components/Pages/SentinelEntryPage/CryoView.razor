@@ -97,7 +97,8 @@ else
                             {
                                 <input type="text" class="form-control form-control-sm" 
                                   value="@item.CryoRemark"
-                                  @oninput="@(e => OnCryoRemarkInput(item, e))" />
+                                  @oninput="@(e => OnCryoRemarkInput(item, e))"
+                                  aria-label="Zusätzliche Informationen für @item.LaboratoryNumber" />
                             }
                         </td>
                         <td style="white-space: nowrap;">
