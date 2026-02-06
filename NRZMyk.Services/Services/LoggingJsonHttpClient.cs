@@ -170,6 +170,7 @@ public class LoggingJsonHttpClient : IHttpClient
         }
         catch (JsonException)
         {
+            // Content is not in validation error format; fall back to default error message
             return null;
         }
     }
