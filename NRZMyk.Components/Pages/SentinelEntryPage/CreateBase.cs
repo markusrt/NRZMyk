@@ -12,7 +12,7 @@ using NRZMyk.Services.Utils;
 
 namespace NRZMyk.Components.Pages.SentinelEntryPage
 {
-    public class CreateBase : BlazorComponent
+    public class CreateBase : BlazorComponent, IDisposable
     {
         private const float EucastExtraLowSusceptibleValueToAlwaysGetIntermediate = 0.001f;
 
@@ -328,6 +328,14 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         private bool IsEdit()
         {
             return Id.HasValue;
+        }
+
+        public void Dispose()
+        {
+            if (EditContext != null)
+            {
+                EditContext.OnFieldChanged -= OnFieldChanged;
+            }
         }
     }
 }
