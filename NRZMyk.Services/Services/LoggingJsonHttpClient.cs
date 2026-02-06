@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -110,7 +112,7 @@ public class LoggingJsonHttpClient : IHttpClient
             if (!response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-                throw new Exception($"Remote call failed with status {response.StatusCode}, content: {content}");
+                throw new Exception(FormatErrorMessage(response.StatusCode, content));
             }
             return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken:cancellationToken).ConfigureAwait(false);
         }
@@ -128,5 +130,47 @@ public class LoggingJsonHttpClient : IHttpClient
         var status = statusCode?.ToString() ?? "?";
         _logger.LogError(exception, "{method} {request} on {uri} failed with status {status} during {callingMethod}",
             method, target, uri, status, callingMethod);
+    }
+
+    private static string FormatErrorMessage(HttpStatusCode statusCode, string content)
+    {
+        var userFriendlyMessage = TryParseValidationErrors(content);
+        if (!string.IsNullOrEmpty(userFriendlyMessage))
+        {
+            return userFriendlyMessage;
+        }
+        return $"Remote call failed with status {statusCode}, content: {content}";
+    }
+
+    private static string TryParseValidationErrors(string content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return null;
+        }
+
+        try
+        {
+            var validationErrors = JsonSerializer.Deserialize<Dictionary<string, string[]>>(content);
+            if (validationErrors == null || validationErrors.Count == 0)
+            {
+                return null;
+            }
+
+            var errorMessages = validationErrors
+                .SelectMany(kvp => kvp.Value)
+                .ToList();
+
+            if (errorMessages.Count == 0)
+            {
+                return null;
+            }
+
+            return string.Join("; ", errorMessages);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
     }
 }
