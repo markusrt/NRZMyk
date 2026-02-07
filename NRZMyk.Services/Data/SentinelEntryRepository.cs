@@ -36,6 +36,7 @@ namespace NRZMyk.Services.Data
 
             entry.Year = currentYear;
             entry.YearlySequentialEntryNumber = lastSequentialIsolateNumber + 1;
+            entry.ReceivingDate = DateTime.Now;
         }
 
         public void AssignNextCryoBoxNumber(SentinelEntry entry)

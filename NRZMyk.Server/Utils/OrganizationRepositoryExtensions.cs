@@ -22,9 +22,9 @@ public static class OrganizationRepositoryExtensions
         {
             var protectKey = $"{organization.Id}";
             
-            var latestEntryBySamplingDate =
-                await sentinelEntryRepository.FirstOrDefaultAsync(new SentinelEntryBySamplingDateSpecification(1, protectKey)).ConfigureAwait(false);
-            organization.LatestSamplingDate = latestEntryBySamplingDate?.SamplingDate;
+            var latestEntryByReceivingDate =
+                await sentinelEntryRepository.FirstOrDefaultAsync(new SentinelEntryByReceivingDateSpecification(1, protectKey)).ConfigureAwait(false);
+            organization.LatestReceivingDate = latestEntryByReceivingDate?.ReceivingDate;
 
             var latestEntryByCryoDate =
                 await sentinelEntryRepository.FirstOrDefaultAsync(new SentinelEntryByCryoDateSpecification(1, protectKey)).ConfigureAwait(false);
@@ -40,12 +40,12 @@ public static class OrganizationRepositoryExtensions
                 organization.TotalCryoArchivedCount = 
                     await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: true)).ConfigureAwait(false);
 
-                // Count current period entries created but not stored
-                organization.CurrentPeriodCreatedNotStoredCount = 
+                // Count current year entries created but not stored
+                organization.CurrentYearCreatedNotStoredCount = 
                     await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: false, year: currentYear)).ConfigureAwait(false);
 
-                // Count current period cryo archived entries
-                organization.CurrentPeriodCryoArchivedCount = 
+                // Count current year cryo archived entries
+                organization.CurrentYearCryoArchivedCount = 
                     await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: true, year: currentYear)).ConfigureAwait(false);
             }
         }

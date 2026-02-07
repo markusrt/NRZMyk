@@ -23,7 +23,7 @@ namespace NRZMyk.Services.Data.Entities
         public DateTime? LastReminderSent { get; set; }
 
         [NotMapped]
-        public DateTime? LatestSamplingDate { get; set; }
+        public DateTime? LatestReceivingDate { get; set; }
 
         [NotMapped]
         public DateTime? LatestCryoDate { get; set; }

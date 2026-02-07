@@ -76,7 +76,7 @@ else
                                 <td>@organization.Name</td>
                                     <AuthorizeView Roles="@nameof(Role.SuperUser)" Context="innerContext">
                                         <Authorized>
-                                            <td>@organization.LatestSamplingDate.ToReportFormat("-")</td>
+                                            <td>@organization.LatestReceivingDate.ToReportFormat("-")</td>
                                             <td>@organization.LatestCryoDate.ToReportFormat("-")</td>
                                             <td>
                                                 @if (ReminderService.CalculateExpectedNextSending(organization) < DateTime.Today)
@@ -88,7 +88,7 @@ else
                                                     <span class="badge bg-success">@ReminderService.HumanReadableExpectedNextSending(organization)</span>
                                                 }
                                             </td>
-                                            <td>@organization.CurrentPeriodCreatedNotStoredCount / @organization.CurrentPeriodCryoArchivedCount</td>
+                                            <td>@organization.CurrentYearCreatedNotStoredCount / @organization.CurrentYearCryoArchivedCount</td>
                                             <td>@organization.TotalCreatedNotStoredCount / @organization.TotalCryoArchivedCount</td>
                                         </Authorized>
                                 </AuthorizeView>

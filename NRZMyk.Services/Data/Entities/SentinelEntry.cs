@@ -11,6 +11,9 @@ namespace NRZMyk.Services.Data.Entities
         [Display(Name = "Entnahmedatum")]
         public DateTime? SamplingDate { get; set; }
 
+        [Display(Name = "Eingangsdatum")]
+        public DateTime? ReceivingDate { get; set; }
+
         [Display(Name = "Labnr. Einsender")]
         public string SenderLaboratoryNumber { get; set; }
         

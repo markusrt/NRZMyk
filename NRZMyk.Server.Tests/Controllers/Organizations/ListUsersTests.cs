@@ -23,12 +23,12 @@ namespace NRZMyk.Server.Tests.Controllers.Organizations
         };
 
         [Test]
-        public async Task WhenQueryingOrganizationsWithExistingEntries_AddsLatestCryoAndSamplingDates()
+        public async Task WhenQueryingOrganizationsWithExistingEntries_AddsLatestCryoAndReceivingDates()
         {
             var sut = CreateSut(out var sentinelEntryRepository);
-            var samplingDate = new DateTime(2010, 10, 10);
-            sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryBySamplingDateSpecification>()).Returns(
-                new SentinelEntry { SamplingDate = samplingDate });
+            var receivingDate = new DateTime(2010, 10, 10);
+            sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryByReceivingDateSpecification>()).Returns(
+                new SentinelEntry { ReceivingDate = receivingDate });
             var cryoDate = new DateTime(2010, 7, 7);
             sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryByCryoDateSpecification>()).Returns(
                 new SentinelEntry { CryoDate = cryoDate });
@@ -37,7 +37,7 @@ namespace NRZMyk.Server.Tests.Controllers.Organizations
             foreach (var organization in expectedResult)
             {
                 organization.LatestCryoDate = cryoDate;
-                organization.LatestSamplingDate = samplingDate;
+                organization.LatestReceivingDate = receivingDate;
             }
             
             var action = await sut.HandleAsync().ConfigureAwait(true);
@@ -48,10 +48,10 @@ namespace NRZMyk.Server.Tests.Controllers.Organizations
         }
 
         [Test]
-        public async Task WhenQueryingOrganizationsWithNoEntries_LeavesCryoAndSamplingDateEmpty()
+        public async Task WhenQueryingOrganizationsWithNoEntries_LeavesCryoAndReceivingDateEmpty()
         {
             var sut = CreateSut(out var sentinelEntryRepository);
-            sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryBySamplingDateSpecification>()).Returns((SentinelEntry)null);
+            sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryByReceivingDateSpecification>()).Returns((SentinelEntry)null);
             sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryByCryoDateSpecification>()).Returns((SentinelEntry)null);
             
             var expectedResult = new List<Organization>(_organizations);
