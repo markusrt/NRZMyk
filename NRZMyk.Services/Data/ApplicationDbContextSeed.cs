@@ -24,8 +24,8 @@ namespace NRZMyk.Services.Data
                     await context.Database.MigrateAsync();
                 }
 
-                var configuredBreakpoints = breakpointProvider?.GetBreakpoints();
-                if (configuredBreakpoints?.Any() == true)
+                var configuredBreakpoints = breakpointProvider.GetBreakpoints();
+                if (configuredBreakpoints.Any())
                 {
                     var databaseCount = await context.ClinicalBreakpoints.CountAsync();
                     if (databaseCount < configuredBreakpoints.Count)
