@@ -35,9 +35,11 @@ namespace NRZMyk.Services.Data.Entities
         public int TotalCryoArchivedCount { get; set; }
 
         [NotMapped]
-        public int CurrentPeriodCreatedNotStoredCount { get; set; }
+        [JsonPropertyName("currentPeriodCreatedNotStoredCount")]
+        public int CurrentYearCreatedNotStoredCount { get; set; }
 
         [NotMapped]
-        public int CurrentPeriodCryoArchivedCount { get; set; }
+        [JsonPropertyName("currentPeriodCryoArchivedCount")]
+        public int CurrentYearCryoArchivedCount { get; set; }
     }
 }
