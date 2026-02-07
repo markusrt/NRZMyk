@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
@@ -34,7 +35,8 @@ namespace NRZMyk.Server.Controllers.Account
         ]
         public override async Task<ActionResult<List<Organization>>> HandleAsync(CancellationToken cancellationToken = new())
         {
-            var organizations = await _organizationRepository.ListAllWithDatesAsync(_sentinelEntryRepository);
+            var isSuperUser = User.IsInRole(nameof(Role.SuperUser));
+            var organizations = await _organizationRepository.ListAllWithDatesAsync(_sentinelEntryRepository, includeStatistics: isSuperUser);
             return Ok(organizations);
         }
 
