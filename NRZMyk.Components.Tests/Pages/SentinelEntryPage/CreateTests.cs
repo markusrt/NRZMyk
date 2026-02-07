@@ -18,6 +18,7 @@ using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
+using NSubstitute;
 using NUnit.Framework;
 using TestContext = Bunit.TestContext;
 
@@ -498,6 +499,101 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             return parameterBuilder == null
                 ? _context.RenderComponent<Create>()
                 : _context.RenderComponent(parameterBuilder);
+        }
+    }
+
+    public class CreateServerValidationTests
+    {
+        private TestContext _context;
+        private ISentinelEntryService _mockSentinelEntryService;
+
+        [SetUp]
+        public void CreateComponent()
+        {
+            _mockSentinelEntryService = Substitute.For<ISentinelEntryService>();
+            _mockSentinelEntryService.Other(Arg.Any<string>())
+                .Returns(Task.FromResult(new List<string> { "test1", "test2" }));
+
+            _context = new TestContext();
+            _context.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
+            _context.Services.AddSingleton(_mockSentinelEntryService);
+            _context.Services.AddSingleton<IClinicalBreakpointService>(new MockClinicalBreakpointService());
+            _context.Services.AddSingleton<IMicStepsService>(new MockMicStepsService());
+            _context.Services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
+            _context.Services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+        }
+
+        [TearDown]
+        public void DisposeContext()
+        {
+            _context.Dispose();
+        }
+
+        [Test]
+        public async Task WhenSubmitThrowsServerValidationException_ValidationErrorIsAddedToEditContext()
+        {
+            var validationErrors = new Dictionary<string, string[]>
+            {
+                { "PredecessorLaboratoryNumber", new[] { "Die Labornummer wurde nicht gefunden" } }
+            };
+            _mockSentinelEntryService.Create(Arg.Any<SentinelEntryRequest>())
+                .Returns<SentinelEntry>(_ => throw new ServerValidationException(validationErrors));
+
+            var component = _context.RenderComponent<Create>();
+            var sut = component.Instance;
+            sut.SentinelEntry.SenderLaboratoryNumber = "test";
+
+            await component.InvokeAsync(() => sut.SubmitClick());
+
+            sut.EditContext.GetValidationMessages().Should().Contain("Die Labornummer wurde nicht gefunden");
+            sut.SaveFailed.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task WhenSubmitThrowsServerValidationException_MultipleErrorsAreAddedToEditContext()
+        {
+            var validationErrors = new Dictionary<string, string[]>
+            {
+                { "PredecessorLaboratoryNumber", new[] { "Error 1", "Error 2" } },
+                { "SenderLaboratoryNumber", new[] { "Error 3" } }
+            };
+            _mockSentinelEntryService.Create(Arg.Any<SentinelEntryRequest>())
+                .Returns<SentinelEntry>(_ => throw new ServerValidationException(validationErrors));
+
+            var component = _context.RenderComponent<Create>();
+            var sut = component.Instance;
+
+            await component.InvokeAsync(() => sut.SubmitClick());
+
+            var messages = sut.EditContext.GetValidationMessages().ToList();
+            messages.Should().HaveCount(3);
+            messages.Should().Contain("Error 1");
+            messages.Should().Contain("Error 2");
+            messages.Should().Contain("Error 3");
+        }
+
+        [Test]
+        public async Task WhenFieldIsEditedAfterServerValidationError_ErrorIsClearedForThatField()
+        {
+            var validationErrors = new Dictionary<string, string[]>
+            {
+                { "SenderLaboratoryNumber", new[] { "Server error message" } }
+            };
+            _mockSentinelEntryService.Create(Arg.Any<SentinelEntryRequest>())
+                .Returns<SentinelEntry>(_ => throw new ServerValidationException(validationErrors));
+
+            var component = _context.RenderComponent<Create>();
+            var sut = component.Instance;
+
+            await component.InvokeAsync(() => sut.SubmitClick());
+            sut.EditContext.GetValidationMessages().Should().Contain("Server error message");
+
+            // Simulate field change by modifying the value and notifying
+            sut.SentinelEntry.SenderLaboratoryNumber = "new value";
+            await component.InvokeAsync(() => 
+                sut.EditContext.NotifyFieldChanged(new Microsoft.AspNetCore.Components.Forms.FieldIdentifier(sut.SentinelEntry, nameof(SentinelEntryRequest.SenderLaboratoryNumber))));
+
+            sut.EditContext.GetValidationMessages().Should().NotContain("Server error message");
         }
     }
 }
