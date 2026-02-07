@@ -53,6 +53,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(ISentinelEntrySe
 
 
 builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<IClinicalBreakpointProvider, ClinicalBreakpointProvider>();
 builder.Services.AddScoped<IGraphServiceClient, GraphServiceClientWrapper>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
@@ -135,11 +136,12 @@ using (var scope = app.Services.CreateScope())
     var loggerFactory = services.GetRequiredService<ILoggerFactory>();
     var configuration = services.GetRequiredService<IConfiguration>();
     var seedSettings = configuration.Get<DatabaseSeedSettings>();
+    var breakpointProvider = services.GetRequiredService<IClinicalBreakpointProvider>();
 
     try
     {
         var catalogContext = services.GetRequiredService<ApplicationDbContext>();
-        await ApplicationDbContextSeed.SeedAsync(catalogContext, loggerFactory, seedSettings.DatabaseSeed).ConfigureAwait(false);
+        await ApplicationDbContextSeed.SeedAsync(catalogContext, loggerFactory, seedSettings.DatabaseSeed, breakpointProvider).ConfigureAwait(false);
     }
     catch (Exception ex)
     {
