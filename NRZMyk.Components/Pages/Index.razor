@@ -62,10 +62,8 @@ else
                                     <th scope="col">Letzte Datenerfassung</th>
                                     <th scope="col">Letzte Einsendung</th>
                                     <th scope="col">Nächstes Einsendefenster</th>
-                                    <th scope="col">Erfasst (aktuelles Jahr)</th>
-                                    <th scope="col">Kryo archiviert (aktuelles Jahr)</th>
-                                    <th scope="col">Erfasst (gesamt)</th>
-                                    <th scope="col">Kryo archiviert (gesamt)</th>
+                                    <th scope="col">Dieses Jahr (erfasst / archiviert)</th>
+                                    <th scope="col">Gesamt (erfasst / archiviert)</th>
                                 </Authorized>
                             </AuthorizeView>
                         </tr>
@@ -90,10 +88,8 @@ else
                                                     <span class="badge bg-success">@ReminderService.HumanReadableExpectedNextSending(organization)</span>
                                                 }
                                             </td>
-                                            <td>@organization.CurrentPeriodCreatedNotStoredCount</td>
-                                            <td>@organization.CurrentPeriodCryoArchivedCount</td>
-                                            <td>@organization.TotalCreatedNotStoredCount</td>
-                                            <td>@organization.TotalCryoArchivedCount</td>
+                                            <td>@organization.CurrentPeriodCreatedNotStoredCount / @organization.CurrentPeriodCryoArchivedCount</td>
+                                            <td>@organization.TotalCreatedNotStoredCount / @organization.TotalCryoArchivedCount</td>
                                         </Authorized>
                                 </AuthorizeView>
                             </tr>
