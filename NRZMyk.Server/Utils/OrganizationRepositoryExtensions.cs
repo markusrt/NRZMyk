@@ -11,7 +11,8 @@ public static class OrganizationRepositoryExtensions
 {
     public static async Task<IReadOnlyList<Organization>> ListAllWithDatesAsync(
         this IAsyncRepository<Organization> organizationRepository,
-        IAsyncRepository<SentinelEntry> sentinelEntryRepository)
+        IAsyncRepository<SentinelEntry> sentinelEntryRepository,
+        bool includeStatistics = false)
     {
         var organizations = await organizationRepository.ListAsync(
             new OrganizationsIncludingRemoteAccountSpecification()).ConfigureAwait(false);
@@ -22,28 +23,31 @@ public static class OrganizationRepositoryExtensions
             var protectKey = $"{organization.Id}";
             
             var latestEntryBySamplingDate =
-                await sentinelEntryRepository.FirstOrDefaultAsync(new SentinelEntryBySamplingDateSpecification(1, protectKey));
+                await sentinelEntryRepository.FirstOrDefaultAsync(new SentinelEntryBySamplingDateSpecification(1, protectKey)).ConfigureAwait(false);
             organization.LatestSamplingDate = latestEntryBySamplingDate?.SamplingDate;
 
             var latestEntryByCryoDate =
-                await sentinelEntryRepository.FirstOrDefaultAsync(new SentinelEntryByCryoDateSpecification(1, protectKey));
+                await sentinelEntryRepository.FirstOrDefaultAsync(new SentinelEntryByCryoDateSpecification(1, protectKey)).ConfigureAwait(false);
             organization.LatestCryoDate = latestEntryByCryoDate?.CryoDate;
 
-            // Count total entries created but not stored (no cryo date)
-            organization.TotalCreatedNotStoredCount = 
-                await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: false));
+            if (includeStatistics)
+            {
+                // Count total entries created but not stored (no cryo date)
+                organization.TotalCreatedNotStoredCount = 
+                    await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: false)).ConfigureAwait(false);
 
-            // Count total cryo archived entries (has cryo date)
-            organization.TotalCryoArchivedCount = 
-                await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: true));
+                // Count total cryo archived entries (has cryo date)
+                organization.TotalCryoArchivedCount = 
+                    await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: true)).ConfigureAwait(false);
 
-            // Count current period entries created but not stored
-            organization.CurrentPeriodCreatedNotStoredCount = 
-                await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: false, year: currentYear));
+                // Count current period entries created but not stored
+                organization.CurrentPeriodCreatedNotStoredCount = 
+                    await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: false, year: currentYear)).ConfigureAwait(false);
 
-            // Count current period cryo archived entries
-            organization.CurrentPeriodCryoArchivedCount = 
-                await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: true, year: currentYear));
+                // Count current period cryo archived entries
+                organization.CurrentPeriodCryoArchivedCount = 
+                    await sentinelEntryRepository.CountAsync(new SentinelEntryCountSpecification(protectKey, hasCryoDate: true, year: currentYear)).ConfigureAwait(false);
+            }
         }
 
         return organizations;
