@@ -13,8 +13,8 @@ using NRZMyk.Services.Data;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Utils;
-using SendGrid;
-using SendGrid.Extensions.DependencyInjection;
+using brevo_csharp.Api;
+using brevo_csharp.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,8 +61,14 @@ builder.Services.AddScoped<IProtectKeyToOrganizationResolver, ProtectKeyToOrgani
 builder.Services.AddScoped<IMicStepsService, MicStepsService>();
 builder.Services.AddScoped<IReminderService, ReminderService>();
 builder.Services.AddScoped<IEmailNotificationService, EmailNotificationService>();
-builder.Services.Configure<SendGridClientOptions>(builder.Configuration.GetSection("SendGrid"));
-builder.Services.AddSendGrid(_ => { });
+builder.Services.AddScoped<TransactionalEmailsApi>(_ =>
+{
+    var apiKey = builder.Configuration["Brevo:ApiKey"];
+    var config = new Configuration();
+    config.ApiKey.Add("api-key", apiKey);
+    return new TransactionalEmailsApi(config);
+});
+builder.Services.AddScoped<IBrevoEmailClient, BrevoEmailClient>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

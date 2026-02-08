@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -11,13 +8,13 @@ using Microsoft.Extensions.Options;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Models;
-using NRZMyk.Services.Models.EmailTemplates;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Tests.Utils;
 using NSubstitute;
 using NUnit.Framework;
-using SendGrid;
-using SendGrid.Helpers.Mail;
+using brevo_csharp.Client;
+using brevo_csharp.Model;
+using Task = System.Threading.Tasks.Task;
 
 namespace NRZMyk.Services.Tests.Services
 {
@@ -26,26 +23,26 @@ namespace NRZMyk.Services.Tests.Services
         [Test]
         public async Task WhenNewUserRegistered_SendsEmailWithCorrespondingTemplate()
         {
-            SendGridMessage messageSent = null;
+            SendSmtpEmail emailSent = null;
             
-            var sut = CreateSut(out var sendGridClient, out var logger);
-            sendGridClient.SendEmailAsync(Arg.Do<SendGridMessage>(s => messageSent = s))
-                .Returns(Task.FromResult(new Response(HttpStatusCode.Accepted, null, null)));
+            var sut = CreateSut(out var brevoClient, out var logger);
+            brevoClient.SendTransacEmailAsync(Arg.Do<SendSmtpEmail>(e => emailSent = e))
+                .Returns(Task.FromResult(new CreateSmtpEmail { MessageId = "test-message-id" }));
 
             await sut.NotifyNewUserRegistered("Anders Hellman", "anders.hellman@arasaka.nc", "Night City");
 
-            messageSent.TemplateId.Should().Be("RegisterTemplate");
-            messageSent.From.Email.Should().Be("server@arasaka.nc");
-            messageSent.Personalizations.Should().HaveCount(1);
-            var personalization = messageSent.Personalizations.First();
-            personalization.TemplateData.Should().BeEquivalentTo(new NotifyNewUserRegistered
-            {
-                UserName = "Anders Hellman",
-                UserEmail = "anders.hellman@arasaka.nc",
-                UserCity = "Night City",
-                Date = DateTime.Now.ToString("dd.MM.yyyy"),
-                Time = DateTime.Now.ToString("HH:mm")
-            });
+            var params_ = emailSent.Params as Dictionary<string, object>;
+            emailSent.TemplateId.Should().Be(1);
+            emailSent.Sender.Email.Should().Be("server@arasaka.nc");
+            emailSent.Sender.Name.Should().Be("Test System");
+            emailSent.To.Should().HaveCount(1);
+            emailSent.To.First().Email.Should().Be("admin@arasaka.nc");
+            params_.Should().ContainKey("UserName");
+            params_["UserName"].Should().Be("Anders Hellman");
+            params_["UserEmail"].Should().Be("anders.hellman@arasaka.nc");
+            params_["UserCity"].Should().Be("Night City");
+            params_["Date"].Should().Be(DateTime.Now.ToString("dd.MM.yyyy"));
+            params_["Time"].Should().Be(DateTime.Now.ToString("HH:mm"));
             logger.Messages[LogLevel.Information].Should().NotBeEmpty();
         }
 
@@ -59,54 +56,54 @@ namespace NRZMyk.Services.Tests.Services
                 LatestCryoDate = new DateTime(2024, 10, 13),
                 Members = new List<RemoteAccount>{new() {Email = "member1@org.de"}, new() {Email = "member2@org.de"}}
             };
-            SendGridMessage messageSent = null;
+            SendSmtpEmail emailSent = null;
             
-            var sut = CreateSut(out var sendGridClient, out var logger);
-            sendGridClient.SendEmailAsync(Arg.Do<SendGridMessage>(s => messageSent = s))
-                .Returns(Task.FromResult(new Response(HttpStatusCode.Accepted, null, null)));
+            var sut = CreateSut(out var brevoClient, out var logger);
+            brevoClient.SendTransacEmailAsync(Arg.Do<SendSmtpEmail>(e => emailSent = e))
+                .Returns(Task.FromResult(new CreateSmtpEmail { MessageId = "test-message-id" }));
 
             await sut.RemindOrganizationOnDispatchMonth(organization);
 
-            messageSent.TemplateId.Should().Be("ReminderTemplate");
-            messageSent.From.Email.Should().Be("admin@arasaka.nc");
-            messageSent.Personalizations.Should().HaveCount(1);
-            var personalization = messageSent.Personalizations.First();
-            personalization.TemplateData.Should().BeEquivalentTo(new RemindOrganizationOnDispatchMonth
-            {
-                OrganizationName = "Org 1",
-                DispatchMonth = "Oktober",
-                LatestCryoDate = "13.10.2024"
-            });
-            personalization.Tos.Should().Contain(new EmailAddress("admin@arasaka.nc"));
-            personalization.Tos.Should().Contain(new EmailAddress("member1@org.de"));
-            personalization.Tos.Should().Contain(new EmailAddress("member2@org.de"));
-            logger.Messages[LogLevel.Information].Should().ContainAll("Org 1", "Oktober", "13.10.2024");
-            logger.Messages[LogLevel.Information].Should().NotContainAny("@");
+            var params_ = emailSent.Params as Dictionary<string, object>;
+            emailSent.TemplateId.Should().Be(2);
+            emailSent.Sender.Email.Should().Be("server@arasaka.nc");
+            emailSent.Sender.Name.Should().Be("Test System");
+            emailSent.To.Should().HaveCount(3);
+            emailSent.To.Select(t => t.Email).Should().Contain("admin@arasaka.nc");
+            emailSent.To.Select(t => t.Email).Should().Contain("member1@org.de");
+            emailSent.To.Select(t => t.Email).Should().Contain("member2@org.de");
+            params_.Should().ContainKey("OrganizationName");
+            params_["OrganizationName"].Should().Be("Org 1");
+            params_["DispatchMonth"].Should().Be("Oktober");
+            params_["LatestCryoDate"].Should().Be("13.10.2024");
+            logger.Messages[LogLevel.Information].Should().NotBeEmpty();
         }
 
         [Test]
-        public async Task WhenSendGridNotificationFails_ErrorIsLogged()
+        public async Task WhenBrevoNotificationFails_ErrorIsLogged()
         {
-            var sut = CreateSut(out var sendGridClient, out var logger);
-            var badResponse = new Response(HttpStatusCode.BadRequest, new ByteArrayContent(Encoding.ASCII.GetBytes("Error details")), null);
-            sendGridClient.SendEmailAsync(Arg.Do<SendGridMessage>(s => _ = s))
-                .Returns(Task.FromResult(badResponse));
+            var sut = CreateSut(out var brevoClient, out var logger);
+            var apiException = new ApiException(400, "Bad Request");
+            brevoClient.SendTransacEmailAsync(Arg.Any<SendSmtpEmail>())
+                .Returns<CreateSmtpEmail>(_ => throw apiException);
 
-            await sut.NotifyNewUserRegistered("荒坂 三郎", "saburo.arasaka@arasaka.nc", "Night City").ConfigureAwait(true);
+            Assert.ThrowsAsync<ApiException>(async () => 
+                await sut.NotifyNewUserRegistered("荒坂 三郎", "saburo.arasaka@arasaka.nc", "Night City").ConfigureAwait(true));
 
-            logger.Messages[LogLevel.Error].Should().Contain("Error details");
+            logger.Messages[LogLevel.Error].Should().Contain("Bad Request");
         }
 
-        private EmailNotificationService CreateSut(out ISendGridClient sendGridClient, out TestLogger<EmailNotificationService> logger)
+        private EmailNotificationService CreateSut(out IBrevoEmailClient brevoClient, out TestLogger<EmailNotificationService> logger)
         {
-            sendGridClient = Substitute.For<ISendGridClient>();
+            brevoClient = Substitute.For<IBrevoEmailClient>();
             logger = new TestLogger<EmailNotificationService>();
-            return new EmailNotificationService(sendGridClient, logger, Options.Create(new ApplicationSettings {Application = new Application
+            return new EmailNotificationService(brevoClient, logger, Options.Create(new ApplicationSettings {Application = new Application
             {
-                SendGridSenderEmail = "server@arasaka.nc",
+                SenderEmail = "server@arasaka.nc",
+                SenderName = "Test System",
                 AdministratorEmail = "admin@arasaka.nc",
-                SendGridDynamicTemplateId = "RegisterTemplate",
-                SendGridRemindOrganizationOnDispatchMonthTemplateId = "ReminderTemplate"
+                NewUserRegisteredTemplateId = 1,
+                RemindOrganizationOnDispatchMonthTemplateId = 2
             }}));
         }
     }
