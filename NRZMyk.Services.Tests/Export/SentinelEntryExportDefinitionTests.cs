@@ -43,7 +43,7 @@ namespace NRZMyk.Services.Tests.Export
 
             var export = sut.ToDataTable(SentinelEntries);
 
-            export.Columns.Count.Should().Be(14);
+            export.Columns.Count.Should().Be(16);
         }
 
         [Test]
@@ -67,6 +67,8 @@ namespace NRZMyk.Services.Tests.Export
             SentinelEntry.PredecessorEntry.Year = 2006;
             SentinelEntry.PredecessorEntry.YearlySequentialEntryNumber = 6;
             SentinelEntry.CryoDate = new DateTime(2020, 10, 5);
+            SentinelEntry.CryoRemark = "Cryo comment test";
+            SentinelEntry.Remark = "Test remark";
 
             var export = sut.ToDataTable(SentinelEntries);
 
@@ -81,6 +83,8 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["Labnr. Einsender"].Should().Be("LabNr. 123");
             export.Rows[0]["Methode Speziesidentifikation"].Should().Be("BBL Crystal (Becton-Dickinson)");
             export.Rows[0]["Kryo-Datum"].Should().Be("05.10.2020");
+            export.Rows[0]["Kryo-Kommentar"].Should().Be("Cryo comment test");
+            export.Rows[0]["Anmerkung"].Should().Be("Test remark");
         }
 
         [Test]
