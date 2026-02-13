@@ -83,7 +83,7 @@ namespace Api.Integration.Tests.SentinelEntries
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             var content = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
             content.Should().Contain("PredecessorLaboratoryNumber");
-            content.Should().Contain("Laboratory number can not be found");
+            content.Should().Contain("Die Labornummer wurde nicht gefunden");
         }
 
         [Test]

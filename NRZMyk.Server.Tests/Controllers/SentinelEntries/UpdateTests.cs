@@ -143,6 +143,46 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             await repository.Received(1).UpdateAsync(Arg.Any<SentinelEntry>()).ConfigureAwait(true);
         }
 
+        [TestCase("12", Role.User)]
+        [TestCase("1", Role.SuperUser)] //SuperUsers are able to update predecessors on the parent entries protect key
+        public async Task WhenAddingExistingPredecessor_UpdatesPredecessorOnSameProtectKeyAsParent(string userProtectKey, Role role)
+        {
+            var user = new ClaimsPrincipal();
+            var identity = new ClaimsIdentity();
+            identity.AddClaim(new Claim(identity.RoleClaimType, role.ToString()));
+            user.AddIdentity(identity);
+            var sut = CreateSut(out var repository, out _, out _, userProtectKey, user);
+            var updateSentinelEntry = new SentinelEntryRequest {Id = 567, PredecessorLaboratoryNumber = "SN-2022-0134"};
+            var sensitivityTest1 = new AntimicrobialSensitivityTest();
+            var sentinelEntry = new SentinelEntry
+            {
+                ProtectKey = "12",
+                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>
+                { 
+                    sensitivityTest1
+                },
+                PredecessorEntry = null,
+                PredecessorEntryId = 0
+            };
+            var predecessorSentinelEntry = new SentinelEntry
+            {
+                Id = 123
+            };
+            repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
+                .Returns(Task.FromResult(sentinelEntry));
+            repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryByLaboratoryNumberSpecification>(
+                    specification => specification.Year == 2022
+                                     && specification.SequentialNumber==134
+                                     && specification.ProtectKey == "12"))
+                .Returns(Task.FromResult(predecessorSentinelEntry));
+
+            var action = await sut.HandleAsync(updateSentinelEntry).ConfigureAwait(true);
+
+            var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
+            var updatedSentinelEntry = okResult.Value.As<SentinelEntry>();
+            updatedSentinelEntry.PredecessorEntryId.Should().Be(123);
+        }
+
         [Test]
         public async Task WhenFoundAndUpdateWithoutPredecessor_ClearsPredecessor()
         {

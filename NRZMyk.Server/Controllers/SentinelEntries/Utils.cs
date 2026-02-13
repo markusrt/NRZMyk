@@ -20,7 +20,7 @@ public static class Utils
 
         if (predecessor == null)
         {
-            modelState.AddModelError($"{nameof(SentinelEntryRequest.PredecessorLaboratoryNumber)}", "Laboratory number can not be found");
+            modelState.AddModelError($"{nameof(SentinelEntryRequest.PredecessorLaboratoryNumber)}", "Die Labornummer wurde nicht gefunden");
             return true;
         }
 

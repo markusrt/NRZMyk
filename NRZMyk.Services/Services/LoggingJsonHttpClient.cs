@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -110,7 +112,7 @@ public class LoggingJsonHttpClient : IHttpClient
             if (!response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-                throw new Exception($"Remote call failed with status {response.StatusCode}, content: {content}");
+                throw CreateException(response.StatusCode, content);
             }
             return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken:cancellationToken).ConfigureAwait(false);
         }
@@ -128,5 +130,45 @@ public class LoggingJsonHttpClient : IHttpClient
         var status = statusCode?.ToString() ?? "?";
         _logger.LogError(exception, "{method} {request} on {uri} failed with status {status} during {callingMethod}",
             method, target, uri, status, callingMethod);
+    }
+
+    private static Exception CreateException(HttpStatusCode statusCode, string content)
+    {
+        var validationErrors = TryParseValidationErrors(content);
+        if (validationErrors != null)
+        {
+            return new ServerValidationException(validationErrors);
+        }
+        return new Exception($"Remote call failed with status {statusCode}, content: {content}");
+    }
+
+    private static Dictionary<string, string[]> TryParseValidationErrors(string content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return null;
+        }
+
+        try
+        {
+            var validationErrors = JsonSerializer.Deserialize<Dictionary<string, string[]>>(content);
+            if (validationErrors == null || validationErrors.Count == 0)
+            {
+                return null;
+            }
+
+            var hasMessages = validationErrors.Any(kvp => kvp.Value.Length > 0);
+            if (!hasMessages)
+            {
+                return null;
+            }
+
+            return validationErrors;
+        }
+        catch (JsonException)
+        {
+            // Content is not in validation error format; fall back to default error message
+            return null;
+        }
     }
 }
