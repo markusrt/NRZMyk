@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -173,8 +174,9 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             _renderedComponent.Markup.Should().Contain("title=\"In Cryobox einlagern\"");
         }
 
-        [Test]
-        public async Task WhenCryoRemarkInputTriggered_EnablesSaveButton()
+        [TestCase("test")]
+        [TestCase(null)]
+        public async Task WhenCryoRemarkInputTriggered_EnablesSaveButton(string value)
         {
             var sut = _renderedComponent.Instance;
             sut.SelectedOrganization = 1;
@@ -186,7 +188,7 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             sut.HasCryoRemarkChanged(cryoEntry).Should().BeFalse();
             
             // Trigger the input callback
-            sut.OnCryoRemarkInput(cryoEntry);
+            sut.OnCryoRemarkInput(cryoEntry, new ChangeEventArgs { Value = value });
             
             // Now save button should be enabled
             sut.HasCryoRemarkChanged(cryoEntry).Should().BeTrue();
@@ -202,7 +204,7 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             var cryoEntry = sut.SentinelEntries.First();
             
             // Trigger input to enable save button
-            sut.OnCryoRemarkInput(cryoEntry);
+            sut.OnCryoRemarkInput(cryoEntry, new ChangeEventArgs { Value = "test" });
             sut.HasCryoRemarkChanged(cryoEntry).Should().BeTrue();
             
             // Save the remark
@@ -229,7 +231,7 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             _renderedComponent.Markup.Should().NotContain("disabled=\"");
             
             // Trigger the input callback to enable button
-            sut.OnCryoRemarkInput(cryoEntry);
+            sut.OnCryoRemarkInput(cryoEntry, new ChangeEventArgs { Value = "test" });
             
             // Verify the state logic is working  
             sut.HasCryoRemarkChanged(cryoEntry).Should().BeTrue();
