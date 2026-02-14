@@ -57,7 +57,7 @@ namespace Api.Integration.Tests.SentinelEntries
 
             followUpEntry.Should().NotBeNull();
             followUpEntry.Remark = "Updated Remark";
-            var updatedFollowUpEntry = await UpdateEntry(client, followUpEntry).ConfigureAwait(false);
+            var updatedFollowUpEntry = await UpdateEntry(client, followUpEntry).ConfigureAwait(true);
 
             updatedFollowUpEntry.Should().NotBeNull();
             updatedFollowUpEntry.Remark.Should().Be(followUpEntry.Remark);
