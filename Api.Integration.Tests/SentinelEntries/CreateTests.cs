@@ -1,14 +1,15 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Services;
 using NUnit.Framework;
 using PublicApiIntegrationTests;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Tynamix.ObjectFiller;
 
 namespace Api.Integration.Tests.SentinelEntries
@@ -21,7 +22,7 @@ namespace Api.Integration.Tests.SentinelEntries
             var client = ClientFactory.CreateClient();
             var request = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
 
-            var createdEntry = await CreateValidEntry(client, request).ConfigureAwait(true);
+            var createdEntry = await CreateEntry(client, request).ConfigureAwait(true);
 
             createdEntry.Should().NotBeNull();
             createdEntry!.Id.Should().BeGreaterThan(0);
@@ -33,14 +34,35 @@ namespace Api.Integration.Tests.SentinelEntries
             var client = ClientFactory.CreateClient();
             var predecessor = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
 
-            var predecessorEntry = await CreateValidEntry(client, predecessor).ConfigureAwait(true);
+            var predecessorEntry = await CreateEntry(client, predecessor).ConfigureAwait(true);
             
             //Follow-up entry
             var followUp = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
             followUp.PredecessorLaboratoryNumber = predecessorEntry!.LaboratoryNumber;
-            var followUpEntry = await CreateValidEntry(client, followUp).ConfigureAwait(true);
+            var followUpEntry = await CreateEntry(client, followUp).ConfigureAwait(true);
 
             followUpEntry!.PredecessorLaboratoryNumber.Should().Be(predecessorEntry!.LaboratoryNumber);
+        }
+
+        [Test]
+        public async Task WhenUpdateWithExistingPredecessorEntry_DoesNotRemovePredecessor()
+        {
+            var client = ClientFactory.CreateClient();
+            var predecessor = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
+
+            var predecessorEntry = await CreateEntry(client, predecessor).ConfigureAwait(true);
+            //Follow-up entry
+            var followUp = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
+            followUp.PredecessorLaboratoryNumber = predecessorEntry!.LaboratoryNumber;
+            var followUpEntry = await CreateEntry(client, followUp).ConfigureAwait(true);
+
+            followUpEntry.Should().NotBeNull();
+
+            var updatedFollowUpEntry = await UpdateEntry(client, followUpEntry).ConfigureAwait(false);
+
+            updatedFollowUpEntry.Should().NotBeNull();
+            updatedFollowUpEntry.Remark.Should().Be(followUpEntry.Remark);
+            updatedFollowUpEntry.PredecessorLaboratoryNumber.Should().Be(predecessorEntry.LaboratoryNumber);
         }
 
         
@@ -51,12 +73,12 @@ namespace Api.Integration.Tests.SentinelEntries
             var predecessorRequest = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
 
             // Arrange: Create entry with follow-up
-            var predecessor = await CreateValidEntry(client, predecessorRequest).ConfigureAwait(true);
+            var predecessor = await CreateEntry(client, predecessorRequest).ConfigureAwait(true);
             predecessor.Should().NotBeNull();
             predecessor!.Id.Should().BeGreaterThan(0);
             var followUp = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
             followUp.PredecessorLaboratoryNumber = predecessor!.LaboratoryNumber;
-            var followUpEntry = await CreateValidEntry(client, followUp).ConfigureAwait(true);
+            var followUpEntry = await CreateEntry(client, followUp).ConfigureAwait(true);
             followUpEntry.Should().NotBeNull();
 
             // Arrange: Make original entry reference follow-up, thus creating a circle
@@ -128,15 +150,22 @@ namespace Api.Integration.Tests.SentinelEntries
             content.Should().Contain(nameof(SentinelEntryRequest.SamplingDate));
         }
         
-        private static async Task<SentinelEntryResponse?> CreateValidEntry(HttpClient client, SentinelEntryRequest predecessor)
+        private static async Task<SentinelEntryResponse?> CreateEntry(HttpClient client, SentinelEntryRequest predecessor)
         {
             var response = await client.PostAsJsonAsync("api/sentinel-entries", predecessor).ConfigureAwait(true);
             response.StatusCode.Should().Be(HttpStatusCode.Created);
             var createdEntryPath = response.Headers.Location?.AbsolutePath;
             var createdEntry = await client.GetFromJsonAsync<SentinelEntryResponse>(createdEntryPath).ConfigureAwait(true);
             createdEntry!.Id.Should().BeGreaterThan(0);
-            response.StatusCode.Should().Be(HttpStatusCode.Created);
             return createdEntry;
+        }
+
+        private static async Task<SentinelEntryResponse?> UpdateEntry(HttpClient client, SentinelEntryRequest predecessor)
+        {
+            var response = await client.PutAsJsonAsync("api/sentinel-entries", predecessor).ConfigureAwait(true);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var updatedEntry = await response.Content.ReadFromJsonAsync<SentinelEntryResponse>().ConfigureAwait(true);
+            return updatedEntry;
         }
     }
 }

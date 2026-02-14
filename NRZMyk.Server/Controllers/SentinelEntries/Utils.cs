@@ -25,6 +25,7 @@ public static class Utils
         }
 
         newEntry.PredecessorEntryId = predecessor.Id;
+        newEntry.PredecessorEntry = predecessor;
         return false;
     }
 }
