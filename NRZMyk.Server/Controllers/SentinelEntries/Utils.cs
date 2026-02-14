@@ -10,10 +10,15 @@ namespace NRZMyk.Server.Controllers.SentinelEntries;
 
 public static class Utils
 {
-    public static async Task<bool> ResolvePredecessor(SentinelEntryRequest request, SentinelEntry newEntry,
+    public static async Task<bool> UpdatePredecessor(SentinelEntryRequest request, SentinelEntry newEntry,
         IAsyncRepository<SentinelEntry>  repository, string organizationId, ModelStateDictionary modelState)
     {
-        if (string.IsNullOrEmpty(request.PredecessorLaboratoryNumber)) return false;
+        if (string.IsNullOrEmpty(request.PredecessorLaboratoryNumber))
+        {
+            newEntry.PredecessorEntryId = null;
+            newEntry.PredecessorEntry = null;
+            return false;
+        }
         
         var predecessor = await repository.FirstOrDefaultAsync(
             new SentinelEntryByLaboratoryNumberSpecification(request.PredecessorLaboratoryNumber, organizationId)).ConfigureAwait(false);
