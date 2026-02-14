@@ -61,16 +61,14 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
                 await _sensitivityTestRepository.DeleteAsync(sensitivityTest).ConfigureAwait(false);
             }
 
-            existingItem.PredecessorEntryId = null;
-            existingItem.PredecessorEntry = null;
+            _mapper.Map(request, existingItem);
 
-            var error = await Utils.ResolvePredecessor(request, existingItem, _sentinelEntryRepository, existingItem.ProtectKey, ModelState).ConfigureAwait(false);
+            var error = await Utils.UpdatePredecessor(request, existingItem, _sentinelEntryRepository, existingItem.ProtectKey, ModelState).ConfigureAwait(false);
             if (error)
             {
                 return new BadRequestObjectResult(ModelState);
             }
             
-            _mapper.Map(request, existingItem);
             await _sentinelEntryRepository.UpdateAsync(existingItem).ConfigureAwait(false);
             
             return Ok(existingItem);
