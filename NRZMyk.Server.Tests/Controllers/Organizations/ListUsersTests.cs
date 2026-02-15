@@ -51,7 +51,7 @@ namespace NRZMyk.Server.Tests.Controllers.Organizations
         public async Task WhenQueryingOrganizationsWithNoEntries_LeavesCryoAndReceivingDateEmpty()
         {
             var sut = CreateSut(out var sentinelEntryRepository);
-            sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryByReceivingDateSpecification>()).Returns((SentinelEntry)null);
+            sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryByReceivingDateSpecification>()).Returns(null);
             sentinelEntryRepository.FirstOrDefaultAsync(Arg.Any<SentinelEntryByCryoDateSpecification>()).Returns((SentinelEntry)null);
             
             var expectedResult = new List<Organization>(_organizations);
