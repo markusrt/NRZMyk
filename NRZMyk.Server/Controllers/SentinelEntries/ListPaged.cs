@@ -32,14 +32,45 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<ListPagedSentinelEntryResponse>> HandleAsync([FromQuery]ListPagedSentinelEntryRequest request, CancellationToken cancellationToken = new())
         {
-            var organizationId = User.Claims.OrganizationId();
+            // Determine the organization ID to filter by
+            string protectKey = null;
+            if (request.OrganizationId.HasValue && request.OrganizationId.Value > 0)
+            {
+                // Super user can specify organization
+                if (User.IsInRole(nameof(Role.SuperUser)))
+                {
+                    protectKey = request.OrganizationId.Value.ToString();
+                }
+                else
+                {
+                    // Regular users can only access their own organization
+                    var userOrgKey = User.Claims.OrganizationId();
+                    if (request.OrganizationId.Value.ToString() == userOrgKey)
+                    {
+                        protectKey = userOrgKey;
+                    }
+                    else
+                    {
+                        return Forbid();
+                    }
+                }
+            }
+            else
+            {
+                // Default to user's organization
+                protectKey = User.Claims.OrganizationId();
+            }
+
             var response = new ListPagedSentinelEntryResponse();
 
-            var totalItems = await _sentinelEntryRepository.CountAsync(new SentinelEntryFilterSpecification(organizationId)).ConfigureAwait(false);
+            var countSpec = new SentinelEntrySearchFilterSpecification(protectKey, request.SearchTerm);
+            var totalItems = await _sentinelEntryRepository.CountAsync(countSpec).ConfigureAwait(false);
 
-            var pagedSpec = new SentinelEntryFilterPaginatedSpecification(
+            var pagedSpec = new SentinelEntrySearchPaginatedSpecification(
                 request.PageIndex * request.PageSize,
-                request.PageSize, organizationId);
+                request.PageSize, 
+                protectKey, 
+                request.SearchTerm);
 
             var items = await _sentinelEntryRepository.ListAsync(pagedSpec).ConfigureAwait(false);
 

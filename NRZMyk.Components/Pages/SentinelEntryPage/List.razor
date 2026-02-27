@@ -3,6 +3,7 @@
 @inherits NRZMyk.Components.Helpers.BlazorComponent
 
 @inject ISentinelEntryService SentinelEntryService
+@inject IAccountService AccountService
 
 <h1>Sentinel Daten</h1>
 
@@ -28,6 +29,61 @@ else
                 </AuthorizeView>
             </div>
         </div>
+
+        <EditForm Model="@this">
+            <!-- Search and Filter Controls -->
+            <div class="mb-3 row">
+                <label class="col-form-label col-sm-2">Suche</label>
+                <div class="col-sm-4">
+                    <InputText class="form-control" @bind-Value="@searchTerm" @onkeypress="@OnSearchKeyPress" placeholder="Labornummer, Einsender, Datum, Spezies..." />
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-outline-secondary" type="button" @onclick="OnSearchAsync">
+                        Suchen
+                    </button>
+                    @if (!string.IsNullOrEmpty(searchTerm))
+                    {
+                        <button class="btn btn-outline-danger ms-1" type="button" @onclick="OnClearSearchAsync">
+                            ✕
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Organization selector for super users -->
+            <AuthorizeView Roles=@nameof(Role.SuperUser)>
+                <Authorized Context="authContext">
+                    <div class="mb-3 row">
+                        <label class="col-form-label col-sm-2">Organisation</label>
+                        <div class="col-sm-4">
+                            <InputSelectNumber class="form-select" @bind-Value="selectedOrganizationId">
+                                <option value="-1">Alle Organisationen</option>
+                                @if (organizations != null)
+                                {
+                                    @foreach (var organization in organizations)
+                                    {
+                                        <option value="@organization.Id">@organization.Name</option>
+                                    }
+                                }
+                            </InputSelectNumber>
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-outline-secondary" type="button" @onclick="OnOrganizationChangeAsync">
+                                Laden
+                            </button>
+                        </div>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </EditForm>
+
+        <!-- Results info -->
+        @if (pagedResult != null && !string.IsNullOrEmpty(searchTerm))
+        {
+            <div class="alert alert-info">
+                Suchergebnisse für "@searchTerm" - @sentinelEntries.Count Einträge gefunden
+            </div>
+        }
 
         <table class="table table-striped table-hover table-sm">
             <thead>
@@ -81,6 +137,11 @@ else
                 }
             </tbody>
         </table>
+
+        @if (pagedResult != null && pagedResult.PageCount > 1)
+        {
+            <Pagination CurrentPage="@currentPage" TotalPages="@pagedResult.PageCount" OnPageChanged="@OnPageChangedAsync" />
+        }
     }
     @if (showDetails)
     {
@@ -106,22 +167,86 @@ else
 @code
 {
     private List<SentinelEntry> sentinelEntries = default!;
+    private PagedSentinelEntryResult pagedResult = default!;
+    private ICollection<Organization> organizations = default!;
     private bool showCreate;
     private bool showDetails;
     private bool showEdit;
     private bool showDelete;
     private int selectedId = 0;
+    private int currentPage = 0;
+    private int selectedOrganizationId = -1;
+    private string searchTerm = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            sentinelEntries = await SentinelEntryService.ListPaged(50).ConfigureAwait(true);
+            // Load organizations for super users
+            try 
+            {
+                organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
+            }
+            catch
+            {
+                // Regular users might not have access to organization list
+                organizations = new List<Organization>();
+            }
 
+            await LoadDataAsync().ConfigureAwait(true);
             await InvokeAsync(CallRequestRefresh).ConfigureAwait(true);
         }
 
         await base.OnAfterRenderAsync(firstRender).ConfigureAwait(true);
+    }
+
+    private async Task LoadDataAsync()
+    {
+        pagedResult = await SentinelEntryService.ListPaged(
+            pageSize: 50, 
+            pageIndex: currentPage, 
+            searchTerm: string.IsNullOrEmpty(searchTerm) ? null : searchTerm,
+            organizationId: selectedOrganizationId <= 0 ? null : selectedOrganizationId
+        ).ConfigureAwait(true);
+        
+        sentinelEntries = pagedResult.SentinelEntries;
+    }
+
+    private async Task OnSearchAsync()
+    {
+        currentPage = 0; // Reset to first page when searching
+        await LoadDataAsync().ConfigureAwait(true);
+        StateHasChanged();
+    }
+
+    private async Task OnClearSearchAsync()
+    {
+        searchTerm = string.Empty;
+        currentPage = 0;
+        await LoadDataAsync().ConfigureAwait(true);
+        StateHasChanged();
+    }
+
+    private async Task OnSearchKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await OnSearchAsync().ConfigureAwait(true);
+        }
+    }
+
+    private async Task OnOrganizationChangeAsync()
+    {
+        currentPage = 0; // Reset to first page when changing organization
+        await LoadDataAsync().ConfigureAwait(true);
+        StateHasChanged();
+    }
+
+    private async Task OnPageChangedAsync(int page)
+    {
+        currentPage = page;
+        await LoadDataAsync().ConfigureAwait(true);
+        StateHasChanged();
     }
 
     private void DetailsClick(int id)
@@ -173,7 +298,7 @@ else
 
     private async Task ReloadCatalogItems()
     {
-        sentinelEntries = await SentinelEntryService.ListPaged(50).ConfigureAwait(true);
+        await LoadDataAsync().ConfigureAwait(true);
         StateHasChanged();
     }
 }
