@@ -49,7 +49,11 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddApplicationInsightsTelemetry();
 
-builder.Services.AddAutoMapper(cfg => { cfg.AddProfile<MappingProfile>(); cfg.AddProfile<NRZMyk.Services.MappingProfile>(); });
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<MappingProfile>();
+    cfg.AddProfile<NRZMyk.Services.MappingProfile>();
+});
 
 
 builder.Services.AddSingleton(TimeProvider.System);
