@@ -39,7 +39,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             _mockMicStepsService = new MockMicStepsService();
 
             _context = new TestContext();
-            _context.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
+            _context.Services.AddAutoMapper(cfg => cfg.AddProfile<NRZMyk.Services.MappingProfile>());
             _context.Services.AddSingleton<ISentinelEntryService, MockSentinelEntryServiceImpl>();
             _context.Services.AddSingleton<IClinicalBreakpointService>(_mockClinicalBreakpointService);
             _context.Services.AddSingleton<IMicStepsService>(_mockMicStepsService);
@@ -515,7 +515,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
                 .Returns(Task.FromResult(new List<string> { "test1", "test2" }));
 
             _context = new TestContext();
-            _context.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
+            _context.Services.AddAutoMapper(cfg => cfg.AddProfile<NRZMyk.Services.MappingProfile>());
             _context.Services.AddSingleton(_mockSentinelEntryService);
             _context.Services.AddSingleton<IClinicalBreakpointService>(new MockClinicalBreakpointService());
             _context.Services.AddSingleton<IMicStepsService>(new MockMicStepsService());

@@ -11,6 +11,7 @@ using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Specifications;
 using NSubstitute;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
 namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
@@ -65,7 +66,7 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         private static CryoRemarkUpdate CreateSut(out IAsyncRepository<SentinelEntry> sentinelEntryRepository)
         {
             var myProfile = new MappingProfile();
-            var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
+            var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile), NullLoggerFactory.Instance);
             var mapper = new Mapper(configuration);
             sentinelEntryRepository = Substitute.For<IAsyncRepository<SentinelEntry>>();
 

@@ -31,7 +31,7 @@ namespace NRZMyk.Components.Tests.Pages
 
             _reminderService = Substitute.For<IReminderService>();
 
-            _context.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
+            _context.Services.AddAutoMapper(cfg => cfg.AddProfile<NRZMyk.Services.MappingProfile>());
             _context.Services.AddSingleton<IAccountService, MockAccountService>();
             _context.Services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
             _context.Services.AddScoped(typeof(IReminderService), _ => _reminderService);
