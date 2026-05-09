@@ -30,58 +30,54 @@ else
             </div>
         </div>
 
-        <EditForm Model="@this">
-            <!-- Search and Filter Controls -->
-            <div class="mb-3 row">
-                <label class="col-form-label col-sm-2">Suche</label>
-                <div class="col-sm-4">
-                    <InputText class="form-control" @bind-Value="@searchTerm" @onkeypress="@OnSearchKeyPress" placeholder="Labornummer, Einsender, Datum, Spezies..." />
+        <!-- Organization selector for super users (auto-loads on change) -->
+        <AuthorizeView Roles=@nameof(Role.SuperUser)>
+            <Authorized Context="authContext">
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2" for="organization-select">Organisation</label>
+                    <div class="col-sm-4">
+                        <select id="organization-select" class="form-select"
+                                value="@selectedOrganizationId"
+                                @onchange="OnOrganizationChangeAsync">
+                            <option value="-1">Alle Organisationen</option>
+                            @if (organizations != null)
+                            {
+                                @foreach (var organization in organizations)
+                                {
+                                    <option value="@organization.Id">@organization.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
                 </div>
-                <div class="col-sm-2">
-                    <button class="btn btn-outline-secondary" type="button" @onclick="OnSearchAsync">
+            </Authorized>
+        </AuthorizeView>
+
+        <!-- Search input -->
+        <div class="mb-3 row">
+            <label class="col-form-label col-sm-2" for="search-input">Suche</label>
+            <div class="col-sm-6">
+                <div class="input-group">
+                    <input id="search-input" class="form-control" type="search"
+                           value="@searchTerm"
+                           @oninput="OnSearchTermInput"
+                           @onkeypress="OnSearchKeyPress"
+                           placeholder="Einsender Labornummer, Spezies..." />
+                    <button class="btn btn-primary" type="button" @onclick="OnSearchAsync">
                         Suchen
                     </button>
-                    @if (!string.IsNullOrEmpty(searchTerm))
-                    {
-                        <button class="btn btn-outline-danger ms-1" type="button" @onclick="OnClearSearchAsync">
-                            ✕
-                        </button>
-                    }
                 </div>
             </div>
-
-            <!-- Organization selector for super users -->
-            <AuthorizeView Roles=@nameof(Role.SuperUser)>
-                <Authorized Context="authContext">
-                    <div class="mb-3 row">
-                        <label class="col-form-label col-sm-2">Organisation</label>
-                        <div class="col-sm-4">
-                            <InputSelectNumber class="form-select" @bind-Value="selectedOrganizationId">
-                                <option value="-1">Alle Organisationen</option>
-                                @if (organizations != null)
-                                {
-                                    @foreach (var organization in organizations)
-                                    {
-                                        <option value="@organization.Id">@organization.Name</option>
-                                    }
-                                }
-                            </InputSelectNumber>
-                        </div>
-                        <div class="col-sm-2">
-                            <button class="btn btn-outline-secondary" type="button" @onclick="OnOrganizationChangeAsync">
-                                Laden
-                            </button>
-                        </div>
-                    </div>
-                </Authorized>
-            </AuthorizeView>
-        </EditForm>
+        </div>
 
         <!-- Results info -->
-        @if (pagedResult != null && !string.IsNullOrEmpty(searchTerm))
+        @if (!string.IsNullOrEmpty(appliedSearchTerm))
         {
             <div class="alert alert-info">
-                Suchergebnisse für "@searchTerm" - @sentinelEntries.Count Einträge gefunden
+                Suchergebnisse für "@appliedSearchTerm" - @(pagedResult?.SentinelEntries.Count ?? 0) Einträge gefunden
+                <button type="button" class="btn btn-link p-0 ms-2 align-baseline" @onclick="OnClearSearchAsync">
+                    Suche zurücksetzen
+                </button>
             </div>
         }
 
@@ -177,6 +173,7 @@ else
     private int currentPage = 0;
     private int selectedOrganizationId = -1;
     private string searchTerm = string.Empty;
+    private string appliedSearchTerm = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -205,16 +202,22 @@ else
         pagedResult = await SentinelEntryService.ListPaged(
             pageSize: 50, 
             pageIndex: currentPage, 
-            searchTerm: string.IsNullOrEmpty(searchTerm) ? null : searchTerm,
+            searchTerm: string.IsNullOrEmpty(appliedSearchTerm) ? null : appliedSearchTerm,
             organizationId: selectedOrganizationId <= 0 ? null : selectedOrganizationId
         ).ConfigureAwait(true);
         
         sentinelEntries = pagedResult.SentinelEntries;
     }
 
+    private void OnSearchTermInput(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? string.Empty;
+    }
+
     private async Task OnSearchAsync()
     {
         currentPage = 0; // Reset to first page when searching
+        appliedSearchTerm = searchTerm;
         await LoadDataAsync().ConfigureAwait(true);
         StateHasChanged();
     }
@@ -222,6 +225,7 @@ else
     private async Task OnClearSearchAsync()
     {
         searchTerm = string.Empty;
+        appliedSearchTerm = string.Empty;
         currentPage = 0;
         await LoadDataAsync().ConfigureAwait(true);
         StateHasChanged();
@@ -235,8 +239,9 @@ else
         }
     }
 
-    private async Task OnOrganizationChangeAsync()
+    private async Task OnOrganizationChangeAsync(ChangeEventArgs e)
     {
+        selectedOrganizationId = int.TryParse(e.Value?.ToString(), out var id) ? id : -1;
         currentPage = 0; // Reset to first page when changing organization
         await LoadDataAsync().ConfigureAwait(true);
         StateHasChanged();
