@@ -50,7 +50,6 @@ jobs:
           echo "=== SonarCloud authentication diagnostics ==="
           echo "Trigger event:        ${{ github.event_name }}"
           echo "Triggering actor:     ${{ github.actor }}"
-          echo "Head ref:             ${{ github.head_ref }}"
           echo "Repository:           ${{ github.repository }}"
           token_length="${#SONAR_TOKEN}"
           echo "SONAR_TOKEN length:   ${token_length}"
