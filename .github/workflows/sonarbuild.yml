@@ -45,17 +45,20 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
       - name: Begin SonarCloud scan
         if: ${{ env.SONAR_TOKEN != '' }}
+        id: sonar-begin
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         shell: bash
         run: |
           ./.sonar/scanner/dotnet-sonarscanner begin -k:"markusrt_NRZMyk" -o:"markusrt" -d:sonar.token="${{ secrets.SONAR_TOKEN }}" -d:sonar.host.url="https://sonarcloud.io" -d:sonar.cs.vstest.reportsPaths="**/*.trx" -d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" -d:sonar.exclusions="**/Migrations/*,**/*.sql" -d:sonar.coverage.exclusions="**/*.razor"
       - name: Run tests
+        if: always()
         shell: bash
         run: |
           dotnet test -c Release -p:CollectCoverage=true -p:CoverletOutputFormat=\"json,opencover\" -p:SkipAutoProps=true -p:MergeWith=./coverage.json -p:CoverletOutput=./coverage
       - name: End SonarCloud scan
-        if: ${{ env.SONAR_TOKEN != '' }}
+        if: ${{ env.SONAR_TOKEN != '' && steps.sonar-begin.outcome == 'success' }}
         shell: bash
         run: |
           ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.token="${{ secrets.SONAR_TOKEN }}"
