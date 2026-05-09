@@ -43,22 +43,56 @@ jobs:
         run: |
           mkdir -p ./.sonar/scanner
           dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+      - name: Diagnose SonarCloud authentication
+        if: ${{ env.SONAR_TOKEN != '' }}
+        shell: bash
+        run: |
+          echo "=== SonarCloud authentication diagnostics ==="
+          echo "Trigger event:        ${{ github.event_name }}"
+          echo "Triggering actor:     ${{ github.actor }}"
+          echo "Head ref:             ${{ github.head_ref }}"
+          echo "Repository:           ${{ github.repository }}"
+          token_length="${#SONAR_TOKEN}"
+          echo "SONAR_TOKEN length:   ${token_length}"
+          if [ "${token_length}" -eq 0 ]; then
+            echo "SONAR_TOKEN is empty - secret is not available in this context."
+            echo "Note: Dependabot PRs use a separate 'Dependabot secrets' store; secrets defined only as Actions secrets are NOT available."
+            exit 0
+          fi
+          echo ""
+          echo "Calling https://sonarcloud.io/api/authentication/validate to verify the token..."
+          # Use --write-out to capture the HTTP status code on a separate line so we can show it.
+          http_status=$(curl --silent --show-error --location \
+            --output /tmp/sonar_validate.json \
+            --write-out "%{http_code}" \
+            -u "${SONAR_TOKEN}:" \
+            "https://sonarcloud.io/api/authentication/validate")
+          echo "HTTP status:          ${http_status}"
+          echo "Response body:"
+          cat /tmp/sonar_validate.json || true
+          echo ""
+          if [ "${http_status}" != "200" ]; then
+            echo "::error::SonarCloud rejected the token (HTTP ${http_status}). The SONAR_TOKEN secret is most likely expired, revoked, or does not have access to the 'markusrt_NRZMyk' project. Regenerate it at https://sonarcloud.io/account/security/ and update the repository secret."
+            exit 0
+          fi
+          if ! grep -q '"valid":true' /tmp/sonar_validate.json; then
+            echo "::error::SonarCloud responded with HTTP 200 but the token is reported as invalid. Regenerate SONAR_TOKEN at https://sonarcloud.io/account/security/ and update the repository secret."
+          else
+            echo "Token is valid according to SonarCloud."
+          fi
       - name: Begin SonarCloud scan
         if: ${{ env.SONAR_TOKEN != '' }}
-        id: sonar-begin
-        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         shell: bash
         run: |
-          ./.sonar/scanner/dotnet-sonarscanner begin -k:"markusrt_NRZMyk" -o:"markusrt" -d:sonar.token="${{ secrets.SONAR_TOKEN }}" -d:sonar.host.url="https://sonarcloud.io" -d:sonar.cs.vstest.reportsPaths="**/*.trx" -d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" -d:sonar.exclusions="**/Migrations/*,**/*.sql" -d:sonar.coverage.exclusions="**/*.razor"
+          ./.sonar/scanner/dotnet-sonarscanner begin -k:"markusrt_NRZMyk" -o:"markusrt" -d:sonar.token="${{ secrets.SONAR_TOKEN }}" -d:sonar.host.url="https://sonarcloud.io" -d:sonar.verbose=true -d:sonar.cs.vstest.reportsPaths="**/*.trx" -d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" -d:sonar.exclusions="**/Migrations/*,**/*.sql" -d:sonar.coverage.exclusions="**/*.razor"
       - name: Run tests
-        if: always()
         shell: bash
         run: |
           dotnet test -c Release -p:CollectCoverage=true -p:CoverletOutputFormat=\"json,opencover\" -p:SkipAutoProps=true -p:MergeWith=./coverage.json -p:CoverletOutput=./coverage
       - name: End SonarCloud scan
-        if: ${{ env.SONAR_TOKEN != '' && steps.sonar-begin.outcome == 'success' }}
+        if: ${{ env.SONAR_TOKEN != '' }}
         shell: bash
         run: |
           ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.token="${{ secrets.SONAR_TOKEN }}"
