@@ -42,7 +42,6 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<SentinelEntry>> HandleAsync(SentinelEntryRequest request, CancellationToken cancellationToken = new())
         {
-            var organizationId = User.Claims.OrganizationId();
             var existingItem = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(request.Id)));
 
@@ -62,16 +61,14 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
                 await _sensitivityTestRepository.DeleteAsync(sensitivityTest).ConfigureAwait(false);
             }
 
-            existingItem.PredecessorEntryId = null;
-            existingItem.PredecessorEntry = null;
+            _mapper.Map(request, existingItem);
 
-            var error = await Utils.ResolvePredecessor(request, existingItem, _sentinelEntryRepository, organizationId, ModelState).ConfigureAwait(false);
+            var error = await Utils.UpdatePredecessor(request, existingItem, _sentinelEntryRepository, existingItem.ProtectKey, ModelState).ConfigureAwait(false);
             if (error)
             {
                 return new BadRequestObjectResult(ModelState);
             }
             
-            _mapper.Map(request, existingItem);
             await _sentinelEntryRepository.UpdateAsync(existingItem).ConfigureAwait(false);
             
             return Ok(existingItem);

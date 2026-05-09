@@ -100,6 +100,28 @@ namespace NRZMyk.Services.Tests.Export
             export.Rows[0]["MHK"].Should().Be(">8");
         }
 
+        [TestCase(SpeciesTestingMethod.ETest, "E-Test")]
+        [TestCase(SpeciesTestingMethod.Microdilution, "Mikrodilution")]
+        [TestCase(SpeciesTestingMethod.Micronaut, "Micronaut")]
+        [TestCase(SpeciesTestingMethod.Vitek, "Vitek")]
+        [TestCase(SpeciesTestingMethod.YeastOne, "Yeast One")]
+        public void DataTable_ShowsTestingMethod(SpeciesTestingMethod testingMethod, string exportedTestingMethod)
+        {
+            var sut = CreateExportDefinition(out var micStepsService);
+            // No specific mock setup needed for StepsByTestingMethodAndAgent in this test
+
+            AntimicrobialSensitivityTest.SentinelEntry.Id = 1234;
+            AntimicrobialSensitivityTest.MinimumInhibitoryConcentration = 8.001f;
+            AntimicrobialSensitivityTest.AntifungalAgent = AntifungalAgent.Anidulafungin;
+            AntimicrobialSensitivityTest.TestingMethod = testingMethod;
+            AntimicrobialSensitivityTest.Resistance = Resistance.Resistant;
+            AntimicrobialSensitivityTest.ClinicalBreakpoint = null;
+
+            var export = sut.ToDataTable(AntimicrobialSensitivityTests);
+
+            export.Rows[0]["Test"].Should().Be(exportedTestingMethod);
+        }
+
         private AntimicrobialSensitivityTestExportDefinition CreateExportDefinition(out IMicStepsService micStepsService)
         {
             micStepsService = Substitute.For<IMicStepsService>();

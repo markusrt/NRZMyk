@@ -95,9 +95,10 @@ else
                             }
                             else
                             {
-                                <InputText class="form-control form-control-sm" 
-                                  @bind-Value="item.CryoRemark"
-                                  @oninput="@(_ => OnCryoRemarkInput(item))"/>
+                                <input type="text" class="form-control form-control-sm" 
+                                  value="@item.CryoRemark"
+                                  @oninput="@(e => OnCryoRemarkInput(item, e))"
+                                  aria-label="Zusätzliche Informationen für @item.LaboratoryNumber" />
                             }
                         </td>
                         <td style="white-space: nowrap;">
@@ -111,10 +112,9 @@ else
                             {
                                 <a title="Zusätzliche Info aktualisieren"
                                    href=""
-                                   @onclick="() => UpdateCryoRemark(item)"
+                                   @onclick="HasCryoRemarkChanged(item) ? async () => await UpdateCryoRemark(item) : () => Task.CompletedTask"
                                    @onclick:preventDefault
-                                   class="btn btn-sm @(HasCryoRemarkChanged(item) ? "btn-primary" : "btn-secondary") me-1"
-                                   disabled="@(!HasCryoRemarkChanged(item))">
+                                   class="btn btn-sm @(HasCryoRemarkChanged(item) ? "btn-primary" : "btn-secondary disabled") me-1">
                                     <i class="oi oi-comment-square"></i>
                                 </a>
 

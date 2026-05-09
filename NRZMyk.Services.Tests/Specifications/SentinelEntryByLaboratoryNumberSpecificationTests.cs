@@ -6,13 +6,14 @@ namespace NRZMyk.Services.Tests.Specifications;
 
 public class SentinelEntryByLaboratoryNumberSpecificationTests
 {
-    [Test]
-    public void Ctor_ParsesLaboratoryNumber()
+    [TestCase("SN-2011-0233", 2011, 233)]
+    [TestCase("SN-2022-0236", 2022, 236)]
+    public void Ctor_ParsesLaboratoryNumber(string laboratoryNumber, int year, int sequentialNumber)
     {
-        var sut = new SentinelEntryByLaboratoryNumberSpecification("SN-2011-0233", "");
+        var sut = new SentinelEntryByLaboratoryNumberSpecification(laboratoryNumber, "");
 
-        sut.Year.Should().Be(2011);
-        sut.SequentialNumber.Should().Be(233);
+        sut.Year.Should().Be(year);
+        sut.SequentialNumber.Should().Be(sequentialNumber);
     }
 
     [TestCase("")]

@@ -152,8 +152,15 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             return _modifiedCryoRemarks.Contains(entry.Id);
         }
         
-        internal void OnCryoRemarkInput(SentinelEntryResponse entry)
+        internal void OnCryoRemarkInput(SentinelEntryResponse entry, ChangeEventArgs e)
         {
+            // Update the value directly to avoid triggering StateHasChanged, which would
+            // cause the entire 4000+ entry table to re-render on every keystroke.
+            // This significantly improves performance in Blazor Server scenarios.
+            entry.CryoRemark = e.Value?.ToString();
+            
+            // Track that this entry has been modified to enable the save button.
+            // Using HashSet.Add is idempotent (safe to call multiple times).
             _modifiedCryoRemarks.Add(entry.Id);
         }
     }

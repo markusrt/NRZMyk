@@ -43,7 +43,7 @@ namespace NRZMyk.Services.Tests.Export
 
             var export = sut.ToDataTable(SentinelEntries);
 
-            export.Columns.Count.Should().Be(15);
+            export.Columns.Count.Should().Be(17);
         }
 
         [Test]

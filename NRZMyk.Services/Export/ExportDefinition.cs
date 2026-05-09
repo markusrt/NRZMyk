@@ -32,12 +32,12 @@ namespace NRZMyk.Services.Export
             return dataTable;
         }
 
-        protected object ExportChildProperty<TProperty>(TProperty property, Func<TProperty, object> accessValue)
+        protected object ExportChildProperty<TProperty, TValue>(TProperty property, Func<TProperty, TValue> accessValue)
         {
             return ExportChildProperty(property, accessValue, null);
         }
 
-        protected object ExportChildProperty<TProperty>(TProperty property, Func<TProperty, object> accessValue, string nullValue)
+        protected object ExportChildProperty<TProperty, TValue>(TProperty property, Func<TProperty, TValue> accessValue, string nullValue)
         {
             return EqualityComparer<TProperty>.Default.Equals(property, default)
                 ? nullValue
@@ -46,7 +46,7 @@ namespace NRZMyk.Services.Export
 
         protected static string ExportToString<TValue>(TValue value)
         {
-            if (EqualityComparer<TValue>.Default.Equals(value, default))
+            if (value == null)
             {
                 return string.Empty;
             }

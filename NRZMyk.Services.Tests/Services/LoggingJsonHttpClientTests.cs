@@ -203,4 +203,61 @@ public class LoggingJsonHttpClientTests
     {
         public int Id { get; set; }
     }
+
+    [Test]
+    public async Task WhenPutFailsWithValidationError_ThrowsServerValidationException()
+    {
+        var sut = CreateSut(out var mockHttp, out _);
+        var validationErrorContent = "{\"PredecessorLaboratoryNumber\":[\"Die Labornummer wurde nicht gefunden\"]}";
+        NoErrorOnHttpMethods(mockHttp, HttpMethod.Get, HttpMethod.Post, HttpMethod.Delete);
+        mockHttp.When(HttpMethod.Put, "*").Respond(HttpStatusCode.BadRequest, "application/json", validationErrorContent);
+
+        var putAction = async () => await sut.Put<Product, IdResponse>("/api/products", new Product()).ConfigureAwait(true);
+
+        var exception = await putAction.Should().ThrowAsync<ServerValidationException>();
+        exception.Which.ValidationErrors.Should().ContainKey("PredecessorLaboratoryNumber");
+        exception.Which.ValidationErrors["PredecessorLaboratoryNumber"].Should().Contain("Die Labornummer wurde nicht gefunden");
+    }
+
+    [Test]
+    public async Task WhenPutFailsWithMultipleValidationErrors_ExceptionContainsJoinedMessages()
+    {
+        var sut = CreateSut(out var mockHttp, out _);
+        var validationErrorContent = "{\"Field1\":[\"Error 1\",\"Error 2\"],\"Field2\":[\"Error 3\"]}";
+        NoErrorOnHttpMethods(mockHttp, HttpMethod.Get, HttpMethod.Post, HttpMethod.Delete);
+        mockHttp.When(HttpMethod.Put, "*").Respond(HttpStatusCode.BadRequest, "application/json", validationErrorContent);
+
+        var putAction = async () => await sut.Put<Product, IdResponse>("/api/products", new Product()).ConfigureAwait(true);
+
+        var exception = await putAction.Should().ThrowAsync<ServerValidationException>();
+        exception.Which.Message.Should().Be("Error 1; Error 2; Error 3");
+    }
+
+    [Test]
+    public async Task WhenPutFailsWithNonValidationError_ExceptionContainsTechnicalMessage()
+    {
+        var sut = CreateSut(out var mockHttp, out _);
+        var errorContent = "Something went wrong";
+        NoErrorOnHttpMethods(mockHttp, HttpMethod.Get, HttpMethod.Post, HttpMethod.Delete);
+        mockHttp.When(HttpMethod.Put, "*").Respond(HttpStatusCode.InternalServerError, "text/plain", errorContent);
+
+        var putAction = async () => await sut.Put<Product, IdResponse>("/api/products", new Product()).ConfigureAwait(true);
+
+        var exception = await putAction.Should().ThrowAsync<Exception>();
+        exception.Which.Message.Should().Be("Remote call failed with status InternalServerError, content: Something went wrong");
+    }
+
+    [Test]
+    public async Task WhenPostFailsWithValidationError_ThrowsServerValidationException()
+    {
+        var sut = CreateSut(out var mockHttp, out _);
+        var validationErrorContent = "{\"Name\":[\"Name is required\"]}";
+        NoErrorOnHttpMethods(mockHttp, HttpMethod.Get, HttpMethod.Put, HttpMethod.Delete);
+        mockHttp.When(HttpMethod.Post, "*").Respond(HttpStatusCode.BadRequest, "application/json", validationErrorContent);
+
+        var postAction = async () => await sut.Post<Product, IdResponse>("/api/products", new Product()).ConfigureAwait(true);
+
+        var exception = await postAction.Should().ThrowAsync<ServerValidationException>();
+        exception.Which.Message.Should().Be("Name is required");
+    }
 }
