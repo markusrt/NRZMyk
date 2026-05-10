@@ -7,53 +7,12 @@
 [![CodeQL](https://github.com/markusrt/NRZMyk/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/markusrt/NRZMyk/actions/workflows/codeql-analysis.yml)
 [![Build and Publish Docker](https://github.com/markusrt/NRZMyk/actions/workflows/docker-build-and-publish.yml/badge.svg?branch=master)](https://github.com/markusrt/NRZMyk/actions/workflows/docker-build-and-publish.yml)
 
-### Super-linter (current PR setup)
-
-- Workflow: `.github/workflows/super-linter.yml`
-- Scope: only changed files in PRs (`VALIDATE_ALL_CODEBASE: false`)
-- Action pin: `super-linter/super-linter@9e863354e3ff62e0727d37183162c4a88873df41` (v8.6.0)
-- Some validators are currently disabled to reduce baseline noise (BIOME/CHECKOV/JSCPD/TRIVY/ZIZMOR and .NET solution-format validators).
-
-`FIX_CSS_PRETTIER` / `FIX_CSS` run fixes only inside the CI workspace. They do not
-create a new Git commit automatically, so fixes are not persisted back to the PR
-branch unless a separate commit/push step is added. For the current PR check these
-flags are set to `false`.
-
-### Fix linting issues locally
-
-When Super-Linter reports a linting issue, run the same container locally from
-the repo root:
-
-```bash
-docker run --rm \
-  -e RUN_LOCAL=true \
-  -e DEFAULT_WORKSPACE=/tmp/lint \
-  -e VALIDATE_ALL_CODEBASE=false \
-  -e FIX_MARKDOWN_PRETTIER=true \
-  -e FIX_MARKDOWN=true \
-  -v "$PWD":/tmp/lint \
-  ghcr.io/super-linter/super-linter:v8.6.0
-```
-
-Then review and verify:
-
-```bash
-git --no-pager diff -- README.md
-dotnet test NRZMyk.sln -v minimal --no-restore
-```
-
-Notes:
-
-- This runs the same Super-Linter image as CI and applies available fixes directly
-  to your local files via the bind mount.
-- `FIX_MARKDOWN_PRETTIER=true` and `FIX_MARKDOWN=true` auto-fix formatting and
-  Markdown rules that support fixing.
-- Some checks (for example spelling suggestions from `codespell`) are not always
-  auto-fixable and may require a manual edit.
-
 ### Sonarcloud
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=coverage)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=coverage)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk)
 
 ## Infrastructure setup
 
@@ -149,6 +108,49 @@ Add a new migration using
 ```bash
 dotnet ef migrations --startup-project ../NRZMyk.Server/NRZMyk.Server.csproj add Entity_MigrationDetails
 ```
+
+### Super-linter
+
+- Workflow: `.github/workflows/super-linter.yml`
+- Scope: only changed files in PRs (`VALIDATE_ALL_CODEBASE: false`)
+- Some validators are currently disabled to reduce baseline noise (BIOME/CHECKOV/JSCPD/TRIVY/ZIZMOR and .NET solution-format validators).
+
+`FIX_CSS_PRETTIER` / `FIX_CSS` run fixes only inside the CI workspace. They do not
+create a new Git commit automatically, so fixes are not persisted back to the PR
+branch unless a separate commit/push step is added. For the current PR check these
+flags are set to `false`.
+
+### Fix linting issues locally
+
+When Super-Linter reports a linting issue, run the same container locally from
+the repository root:
+
+```bash
+docker run --rm \
+  -e RUN_LOCAL=true \
+  -e DEFAULT_WORKSPACE=/tmp/lint \
+  -e VALIDATE_ALL_CODEBASE=false \
+  -e FIX_MARKDOWN_PRETTIER=true \
+  -e FIX_MARKDOWN=true \
+  -v "$PWD":/tmp/lint \
+  ghcr.io/super-linter/super-linter:v8.6.0
+```
+
+Then review and verify:
+
+```bash
+git --no-pager diff -- README.md
+dotnet test NRZMyk.sln -v minimal --no-restore
+```
+
+Notes:
+
+- This runs the same Super-Linter image as CI and applies available fixes directly
+  to your local files via the bind mount.
+- `FIX_MARKDOWN_PRETTIER=true` and `FIX_MARKDOWN=true` autofix formatting and
+  Markdown rules that support fixing.
+- Some checks (for example spelling suggestions from `codespell`) are not always
+  auto-fixable and may require a manual edit.
 
 ## Reference to third party licenses
 
