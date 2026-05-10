@@ -2,4 +2,7 @@
 dialect = tsql
 # Keep SQL data-fix scripts readable in repository style and focus linting on
 # syntax/parse validity instead of strict formatting or qualification rules.
+# AM04: unknown/variable column count (e.g., SELECT * verification queries)
+# CP02: identifier capitalization, LT02: indentation, LT05: line length
+# RF02: qualified references in multi-table contexts
 exclude_rules = AM04,CP02,LT02,LT05,RF02
