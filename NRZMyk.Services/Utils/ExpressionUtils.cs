@@ -26,8 +26,9 @@ namespace NRZMyk.Services.Utils
                 var member = GetMemberExpression((Expression) expression);
                 return member.Type;
             }
-            catch
+            catch (InvalidOperationException)
             {
+                // Falls back to typeof(object) when the expression cannot be parsed as a member expression.
             }
             return typeof (object);
         }
@@ -43,15 +44,13 @@ namespace NRZMyk.Services.Utils
             {
                 return GetMemberExpression(((UnaryExpression) expression).Operand);
             }
-            if (expression is LambdaExpression)
+            if (expression is LambdaExpression lambda)
             {
-                var lambda = expression as LambdaExpression;
                 var body = lambda.Body;
                 return GetMemberExpression(body);
             }
-            if (expression is MethodCallExpression)
+            if (expression is MethodCallExpression call)
             {
-                var call = expression as MethodCallExpression;
                 var calledObject = call.Object;
                 if ((calledObject == null || calledObject.NodeType == ExpressionType.Constant) &&
                     call.Arguments.Count >= 1)

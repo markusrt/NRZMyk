@@ -128,7 +128,7 @@ public class LoggingJsonHttpClient : IHttpClient
     {
         var uri = new Uri(_httpClient.BaseAddress, requestUri);
         var status = statusCode?.ToString() ?? "?";
-        _logger.LogError(exception, "{method} {request} on {uri} failed with status {status} during {callingMethod}",
+        _logger.LogError(exception, "{Method} {Request} on {Uri} failed with status {Status} during {CallingMethod}",
             method, target, uri, status, callingMethod);
     }
 

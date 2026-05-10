@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
@@ -14,18 +13,17 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.Account
 {
     [Authorize(Roles = nameof(Role.Admin))]
+    [Route("api/users/assign-organization")]
     public class AssignOrganization : EndpointBaseAsync.WithRequest<List<RemoteAccount>>.WithActionResult<int>
     {
         private readonly IAsyncRepository<RemoteAccount> _accountRepository;
-        private readonly ILogger<AssignOrganization> _logger;
 
-        public AssignOrganization(IAsyncRepository<RemoteAccount> accountRepository, ILogger<AssignOrganization> logger)
+        public AssignOrganization(IAsyncRepository<RemoteAccount> accountRepository)
         {
             _accountRepository = accountRepository;
-            _logger = logger;
         }
 
-        [HttpPost("api/users/assign-organization")]
+        [HttpPost]
         [SwaggerOperation(
             Summary = "Assign organization to account",
             OperationId = "account.assign-organization",
