@@ -1,36 +1,14 @@
-﻿using Ardalis.Specification;
+using Ardalis.Specification;
 using NRZMyk.Services.Data.Entities;
 
 namespace NRZMyk.Services.Specifications
 {
-    public sealed class SentinelEntrySearchPaginatedSpecification : Specification<SentinelEntry>
+    public sealed class SentinelEntrySearchPaginatedSpecification : SentinelEntrySearchSpecificationBase
     {
-        public string ProtectKey { get; }
-        public string SearchTerm { get; }
-
-        public SentinelEntrySearchPaginatedSpecification(int skip, int take, string protectKey, string searchTerm = null)
+        public SentinelEntrySearchPaginatedSpecification(int skip, int take, string protectKey, string searchTerm = null) : base(protectKey, searchTerm)
         {
-            ProtectKey = protectKey;
-            SearchTerm = searchTerm;
-
-            // Filter by organization if specified
-            if (!string.IsNullOrEmpty(protectKey))
-            {
-                Query.Where(s => s.ProtectKey == protectKey);
-            }
-
-            // Apply search filter if provided
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                var searchTermLower = searchTerm.ToLower();
-                Query.Where(s =>
-                    s.SenderLaboratoryNumber.ToLower().Contains(searchTermLower) ||
-                    (!string.IsNullOrEmpty(s.OtherIdentifiedSpecies) && s.OtherIdentifiedSpecies.ToLower().Contains(searchTermLower)));
-            }
-
-            Query.OrderByDescending(s => s.Id)
-                .Skip(skip)
-                .Take(take);
+            OrderByNewest();
+            Query.Skip(skip).Take(take);
         }
     }
 }
