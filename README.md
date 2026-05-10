@@ -6,6 +6,15 @@
 
 [![CodeQL](https://github.com/markusrt/NRZMyk/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/markusrt/NRZMyk/actions/workflows/codeql-analysis.yml) [![Build and Publish Docker](https://github.com/markusrt/NRZMyk/actions/workflows/docker-build-and-publish.yml/badge.svg?branch=master)](https://github.com/markusrt/NRZMyk/actions/workflows/docker-build-and-publish.yml)
 
+### Super-linter (current PR setup)
+
+- Workflow: `.github/workflows/super-linter.yml`
+- Scope: only changed files in PRs (`VALIDATE_ALL_CODEBASE: false`)
+- Action pin: `super-linter/super-linter@9e863354e3ff62e0727d37183162c4a88873df41` (v8.6.0)
+- Some validators are currently disabled to reduce baseline noise (BIOME/CHECKOV/JSCPD/TRIVY/ZIZMOR and .NET solution-format validators).
+
+`FIX_CSS_PRETTIER` / `FIX_CSS` run fixes only inside the CI workspace. They do not create a new git commit automatically, so fixes are not persisted back to the PR branch unless a separate commit/push step is added. For the current PR check these flags are set to `false`.
+
 ### Sonarcloud
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=coverage)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=markusrt_NRZMyk&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=markusrt_NRZMyk)
