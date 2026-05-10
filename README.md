@@ -6,6 +6,7 @@
 
 [![CodeQL](https://github.com/markusrt/NRZMyk/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/markusrt/NRZMyk/actions/workflows/codeql-analysis.yml)
 [![Build and Publish Docker](https://github.com/markusrt/NRZMyk/actions/workflows/docker-build-and-publish.yml/badge.svg?branch=master)](https://github.com/markusrt/NRZMyk/actions/workflows/docker-build-and-publish.yml)
+[![Lint](https://github.com/markusrt/NRZMyk/actions/workflows/super-linter.yml/badge.svg)](https://github.com/markusrt/NRZMyk/actions/workflows/super-linter.yml)
 
 ### Sonarcloud
 
