@@ -9,7 +9,14 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0-noble AS build
 WORKDIR /src
-COPY . .
+# Copy only the project sources required to build NRZMyk.Server to avoid
+# inadvertently shipping unrelated files (tests, infra, scripts, secrets, ...)
+# into the build context.
+COPY ["global.json", "./"]
+COPY ["NRZMyk.Server/", "NRZMyk.Server/"]
+COPY ["NRZMyk.Client/", "NRZMyk.Client/"]
+COPY ["NRZMyk.Services/", "NRZMyk.Services/"]
+COPY ["NRZMyk.Components/", "NRZMyk.Components/"]
 WORKDIR "/src/NRZMyk.Server"
 RUN dotnet build "NRZMyk.Server.csproj" -c Release -o /app/build
 
@@ -21,4 +28,7 @@ RUN version="$(date '+%Y-%m-%d-%H-%M-%S')" && sed -i "s/\${version}/${version}/"
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# Run as the non-root 'app' user (UID 1654) provided by the chiseled base image
+# instead of relying on the default user.
+USER $APP_UID
 ENTRYPOINT ["dotnet", "NRZMyk.Server.dll"]
