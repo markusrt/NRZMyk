@@ -51,8 +51,8 @@ namespace NRZMyk.Services.Services
             _logger.LogInformation("Found {StepCount} MIC steps for {TestingMethod}/{Agent} found",
                 agentSteps.Count, testingMethod, agent);
 
-            agentSteps.First().LowerBoundary = true;
-            agentSteps.Last().UpperBoundary = true;
+            agentSteps[0].LowerBoundary = true;
+            agentSteps[^1].UpperBoundary = true;
             return agentSteps;
         }
 

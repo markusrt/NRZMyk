@@ -49,7 +49,7 @@ namespace NRZMyk.Services.Utils
         public static string FirstEmail(this IEnumerable<Claim> claims)
         {
             var emails = claims.FirstOrDefault(c => c.Type == "emails")?.Value ?? "[]";
-            var hasSingleEmail = !(emails.Trim().StartsWith("[") && emails.Trim().EndsWith("]"));
+            var hasSingleEmail = !(emails.Trim().StartsWith('[') && emails.Trim().EndsWith(']'));
             return hasSingleEmail 
                 ? emails 
                 : JsonSerializer.Deserialize<List<string>>(emails).FirstOrDefault();

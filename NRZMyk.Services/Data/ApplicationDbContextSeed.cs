@@ -12,6 +12,10 @@ namespace NRZMyk.Services.Data
     [ExcludeFromCodeCoverage(Justification = "Not testable with in memory DB")]
     public class ApplicationDbContextSeed
     {
+        private ApplicationDbContextSeed()
+        {
+        }
+
         public static async Task SeedAsync(ApplicationDbContext context,
             ILoggerFactory loggerFactory, DatabaseSeed databaseSeed, int? retry = 0)
         {
@@ -24,7 +28,7 @@ namespace NRZMyk.Services.Data
                 }
 
                 var configuredBreakpoints = databaseSeed?.ClinicalBreakpoints;
-                if (configuredBreakpoints?.Any() == true)
+                if (configuredBreakpoints is { Count: > 0 })
                 {
                     var databaseCount = await context.ClinicalBreakpoints.CountAsync();
                     if (databaseCount < databaseSeed.ClinicalBreakpoints.Count)

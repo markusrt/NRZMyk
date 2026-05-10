@@ -52,7 +52,7 @@ else
                         <td>
                             @if (item.SamplingDate.HasValue)
                             {
-                                @item.SamplingDate.Value.ToShortDateString();
+                                @item.SamplingDate.Value.ToShortDateString()
                             }
                         </td>
                         <td>@item.SenderLaboratoryNumber</td>
@@ -130,17 +130,6 @@ else
         showDetails = true;
     }
 
-    private void CreateClick()
-    {
-        showCreate = true;
-    }
-
-    private void EditClick(int id)
-    {
-        selectedId = id;
-        showEdit = true;
-    }
-
     private void DeleteClick(int id)
     {
         selectedId = id;
@@ -152,22 +141,10 @@ else
         showDetails = false;
         await ReloadCatalogItems().ConfigureAwait(true);
     }
-    
-    private async Task CloseEditHandler(string action)
-    {
-        showEdit = false;
-        await ReloadCatalogItems().ConfigureAwait(true);
-    }
 
     private async Task CloseDeleteHandler(string action)
     {
         showDelete = false;
-        await ReloadCatalogItems().ConfigureAwait(true);
-    }
-
-    private async Task CloseCreateHandler(string action)
-    {
-        showCreate = false;
         await ReloadCatalogItems().ConfigureAwait(true);
     }
 

@@ -101,7 +101,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             var matchingSteps = MicStepsService.StepsByTestingMethodAndAgent(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent);
             if (sensitivityTest.MinimumInhibitoryConcentration.HasValue && matchingSteps.Any() && matchingSteps.TrueForAll(s => !s.Value.Equals(sensitivityTest.MinimumInhibitoryConcentration)))
             {
-                sensitivityTest.MinimumInhibitoryConcentration = matchingSteps.First().Value;
+                sensitivityTest.MinimumInhibitoryConcentration = matchingSteps[0].Value;
             }
             return matchingSteps;
         }
@@ -121,7 +121,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             var standards = MicStepsService.Standards(TestingMethod).ToList();
             if (!standards.Contains(Standard))
             {
-                Standard = standards.First();
+                Standard = standards[0];
             }
             return standards;
         }

@@ -7,6 +7,7 @@ using NRZMyk.Services.Services;
 
 namespace NRZMyk.Services.Validation
 {
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class RequiredForNormalInternalUnitAttribute : ValidationAttribute
     {
         public RequiredForNormalInternalUnitAttribute() 

@@ -7,6 +7,7 @@ using NRZMyk.Services.Services;
 
 namespace NRZMyk.Services.Validation
 {
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class SensitivityTestAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
