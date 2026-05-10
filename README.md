@@ -131,7 +131,7 @@ Make sure above mentioned secrets are also set correctly in your deployment envi
 can be done via environment variables:
 
 - `AzureAdB2C__Domain=contoso.onmicrosoft.com`
-- `AzureAdB2C\_\_ClientId=acc6f10a-484d-4e56-a0fa-1536d7b2df0b
+- `AzureAdB2C__ClientId=acc6f10a-484d-4e56-a0fa-1536d7b2df0b`
 - _etc..._
 
 ## Development tasks
