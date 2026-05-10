@@ -33,9 +33,15 @@ jobs:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
+          VALIDATE_BIOME_FORMAT: false
+          VALIDATE_BIOME_LINT: false
+          VALIDATE_CHECKOV: false
           VALIDATE_CSHARP: false
           VALIDATE_DOTNET_SLN_FORMAT_ANALYZERS: false
           VALIDATE_DOTNET_SLN_FORMAT: false
           VALIDATE_DOTNET_SLN: false
+          VALIDATE_GITHUB_ACTIONS_ZIZMOR: false
+          VALIDATE_JSCPD: false
+          VALIDATE_TRIVY: false
           FIX_CSS_PRETTIER: true
           FIX_CSS: true
