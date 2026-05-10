@@ -54,7 +54,7 @@ namespace NRZMyk.Services.Data
                 {
                     retryForAvailability++;
                     var log = loggerFactory.CreateLogger<ApplicationDbContextSeed>();
-                    log.LogError(ex.Message);
+                    log.LogError(ex, "Database seeding failed; will retry (attempt {RetryCount})", retryForAvailability);
                     await SeedAsync(context, loggerFactory, databaseSeed, retryForAvailability).ConfigureAwait(false);
                 }
                 throw;

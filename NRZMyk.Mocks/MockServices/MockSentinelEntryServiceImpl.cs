@@ -78,7 +78,7 @@ namespace NRZMyk.Mocks.MockServices
 
         public Task<SentinelEntry> Create(SentinelEntryRequest createRequest)
         {
-            _logger.LogInformation("Create sentinel entry: {request}", createRequest);
+            _logger.LogInformation("Create sentinel entry: {Request}", createRequest);
             var sentinelEntry = _mapper.Map<SentinelEntry>(createRequest);
             sentinelEntry.Id = _id++;
             _repository.Add(sentinelEntry);
