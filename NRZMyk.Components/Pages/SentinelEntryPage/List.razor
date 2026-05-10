@@ -4,6 +4,7 @@
 
 @inject ISentinelEntryService SentinelEntryService
 @inject IAccountService AccountService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h1>Sentinel Daten</h1>
 
@@ -179,14 +180,13 @@ else
     {
         if (firstRender)
         {
-            // Load organizations for super users
-            try 
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync().ConfigureAwait(true);
+            if (authState.User.IsInRole(nameof(Role.SuperUser)))
             {
                 organizations = await AccountService.ListOrganizations().ConfigureAwait(true);
             }
-            catch
+            else
             {
-                // Regular users might not have access to organization list
                 organizations = new List<Organization>();
             }
 
