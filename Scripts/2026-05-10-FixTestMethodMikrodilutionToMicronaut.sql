@@ -4,9 +4,15 @@
 
 -- Verification query (run before UPDATE)
 SELECT
-    ast.*,
+    ast.Id,
+    ast.SentinelEntryId,
+    ast.TestingMethod,
+    ast.AntifungalAgent,
+    ast.MinimumInhibitoryConcentration,
+    ast.Resistance,
+    ast.ClinicalBreakpointId,
     se.SenderLaboratoryNumber,
-    'SN-' + CAST(se.Year AS VARCHAR(4)) + '-' + RIGHT('0000' + CAST(se.YearlySequentialEntryNumber AS VARCHAR(4)), 4) AS LaboratoryNumber
+    CONCAT('SN-', se.Year, '-', RIGHT(CONCAT('0000', se.YearlySequentialEntryNumber), 4)) AS LaboratoryNumber
 FROM AntimicrobialSensitivityTest AS ast
 INNER JOIN SentinelEntries AS se ON ast.SentinelEntryId = se.Id
 WHERE ast.TestingMethod = 1 -- Microdilution (displayed as "Mikrodilution")
