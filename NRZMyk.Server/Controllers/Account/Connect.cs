@@ -14,6 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.Account
 {
     [Authorize]
+    [Route("api/user/connect")]
     public class Connect : EndpointBaseAsync.WithoutRequest.WithActionResult<ConnectedAccount>
     {
         private readonly IAsyncRepository<RemoteAccount> _accountRepository;
@@ -27,7 +28,7 @@ namespace NRZMyk.Server.Controllers.Account
             _emailNotificationService = emailNotificationService;
         }
 
-        [HttpGet("api/user/connect")]
+        [HttpGet]
         [SwaggerOperation(
             Summary = "Informs about remote account connection",
             OperationId = "account.connect",

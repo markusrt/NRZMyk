@@ -14,6 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.SuperUser))]
+    [Route("api/sentinel-entries/cryo-archive")]
     public class CryoArchive : EndpointBaseAsync.WithRequest<CryoArchiveRequest>.WithActionResult<SentinelEntry>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
@@ -26,7 +27,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             _mapper = mapper;
         }
 
-        [HttpPut("api/sentinel-entries/cryo-archive")]
+        [HttpPut]
         [SwaggerOperation(
             Summary = "Store or releases a Sentinel Entry from cryo storage",
             OperationId = "sentinel-entries.cryo-archive",

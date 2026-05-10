@@ -18,6 +18,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [ApiController]
     [Authorize(Roles = nameof(Role.SuperUser))]
+    [Route("api/sentinel-entries/export")]
     public class ExcelExport : ControllerBase
     {
         private const string XlsxContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -33,7 +34,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             _micStepsService = micStepsService;
         }
 
-        [HttpGet("api/sentinel-entries/export")]
+        [HttpGet]
         [SwaggerOperation(
             Summary = "Export all sentinel entries to excel",
             OperationId = "sentinel-entries.ListPaged",
