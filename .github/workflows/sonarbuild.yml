@@ -52,7 +52,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: bash
         run: |
-          ./.sonar/scanner/dotnet-sonarscanner begin -k:"markusrt_NRZMyk" -o:"markusrt" -d:sonar.token="$SONAR_TOKEN" -d:sonar.host.url="https://sonarcloud.io" -d:sonar.verbose=true -d:sonar.cs.vstest.reportsPaths="**/*.trx" -d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" -d:sonar.exclusions="**/Migrations/*,**/*.sql" -d:sonar.coverage.exclusions="**/*.razor"
+          ./.sonar/scanner/dotnet-sonarscanner begin -k:"markusrt_NRZMyk" -o:"markusrt" -d:sonar.token="$SONAR_TOKEN" -d:sonar.host.url="https://sonarcloud.io" -d:sonar.verbose=true -d:sonar.cs.vstest.reportsPaths="**/*.trx" -d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" -d:sonar.exclusions="**/Migrations/*,**/*.sql,**/wwwroot/js/interop.js,**/wwwroot/index.html" -d:sonar.coverage.exclusions="**/*.razor"
       - name: Run tests
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
