@@ -1,3 +1,5 @@
 [sqlfluff]
 dialect = tsql
+# Keep SQL data-fix scripts readable in repository style and focus linting on
+# syntax/parse validity instead of strict formatting or qualification rules.
 exclude_rules = AM04,CP02,LT02,LT05,RF02
