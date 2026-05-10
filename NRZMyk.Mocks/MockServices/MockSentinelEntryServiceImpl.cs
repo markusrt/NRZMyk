@@ -154,11 +154,15 @@ namespace NRZMyk.Mocks.MockServices
                 var lowered = searchTerm.ToLowerInvariant();
                 query = query.Where(e =>
                     (!string.IsNullOrEmpty(e.SenderLaboratoryNumber) && e.SenderLaboratoryNumber.ToLowerInvariant().Contains(lowered))
-                    || (!string.IsNullOrEmpty(e.OtherIdentifiedSpecies) && e.OtherIdentifiedSpecies.ToLowerInvariant().Contains(lowered)));
+                    || (!string.IsNullOrEmpty(e.OtherIdentifiedSpecies) && e.OtherIdentifiedSpecies.ToLowerInvariant().Contains(lowered))
+                    || e.IdentifiedSpecies.ToString().ToLowerInvariant().Contains(lowered)
+                    || e.LaboratoryNumber.ToLowerInvariant().Contains(lowered)
+                    || (e.SamplingDate.HasValue && e.SamplingDate.Value.ToString("yyyy-MM-dd").Contains(lowered)));
             }
 
             var ordered = query.OrderByDescending(e => e.Id).ToList();
-            var pageCount = pageSize <= 0 ? 1 : Math.Max(1, (int)Math.Ceiling(ordered.Count / (double)pageSize));
+            var totalCount = ordered.Count;
+            var pageCount = pageSize <= 0 ? 1 : Math.Max(1, (int)Math.Ceiling(totalCount / (double)pageSize));
             var page = pageSize <= 0
                 ? ordered
                 : ordered.Skip(pageIndex * pageSize).Take(pageSize).ToList();
@@ -166,7 +170,8 @@ namespace NRZMyk.Mocks.MockServices
             var result = new PagedSentinelEntryResult
             {
                 SentinelEntries = page,
-                PageCount = pageCount
+                PageCount = pageCount,
+                TotalCount = totalCount
             };
             return Task.FromResult(result);
         }

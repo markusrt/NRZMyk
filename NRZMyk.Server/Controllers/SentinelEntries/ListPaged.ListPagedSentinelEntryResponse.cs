@@ -7,5 +7,6 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
     {
         public List<SentinelEntry> SentinelEntries { get; set; } = new List<SentinelEntry>();
         public int PageCount { get; set; }
+        public int TotalCount { get; set; }
     }
 }

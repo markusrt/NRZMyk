@@ -75,6 +75,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             var items = await _sentinelEntryRepository.ListAsync(pagedSpec).ConfigureAwait(false);
 
             response.SentinelEntries.AddRange(items);
+            response.TotalCount = totalItems;
             response.PageCount = int.Parse(Math.Ceiling((decimal)totalItems / request.PageSize).ToString());
 
             return Ok(response);

@@ -74,7 +74,7 @@ else
         @if (!string.IsNullOrEmpty(appliedSearchTerm))
         {
             <div class="alert alert-info">
-                Suchergebnisse für "@appliedSearchTerm" - @(pagedResult?.SentinelEntries.Count ?? 0) Einträge gefunden
+                Suchergebnisse für "@appliedSearchTerm" - @(pagedResult?.TotalCount ?? 0) Einträge gefunden
                 <button type="button" class="btn btn-link p-0 ms-2 align-baseline" @onclick="OnClearSearchAsync">
                     Suche zurücksetzen
                 </button>
