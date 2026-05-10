@@ -186,7 +186,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
 
             var breakpoints = sut.ApplicableBreakpoints(sensitivityTest).ToList();
 
-            breakpoints.Should().HaveCount(2);
+            breakpoints.Should().HaveCount(3);
             breakpoints.Select(b => b.Version).Should().BeInDescendingOrder();
             breakpoints.Should().OnlyContain(
                 b => b.AntifungalAgent == AntifungalAgent.Micafungin && b.Standard == BrothMicrodilutionStandard.Eucast);
@@ -205,7 +205,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             var breakpoints = sut.ApplicableBreakpoints(sut.SentinelEntry.AntimicrobialSensitivityTests.Single()).ToList();
 
             var breakpointId = sut.SentinelEntry.AntimicrobialSensitivityTests.Single().ClinicalBreakpointId;
-            breakpoints.Single(b=>b.Id == breakpointId).Version.Should().Be("11.0");
+            breakpoints.Single(b=>b.Id == breakpointId).Version.Should().Be("12.0");
         }
 
         [Test]

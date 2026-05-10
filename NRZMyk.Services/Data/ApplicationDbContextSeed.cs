@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NRZMyk.Services.Configuration;
 using NRZMyk.Services.Data.Entities;
+using NRZMyk.Services.Services;
 
 namespace NRZMyk.Services.Data
 {
@@ -13,7 +14,7 @@ namespace NRZMyk.Services.Data
     public class ApplicationDbContextSeed
     {
         public static async Task SeedAsync(ApplicationDbContext context,
-            ILoggerFactory loggerFactory, DatabaseSeed databaseSeed, int? retry = 0)
+            ILoggerFactory loggerFactory, DatabaseSeed databaseSeed, IClinicalBreakpointProvider breakpointProvider, int? retry = 0)
         {
             int retryForAvailability = retry.Value;
             try
@@ -23,11 +24,11 @@ namespace NRZMyk.Services.Data
                     await context.Database.MigrateAsync();
                 }
 
-                var configuredBreakpoints = databaseSeed?.ClinicalBreakpoints;
-                if (configuredBreakpoints?.Any() == true)
+                var configuredBreakpoints = breakpointProvider.GetBreakpoints();
+                if (configuredBreakpoints.Any())
                 {
                     var databaseCount = await context.ClinicalBreakpoints.CountAsync();
-                    if (databaseCount < databaseSeed.ClinicalBreakpoints.Count)
+                    if (databaseCount < configuredBreakpoints.Count)
                     {
                         var databaseBreakpoints = await context.ClinicalBreakpoints.ToListAsync();
                         var newBreakpoints = configuredBreakpoints.Where(
@@ -55,7 +56,7 @@ namespace NRZMyk.Services.Data
                     retryForAvailability++;
                     var log = loggerFactory.CreateLogger<ApplicationDbContextSeed>();
                     log.LogError(ex.Message);
-                    await SeedAsync(context, loggerFactory, databaseSeed, retryForAvailability).ConfigureAwait(false);
+                    await SeedAsync(context, loggerFactory, databaseSeed, breakpointProvider, retryForAvailability).ConfigureAwait(false);
                 }
                 throw;
             }

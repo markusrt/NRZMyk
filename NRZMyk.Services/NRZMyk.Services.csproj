@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration\BreakpointSettings.json" />
+    <EmbeddedResource Include="Data\ClinicalBreakpoints.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="8.0.0" />
