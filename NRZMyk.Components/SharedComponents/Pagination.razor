@@ -49,7 +49,7 @@
     {
         if (page >= 0 && page < TotalPages && page != CurrentPage)
         {
-            await OnPageChanged.InvokeAsync(page);
+            await OnPageChanged.InvokeAsync(page).ConfigureAwait(true);
         }
     }
 }

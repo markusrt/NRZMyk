@@ -23,7 +23,6 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         [Test]
         public async Task WhenSuperUserSpecifiesOrganization_AllowsAccess()
         {
-            // Arrange
             var user = CreateSuperUser();
             var sut = CreateSut(out var repository, "1", user);
             var request = new ListPagedSentinelEntryRequest 
@@ -38,10 +37,8 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.ListAsync(Arg.Any<SentinelEntrySearchPaginatedSpecification>())
                 .Returns(Task.FromResult(new List<SentinelEntry>() as IReadOnlyList<SentinelEntry>));
 
-            // Act
             var result = await sut.HandleAsync(request);
 
-            // Assert
             result.Result.Should().BeOfType<OkObjectResult>();
             
             // Verify that the specifications were called with the requested organization ID
@@ -54,7 +51,6 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         [Test]
         public async Task WhenRegularUserSpecifiesOwnOrganization_AllowsAccess()
         {
-            // Arrange
             var user = CreateRegularUser("3");
             var sut = CreateSut(out var repository, "3", user);
             var request = new ListPagedSentinelEntryRequest 
@@ -69,10 +65,8 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.ListAsync(Arg.Any<SentinelEntrySearchPaginatedSpecification>())
                 .Returns(Task.FromResult(new List<SentinelEntry>() as IReadOnlyList<SentinelEntry>));
 
-            // Act
             var result = await sut.HandleAsync(request);
 
-            // Assert
             result.Result.Should().BeOfType<OkObjectResult>();
             
             // Verify that the specifications were called with the user's organization ID
@@ -85,7 +79,6 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         [Test]
         public async Task WhenRegularUserSpecifiesDifferentOrganization_ReturnsForbid()
         {
-            // Arrange
             var user = CreateRegularUser("3");
             var sut = CreateSut(out var repository, "3", user);
             var request = new ListPagedSentinelEntryRequest 
@@ -95,10 +88,8 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
                 OrganizationId = 7  // Different from user's organization (3)
             };
 
-            // Act
             var result = await sut.HandleAsync(request);
 
-            // Assert
             result.Result.Should().BeOfType<ForbidResult>();
             
             // Verify that no repository calls were made
@@ -109,7 +100,6 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         [Test]
         public async Task WhenNoOrganizationSpecified_UsesUserOrganization()
         {
-            // Arrange
             var user = CreateRegularUser("4");
             var sut = CreateSut(out var repository, "4", user);
             var request = new ListPagedSentinelEntryRequest 
@@ -124,10 +114,8 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
             repository.ListAsync(Arg.Any<SentinelEntrySearchPaginatedSpecification>())
                 .Returns(Task.FromResult(new List<SentinelEntry>() as IReadOnlyList<SentinelEntry>));
 
-            // Act
             var result = await sut.HandleAsync(request);
 
-            // Assert
             result.Result.Should().BeOfType<OkObjectResult>();
             
             // Verify that the specifications were called with the user's organization ID
@@ -140,13 +128,10 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         [Test]
         public void WhenPerformingAuthorization_RestrictsToUsersWithinAnOrganization()
         {
-            // Arrange
             var type = typeof(ListPaged);
 
-            // Act
-            var attribute = type.GetCustomAttribute(typeof(AuthorizeAttribute)) as AuthorizeAttribute;
+            var attribute = type.GetCustomAttribute(typeof(AuthorizeAttribute)).As<AuthorizeAttribute>();
 
-            // Assert
             attribute.Should().NotBeNull();
             attribute.Policy.Should().Be(Policies.AssignedToOrganization);
             attribute.Roles.Should().Contain(nameof(Role.User));

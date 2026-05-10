@@ -76,7 +76,9 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
 
             response.SentinelEntries.AddRange(items);
             response.TotalCount = totalItems;
-            response.PageCount = int.Parse(Math.Ceiling((decimal)totalItems / request.PageSize).ToString());
+            response.PageCount = request.PageSize <= 0
+                ? 1
+                : (int)Math.Ceiling((decimal)totalItems / request.PageSize);
 
             return Ok(response);
         }
