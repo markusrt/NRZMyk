@@ -3,18 +3,18 @@
 -- from Microdilution (1, displayed as "Mikrodilution") to Micronaut (3)
 
 -- Verification query (run before UPDATE)
-SELECT *
-FROM AntimicrobialSensitivityTest
-WHERE TestingMethod = 1 -- Microdilution (displayed as "Mikrodilution")
-  AND SentinelEntryId IN (
-      SELECT Id
-      FROM SentinelEntries
-      WHERE (Id BETWEEN 1304 AND 1598)
-         OR (Id BETWEEN 1683 AND 1693)
-         OR (Id BETWEEN 1795 AND 1801)
-         OR Id = 1942
-         OR (Id BETWEEN 2788 AND 2805)
-  );
+SELECT
+    ast.*,
+    se.SenderLaboratoryNumber,
+    'SN-' + CAST(se.Year AS VARCHAR(4)) + '-' + RIGHT('0000' + CAST(se.YearlySequentialEntryNumber AS VARCHAR(4)), 4) AS LaboratoryNumber
+FROM AntimicrobialSensitivityTest AS ast
+INNER JOIN SentinelEntries AS se ON ast.SentinelEntryId = se.Id
+WHERE ast.TestingMethod = 1 -- Microdilution (displayed as "Mikrodilution")
+  AND ((se.Id BETWEEN 1304 AND 1598)
+    OR (se.Id BETWEEN 1683 AND 1693)
+    OR (se.Id BETWEEN 1795 AND 1801)
+    OR se.Id = 1942
+    OR (se.Id BETWEEN 2788 AND 2805));
 
 -- ~NNN rows affected (verify with SELECT above before running)
 UPDATE AntimicrobialSensitivityTest
