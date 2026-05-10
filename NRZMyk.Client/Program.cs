@@ -28,7 +28,7 @@ builder.Services.AddSingleton(TimeProvider.System);
 // Custom services start
 
 builder.Services.AddBlazorApplicationInsights();
-builder.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<NRZMyk.Services.MappingProfile>());
 builder.Services.AddTransient<ISentinelEntryService, SentinelEntryServiceImpl>();
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IClinicalBreakpointService, ClinicalBreakpointService>();

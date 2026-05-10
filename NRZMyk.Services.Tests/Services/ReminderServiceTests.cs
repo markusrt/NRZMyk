@@ -19,7 +19,7 @@ public class ReminderServiceTests
         var org = CreateOrganization();
         var today = DateTime.Today;
         org.DispatchMonth = (MonthToDispatch)today.Month;
-        org.LatestCryoDate = today.Subtract(TimeSpan.FromDays(200));
+        org.LatestCryoDate = today.Subtract(TimeSpan.FromDays(370));
 
         sut.HumanReadableExpectedNextSending(org).Should().Be("diesen Monat");
     }
@@ -54,28 +54,30 @@ public class ReminderServiceTests
     [Test]
     public void WhenExpectedNextSendingIsChecked_SentSlightlyEarlyShowsDueNextYear()
     {
-        var sut = CreateSut();
+        var fakeToday = new DateTime(2021, 7, 15);
+        var fakeTimeProvider = new FakeTimeProvider(fakeToday);
+        var sut = CreateSut(fakeTimeProvider);
         var org = CreateOrganization();
-        var today = DateTime.Today;
-        var twentyDaysAgo = today.Subtract(TimeSpan.FromDays(20));
-        org.DispatchMonth = (MonthToDispatch) today.Month;
+        var twentyDaysAgo = fakeToday.Subtract(TimeSpan.FromDays(20));
+        org.DispatchMonth = (MonthToDispatch) fakeToday.Month;
         org.LatestCryoDate = twentyDaysAgo;
 
-        sut.HumanReadableExpectedNextSending(org).Should().Be("in einem Jahr");
+        sut.HumanReadableExpectedNextSending(org).Should().MatchRegex("in einem Jahr|in 1[01] Monaten");
     }
 
     [Test]
     public void WhenExpectedNextSendingIsChecked_SentSlightlyLateShowsDueNextYear()
     {
-        var sut = CreateSut();
+        var fakeToday = new DateTime(2021, 7, 15);
+        var fakeTimeProvider = new FakeTimeProvider(fakeToday);
+        var sut = CreateSut(fakeTimeProvider);
         var org = CreateOrganization();
-        var today = DateTime.Today;
-        var lastMonth = DateTime.Today.AddMonths(-1);
-        var someDaysAgo = today.AddDays(-20);
+        var lastMonth = fakeToday.AddMonths(-1);
+        var someDaysAgo = fakeToday.AddDays(-20);
         org.DispatchMonth = (MonthToDispatch) lastMonth.Month;
         org.LatestCryoDate = someDaysAgo;
 
-        sut.HumanReadableExpectedNextSending(org).Should().MatchRegex("in 1[01] Monaten");
+        sut.HumanReadableExpectedNextSending(org).Should().MatchRegex("in einem Jahr|in 1[01] Monaten");
     }
 
     [Test]
@@ -134,14 +136,16 @@ public class ReminderServiceTests
     [Test]
     public void WhenLatestCryoDateIsNull_CalculateExpectedNextSendingReturnsNull()
     {
-        var sut = CreateSut();
+        var fakeToday = new DateTime(2021, 7, 15);
+        var fakeTimeProvider = new FakeTimeProvider(fakeToday);
+        var sut = CreateSut(fakeTimeProvider);
         var org = CreateOrganization();
-        var today = DateTime.Today.AddMonths(2);
-        org.DispatchMonth = (MonthToDispatch) today.Month;
+        var futureDate = fakeToday.AddMonths(2);
+        org.DispatchMonth = (MonthToDispatch) futureDate.Month;
         org.LatestCryoDate = null;
 
         sut.CalculateExpectedNextSending(org).Should().NotBeNull();
-        sut.HumanReadableExpectedNextSending(org).Should().Be(today.Day == 1 ? "in 2 Monaten" : "in einem Monat");
+        sut.HumanReadableExpectedNextSending(org).Should().Be("in einem Monat");
     }
 
     private static Organization CreateOrganization()

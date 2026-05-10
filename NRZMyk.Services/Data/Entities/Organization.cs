@@ -23,9 +23,23 @@ namespace NRZMyk.Services.Data.Entities
         public DateTime? LastReminderSent { get; set; }
 
         [NotMapped]
-        public DateTime? LatestSamplingDate { get; set; }
+        public DateTime? LatestReceivingDate { get; set; }
 
         [NotMapped]
         public DateTime? LatestCryoDate { get; set; }
+
+        [NotMapped]
+        public int TotalCreatedNotStoredCount { get; set; }
+
+        [NotMapped]
+        public int TotalCryoArchivedCount { get; set; }
+
+        [NotMapped]
+        [JsonPropertyName("currentPeriodCreatedNotStoredCount")]
+        public int CurrentYearCreatedNotStoredCount { get; set; }
+
+        [NotMapped]
+        [JsonPropertyName("currentPeriodCryoArchivedCount")]
+        public int CurrentYearCryoArchivedCount { get; set; }
     }
 }

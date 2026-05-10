@@ -18,6 +18,7 @@ namespace HaemophilusWeb.Tools
             AddField(s => s.LaboratoryNumber);
             AddField(s => s.CryoBox);
             AddField(s => s.CryoDate.ToReportFormat(""));
+            AddField(s => ExportToString(s.CryoRemark), "Kryo-Kommentar");
             AddField(s => ExportToString(s.SenderLaboratoryNumber));
             AddField(s => s.SamplingDate.ToReportFormat(""));
             AddField(s => ExportToString(s.AgeGroup));
@@ -27,6 +28,7 @@ namespace HaemophilusWeb.Tools
             AddField(s => s.MaterialOrOther(), "Material");
             AddField(s => s.SpeciesIdentificationMethodWithPcrDetails(), "Methode Speziesidentifikation");
             AddField(s => s.SpeciesOrOther(), "Spezies");
+            AddField(s => ExportToString(s.Remark), "Anmerkung");
             AddField(s => ResolveSender(s), "Einsender");
         }
         

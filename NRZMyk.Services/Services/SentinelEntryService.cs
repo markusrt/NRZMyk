@@ -23,6 +23,9 @@ namespace NRZMyk.Services.Services
         public Task<SentinelEntry> CryoArchive(CryoArchiveRequest archiveRequest)
             => _httpClient.Put<CryoArchiveRequest, SentinelEntry>($"{BaseApi}/cryo-archive", archiveRequest);
 
+        public Task<SentinelEntry> UpdateCryoRemark(CryoRemarkUpdateRequest updateRequest)
+            => _httpClient.Put<CryoRemarkUpdateRequest, SentinelEntry>($"{BaseApi}/cryo-remark-update", updateRequest);
+
         public Task<string> Export()
             => _httpClient.GetBytesAsBase64($"{BaseApi}/export");
 

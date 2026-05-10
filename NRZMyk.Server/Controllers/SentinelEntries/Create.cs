@@ -44,7 +44,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         {
             var newEntry = _mapper.Map<SentinelEntry>(request);
 
-            var error = await Utils.ResolvePredecessor(request, newEntry, _sentinelEntryRepository, OrganizationId, ModelState).ConfigureAwait(false);
+            var error = await Utils.UpdatePredecessor(request, newEntry, _sentinelEntryRepository, OrganizationId, ModelState).ConfigureAwait(false);
             if (error)
             {
                 return new BadRequestObjectResult(ModelState);

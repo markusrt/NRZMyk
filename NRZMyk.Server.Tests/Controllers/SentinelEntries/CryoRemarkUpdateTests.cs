@@ -16,44 +16,61 @@ using NUnit.Framework;
 
 namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
 {
-    public class CryoArchiveTests
+    public class CryoRemarkUpdateTests
     {
-        [TestCase("2010-10-10", "A remark")]
-        [TestCase(null, "")]
-        [TestCase("2020-05-04", null)]
-        public async Task WhenFound_UpdatesOnlyDateAndRemark(string dateString, string expectedRemark)
+        [TestCase("Updated remark")]
+        [TestCase("")]
+        [TestCase(null)]
+        public async Task WhenFound_UpdatesOnlyRemark(string expectedRemark)
         {
-            var expectedDate = dateString != null ? (DateTime?)DateTime.Parse(dateString) : null;
             var sut = CreateSut(out var repository);
             
-            var cryoArchiveRequest = new CryoArchiveRequest {Id = 567, CryoDate = expectedDate, CryoRemark = expectedRemark};
+            var cryoRemarkUpdateRequest = new CryoRemarkUpdateRequest {Id = 567, CryoRemark = expectedRemark};
+            var originalCryoDate = new DateTime(2020, 5, 4);
             var sentinelEntry = new SentinelEntry
             {
                 AgeGroup = AgeGroup.EightySixToNinety,
                 CryoBoxNumber = 10,
-                CryoBoxSlot = 56
+                CryoBoxSlot = 56,
+                CryoDate = originalCryoDate,
+                CryoRemark = "Original remark"
             };
             repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
                 .Returns(Task.FromResult(sentinelEntry));
 
-            var action = await sut.HandleAsync(cryoArchiveRequest).ConfigureAwait(true);
+            var action = await sut.HandleAsync(cryoRemarkUpdateRequest).ConfigureAwait(true);
 
             var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
             var storedEntry = okResult.Value as SentinelEntry;
-            storedEntry.CryoDate.Should().Be(expectedDate);
             storedEntry.CryoRemark.Should().Be(expectedRemark);
+            // All other fields should remain unchanged
+            storedEntry.CryoDate.Should().Be(originalCryoDate);
             storedEntry.CryoBoxNumber.Should().Be(10);
             storedEntry.CryoBoxSlot.Should().Be(56);
         }
 
-        private static CryoArchive CreateSut(out IAsyncRepository<SentinelEntry> sentinelEntryRepository)
+        [Test]
+        public async Task WhenNotFound_ReturnsNotFound()
+        {
+            var sut = CreateSut(out var repository);
+            
+            var cryoRemarkUpdateRequest = new CryoRemarkUpdateRequest {Id = 999, CryoRemark = "Some remark"};
+            repository.FirstOrDefaultAsync(Arg.Any<SentinelEntryIncludingTestsSpecification>())
+                .Returns(Task.FromResult<SentinelEntry>(null));
+
+            var action = await sut.HandleAsync(cryoRemarkUpdateRequest).ConfigureAwait(true);
+
+            action.Result.Should().BeOfType<NotFoundResult>();
+        }
+
+        private static CryoRemarkUpdate CreateSut(out IAsyncRepository<SentinelEntry> sentinelEntryRepository)
         {
             var myProfile = new MappingProfile();
             var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile), NullLoggerFactory.Instance);
             var mapper = new Mapper(configuration);
             sentinelEntryRepository = Substitute.For<IAsyncRepository<SentinelEntry>>();
 
-            return new CryoArchive(sentinelEntryRepository, mapper)
+            return new CryoRemarkUpdate(sentinelEntryRepository, mapper)
             {
                 ControllerContext = new MockControllerContext()
             };

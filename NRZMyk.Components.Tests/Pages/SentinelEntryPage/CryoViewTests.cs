@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -28,7 +29,7 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
         {
             MockSentinelEntryServiceImpl.Delay = 0;
             _context = new TestContext();
-            _context.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
+            _context.Services.AddAutoMapper(cfg => cfg.AddProfile<NRZMyk.Services.MappingProfile>());
             _context.Services.AddSingleton<ISentinelEntryService, MockSentinelEntryServiceImpl>();
             _context.Services.AddSingleton<IAccountService, MockAccountService>();
             _context.Services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
@@ -130,6 +131,110 @@ namespace NRZMyk.Components.Tests.Pages.SentinelEntryPage
             sut.SelectedId.Should().Be(0);
             sut.ShowEdit.Should().BeFalse();
             sut.SentinelEntries.Single(s => s.Id == 1).Remark.Should().Be("Updated by test");
+        }
+
+        [Test]
+        public async Task WhenUpdateCryoRemark_UpdatesRemarkOnly()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 1;
+            await sut.LoadData().ConfigureAwait(true);
+
+            var cryoEntry = sut.SentinelEntries.First();
+            var originalCryoDate = cryoEntry.CryoDate;
+            cryoEntry.CryoRemark = "Updated cryo remark";
+            await sut.UpdateCryoRemark(cryoEntry).ConfigureAwait(true);
+
+            var entry = await _sentinelEntryService.GetById(1).ConfigureAwait(true);
+            entry.CryoRemark.Should().Be("Updated cryo remark");
+            entry.CryoDate.Should().Be(originalCryoDate); // CryoDate should remain unchanged
+        }
+
+        [Test]
+        public async Task WhenEntriesInCryoStorage_ShowsSaveButton()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 1;
+            await sut.LoadData().ConfigureAwait(true);
+
+            // First entry has a CryoDate, so it should show the save button
+            _renderedComponent.Markup.Should().Contain("title=\"Zusätzliche Info aktualisieren\"");
+            _renderedComponent.Markup.Should().Contain("oi-comment-square");
+        }
+
+        [Test]
+        public async Task WhenEntriesNotInCryoStorage_AlsoShowSaveButton()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 2; // Second entry has no CryoDate
+            await sut.LoadData().ConfigureAwait(true);
+
+            // Should not show save button for non-cryo-stored entries
+            _renderedComponent.Markup.Should().Contain("title=\"Zusätzliche Info aktualisieren\"");
+            _renderedComponent.Markup.Should().Contain("title=\"In Cryobox einlagern\"");
+        }
+
+        [TestCase("test")]
+        [TestCase(null)]
+        public async Task WhenCryoRemarkInputTriggered_EnablesSaveButton(string value)
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 1;
+            await sut.LoadData().ConfigureAwait(true);
+
+            var cryoEntry = sut.SentinelEntries.First();
+            
+            // Initially save button should be disabled
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeFalse();
+            
+            // Trigger the input callback
+            sut.OnCryoRemarkInput(cryoEntry, new ChangeEventArgs { Value = value });
+            
+            // Now save button should be enabled
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task WhenCryoRemarkSaved_DisablesSaveButton()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 1;
+            await sut.LoadData().ConfigureAwait(true);
+
+            var cryoEntry = sut.SentinelEntries.First();
+            
+            // Trigger input to enable save button
+            sut.OnCryoRemarkInput(cryoEntry, new ChangeEventArgs { Value = "test" });
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeTrue();
+            
+            // Save the remark
+            cryoEntry.CryoRemark = "Updated remark";
+            await sut.UpdateCryoRemark(cryoEntry).ConfigureAwait(true);
+            
+            // Save button should be disabled again
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeFalse();
+        }
+
+        [Test]
+        public async Task CheckDisabledButtonRendering()
+        {
+            var sut = _renderedComponent.Instance;
+            sut.SelectedOrganization = 1;
+            await sut.LoadData().ConfigureAwait(true);
+
+            var cryoEntry = sut.SentinelEntries.First();
+            
+            // Initially save button should be disabled - check markup
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeFalse();
+            // Verify the disabled button shows correct classes and no invalid disabled attribute
+            _renderedComponent.Markup.Should().Contain("btn-secondary disabled");
+            _renderedComponent.Markup.Should().NotContain("disabled=\"");
+            
+            // Trigger the input callback to enable button
+            sut.OnCryoRemarkInput(cryoEntry, new ChangeEventArgs { Value = "test" });
+            
+            // Verify the state logic is working  
+            sut.HasCryoRemarkChanged(cryoEntry).Should().BeTrue();
         }
 
         private static IRenderedComponent<CryoView> CreateSut(TestContext context)
