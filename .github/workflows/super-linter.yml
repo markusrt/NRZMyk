@@ -21,9 +21,6 @@ jobs:
       statuses: write
 
     steps:
-      - name: Remove global.json
-        run: |
-          rm -f global.json
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -35,10 +32,10 @@ jobs:
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
           VALIDATE_CSHARP: false
           VALIDATE_DOTNET_SLN_FORMAT_ANALYZERS: false
           VALIDATE_DOTNET_SLN_FORMAT: false
           VALIDATE_DOTNET_SLN: false
           FIX_CSS_PRETTIER: true
           FIX_CSS: true
-
