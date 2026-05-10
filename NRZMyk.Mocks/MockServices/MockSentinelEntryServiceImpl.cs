@@ -153,11 +153,24 @@ namespace NRZMyk.Mocks.MockServices
             {
                 var lowered = searchTerm.ToLowerInvariant();
                 query = query.Where(e =>
-                    (!string.IsNullOrEmpty(e.SenderLaboratoryNumber) && e.SenderLaboratoryNumber.ToLowerInvariant().Contains(lowered))
-                    || (!string.IsNullOrEmpty(e.OtherIdentifiedSpecies) && e.OtherIdentifiedSpecies.ToLowerInvariant().Contains(lowered))
-                    || e.IdentifiedSpecies.ToString().ToLowerInvariant().Contains(lowered)
-                    || e.LaboratoryNumber.ToLowerInvariant().Contains(lowered)
-                    || (e.SamplingDate.HasValue && e.SamplingDate.Value.ToString("yyyy-MM-dd").Contains(lowered)));
+                {
+                    var senderLabNumberMatch = !string.IsNullOrEmpty(e.SenderLaboratoryNumber)
+                        && e.SenderLaboratoryNumber.ToLowerInvariant().Contains(lowered);
+
+                    var otherSpeciesMatch = !string.IsNullOrEmpty(e.OtherIdentifiedSpecies)
+                        && e.OtherIdentifiedSpecies.ToLowerInvariant().Contains(lowered);
+
+                    var identifiedSpeciesMatch = e.IdentifiedSpecies.ToString().ToLowerInvariant().Contains(lowered);
+                    var laboratoryNumberMatch = e.LaboratoryNumber.ToLowerInvariant().Contains(lowered);
+                    var samplingDateMatch = e.SamplingDate.HasValue
+                        && e.SamplingDate.Value.ToString("yyyy-MM-dd").Contains(lowered);
+
+                    return senderLabNumberMatch
+                        || otherSpeciesMatch
+                        || identifiedSpeciesMatch
+                        || laboratoryNumberMatch
+                        || samplingDateMatch;
+                });
             }
 
             var ordered = query.OrderByDescending(e => e.Id).ToList();
