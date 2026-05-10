@@ -40,8 +40,8 @@ namespace NRZMyk.Mocks.MockServices
                 Remark = "Some notes",
                 HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
                 HospitalDepartment =  HospitalDepartment.Neurology,
-                SamplingDate = new DateTime(2020,5,1),
-                CryoDate = new DateTime(2020,10,11),
+                SamplingDate = new DateTime(2020, 5, 1, 0, 0, 0, DateTimeKind.Utc),
+                CryoDate = new DateTime(2020, 10, 11, 0, 0, 0, DateTimeKind.Utc),
                 SenderLaboratoryNumber = "SLN-123456",
                 ProtectKey = "1",
                 AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>
@@ -70,7 +70,7 @@ namespace NRZMyk.Mocks.MockServices
                 Material = Material.CentralBloodCulturePort,
                 HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
                 HospitalDepartment = HospitalDepartment.Neurology,
-                SamplingDate = new DateTime(2020, 5, 1),
+                SamplingDate = new DateTime(2020, 5, 1, 0, 0, 0, DateTimeKind.Utc),
                 SenderLaboratoryNumber = "SLO-123456",
                 ProtectKey = "2"
             });
