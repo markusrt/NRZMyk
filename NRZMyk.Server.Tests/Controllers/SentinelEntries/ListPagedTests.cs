@@ -126,6 +126,32 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         }
 
         [Test]
+        public async Task WhenSuperUserDoesNotSpecifyOrganization_UsesAllOrganizations()
+        {
+            var user = CreateSuperUser();
+            var sut = CreateSut(out var repository, "1", user);
+            var request = new ListPagedSentinelEntryRequest
+            {
+                PageSize = 10,
+                PageIndex = 0
+            };
+
+            repository.CountAsync(Arg.Any<SentinelEntrySearchFilterSpecification>())
+                .Returns(Task.FromResult(0));
+            repository.ListAsync(Arg.Any<SentinelEntrySearchPaginatedSpecification>())
+                .Returns(Task.FromResult(new List<SentinelEntry>() as IReadOnlyList<SentinelEntry>));
+
+            var result = await sut.HandleAsync(request);
+
+            result.Result.Should().BeOfType<OkObjectResult>();
+
+            await repository.Received(1).CountAsync(Arg.Is<SentinelEntrySearchFilterSpecification>(
+                spec => spec.ProtectKey == null));
+            await repository.Received(1).ListAsync(Arg.Is<SentinelEntrySearchPaginatedSpecification>(
+                spec => spec.ProtectKey == null));
+        }
+
+        [Test]
         public void WhenPerformingAuthorization_RestrictsToUsersWithinAnOrganization()
         {
             var type = typeof(ListPaged);
