@@ -14,6 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User))]
+    [Route("api/sentinel-entries/other/materials")]
     public class OtherMaterials : EndpointBaseAsync.WithoutRequest.WithActionResult<List<string>>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
@@ -23,7 +24,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             _sentinelEntryRepository = sentinelEntryRepository;
         }
 
-        [HttpGet("api/sentinel-entries/other/materials")]
+        [HttpGet]
         [SwaggerOperation(
             Summary = "List all used other materials)",
             OperationId = "sentinel-entries.OtherMaterials",

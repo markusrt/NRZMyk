@@ -77,11 +77,11 @@ namespace NRZMyk.Services.Utils
             var filterAttributeName = enumValue.ToString();
 
             var memInfo = type.GetMember(filterAttributeName);
-            if (memInfo.Any())
+            if (memInfo.Length > 0)
             {
                 var attributes = memInfo[0].GetCustomAttributes(
                     typeof (TAttribute), false);
-                if (attributes.Any())
+                if (attributes.Length > 0)
                 {
                     result = (TAttribute) attributes[0];
                 }

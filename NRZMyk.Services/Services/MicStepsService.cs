@@ -45,14 +45,14 @@ namespace NRZMyk.Services.Services
 
             if (agentSteps == null)
             {
-                _logger.LogInformation("No MIC steps for {testingMethod}/{agent} found", testingMethod, agent);
+                _logger.LogInformation("No MIC steps for {TestingMethod}/{Agent} found", testingMethod, agent);
                 return new List<MicStep>();
             }
-            _logger.LogInformation("Found {stepCount} MIC steps for {testingMethod}/{agent} found",
+            _logger.LogInformation("Found {StepCount} MIC steps for {TestingMethod}/{Agent} found",
                 agentSteps.Count, testingMethod, agent);
 
-            agentSteps.First().LowerBoundary = true;
-            agentSteps.Last().UpperBoundary = true;
+            agentSteps[0].LowerBoundary = true;
+            agentSteps[^1].UpperBoundary = true;
             return agentSteps;
         }
 

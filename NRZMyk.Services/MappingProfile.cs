@@ -10,7 +10,6 @@ namespace NRZMyk.Services
         {
             CreateMap<SentinelEntryRequest, SentinelEntry>();
             CreateMap<SentinelEntry, SentinelEntryResponse>();
-            //CreateMap <SentinelEntryRequest, SentinelEntryResponse>();
             CreateMap<SentinelEntryResponse, SentinelEntryRequest>();
             CreateMap<AntimicrobialSensitivityTestRequest, AntimicrobialSensitivityTest>();
             CreateMap<AntimicrobialSensitivityTest, AntimicrobialSensitivityTestRequest>().ForMember(

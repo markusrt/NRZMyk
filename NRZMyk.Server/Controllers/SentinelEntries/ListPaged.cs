@@ -15,6 +15,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
+    [Route("api/sentinel-entries")]
     public class ListPaged : EndpointBaseAsync.WithRequest<ListPagedSentinelEntryRequest>.WithActionResult<ListPagedSentinelEntryResponse>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
@@ -24,7 +25,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             _sentinelEntryRepository = sentinelEntryRepository;
         }
 
-        [HttpGet("api/sentinel-entries")]
+        [HttpGet]
         [SwaggerOperation(
             Summary = "List Sentinel entries (paged)",
             OperationId = "sentinel-entries.ListPaged",

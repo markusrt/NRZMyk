@@ -101,7 +101,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             var matchingSteps = MicStepsService.StepsByTestingMethodAndAgent(sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent);
             if (sensitivityTest.MinimumInhibitoryConcentration.HasValue && matchingSteps.Any() && matchingSteps.TrueForAll(s => !s.Value.Equals(sensitivityTest.MinimumInhibitoryConcentration)))
             {
-                sensitivityTest.MinimumInhibitoryConcentration = matchingSteps.First().Value;
+                sensitivityTest.MinimumInhibitoryConcentration = matchingSteps[0].Value;
             }
             return matchingSteps;
         }
@@ -121,7 +121,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             var standards = MicStepsService.Standards(TestingMethod).ToList();
             if (!standards.Contains(Standard))
             {
-                Standard = standards.First();
+                Standard = standards[0];
             }
             return standards;
         }
@@ -136,7 +136,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             
             if (applicableBreakpoints.All(b => b.Id != sensitivityTest.ClinicalBreakpointId))
             {
-                Logger.LogInformation("Update test {sensitivityTest} to breakpoint id {breakpoint}",
+                Logger.LogInformation("Update test {SensitivityTest} to breakpoint id {Breakpoint}",
                     sensitivityTest.AntifungalAgent, applicableBreakpoints.FirstOrDefault()?.Id);
                 sensitivityTest.ClinicalBreakpointId = applicableBreakpoints.FirstOrDefault()?.Id;
             }
@@ -169,11 +169,13 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
             {
                 if (breakpoint == null)
                 {
-                    Logger.LogWarning($"No breakpoint found for {sensitivityTest.TestingMethod}/{sensitivityTest.AntifungalAgent} where id is {sensitivityTest.ClinicalBreakpointId}");
+                    Logger.LogWarning("No breakpoint found for {TestingMethod}/{AntifungalAgent} where id is {ClinicalBreakpointId}",
+                        sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent, sensitivityTest.ClinicalBreakpointId);
                 }
                 else
                 {
-                    Logger.LogInformation($"Breakpoints {breakpoint.Id} (resistant/susceptible) values are not complete ({breakpoint.MicBreakpointResistent}/{breakpoint.MicBreakpointSusceptible})");
+                    Logger.LogInformation("Breakpoints {BreakpointId} (resistant/susceptible) values are not complete ({MicBreakpointResistent}/{MicBreakpointSusceptible})",
+                        breakpoint.Id, breakpoint.MicBreakpointResistent, breakpoint.MicBreakpointSusceptible);
                 }
                 sensitivityTest.Resistance = Resistance.NotDetermined;
                 return "bg-info";
@@ -192,7 +194,8 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
                 }
             }
 
-            Logger.LogInformation($"Found breakpoint for {sensitivityTest.TestingMethod}/{sensitivityTest.AntifungalAgent} where id is {sensitivityTest.ClinicalBreakpointId}: {breakpoint.Title}");
+            Logger.LogInformation("Found breakpoint for {TestingMethod}/{AntifungalAgent} where id is {ClinicalBreakpointId}: {Title}",
+                sensitivityTest.TestingMethod, sensitivityTest.AntifungalAgent, sensitivityTest.ClinicalBreakpointId, breakpoint.Title);
 
             var mic = MicStepsService.FloorToClosestReferenceValue(sensitivityTest.MinimumInhibitoryConcentration);
             
@@ -290,7 +293,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
 
         protected override async Task OnInitializedAsync()
         {
-            Logger.LogInformation($"Now loading... /SentinelEntry/{(IsEdit()?"Edit":"Create")}");
+            Logger.LogInformation("Now loading... /SentinelEntry/{Mode}", IsEdit() ? "Edit" : "Create");
 
             Title = IsEdit() ? "Bearbeiten" : "Neu anlegen";
             PrimaryAction = IsEdit() ? "Speichern" : "Anlegen";

@@ -14,6 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
 {
     [Authorize]
+    [Route("api/clinical-breakpoints")]
     public class List : EndpointBaseAsync.WithRequest<ListClinicalBreakpointsRequest>.WithActionResult<List<ClinicalBreakpoint>>
     {
         private readonly IAsyncRepository<ClinicalBreakpoint> _clinicalBreakpointRepository;
@@ -23,7 +24,7 @@ namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
             _clinicalBreakpointRepository = clinicalBreakpointRepository;
         }
 
-        [HttpGet("api/clinical-breakpoints")]
+        [HttpGet]
         [SwaggerOperation(
             Summary = "List Clinical Breakpoints",
             OperationId = "clinical-breakpoints.list",

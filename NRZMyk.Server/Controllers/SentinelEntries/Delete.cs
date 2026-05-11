@@ -16,6 +16,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
+    [Route("api/sentinel-entries/{sentinelEntryId}")]
     public class Delete : EndpointBaseAsync.WithRequest<int>.WithActionResult<int>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
@@ -28,7 +29,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             _sensitivityTestRepository = sensitivityTestRepository;
         }
 
-        [HttpDelete("api/sentinel-entries/{sentinelEntryId}")]
+        [HttpDelete]
         [SwaggerOperation(
             Summary = "Delete a Sentinel Entry by Id",
             OperationId = "sentinel-entries.DeleteById",
