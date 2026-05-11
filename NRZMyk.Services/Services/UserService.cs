@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Azure.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
@@ -42,13 +43,20 @@ public class UserService : IUserService
 
     public async Task GetRolesViaGraphApi(IEnumerable<RemoteAccount> remoteAccounts)
     {
+        var canQueryGraphApi = true;
         foreach (var remoteAccount in remoteAccounts)
         {
-            await GetRoleViaGraphApi(remoteAccount).ConfigureAwait(false);
+            if (!canQueryGraphApi)
+            {
+                remoteAccount.Role = Role.Guest;
+                continue;
+            }
+
+            canQueryGraphApi = await GetRoleViaGraphApi(remoteAccount).ConfigureAwait(false);
         }
     }
 
-    private async Task GetRoleViaGraphApi(RemoteAccount remoteAccount)
+    private async Task<bool> GetRoleViaGraphApi(RemoteAccount remoteAccount)
     {
         var role = Role.Guest;
 
@@ -60,12 +68,26 @@ public class UserService : IUserService
 
             role = TryToGetRoleFromCustomAttribute(user);
         }
+        catch (AuthenticationFailedException e)
+        {
+            _logger.LogError(e,
+                "Failed to authenticate against AADB2C Graph API, assigning guest role");
+            remoteAccount.Role = role;
+            return false;
+        }
         catch (ServiceException e)
         {
             if (e.StatusCode == HttpStatusCode.NotFound)
             {
                 _logger.LogWarning("User with ID {RemoteAccount} was not found in AADB2C, assigning guest role",
                     remoteAccount.ObjectId);
+            }
+            else if (e.StatusCode == HttpStatusCode.Unauthorized || e.StatusCode == HttpStatusCode.Forbidden)
+            {
+                _logger.LogError(e,
+                    "Failed to authenticate against AADB2C Graph API, assigning guest role");
+                remoteAccount.Role = role;
+                return false;
             }
             else
             {
@@ -75,6 +97,7 @@ public class UserService : IUserService
         }
 
         remoteAccount.Role = role;
+        return true;
     }
 
     private Role TryToGetRoleFromCustomAttribute(User user)
