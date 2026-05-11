@@ -39,7 +39,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         {
             var sentinelEntry = (await _sentinelEntryRepository.FirstOrDefaultAsync(
                 new SentinelEntryIncludingTestsSpecification(sentinelEntryId)));
-            if (sentinelEntry.IsNullOrProtected(User))
+            if (sentinelEntry.IsNullOrProtected(User, Role.SuperUser))
             {
                 return NotFound();
             }
