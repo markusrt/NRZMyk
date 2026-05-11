@@ -1,15 +1,18 @@
-﻿using System.Threading;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using System.Collections.Generic;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NRZMyk.Server.Converter;
 using NRZMyk.Services.Data.Entities;
 using NRZMyk.Services.Interfaces;
 using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Specifications;
+using NRZMyk.Services.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace NRZMyk.Server.Controllers.Account
@@ -18,7 +21,6 @@ namespace NRZMyk.Server.Controllers.Account
     [Route("api/user/connect")]
     public class Connect : EndpointBaseAsync.WithoutRequest.WithActionResult<ConnectedAccount>
     {
-        private static readonly ClaimsPrincipalToAccountConverter ClaimsPrincipalConverter = new();
         private readonly IAsyncRepository<RemoteAccount> _accountRepository;
         private readonly IMapper _mapper;
         private readonly IEmailNotificationService _emailNotificationService;
@@ -60,7 +62,7 @@ namespace NRZMyk.Server.Controllers.Account
             };
         }
 
-        private RemoteAccount MapToAccount(System.Security.Claims.ClaimsPrincipal user)
+        private RemoteAccount MapToAccount(ClaimsPrincipal user)
         {
             try
             {
@@ -68,11 +70,11 @@ namespace NRZMyk.Server.Controllers.Account
             }
             catch (AutoMapperMappingException)
             {
-                return ClaimsPrincipalConverter.Convert(user, null!, default!);
+                return FallbackMapToAccount(user, new RemoteAccount());
             }
         }
 
-        private RemoteAccount MapToAccount(System.Security.Claims.ClaimsPrincipal user, RemoteAccount destination)
+        private RemoteAccount MapToAccount(ClaimsPrincipal user, RemoteAccount destination)
         {
             try
             {
@@ -80,7 +82,43 @@ namespace NRZMyk.Server.Controllers.Account
             }
             catch (AutoMapperMappingException)
             {
-                return ClaimsPrincipalConverter.Convert(user, destination, default!);
+                return FallbackMapToAccount(user, destination);
+            }
+        }
+
+        private static RemoteAccount FallbackMapToAccount(ClaimsPrincipal user, RemoteAccount destination)
+        {
+            destination.DisplayName = user.Claims.Name();
+            destination.Street = user.Claims.Address();
+            destination.Postalcode = user.Claims.Postalcode();
+            destination.City = user.Claims.City();
+            destination.Country = user.Claims.Country();
+            destination.ObjectId = TryGetObjectIdOrEmpty(user.Claims);
+            destination.Email = TryGetFirstEmailOrDefault(user.Claims);
+            return destination;
+        }
+
+        private static Guid TryGetObjectIdOrEmpty(IEnumerable<Claim> claims)
+        {
+            try
+            {
+                return claims.ObjectId();
+            }
+            catch
+            {
+                return Guid.Empty;
+            }
+        }
+
+        private static string TryGetFirstEmailOrDefault(IEnumerable<Claim> claims)
+        {
+            try
+            {
+                return claims.FirstEmail();
+            }
+            catch
+            {
+                return null;
             }
         }
     }

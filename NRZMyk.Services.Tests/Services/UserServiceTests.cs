@@ -74,7 +74,7 @@ public class UserServiceTests
         var sut = CreateSut(out _, out _, out _);
         var remoteAccounts = new List<RemoteAccount>();
 
-        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
+        await sut.GetRolesViaGraphApi(remoteAccounts);
 
         remoteAccounts.Should().BeEmpty();
     }
@@ -91,7 +91,7 @@ public class UserServiceTests
         var serviceException = new ServiceException(new Error(), null, HttpStatusCode.BadRequest);
         graphServiceClient.Users[guid.ToString()].Throws(serviceException);
 
-        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
+        await sut.GetRolesViaGraphApi(remoteAccounts);
 
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
         logger.Received(1).Log(LogLevel.Error, Arg.Is<string>(s => s.StartsWith(
@@ -137,7 +137,7 @@ public class UserServiceTests
         graphServiceClient.Users[guid1.ToString()].Returns(userRequestBuilder);
         graphServiceClient.Users[guid2.ToString()].Returns(userRequestBuilder);
 
-        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
+        await sut.GetRolesViaGraphApi(remoteAccounts);
 
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
         userRequest.Received(1).Select(Arg.Any<string>());

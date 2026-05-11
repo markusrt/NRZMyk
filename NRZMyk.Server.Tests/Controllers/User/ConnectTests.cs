@@ -117,7 +117,7 @@ namespace NRZMyk.Server.Tests.Controllers.User
             repository.AddAsync(Arg.Any<RemoteAccount>())
                 .Returns(callInfo => callInfo.Arg<RemoteAccount>());
 
-            var action = await sut.HandleAsync().ConfigureAwait(true);
+            var action = await sut.HandleAsync();
 
             var connectedAccount = action.Value.Should().BeOfType<ConnectedAccount>().Subject;
             connectedAccount.Account.ObjectId.Should().Be(objectId);

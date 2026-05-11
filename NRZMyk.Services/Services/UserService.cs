@@ -43,16 +43,16 @@ public class UserService : IUserService
 
     public async Task GetRolesViaGraphApi(IEnumerable<RemoteAccount> remoteAccounts)
     {
-        var canQueryGraphApi = true;
+        var skipGraphRequests = false;
         foreach (var remoteAccount in remoteAccounts)
         {
-            if (!canQueryGraphApi)
+            if (skipGraphRequests)
             {
                 remoteAccount.Role = Role.Guest;
                 continue;
             }
 
-            canQueryGraphApi = await GetRoleViaGraphApi(remoteAccount).ConfigureAwait(false);
+            skipGraphRequests = !await GetRoleViaGraphApi(remoteAccount).ConfigureAwait(false);
         }
     }
 
@@ -70,10 +70,7 @@ public class UserService : IUserService
         }
         catch (AuthenticationFailedException e)
         {
-            _logger.LogError(e,
-                "Failed to authenticate against AADB2C Graph API, assigning guest role");
-            remoteAccount.Role = role;
-            return false;
+            return HandleGraphAuthenticationFailure(e, remoteAccount);
         }
         catch (ServiceException e)
         {
@@ -84,10 +81,7 @@ public class UserService : IUserService
             }
             else if (e.StatusCode == HttpStatusCode.Unauthorized || e.StatusCode == HttpStatusCode.Forbidden)
             {
-                _logger.LogError(e,
-                    "Failed to authenticate against AADB2C Graph API, assigning guest role");
-                remoteAccount.Role = role;
-                return false;
+                return HandleGraphAuthenticationFailure(e, remoteAccount);
             }
             else
             {
@@ -98,6 +92,14 @@ public class UserService : IUserService
 
         remoteAccount.Role = role;
         return true;
+    }
+
+    private bool HandleGraphAuthenticationFailure(Exception exception, RemoteAccount remoteAccount)
+    {
+        _logger.LogError(exception,
+            "Failed to authenticate against AADB2C Graph API, assigning guest role");
+        remoteAccount.Role = Role.Guest;
+        return false;
     }
 
     private Role TryToGetRoleFromCustomAttribute(User user)
