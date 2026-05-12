@@ -55,7 +55,6 @@ public class SentinelEntrySearchPaginatedSpecificationTests
     }
 
     [Test]
-    [Ignore("Test needs debugging - specification logic returning unexpected results")]
     public void WhenSpecificationIsCreated_FiltersByProtectKeyAndSearchTerm_WithUniqueSearchTerm()
     {
         var spec = new SentinelEntrySearchPaginatedSpecification(0, 10, "123", "Custom Species");

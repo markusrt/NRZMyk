@@ -151,26 +151,31 @@ namespace NRZMyk.Mocks.MockServices
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                var lowered = searchTerm.ToLowerInvariant();
-                query = query.Where(e =>
+                var parsed = NRZMyk.Services.Specifications.SentinelEntrySearchTerm.Parse(searchTerm);
+                if (!parsed.IsEmpty)
                 {
-                    var senderLabNumberMatch = !string.IsNullOrEmpty(e.SenderLaboratoryNumber)
-                        && e.SenderLaboratoryNumber.ToLowerInvariant().Contains(lowered);
-
-                    var otherSpeciesMatch = !string.IsNullOrEmpty(e.OtherIdentifiedSpecies)
-                        && e.OtherIdentifiedSpecies.ToLowerInvariant().Contains(lowered);
-
-                    var identifiedSpeciesMatch = e.IdentifiedSpecies.ToString().ToLowerInvariant().Contains(lowered);
-                    var laboratoryNumberMatch = e.LaboratoryNumber.ToLowerInvariant().Contains(lowered);
-                    var samplingDateMatch = e.SamplingDate.HasValue
-                        && e.SamplingDate.Value.ToString("yyyy-MM-dd").Contains(lowered);
-
-                    return senderLabNumberMatch
-                        || otherSpeciesMatch
-                        || identifiedSpeciesMatch
-                        || laboratoryNumberMatch
-                        || samplingDateMatch;
-                });
+                    var term = parsed.NormalizedTerm;
+                    query = query.Where(e =>
+                        (!string.IsNullOrEmpty(e.SenderLaboratoryNumber)
+                            && e.SenderLaboratoryNumber.ToLowerInvariant().Contains(term))
+                        || (!string.IsNullOrEmpty(e.OtherIdentifiedSpecies)
+                            && e.OtherIdentifiedSpecies.ToLowerInvariant().Contains(term))
+                        || (!string.IsNullOrEmpty(e.OtherMaterial)
+                            && e.OtherMaterial.ToLowerInvariant().Contains(term))
+                        || (!string.IsNullOrEmpty(e.OtherHospitalDepartment)
+                            && e.OtherHospitalDepartment.ToLowerInvariant().Contains(term))
+                        || parsed.MaterialMatches.Contains(e.Material)
+                        || parsed.AgeGroupMatches.Contains(e.AgeGroup)
+                        || parsed.SpeciesMatches.Contains(e.IdentifiedSpecies)
+                        || parsed.HospitalDepartmentMatches.Contains(e.HospitalDepartment)
+                        || parsed.InternalHospitalDepartmentMatches.Contains(e.InternalHospitalDepartmentType)
+                        || (parsed.ExactYear.HasValue && parsed.ExactSequenceNumber.HasValue
+                            && e.Year == parsed.ExactYear.Value
+                            && e.YearlySequentialEntryNumber == parsed.ExactSequenceNumber.Value)
+                        || (parsed.CandidateYear.HasValue && e.Year == parsed.CandidateYear.Value)
+                        || (parsed.CandidateSequenceNumber.HasValue
+                            && e.YearlySequentialEntryNumber == parsed.CandidateSequenceNumber.Value));
+                }
             }
 
             var ordered = query.OrderByDescending(e => e.Id).ToList();
