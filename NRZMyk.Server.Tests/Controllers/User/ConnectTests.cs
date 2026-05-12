@@ -1,4 +1,6 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -13,6 +15,7 @@ using NRZMyk.Services.Models;
 using NRZMyk.Services.Services;
 using NRZMyk.Services.Specifications;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 
 namespace NRZMyk.Server.Tests.Controllers.User
@@ -90,6 +93,36 @@ namespace NRZMyk.Server.Tests.Controllers.User
             await repository.Received(1).UpdateAsync(existingAccount).ConfigureAwait(true);
             var connectedAccount = action.Value.Should().BeOfType<ConnectedAccount>().Subject;
             connectedAccount.Account.Should().Be(existingAccount);
+            connectedAccount.IsGuest.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task WhenAutoMapperThrowsOnConnect_FallsBackToClaimsConverter()
+        {
+            var objectId = Guid.NewGuid();
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Dictionary<string, string>
+            {
+                { "oid", objectId.ToString() },
+                { "name", "Jane Doe" },
+                { "streetAddress", "Long Road 123" },
+                { "city", "Big City" },
+                { "postalCode", "12345" },
+                { "country", "Germany" },
+                { "emails", "[\"jane.doe@great-email-provider.com\"]" }
+            }.Select(c => new Claim(c.Key, c.Value))));
+
+            var sut = CreateSut(user, out var repository, out var mapper, out _);
+            mapper.Map<RemoteAccount>(user)
+                .Throws(new AutoMapperMappingException("Mapping failed", new InvalidOperationException()));
+            repository.AddAsync(Arg.Any<RemoteAccount>())
+                .Returns(callInfo => callInfo.Arg<RemoteAccount>());
+
+            var action = await sut.HandleAsync();
+
+            var connectedAccount = action.Value.Should().BeOfType<ConnectedAccount>().Subject;
+            connectedAccount.Account.ObjectId.Should().Be(objectId);
+            connectedAccount.Account.DisplayName.Should().Be("Jane Doe");
+            connectedAccount.Account.Email.Should().Be("jane.doe@great-email-provider.com");
             connectedAccount.IsGuest.Should().BeTrue();
         }
 
