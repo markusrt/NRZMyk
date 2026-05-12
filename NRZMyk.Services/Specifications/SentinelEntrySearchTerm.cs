@@ -122,7 +122,7 @@ namespace NRZMyk.Services.Specifications
         {
             var field = value.GetType().GetField(value.ToString());
             var attribute = field?.GetCustomAttribute<DescriptionAttribute>();
-            return attribute?.Description;
+            return attribute?.Description ?? string.Empty;
         }
 
         private static void ParseLaboratoryNumber(string term,
