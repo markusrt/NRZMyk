@@ -34,7 +34,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         public override async Task<ActionResult<ListPagedSentinelEntryResponse>> HandleAsync([FromQuery]ListPagedSentinelEntryRequest request, CancellationToken cancellationToken = new())
         {
             // Determine the organization ID to filter by
-            string protectKey = null;
+            string? protectKey = null;
             if (request.OrganizationId.HasValue && request.OrganizationId.Value > 0)
             {
                 // Super user can specify organization
@@ -58,8 +58,12 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             }
             else
             {
-                // Default to user's organization
-                protectKey = User.Claims.OrganizationId();
+                // Super users can access all organizations by default.
+                // Regular users are restricted to their own organization.
+                if (!User.IsInRole(nameof(Role.SuperUser)))
+                {
+                    protectKey = User.Claims.OrganizationId();
+                }
             }
 
             var response = new ListPagedSentinelEntryResponse();
