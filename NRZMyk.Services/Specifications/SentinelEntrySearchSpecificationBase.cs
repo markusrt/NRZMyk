@@ -32,13 +32,16 @@ namespace NRZMyk.Services.Specifications
         {
             ProtectKey = protectKey;
             SearchTerm = searchTerm;
+        }
 
-            if (!string.IsNullOrEmpty(protectKey))
+        protected void ApplyBaseFilters()
+        {
+            if (!string.IsNullOrEmpty(ProtectKey))
             {
-                Query.Where(s => s.ProtectKey == protectKey);
+                Query.Where(s => s.ProtectKey == ProtectKey);
             }
 
-            var parsed = SentinelEntrySearchTerm.Parse(searchTerm);
+            var parsed = SentinelEntrySearchTerm.Parse(SearchTerm);
             if (parsed.IsEmpty)
             {
                 return;
