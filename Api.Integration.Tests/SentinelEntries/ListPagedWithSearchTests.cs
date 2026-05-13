@@ -278,5 +278,97 @@ namespace Api.Integration.Tests.SentinelEntries
             result.Should().NotBeNull();
             result.SentinelEntries.Should().Contain(e => e.Id == created.Id);
         }
+
+        [Test]
+        public async Task WhenSearchTermMatchesOtherIdentifiedSpecies_ReturnsFilteredResults()
+        {
+            var matching = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
+            matching.IdentifiedSpecies = Species.Other;
+            matching.OtherIdentifiedSpecies = "Cryptococcus-ApiTest-OIS";
+            matching.SenderLaboratoryNumber = "OIS-MATCH-1";
+
+            var nonMatching = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
+            nonMatching.IdentifiedSpecies = Species.CandidaAlbicans;
+            nonMatching.SenderLaboratoryNumber = "OIS-OTHER-1";
+
+            var httpClient = ClientFactory.CreateClient();
+            await httpClient.PostAsJsonAsync("api/sentinel-entries", matching);
+            await httpClient.PostAsJsonAsync("api/sentinel-entries", nonMatching);
+
+            var response = await httpClient.GetAsync("api/sentinel-entries?PageSize=50&PageIndex=0&SearchTerm=Cryptococcus-ApiTest-OIS");
+
+            response.IsSuccessStatusCode.Should().BeTrue();
+            var result = await response.Content.ReadFromJsonAsync<ListPagedSentinelEntryResponse>();
+            result.Should().NotBeNull();
+            result.SentinelEntries.Should().Contain(e => e.SenderLaboratoryNumber == "OIS-MATCH-1");
+            result.SentinelEntries.Should().NotContain(e => e.SenderLaboratoryNumber == "OIS-OTHER-1");
+        }
+
+        [Test]
+        public async Task WhenSearchTermMatchesOtherMaterial_ReturnsFilteredResults()
+        {
+            var matching = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
+            matching.Material = Material.Other;
+            matching.OtherMaterial = "BronchialLavage-ApiTest-OM";
+            matching.SenderLaboratoryNumber = "OM-MATCH-1";
+
+            var nonMatching = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
+            nonMatching.Material = Material.PeripheralBloodCulture;
+            nonMatching.SenderLaboratoryNumber = "OM-OTHER-1";
+
+            var httpClient = ClientFactory.CreateClient();
+            await httpClient.PostAsJsonAsync("api/sentinel-entries", matching);
+            await httpClient.PostAsJsonAsync("api/sentinel-entries", nonMatching);
+
+            var response = await httpClient.GetAsync("api/sentinel-entries?PageSize=50&PageIndex=0&SearchTerm=BronchialLavage-ApiTest-OM");
+
+            response.IsSuccessStatusCode.Should().BeTrue();
+            var result = await response.Content.ReadFromJsonAsync<ListPagedSentinelEntryResponse>();
+            result.Should().NotBeNull();
+            result.SentinelEntries.Should().Contain(e => e.SenderLaboratoryNumber == "OM-MATCH-1");
+            result.SentinelEntries.Should().NotContain(e => e.SenderLaboratoryNumber == "OM-OTHER-1");
+        }
+
+        [Test]
+        public async Task WhenSearchTermMatchesOtherHospitalDepartment_ReturnsFilteredResults()
+        {
+            var matching = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
+            matching.HospitalDepartment = HospitalDepartment.Other;
+            matching.OtherHospitalDepartment = "TropicalMedicine-ApiTest-OHD";
+            matching.SenderLaboratoryNumber = "OHD-MATCH-1";
+
+            var nonMatching = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
+            nonMatching.HospitalDepartment = HospitalDepartment.Neurology;
+            nonMatching.SenderLaboratoryNumber = "OHD-OTHER-1";
+
+            var httpClient = ClientFactory.CreateClient();
+            await httpClient.PostAsJsonAsync("api/sentinel-entries", matching);
+            await httpClient.PostAsJsonAsync("api/sentinel-entries", nonMatching);
+
+            var response = await httpClient.GetAsync("api/sentinel-entries?PageSize=50&PageIndex=0&SearchTerm=TropicalMedicine-ApiTest-OHD");
+
+            response.IsSuccessStatusCode.Should().BeTrue();
+            var result = await response.Content.ReadFromJsonAsync<ListPagedSentinelEntryResponse>();
+            result.Should().NotBeNull();
+            result.SentinelEntries.Should().Contain(e => e.SenderLaboratoryNumber == "OHD-MATCH-1");
+            result.SentinelEntries.Should().NotContain(e => e.SenderLaboratoryNumber == "OHD-OTHER-1");
+        }
+
+        [Test]
+        public async Task WhenSearchTermIsCaseInsensitive_ReturnsFilteredResults()
+        {
+            var matching = SentinelEntryTestHelper.CreateValidSentinelEntryRequest();
+            matching.SenderLaboratoryNumber = "CaseSensitive-MixedCase";
+
+            var httpClient = ClientFactory.CreateClient();
+            await httpClient.PostAsJsonAsync("api/sentinel-entries", matching);
+
+            var response = await httpClient.GetAsync("api/sentinel-entries?PageSize=50&PageIndex=0&SearchTerm=casesensitive-mixedcase");
+
+            response.IsSuccessStatusCode.Should().BeTrue();
+            var result = await response.Content.ReadFromJsonAsync<ListPagedSentinelEntryResponse>();
+            result.Should().NotBeNull();
+            result.SentinelEntries.Should().Contain(e => e.SenderLaboratoryNumber == "CaseSensitive-MixedCase");
+        }
     }
 }
