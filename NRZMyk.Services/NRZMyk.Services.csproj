@@ -5,6 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration\BreakpointSettings.json" />
+    <InternalsVisibleTo Include="NRZMyk.Mocks" />
+    <InternalsVisibleTo Include="NRZMyk.Services.Tests" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="8.0.0" />

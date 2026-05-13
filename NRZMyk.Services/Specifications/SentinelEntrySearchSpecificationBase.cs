@@ -62,7 +62,7 @@ namespace NRZMyk.Services.Specifications
         /// expression stays simple while the resulting tree still translates to a
         /// single SQL <c>WHERE</c> clause.
         /// </summary>
-        public static Expression<System.Func<SentinelEntry, bool>> BuildSearchPredicate(SentinelEntrySearchTerm parsed)
+        internal static Expression<System.Func<SentinelEntry, bool>> BuildSearchPredicate(SentinelEntrySearchTerm parsed)
         {
             var textMatch = TextMatchPredicate(parsed.NormalizedTerm);
             var enumMatch = EnumMatchPredicate(parsed);
