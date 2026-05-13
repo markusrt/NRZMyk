@@ -152,6 +152,86 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         }
 
         [Test]
+        public async Task WhenPageSizeIsZero_AppliesDefaultPageSizeAndDoesNotThrow()
+        {
+            var user = CreateRegularUser("4");
+            var sut = CreateSut(out var repository, "4", user);
+            var request = new ListPagedSentinelEntryRequest
+            {
+                // PageSize and PageIndex left at default int (0)
+            };
+
+            repository.CountAsync(Arg.Any<SentinelEntrySearchFilterSpecification>())
+                .Returns(Task.FromResult(50));
+            repository.ListAsync(Arg.Any<SentinelEntrySearchPaginatedSpecification>())
+                .Returns(Task.FromResult(new List<SentinelEntry>() as IReadOnlyList<SentinelEntry>));
+
+            var result = await sut.HandleAsync(request);
+
+            result.Result.Should().BeOfType<OkObjectResult>();
+            var response = (result.Result as OkObjectResult)!.Value as ListPagedSentinelEntryResponse;
+            response.Should().NotBeNull();
+            // 50 items at default page size (25) should produce 2 pages
+            response!.PageCount.Should().Be(2);
+            response.TotalCount.Should().Be(50);
+        }
+
+        [Test]
+        public void WhenPageSizeIsNotProvided_RequestUsesDefaultPageSize()
+        {
+            var request = new ListPagedSentinelEntryRequest();
+
+            request.PageSize.Should().Be(ListPagedSentinelEntryRequest.DefaultPageSize);
+            request.PageIndex.Should().Be(0);
+        }
+
+        [Test]
+        public async Task WhenPageSizeExceedsMax_ClampsToMaxPageSize()
+        {
+            var user = CreateRegularUser("4");
+            var sut = CreateSut(out var repository, "4", user);
+            var request = new ListPagedSentinelEntryRequest
+            {
+                PageSize = ListPagedSentinelEntryRequest.MaxPageSize + 5000,
+                PageIndex = 0
+            };
+
+            repository.CountAsync(Arg.Any<SentinelEntrySearchFilterSpecification>())
+                .Returns(Task.FromResult(0));
+            repository.ListAsync(Arg.Any<SentinelEntrySearchPaginatedSpecification>())
+                .Returns(Task.FromResult(new List<SentinelEntry>() as IReadOnlyList<SentinelEntry>));
+
+            var result = await sut.HandleAsync(request);
+
+            result.Result.Should().BeOfType<OkObjectResult>();
+            await repository.Received(1).ListAsync(Arg.Is<SentinelEntrySearchPaginatedSpecification>(
+                spec => spec.Take == ListPagedSentinelEntryRequest.MaxPageSize));
+        }
+
+        [Test]
+        public async Task WhenPageIndexIsNegative_ClampsToZero()
+        {
+            var user = CreateRegularUser("4");
+            var sut = CreateSut(out var repository, "4", user);
+            var request = new ListPagedSentinelEntryRequest
+            {
+                PageSize = 10,
+                PageIndex = -3
+            };
+
+            repository.CountAsync(Arg.Any<SentinelEntrySearchFilterSpecification>())
+                .Returns(Task.FromResult(0));
+            repository.ListAsync(Arg.Any<SentinelEntrySearchPaginatedSpecification>())
+                .Returns(Task.FromResult(new List<SentinelEntry>() as IReadOnlyList<SentinelEntry>));
+
+            var result = await sut.HandleAsync(request);
+
+            result.Result.Should().BeOfType<OkObjectResult>();
+            await repository.Received(1).ListAsync(Arg.Is<SentinelEntrySearchPaginatedSpecification>(
+                spec => spec.Skip == 0));
+        }
+
+        [Test]
         public void WhenPerformingAuthorization_RestrictsToUsersWithinAnOrganization()
         {
             var type = typeof(ListPaged);

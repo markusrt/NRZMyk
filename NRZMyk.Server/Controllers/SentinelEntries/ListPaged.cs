@@ -66,24 +66,30 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
                 }
             }
 
+            // Sanitize paging parameters: apply sensible defaults and clamp values to a
+            // valid range so unset/invalid query parameters cannot cause server errors
+            // (e.g. DivideByZeroException) or unbounded result sets.
+            var pageSize = request.PageSize <= 0
+                ? ListPagedSentinelEntryRequest.DefaultPageSize
+                : Math.Min(request.PageSize, ListPagedSentinelEntryRequest.MaxPageSize);
+            var pageIndex = Math.Max(0, request.PageIndex);
+
             var response = new ListPagedSentinelEntryResponse();
 
             var countSpec = new SentinelEntrySearchFilterSpecification(protectKey, request.SearchTerm);
             var totalItems = await _sentinelEntryRepository.CountAsync(countSpec).ConfigureAwait(false);
 
             var pagedSpec = new SentinelEntrySearchPaginatedSpecification(
-                request.PageIndex * request.PageSize,
-                request.PageSize, 
-                protectKey, 
+                pageIndex * pageSize,
+                pageSize,
+                protectKey,
                 request.SearchTerm);
 
             var items = await _sentinelEntryRepository.ListAsync(pagedSpec).ConfigureAwait(false);
 
             response.SentinelEntries.AddRange(items);
             response.TotalCount = totalItems;
-            response.PageCount = request.PageSize <= 0
-                ? 1
-                : (int)Math.Ceiling((decimal)totalItems / request.PageSize);
+            response.PageCount = (int)Math.Ceiling((decimal)totalItems / pageSize);
 
             return Ok(response);
         }
