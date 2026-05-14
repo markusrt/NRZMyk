@@ -26,17 +26,22 @@ namespace NRZMyk.Services.Specifications
     /// </summary>
     public sealed class SentinelEntrySearchTerm
     {
+        private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
+
         private static readonly Regex YearAndSequencePattern = new(
             @"^(?:sn[\s-]*)?(\d{4})\s*-\s*(\d{1,4})$",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            RegexOptions.IgnoreCase | RegexOptions.Compiled,
+            RegexTimeout);
 
         private static readonly Regex YearWithPrefixPattern = new(
             @"^sn[\s-]*(\d{4})\s*-?\s*$",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            RegexOptions.IgnoreCase | RegexOptions.Compiled,
+            RegexTimeout);
 
         private static readonly Regex DigitsOnlyPattern = new(
             @"^(\d{1,4})$",
-            RegexOptions.Compiled);
+            RegexOptions.Compiled,
+            RegexTimeout);
 
         private SentinelEntrySearchTerm()
         {
