@@ -151,26 +151,14 @@ namespace NRZMyk.Mocks.MockServices
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                var lowered = searchTerm.ToLowerInvariant();
-                query = query.Where(e =>
+                var parsed = NRZMyk.Services.Specifications.SentinelEntrySearchTerm.Parse(searchTerm);
+                if (!parsed.IsEmpty)
                 {
-                    var senderLabNumberMatch = !string.IsNullOrEmpty(e.SenderLaboratoryNumber)
-                        && e.SenderLaboratoryNumber.ToLowerInvariant().Contains(lowered);
-
-                    var otherSpeciesMatch = !string.IsNullOrEmpty(e.OtherIdentifiedSpecies)
-                        && e.OtherIdentifiedSpecies.ToLowerInvariant().Contains(lowered);
-
-                    var identifiedSpeciesMatch = e.IdentifiedSpecies.ToString().ToLowerInvariant().Contains(lowered);
-                    var laboratoryNumberMatch = e.LaboratoryNumber.ToLowerInvariant().Contains(lowered);
-                    var samplingDateMatch = e.SamplingDate.HasValue
-                        && e.SamplingDate.Value.ToString("yyyy-MM-dd").Contains(lowered);
-
-                    return senderLabNumberMatch
-                        || otherSpeciesMatch
-                        || identifiedSpeciesMatch
-                        || laboratoryNumberMatch
-                        || samplingDateMatch;
-                });
+                    var predicate = NRZMyk.Services.Specifications.SentinelEntrySearchSpecificationBase
+                        .BuildSearchPredicate(parsed)
+                        .Compile();
+                    query = query.Where(predicate);
+                }
             }
 
             var ordered = query.OrderByDescending(e => e.Id).ToList();

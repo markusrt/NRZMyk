@@ -118,6 +118,16 @@ else
                                     <a title="Eintrag ansehen" href="" @onclick="() => DetailsClick(item.Id)" @onclick:preventDefault class="btn btn-primary">
                                         <i class="oi oi-eye"></i>
                                     </a>
+                                    <AuthorizeView Roles=@nameof(Role.SuperUser)>
+                                        <Authorized Context="authContext">
+                                            <a title="Eintrag bearbeiten" href="@($"sentinel-entry/{item.Id}")" class="btn btn-primary">
+                                                <i class="oi oi-pencil"></i>
+                                            </a>
+                                            <a title="Eintrag löschen" href="" @onclick="() => DeleteClick(item.Id)" @onclick:preventDefault class="btn btn-danger">
+                                                <i class="oi oi-trash"></i>
+                                            </a>
+                                        </Authorized>
+                                    </AuthorizeView>
                                 }
                                 else
                                 {

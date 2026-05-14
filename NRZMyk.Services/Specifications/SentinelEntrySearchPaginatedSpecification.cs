@@ -7,6 +7,7 @@ namespace NRZMyk.Services.Specifications
     {
         public SentinelEntrySearchPaginatedSpecification(int skip, int take, string protectKey, string searchTerm = null) : base(protectKey, searchTerm)
         {
+            ApplyBaseFilters();
             OrderByNewest();
             Query.Skip(skip).Take(take);
         }

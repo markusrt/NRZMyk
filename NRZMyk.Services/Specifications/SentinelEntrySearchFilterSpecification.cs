@@ -7,6 +7,7 @@ namespace NRZMyk.Services.Specifications
     {
         public SentinelEntrySearchFilterSpecification(string protectKey, string searchTerm = null) : base(protectKey, searchTerm)
         {
+            ApplyBaseFilters();
             OrderByNewest();
         }
     }
