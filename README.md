@@ -60,6 +60,7 @@ dotnet user-secrets set "Application:AdministratorEmail" "Address of admin to re
 dotnet user-secrets set "SendGrid:ApiKey" "Sendgrid API key"
 dotnet user-secrets set "AzureAdB2C:ClientSecret" "Client secret for GraphAPI access"
 dotnet user-secrets set "AzureAdB2C:B2cExtensionAppClientId" "B2C extensions app client id"
+dotnet user-secrets set "AutoMapper:LicenseKey" "AutoMapper License Key"
 ```
 
 See also `appsettings.json` in server project.

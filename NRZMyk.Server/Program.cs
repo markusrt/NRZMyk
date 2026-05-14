@@ -49,8 +49,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddApplicationInsightsTelemetry();
 
+builder.Services.AddTransient<NRZMyk.Server.Converter.ClaimsPrincipalToAccountConverter>();
 builder.Services.AddAutoMapper(cfg =>
 {
+    cfg.LicenseKey = builder.Configuration["AutoMapper:LicenseKey"];
     cfg.AddProfile<MappingProfile>();
     cfg.AddProfile<NRZMyk.Services.MappingProfile>();
 });

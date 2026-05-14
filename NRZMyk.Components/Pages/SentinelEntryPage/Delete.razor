@@ -14,6 +14,13 @@ else
             <div class="alert alert-danger" role="alert">
                 <strong>Achtung!</strong> Wollen sie den ausgewählten Datensatz unwiderruflich löschen?
             </div>
+            @if (SentinelEntry.CryoDate.HasValue)
+            {
+                <div class="alert alert-warning" role="alert">
+                    Die Probe wurde bereits eingesendet und am @SentinelEntry.CryoDate.Value.ToShortDateString() in der Kryo-Box @SentinelEntry.CryoBox asserviert.
+                    Ein Löschen der Daten sollte nur aus triftigen Grund erfolgen.
+                </div>
+            }
             <dl class="col-md-6 dl-horizontal">
                 <dt>
                     Sentinel Labornummer

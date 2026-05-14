@@ -23,7 +23,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         [Parameter]
         public EventCallback<string> OnCloseClick { get; set; }
 
-        internal SentinelEntryRequest SentinelEntry { get; set; } = default!;
+        internal SentinelEntryResponse SentinelEntry { get; set; } = default!;
 
         internal bool DeleteFailed { get; set; }
 
@@ -31,7 +31,7 @@ namespace NRZMyk.Components.Pages.SentinelEntryPage
         {
             Logger.LogInformation("Now loading... /Catalog/Delete/{Id}", Id);
 
-            SentinelEntry = Mapper.Map<SentinelEntryRequest>(await SentinelEntryService.GetById(Id).ConfigureAwait(true));
+            SentinelEntry = await SentinelEntryService.GetById(Id).ConfigureAwait(true);
 
             await base.OnInitializedAsync().ConfigureAwait(true);
         }
