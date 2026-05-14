@@ -12,13 +12,13 @@ else
     <div class="container">
         <div class="row">
             <div class="alert alert-danger" role="alert">
-                <strong>Achtung!</strong> Wollen sie den ausgewählten Datensatz unwiderruflich löschen?
+                <strong>Achtung!</strong> Wollen Sie den ausgewählten Datensatz unwiderruflich löschen?
             </div>
             @if (SentinelEntry.CryoDate.HasValue)
             {
                 <div class="alert alert-warning" role="alert">
                     Die Probe wurde bereits eingesendet und am @SentinelEntry.CryoDate.Value.ToShortDateString() in der Kryo-Box @SentinelEntry.CryoBox asserviert.
-                    Ein Löschen der Daten sollte nur aus triftigen Grund erfolgen.
+                    Ein Löschen der Daten sollte nur aus triftigem Grund erfolgen.
                 </div>
             }
             <dl class="col-md-6 dl-horizontal">
@@ -59,7 +59,7 @@ else
                     Abbrechen
                 </a>
                 <button type="submit" class="btn btn-danger"  @onclick="DeleteClick">
-                    Eintrag Löschen
+                    Eintrag löschen
                 </button>
             </div>
         </div>

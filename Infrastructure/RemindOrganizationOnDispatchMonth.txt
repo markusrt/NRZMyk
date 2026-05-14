@@ -1,10 +1,10 @@
 Subject: Sentinel Netzwerk: Erinnerung zur Einsendung im {{DispatchMonth}}
-Preheader: Ihre letzte Sentinel Netzwerk Einsendung erfolgte am {{LatestCryoDate}}. Hiermit möchten wir sie freundlich an Ihre nun folgende Einsendung erinnern.
+Preheader: Ihre letzte Sentinel Netzwerk Einsendung erfolgte am {{LatestCryoDate}}. Hiermit möchten wir Sie freundlich an Ihre nun folgende Einsendung erinnern.
 
 Mikrobiologie: {{OrganizationName}} 
 Sehr geehrtes Einsender Team,
 
-vielen Dank für die rege Teilnahme an unserem Sentinel Netzwerk Invasive Mykosen: Modul Candidämie. Ihre letzte Einsendung erfolgte am {{LatestCryoDate}}. Hiermit möchten wir sie freundlich an Ihre nun folgende Einsendung im Monat {{DispatchMonth}} erinnern.
+vielen Dank für die rege Teilnahme an unserem Sentinel Netzwerk Invasive Mykosen: Modul Candidämie. Ihre letzte Einsendung erfolgte am {{LatestCryoDate}}. Hiermit möchten wir Sie freundlich an Ihre nun folgende Einsendung im Monat {{DispatchMonth}} erinnern.
 
 Für weitere Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung!
 
