@@ -1,7 +1,7 @@
 -- Update prepared on 2026-05-10
 -- Fix issue #218: sentinel entries with mislabeled AntimicrobialSensitivityTest testing method
 -- from Microdilution (1, displayed as "Mikrodilution") to Micronaut (3)
--- Request source: "Duesseldorf zu Micronaut Für Markus (1).xlsx"
+-- Executed on 2026-06-30
 
 DECLARE @TargetSentinelEntries TABLE (Id INT PRIMARY KEY);
 
