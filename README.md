@@ -56,7 +56,7 @@ To stay on the safe side, please make sure that:
 2. On the Azure side, set the **Minimum TLS Version** of the SQL server
    (or Managed Instance) to **1.2** (or higher). For Azure SQL
    Database this is configured under
-   *SQL server → Networking → Connectivity → Minimum TLS Version*.
+   *SQL server → Security → Networking → Connectivity → Minimum TLS Version*.
    See the official documentation for step-by-step instructions:
 
    - [Azure SQL Database – configure minimum TLS version](https://learn.microsoft.com/azure/azure-sql/database/connectivity-settings#configure-minimum-tls-version)
