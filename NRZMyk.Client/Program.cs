@@ -29,6 +29,7 @@ builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services.AddBlazorApplicationInsights();
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<NRZMyk.Services.MappingProfile>());
+builder.Logging.AddFilter("LuckyPennySoftware.AutoMapper.License", LogLevel.None);
 builder.Services.AddTransient<ISentinelEntryService, SentinelEntryServiceImpl>();
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IClinicalBreakpointService, ClinicalBreakpointService>();

@@ -51,7 +51,7 @@ namespace NRZMyk.Client
 
                     if (connectedAccount != null)
                     {
-                        _logger.LogInformation("Connect success, {displayName}, IsGuest={isGuest}", connectedAccount.Account.DisplayName, connectedAccount.IsGuest);
+                        _logger.LogInformation("Connect success, {DisplayName}, IsGuest={IsGuest}", connectedAccount.Account.DisplayName, connectedAccount.IsGuest);
                         if (!connectedAccount.IsGuest && !userIdentity.HasClaim(ClaimTypes.Role, nameof(Role.User)))
                         {
                             userIdentity.AddClaim(new Claim(ClaimTypes.Role, nameof(Role.User)));
@@ -66,12 +66,12 @@ namespace NRZMyk.Client
                 }
                 else
                 {
-                    _logger.LogError("Connect API request failed with status code: {statusCode}", response.StatusCode);
+                    _logger.LogError("Connect API request failed with status code: {StatusCode}", response.StatusCode);
                 }
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, "Connect API request failed: {errorMessage}", exception.Message);
+                _logger.LogError(exception, "Connect API request failed: {ErrorMessage}", exception.Message);
             }
 
             return initialUser;

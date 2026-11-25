@@ -53,6 +53,6 @@ public class SentinelEntryReminderEmailJob : IInvocable
                 numberOfRemindedOrganizations++;
             }
         }
-        _logger.LogInformation("Sentinel reminder job invoked for {numberOfOrganizations} organizations", numberOfRemindedOrganizations);
+        _logger.LogInformation("Sentinel reminder job invoked for {NumberOfOrganizations} organizations", numberOfRemindedOrganizations);
     }
 }

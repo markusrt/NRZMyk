@@ -13,6 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
 {
     [Authorize(Roles=nameof(Role.Admin))]
+    [Route("api/clinical-breakpoints")]
     public class Create : EndpointBaseAsync.WithRequest<CreateClinicalBreakpointRequest>.WithActionResult<ClinicalBreakpoint>
     {
         private readonly IAsyncRepository<ClinicalBreakpoint> _clinicalBreakpointRepository;
@@ -24,7 +25,7 @@ namespace NRZMyk.Server.Controllers.ClinicalBreakpoints
             _mapper = mapper;
         }
 
-        [HttpPost("api/clinical-breakpoints")]
+        [HttpPost]
         [SwaggerOperation(
             Summary = "Creates a new Clinical Breakpoint",
             OperationId = "clinical-breakpoints.create",

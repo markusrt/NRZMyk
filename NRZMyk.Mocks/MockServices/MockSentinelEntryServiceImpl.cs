@@ -40,8 +40,8 @@ namespace NRZMyk.Mocks.MockServices
                 Remark = "Some notes",
                 HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
                 HospitalDepartment =  HospitalDepartment.Neurology,
-                SamplingDate = new DateTime(2020,5,1),
-                CryoDate = new DateTime(2020,10,11),
+                SamplingDate = new DateTime(2020, 5, 1, 0, 0, 0, DateTimeKind.Utc),
+                CryoDate = new DateTime(2020, 10, 11, 0, 0, 0, DateTimeKind.Utc),
                 SenderLaboratoryNumber = "SLN-123456",
                 ProtectKey = "1",
                 AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>
@@ -70,15 +70,64 @@ namespace NRZMyk.Mocks.MockServices
                 Material = Material.CentralBloodCulturePort,
                 HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
                 HospitalDepartment = HospitalDepartment.Neurology,
-                SamplingDate = new DateTime(2020, 5, 1),
+                SamplingDate = new DateTime(2020, 5, 1, 0, 0, 0, DateTimeKind.Utc),
                 SenderLaboratoryNumber = "SLO-123456",
                 ProtectKey = "2"
             });
+
+            // Seeding of additional mock entries is opt-in via SeedAdditionalEntries(...) so that
+            // unit tests relying on deterministic ID assignment are not affected. The Playground
+            // calls SeedAdditionalEntries during startup to showcase pagination and search.
+        }
+
+        public void SeedAdditionalEntries(int count)
+        {
+            var species = new[]
+            {
+                Species.CandidaAlbicans, Species.CandidaDubliniensis, Species.CandidaGlabrata,
+                Species.CandidaKrusei, Species.CandidaParapsilosis, Species.CandidaTropicalis,
+                Species.CandidaGuilliermondii
+            };
+            var materials = new[]
+            {
+                Material.CentralBloodCultureCvc, Material.CentralBloodCulturePort,
+                Material.PeripheralBloodCulture, Material.BloodCultureOther, Material.Other
+            };
+            var departments = new[]
+            {
+                HospitalDepartment.Neurology, HospitalDepartment.GeneralSurgery,
+                HospitalDepartment.Internal, HospitalDepartment.Pediadric
+            };
+            var ageGroups = new[]
+            {
+                AgeGroup.SixteenToTwenty, AgeGroup.TwentySixToThirty,
+                AgeGroup.FiftyOneToFiftyFive, AgeGroup.SixtyOneToSixtyFive
+            };
+
+            for (var i = 0; i < count; i++)
+            {
+                var sequence = _id;
+                _repository.Add(new SentinelEntry
+                {
+                    Id = _id++,
+                    Year = 2024,
+                    YearlySequentialEntryNumber = sequence,
+                    AgeGroup = ageGroups[i % ageGroups.Length],
+                    IdentifiedSpecies = species[i % species.Length],
+                    Material = materials[i % materials.Length],
+                    HospitalDepartmentType = HospitalDepartmentType.NormalUnit,
+                    HospitalDepartment = departments[i % departments.Length],
+                    SamplingDate = new DateTime(2024, 1, 1).AddDays(i),
+                    SenderLaboratoryNumber = $"SLM-{1000 + i}",
+                    OtherIdentifiedSpecies = i % 7 == 0 ? $"Mock species sample {i}" : null,
+                    ProtectKey = ((i % 3) + 1).ToString()
+                });
+            }
         }
 
         public Task<SentinelEntry> Create(SentinelEntryRequest createRequest)
         {
-            _logger.LogInformation("Create sentinel entry: {request}", createRequest);
+            _logger.LogInformation("Create sentinel entry: {Request}", createRequest);
             var sentinelEntry = _mapper.Map<SentinelEntry>(createRequest);
             sentinelEntry.Id = _id++;
             _repository.Add(sentinelEntry);
@@ -88,6 +137,44 @@ namespace NRZMyk.Mocks.MockServices
         public Task<List<SentinelEntry>> ListPaged(int pageSize)
         {
             return Task.FromResult(_repository);
+        }
+
+        public Task<PagedSentinelEntryResult> ListPaged(int pageSize, int pageIndex, string searchTerm = null, int? organizationId = null)
+        {
+            IEnumerable<SentinelEntry> query = _repository;
+
+            if (organizationId.HasValue && organizationId.Value > 0)
+            {
+                var key = organizationId.Value.ToString();
+                query = query.Where(e => e.ProtectKey == key);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var parsed = NRZMyk.Services.Specifications.SentinelEntrySearchTerm.Parse(searchTerm);
+                if (!parsed.IsEmpty)
+                {
+                    var predicate = NRZMyk.Services.Specifications.SentinelEntrySearchSpecificationBase
+                        .BuildSearchPredicate(parsed)
+                        .Compile();
+                    query = query.Where(predicate);
+                }
+            }
+
+            var ordered = query.OrderByDescending(e => e.Id).ToList();
+            var totalCount = ordered.Count;
+            var pageCount = pageSize <= 0 ? 1 : Math.Max(1, (int)Math.Ceiling(totalCount / (double)pageSize));
+            var page = pageSize <= 0
+                ? ordered
+                : ordered.Skip(pageIndex * pageSize).Take(pageSize).ToList();
+
+            var result = new PagedSentinelEntryResult
+            {
+                SentinelEntries = page,
+                PageCount = pageCount,
+                TotalCount = totalCount
+            };
+            return Task.FromResult(result);
         }
 
         public async Task<List<SentinelEntry>> ListByOrganization(int organizationId)

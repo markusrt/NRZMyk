@@ -74,7 +74,7 @@ public class UserServiceTests
         var sut = CreateSut(out _, out _, out _);
         var remoteAccounts = new List<RemoteAccount>();
 
-        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
+        await sut.GetRolesViaGraphApi(remoteAccounts);
 
         remoteAccounts.Should().BeEmpty();
     }
@@ -91,7 +91,7 @@ public class UserServiceTests
         var serviceException = new ServiceException(new Error(), null, HttpStatusCode.BadRequest);
         graphServiceClient.Users[guid.ToString()].Throws(serviceException);
 
-        await sut.GetRolesViaGraphApi(remoteAccounts).ConfigureAwait(true);
+        await sut.GetRolesViaGraphApi(remoteAccounts);
 
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
         logger.Received(1).Log(LogLevel.Error, Arg.Is<string>(s => s.StartsWith(
@@ -115,6 +115,34 @@ public class UserServiceTests
         remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
         logger.Received(1).Log(LogLevel.Warning, Arg.Is<string>(s => s.StartsWith(
             $"User with ID {guid} was not found")));
+    }
+
+    [Test]
+    public async Task WhenGraphAuthenticationFails_AssignsGuestRoleAndSkipsFurtherRequests()
+    {
+        var guid1 = Guid.NewGuid();
+        var guid2 = Guid.NewGuid();
+        var remoteAccounts = new List<RemoteAccount>
+        {
+            new() { ObjectId = guid1 },
+            new() { ObjectId = guid2 },
+        };
+        var sut = CreateSut(out var graphServiceClient, out _, out var logger);
+        var userRequest = Substitute.For<IUserRequest>();
+        var userRequestBuilder = Substitute.For<IUserRequestBuilder>();
+        userRequestBuilder.Request().Returns(userRequest);
+        userRequest.Select($"id,displayName,{RoleCompleteAttributeName}").Returns(userRequest);
+        var serviceException = new ServiceException(new Error(), null, HttpStatusCode.Unauthorized);
+        userRequest.GetAsync().Throws(serviceException);
+        graphServiceClient.Users[guid1.ToString()].Returns(userRequestBuilder);
+        graphServiceClient.Users[guid2.ToString()].Returns(userRequestBuilder);
+
+        await sut.GetRolesViaGraphApi(remoteAccounts);
+
+        remoteAccounts.Should().OnlyContain(a => a.Role == Role.Guest);
+        userRequest.Received(1).Select(Arg.Any<string>());
+        logger.Received(1).Log(LogLevel.Error, Arg.Is<string>(s => s.StartsWith(
+            "Failed to authenticate against AADB2C Graph API")), serviceException);
     }
 
     [Test]

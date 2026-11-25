@@ -33,12 +33,12 @@ namespace HaemophilusWeb.Tools
                 : test.MinimumInhibitoryConcentration.ToString(CultureInfo.GetCultureInfo("de"));
         }
 
-        private string GetClinicalBreakpointName(AntimicrobialSensitivityTest test)
+        private static string GetClinicalBreakpointName(AntimicrobialSensitivityTest test)
         {
             var breakpoint = test.ClinicalBreakpoint;
             return breakpoint == null
                 ? null
-                : $"{breakpoint.AntifungalAgentDetails} - {EnumUtils.GetEnumDescription(breakpoint.Species)} - v{breakpoint.Version}";;
+                : $"{breakpoint.AntifungalAgentDetails} - {EnumUtils.GetEnumDescription(breakpoint.Species)} - v{breakpoint.Version}";
         }
     }
 }

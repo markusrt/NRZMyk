@@ -13,5 +13,6 @@ namespace NRZMyk.Services.Services
     {
         public List<SentinelEntry> SentinelEntries { get; set; } = new List<SentinelEntry>();
         public int PageCount { get; set; } = 0;
+        public int TotalCount { get; set; } = 0;
     }
 }
