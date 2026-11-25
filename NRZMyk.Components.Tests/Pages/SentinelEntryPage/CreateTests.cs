@@ -46,7 +46,6 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             _context.Services.AddScoped<AuthenticationStateProvider, MockAuthStateProvider>();
             _context.Services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
-            _sentinelEntryService = _context.Services.GetService<ISentinelEntryService>();
         }
 
         [TearDown]
@@ -99,6 +98,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             await sut.SubmitClick();
 
             closeTriggered.Should().BeTrue();
+            _sentinelEntryService = _context.Services.GetService<ISentinelEntryService>();
             var entry = await _sentinelEntryService.GetById(1);
             entry.SenderLaboratoryNumber.Should().Be("993882");
         }
@@ -120,6 +120,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             await sut.SubmitClick();
 
             closeTriggered.Should().BeTrue();
+            _sentinelEntryService = _context.Services.GetService<ISentinelEntryService>();
             var entry = await _sentinelEntryService.GetById(3);
             entry.SenderLaboratoryNumber.Should().Be("193882");
         }
@@ -493,12 +494,103 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
             viewOrder[2].TestingMethod.Should().Be(SpeciesTestingMethod.ETest);
             viewOrder[2].AntifungalAgent.Should().Be(AntifungalAgent.Fluorouracil);
         }
+
+        [Test]
+        public void WhenVitekEntryIsRemoved_ETestVoriconazoleKeepsETestMicSteps()
+        {
+            _context.Services.AddSingleton<IMicStepsService>(new MethodSpecificMicStepsService());
+            var component = CreateSut();
+            var sut = component.Instance;
+
+            var vitekVoriconazole = new AntimicrobialSensitivityTestRequest
+            {
+                TestingMethod = SpeciesTestingMethod.Vitek,
+                AntifungalAgent = AntifungalAgent.Voriconazole,
+                Standard = BrothMicrodilutionStandard.Eucast
+            };
+            var eTestVoriconazole = new AntimicrobialSensitivityTestRequest
+            {
+                TestingMethod = SpeciesTestingMethod.ETest,
+                AntifungalAgent = AntifungalAgent.Voriconazole,
+                Standard = BrothMicrodilutionStandard.Eucast
+            };
+
+            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(vitekVoriconazole);
+            sut.SentinelEntry.AntimicrobialSensitivityTests.Add(eTestVoriconazole);
+            component.Render();
+
+            sut.RemoveAntimicrobialSensitivityTest(vitekVoriconazole);
+            component.Render();
+
+            var eTestRow = component.FindAll("div.mb-3.row")
+                .Single(row => row.TextContent.Contains("E-Test - Voriconazol -"));
+            var eTestMicValues = eTestRow.QuerySelectorAll("div.input-group select option")
+                .Select(option => option.TextContent.Trim())
+                .ToList();
+
+            eTestMicValues.Should().Contain("≤0,008");
+            eTestMicValues.Should().Contain("0,06");
+            eTestMicValues.Should().NotContain("≤0,12");
+        }
         
         private IRenderedComponent<Create> CreateSut(Action<ComponentParameterCollectionBuilder<Create>> parameterBuilder = null)
         {
             return parameterBuilder == null
                 ? _context.RenderComponent<Create>()
                 : _context.RenderComponent(parameterBuilder);
+        }
+
+        private class MethodSpecificMicStepsService : IMicStepsService
+        {
+            public List<MicStep> StepsByTestingMethodAndAgent(SpeciesTestingMethod testingMethod, AntifungalAgent agent)
+            {
+                if (testingMethod == SpeciesTestingMethod.ETest && agent == AntifungalAgent.Voriconazole)
+                {
+                    return new List<MicStep>
+                    {
+                        new MicStep {Title = "≤0,008", Value = 0.008f, LowerBoundary = true},
+                        new MicStep {Title = "0,06", Value = 0.06f},
+                        new MicStep {Title = ">32", Value = 32.001f, UpperBoundary = true}
+                    };
+                }
+
+                if (testingMethod == SpeciesTestingMethod.Vitek && agent == AntifungalAgent.Voriconazole)
+                {
+                    return new List<MicStep>
+                    {
+                        new MicStep {Title = "≤0,12", Value = 0.12f, LowerBoundary = true},
+                        new MicStep {Title = "0,25", Value = 0.25f},
+                        new MicStep {Title = "≥32", Value = 32f, UpperBoundary = true}
+                    };
+                }
+
+                return new List<MicStep>();
+            }
+
+            public IEnumerable<SpeciesTestingMethod> TestingMethods()
+            {
+                return new[] { SpeciesTestingMethod.Vitek, SpeciesTestingMethod.ETest };
+            }
+
+            public IEnumerable<AntifungalAgent> AntifungalAgents(SpeciesTestingMethod testingMethod)
+            {
+                return new[] { AntifungalAgent.Voriconazole };
+            }
+
+            public IEnumerable<BrothMicrodilutionStandard> Standards(SpeciesTestingMethod testingMethod)
+            {
+                return new[] { BrothMicrodilutionStandard.Eucast };
+            }
+
+            public bool IsMultiAgentSystem(SpeciesTestingMethod testingMethod)
+            {
+                return true;
+            }
+
+            public float? FloorToClosestReferenceValue(float? micValue)
+            {
+                return micValue;
+            }
         }
     }
 
