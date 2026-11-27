@@ -350,3 +350,6 @@ MigrationBackup/
 .ionide/
 
 Visual Studio 2019/
+
+# Amp orb portal files
+.amp/portals/*
