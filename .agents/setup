@@ -14,18 +14,18 @@ sdk_channel="8.0"
 
 step "Installing .NET SDK $sdk_channel"
 if ! "$dotnet_root/dotnet" --list-sdks 2>/dev/null | grep -q "^${sdk_channel}\."; then
-  installer="$(mktemp)"
-  curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$installer"
-  bash "$installer" --channel "$sdk_channel" --install-dir "$dotnet_root" --no-path
-  rm -f "$installer"
+	installer="$(mktemp)"
+	curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$installer"
+	bash "$installer" --channel "$sdk_channel" --install-dir "$dotnet_root" --no-path
+	rm -f "$installer"
 else
-  echo "already installed: $("$dotnet_root/dotnet" --list-sdks | grep "^${sdk_channel}\." | tail -1)"
+	echo "already installed: $("$dotnet_root/dotnet" --list-sdks | grep "^${sdk_channel}\." | tail -1)"
 fi
 
 step "Persisting dotnet environment in ~/.bash_profile"
 profile_marker="# NRZMyk .NET SDK"
 if ! grep -Fqx "$profile_marker" "$HOME/.bash_profile" 2>/dev/null; then
-  cat >> "$HOME/.bash_profile" <<'EOF'
+	cat >>"$HOME/.bash_profile" <<'EOF'
 
 # NRZMyk .NET SDK
 export DOTNET_ROOT="$HOME/.dotnet"
@@ -43,7 +43,7 @@ export PATH="$dotnet_root:$dotnet_root/tools:$PATH"
 
 step "Installing dotnet-ef"
 if ! dotnet tool list --global | grep -q "^dotnet-ef "; then
-  dotnet tool install --global dotnet-ef --version "8.*"
+	dotnet tool install --global dotnet-ef --version "8.*"
 fi
 
 step "Restoring NuGet packages"
