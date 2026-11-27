@@ -1,8 +1,6 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NRZMyk.Mocks.TestUtils;
 using NRZMyk.Server.Controllers.SentinelEntries;
@@ -64,12 +62,9 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
 
         private static CryoRemarkUpdate CreateSut(out IAsyncRepository<SentinelEntry> sentinelEntryRepository)
         {
-            var myProfile = new MappingProfile();
-            var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
-            var mapper = new Mapper(configuration);
             sentinelEntryRepository = Substitute.For<IAsyncRepository<SentinelEntry>>();
 
-            return new CryoRemarkUpdate(sentinelEntryRepository, mapper)
+            return new CryoRemarkUpdate(sentinelEntryRepository)
             {
                 ControllerContext = new MockControllerContext()
             };

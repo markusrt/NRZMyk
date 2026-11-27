@@ -8,6 +8,7 @@ public interface ISentinelEntryService
 {
     Task<SentinelEntry> Create(SentinelEntryRequest createRequest);
     Task<List<SentinelEntry>> ListPaged(int pageSize);
+    Task<PagedSentinelEntryResult> ListPaged(int pageSize, int pageIndex, string searchTerm = null, int? organizationId = null);
     Task<List<SentinelEntry>> ListByOrganization(int organizationId);
     Task<SentinelEntryResponse> GetById(int id);
     Task<SentinelEntry> Update(SentinelEntryRequest updateRequest);

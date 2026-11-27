@@ -49,7 +49,13 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddApplicationInsightsTelemetry();
 
-builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(ISentinelEntryService).Assembly);
+builder.Services.AddTransient<NRZMyk.Server.Converter.ClaimsPrincipalToAccountConverter>();
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.LicenseKey = builder.Configuration["AutoMapper:LicenseKey"];
+    cfg.AddProfile<MappingProfile>();
+    cfg.AddProfile<NRZMyk.Services.MappingProfile>();
+});
 
 
 builder.Services.AddSingleton(TimeProvider.System);

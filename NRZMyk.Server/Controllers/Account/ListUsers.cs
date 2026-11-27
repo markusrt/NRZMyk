@@ -13,6 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.Account
 {
     [Authorize(Roles = nameof(Role.Admin))]
+    [Route("api/users")]
     public class ListUsers : EndpointBaseAsync.WithoutRequest.WithActionResult<List<RemoteAccount>>
     {
         private readonly IAsyncRepository<RemoteAccount> _accountRepository;
@@ -24,7 +25,7 @@ namespace NRZMyk.Server.Controllers.Account
             _userService = userService;
         }
 
-        [HttpGet("api/users")]
+        [HttpGet]
         [SwaggerOperation(
             Summary = "List users",
             OperationId = "account.list",

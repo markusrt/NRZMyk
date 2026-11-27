@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(ISentinelEntryService).Assembly);
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<NRZMyk.Services.MappingProfile>());
 builder.Services.AddRazorPages();
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddServerSideBlazor();
@@ -30,6 +30,9 @@ builder.Services.AddSingleton(TimeProvider.System);
 
 
 var app = builder.Build();
+
+// Seed additional mock entries to showcase pagination and search in the playground.
+((MockSentinelEntryServiceImpl)app.Services.GetRequiredService<ISentinelEntryService>()).SeedAdditionalEntries(120);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

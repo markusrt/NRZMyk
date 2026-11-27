@@ -1,0 +1,3 @@
+[codespell]
+# German words that codespell incorrectly flags
+ignore-words-list = alle

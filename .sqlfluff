@@ -1,0 +1,10 @@
+[sqlfluff]
+dialect = tsql
+# Keep SQL data-fix scripts readable in repository style and focus linting on
+# syntax/parse validity instead of strict formatting or qualification rules.
+# AM04: unknown/variable column count (e.g., SELECT * verification queries)
+# CP02: identifier capitalization, LT02: indentation, LT05: line length
+# RF02: qualified references in multi-table contexts
+# AL01, CP01, CV06, LT01, LT08, LT12, ST06, ST09, ST12: style-only rules, as
+# scripts are kept unchanged after they were executed against the database
+exclude_rules = AL01,AM04,CP01,CP02,CV06,LT01,LT02,LT05,LT08,LT12,RF02,ST06,ST09,ST12

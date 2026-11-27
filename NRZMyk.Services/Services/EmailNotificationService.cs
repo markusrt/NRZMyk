@@ -70,12 +70,12 @@ namespace NRZMyk.Services.Services
             var response = await _sendGridClient.SendEmailAsync(sendGridMessage).ConfigureAwait(false);
             if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
             {
-                _logger.LogInformation("{templateType} email was sent via SendGrid with data {templateData}", templateData.GetType(), templateData);
+                _logger.LogInformation("{TemplateType} email was sent via SendGrid with data {TemplateData}", templateData.GetType(), templateData);
             }
             else
             {
                 var errorDetails = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
-                _logger.LogError("Email notification via SendGrid failed with status {statusCode}, error details: '{errorDetails}'", response.StatusCode, errorDetails);
+                _logger.LogError("Email notification via SendGrid failed with status {StatusCode}, error details: '{ErrorDetails}'", response.StatusCode, errorDetails);
             }
         }
 

@@ -36,7 +36,7 @@ namespace NRZMyk.Services.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Failed to resolve organization with protect key '{protectKey}'");
+                _logger.LogError(e, "Failed to resolve organization with protect key '{ProtectKey}'", protectKey);
                 return string.Empty;
             }
         }

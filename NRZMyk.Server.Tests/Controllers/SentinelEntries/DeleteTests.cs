@@ -112,15 +112,45 @@ namespace NRZMyk.Server.Tests.Controllers.SentinelEntries
         }
 
 
+        [Test]
+        public async Task WhenFoundWithinAnotherOrganizationAsSuperUser_DeletesCorrespondingObjects()
+        {
+            var user = new ClaimsPrincipal();
+            var identity = new ClaimsIdentity();
+            identity.AddClaim(new Claim(identity.RoleClaimType, nameof(Role.SuperUser)));
+            user.AddIdentity(identity);
+            var sut = CreateSut(out var repository, out var sensitivityTestRepository, "12", user);
+            var sensitivityTest1 = new AntimicrobialSensitivityTest();
+            var sentinelEntry = new SentinelEntry
+            {
+                Id = 567,
+                ProtectKey = "24",
+                AntimicrobialSensitivityTests = new List<AntimicrobialSensitivityTest>
+                {
+                    sensitivityTest1
+                }
+            };
+            repository.FirstOrDefaultAsync(Arg.Is<SentinelEntryIncludingTestsSpecification>(specification => specification.Id == 567))
+                .Returns(Task.FromResult(sentinelEntry));
+
+            var action = await sut.HandleAsync(567).ConfigureAwait(true);
+
+            await sensitivityTestRepository.Received(1).DeleteAsync(sensitivityTest1).ConfigureAwait(true);
+            await repository.Received(1).DeleteAsync(sentinelEntry).ConfigureAwait(true);
+            var okResult = action.Result.Should().BeOfType<OkObjectResult>().Subject;
+            okResult.Value.Should().Be(567);
+        }
+
+
         private static Delete CreateSut(out IAsyncRepository<SentinelEntry> sentinelEntryRepository,
-            out IAsyncRepository<AntimicrobialSensitivityTest> sensitivityTestRepository, string organizationId = null)
+            out IAsyncRepository<AntimicrobialSensitivityTest> sensitivityTestRepository, string organizationId = null, ClaimsPrincipal user = null)
         {
             sentinelEntryRepository = Substitute.For<IAsyncRepository<SentinelEntry>>();
             sensitivityTestRepository = Substitute.For<IAsyncRepository<AntimicrobialSensitivityTest>>();
 
             return new Delete(sentinelEntryRepository, sensitivityTestRepository)
             {
-                ControllerContext = new MockControllerContext(organizationId:organizationId)
+                ControllerContext = new MockControllerContext(organizationId:organizationId, user: user)
             };
         }
     }

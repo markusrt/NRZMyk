@@ -24,7 +24,7 @@ namespace NRZMyk.ComponentsTests.Pages.SentinelEntryPage
         {
             MockSentinelEntryServiceImpl.Delay = 0;
             _context = new TestContext();
-            _context.Services.AddAutoMapper(typeof(ISentinelEntryService).Assembly);
+            _context.Services.AddAutoMapper(cfg => cfg.AddProfile<NRZMyk.Services.MappingProfile>());
             _context.Services.AddSingleton<ISentinelEntryService, MockSentinelEntryServiceImpl>();
             _context.Services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
              

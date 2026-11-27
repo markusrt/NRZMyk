@@ -21,6 +21,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
+    [Route("api/sentinel-entries")]
     public class Create : EndpointBaseAsync.WithRequest<SentinelEntryRequest>.WithActionResult<SentinelEntry>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
@@ -34,7 +35,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             _mapper = mapper;
         }
 
-        [HttpPost("api/sentinel-entries")]
+        [HttpPost]
         [SwaggerOperation(
             Summary = "Creates a new Sentinel Entry",
             OperationId = "catalog-entries.create",

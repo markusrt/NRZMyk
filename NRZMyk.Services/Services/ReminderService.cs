@@ -37,7 +37,7 @@ public class ReminderService(TimeProvider timeProvider) : IReminderService
         var today = timeProvider.GetLocalNow().DateTime;
         var dispatchMonth = (int)organization.DispatchMonth;
         var expectedYear = today.Year;
-        var expectedArrival = new DateTime(expectedYear, dispatchMonth, 1);
+        var expectedArrival = new DateTime(expectedYear, dispatchMonth, 1, 0, 0, 0, DateTimeKind.Local);
 
         if (organization.LatestCryoDate == null)
         {
@@ -51,14 +51,14 @@ public class ReminderService(TimeProvider timeProvider) : IReminderService
         
         if (isOffByNoMoreThen40Days || isSentAlreadyThisYear)
         {
-            expectedArrival = new DateTime(today.AddYears(1).Year, dispatchMonth, 1);
+            expectedArrival = new DateTime(today.AddYears(1).Year, dispatchMonth, 1, 0, 0, 0, DateTimeKind.Local);
         }
         else if (timeSinceLastArrival.TotalDays > 365)
         {
-            var expectedLastTime = new DateTime(latestCryoDate.Year, dispatchMonth, 1);
+            var expectedLastTime = new DateTime(latestCryoDate.Year, dispatchMonth, 1, 0, 0, 0, DateTimeKind.Local);
             var wasSentTheCorrectYearLastTime = expectedLastTime.Year == latestCryoDate.Year;
             expectedArrival = wasSentTheCorrectYearLastTime 
-                ? new DateTime(latestCryoDate.AddYears(1).Year, dispatchMonth, 1)
+                ? new DateTime(latestCryoDate.AddYears(1).Year, dispatchMonth, 1, 0, 0, 0, DateTimeKind.Local)
                 : expectedLastTime;
         }
 

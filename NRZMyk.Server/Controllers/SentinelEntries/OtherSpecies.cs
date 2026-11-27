@@ -15,6 +15,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User))]
+    [Route("api/sentinel-entries/other/species")]
     public class OtherSpecies : EndpointBaseAsync.WithoutRequest.WithActionResult<List<string>>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
@@ -26,7 +27,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             _configuredOtherSpecies = config?.Value?.Application?.OtherSpecies ?? new List<string>();
         }
 
-        [HttpGet("api/sentinel-entries/other/species")]
+        [HttpGet]
         [SwaggerOperation(
             Summary = "List all used other species)",
             OperationId = "sentinel-entries.OtherSpecies",

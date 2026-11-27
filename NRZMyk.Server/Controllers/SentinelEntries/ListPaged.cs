@@ -15,6 +15,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
+    [Route("api/sentinel-entries")]
     public class ListPaged : EndpointBaseAsync.WithRequest<ListPagedSentinelEntryRequest>.WithActionResult<ListPagedSentinelEntryResponse>
     {
         private readonly IAsyncRepository<SentinelEntry> _sentinelEntryRepository;
@@ -24,7 +25,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             _sentinelEntryRepository = sentinelEntryRepository;
         }
 
-        [HttpGet("api/sentinel-entries")]
+        [HttpGet]
         [SwaggerOperation(
             Summary = "List Sentinel entries (paged)",
             OperationId = "sentinel-entries.ListPaged",
@@ -32,19 +33,63 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
         ]
         public override async Task<ActionResult<ListPagedSentinelEntryResponse>> HandleAsync([FromQuery]ListPagedSentinelEntryRequest request, CancellationToken cancellationToken = new())
         {
-            var organizationId = User.Claims.OrganizationId();
+            // Determine the organization ID to filter by
+            string? protectKey = null;
+            if (request.OrganizationId.HasValue && request.OrganizationId.Value > 0)
+            {
+                // Super user can specify organization
+                if (User.IsInRole(nameof(Role.SuperUser)))
+                {
+                    protectKey = request.OrganizationId.Value.ToString();
+                }
+                else
+                {
+                    // Regular users can only access their own organization
+                    var userOrgKey = User.Claims.OrganizationId();
+                    if (request.OrganizationId.Value.ToString() == userOrgKey)
+                    {
+                        protectKey = userOrgKey;
+                    }
+                    else
+                    {
+                        return Forbid();
+                    }
+                }
+            }
+            else
+            {
+                // Super users can access all organizations by default.
+                // Regular users are restricted to their own organization.
+                if (!User.IsInRole(nameof(Role.SuperUser)))
+                {
+                    protectKey = User.Claims.OrganizationId();
+                }
+            }
+
+            // Sanitize paging parameters: apply sensible defaults and clamp values to a
+            // valid range so unset/invalid query parameters cannot cause server errors
+            // (e.g. DivideByZeroException) or unbounded result sets.
+            var pageSize = request.PageSize <= 0
+                ? ListPagedSentinelEntryRequest.DefaultPageSize
+                : Math.Min(request.PageSize, ListPagedSentinelEntryRequest.MaxPageSize);
+            var pageIndex = Math.Max(0, request.PageIndex);
+
             var response = new ListPagedSentinelEntryResponse();
 
-            var totalItems = await _sentinelEntryRepository.CountAsync(new SentinelEntryFilterSpecification(organizationId)).ConfigureAwait(false);
+            var countSpec = new SentinelEntrySearchFilterSpecification(protectKey, request.SearchTerm);
+            var totalItems = await _sentinelEntryRepository.CountAsync(countSpec).ConfigureAwait(false);
 
-            var pagedSpec = new SentinelEntryFilterPaginatedSpecification(
-                request.PageIndex * request.PageSize,
-                request.PageSize, organizationId);
+            var pagedSpec = new SentinelEntrySearchPaginatedSpecification(
+                pageIndex * pageSize,
+                pageSize,
+                protectKey,
+                request.SearchTerm);
 
             var items = await _sentinelEntryRepository.ListAsync(pagedSpec).ConfigureAwait(false);
 
             response.SentinelEntries.AddRange(items);
-            response.PageCount = int.Parse(Math.Ceiling((decimal)totalItems / request.PageSize).ToString());
+            response.TotalCount = totalItems;
+            response.PageCount = (int)Math.Ceiling((decimal)totalItems / pageSize);
 
             return Ok(response);
         }

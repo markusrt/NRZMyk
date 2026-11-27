@@ -20,6 +20,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace NRZMyk.Server.Controllers.SentinelEntries
 {
     [Authorize(Roles = nameof(Role.User), Policy = Policies.AssignedToOrganization)]
+    [Route("api/sentinel-entries/other/laboratory-numbers")]
     public class OtherLaboratoryNumbers : EndpointBaseAsync.WithoutRequest.WithActionResult<List<string>>
     {
         private readonly ISentinelEntryRepository _sentinelEntryRepository;
@@ -29,7 +30,7 @@ namespace NRZMyk.Server.Controllers.SentinelEntries
             _sentinelEntryRepository = sentinelEntryRepository;
         }
 
-        [HttpGet("api/sentinel-entries/other/laboratory-numbers")]
+        [HttpGet]
         [SwaggerOperation(
             Summary = "List all used other laboratory numbers)",
             OperationId = "sentinel-entries.OtherLaboratoryNumbers",

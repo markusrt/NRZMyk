@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Azure.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
@@ -42,13 +43,20 @@ public class UserService : IUserService
 
     public async Task GetRolesViaGraphApi(IEnumerable<RemoteAccount> remoteAccounts)
     {
+        var skipGraphRequests = false;
         foreach (var remoteAccount in remoteAccounts)
         {
-            await GetRoleViaGraphApi(remoteAccount).ConfigureAwait(false);
+            if (skipGraphRequests)
+            {
+                remoteAccount.Role = Role.Guest;
+                continue;
+            }
+
+            skipGraphRequests = !await GetRoleViaGraphApi(remoteAccount).ConfigureAwait(false);
         }
     }
 
-    private async Task GetRoleViaGraphApi(RemoteAccount remoteAccount)
+    private async Task<bool> GetRoleViaGraphApi(RemoteAccount remoteAccount)
     {
         var role = Role.Guest;
 
@@ -60,32 +68,49 @@ public class UserService : IUserService
 
             role = TryToGetRoleFromCustomAttribute(user);
         }
+        catch (AuthenticationFailedException e)
+        {
+            return HandleGraphAuthenticationFailure(e, remoteAccount);
+        }
         catch (ServiceException e)
         {
             if (e.StatusCode == HttpStatusCode.NotFound)
             {
-                _logger.LogWarning("User with ID {remoteAccount} was not found in AADB2C, assigning guest role",
+                _logger.LogWarning("User with ID {RemoteAccount} was not found in AADB2C, assigning guest role",
                     remoteAccount.ObjectId);
+            }
+            else if (e.StatusCode == HttpStatusCode.Unauthorized || e.StatusCode == HttpStatusCode.Forbidden)
+            {
+                return HandleGraphAuthenticationFailure(e, remoteAccount);
             }
             else
             {
-                _logger.LogError(e, "Failed to query user with ID {remoteAccount} from AADB2C, assigning guest role",
+                _logger.LogError(e, "Failed to query user with ID {RemoteAccount} from AADB2C, assigning guest role",
                     remoteAccount.ObjectId);
             }
         }
 
         remoteAccount.Role = role;
+        return true;
+    }
+
+    private bool HandleGraphAuthenticationFailure(Exception exception, RemoteAccount remoteAccount)
+    {
+        _logger.LogError(exception,
+            "Failed to authenticate against AADB2C Graph API, assigning guest role");
+        remoteAccount.Role = Role.Guest;
+        return false;
     }
 
     private Role TryToGetRoleFromCustomAttribute(User user)
     {
-        if (user.AdditionalData == null || !user.AdditionalData.ContainsKey(RoleAttributeName))
+        if (user.AdditionalData == null || !user.AdditionalData.TryGetValue(RoleAttributeName, out var roleValue))
         {
-            _logger.LogInformation("Role attribute is missing for user {user}", user.DisplayName);
+            _logger.LogInformation("Role attribute is missing for user {User}", user.DisplayName);
             return Role.Guest;
         }
         
-        var roleString = user.AdditionalData[RoleAttributeName]?.ToString();
+        var roleString = roleValue?.ToString();
         var parseSuccess = Enum.TryParse<Role>(roleString, out var role);
         if (parseSuccess && role.IsDefinedEnumValue())
         {
@@ -111,13 +136,13 @@ public class UserService : IUserService
         try
         {
             await _graphClient.Users[userId].Request().UpdateAsync(user).ConfigureAwait(false);
-            _logger.LogInformation("Updated role to '{role}' for user with object ID '{userId}'",
+            _logger.LogInformation("Updated role to '{Role}' for user with object ID '{UserId}'",
                 role, userId);
         }
         catch (Exception e)
         {
             _logger.LogError(e, 
-                "Failed to update role to '{role}' for user with object ID '{userId}'",
+                "Failed to update role to '{Role}' for user with object ID '{UserId}'",
                 role, userId);
         }
     }
