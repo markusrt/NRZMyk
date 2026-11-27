@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Prepares an Amp orb for NRZMyk: installs the .NET SDK pinned in global.json
+# and restores NuGet packages. Idempotent and fast on a warm snapshot.
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+step() { echo "==> $* ($(date +%T))"; }
+
+dotnet_root="$HOME/.dotnet"
+# global.json pins 8.0.101 with rollForward latestFeature, so any 8.0 SDK works.
+sdk_channel="8.0"
+
+step "Installing .NET SDK $sdk_channel"
+if ! "$dotnet_root/dotnet" --list-sdks 2>/dev/null | grep -q "^${sdk_channel}\."; then
+	installer="$(mktemp)"
+	curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$installer"
+	bash "$installer" --channel "$sdk_channel" --install-dir "$dotnet_root" --no-path
+	rm -f "$installer"
+else
+	echo "already installed: $("$dotnet_root/dotnet" --list-sdks | grep "^${sdk_channel}\." | tail -1)"
+fi
+
+step "Persisting dotnet environment in ~/.bash_profile"
+profile_marker="# NRZMyk .NET SDK"
+if ! grep -Fqx "$profile_marker" "$HOME/.bash_profile" 2>/dev/null; then
+	cat >>"$HOME/.bash_profile" <<'EOF'
+
+# NRZMyk .NET SDK
+export DOTNET_ROOT="$HOME/.dotnet"
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+export DOTNET_NOLOGO=1
+case ":$PATH:" in
+  *":$DOTNET_ROOT:"*) ;;
+  *) export PATH="$DOTNET_ROOT:$DOTNET_ROOT/tools:$PATH" ;;
+esac
+EOF
+fi
+
+export DOTNET_ROOT="$dotnet_root" DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1
+export PATH="$dotnet_root:$dotnet_root/tools:$PATH"
+
+step "Installing dotnet-ef"
+if ! dotnet tool list --global | grep -q "^dotnet-ef "; then
+	dotnet tool install --global dotnet-ef --version "8.*"
+fi
+
+step "Restoring NuGet packages"
+dotnet restore NRZMyk.sln
+
+step "Done"
