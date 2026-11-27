@@ -36,7 +36,7 @@ be possible to apply entity framework migrations.
 
 #### Azure SQL: minimum TLS version
 
-Azure is retiring the *MinTLS None* (also shown as *No Minimum TLS*)
+Azure is retiring the _MinTLS None_ (also shown as _No Minimum TLS_)
 configuration on Azure SQL Database and SQL Managed Instance. After
 **31 July 2026** all Azure SQL servers will require a minimum TLS
 version of **1.2** for client connections, and unencrypted connections
@@ -54,16 +54,15 @@ To stay on the safe side, please make sure that:
    uses an encrypted connection. With recent SqlClient versions this is
    the default, but it can be made explicit, e.g.:
 
-   ```
+   ```text
    Server=tcp:<your-server>.database.windows.net,1433;Database=NRZMyk;User Id=nrzmyk;Password=******;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
    ```
 
 2. On the Azure side, set the **Minimum TLS Version** of the SQL server
    (or Managed Instance) to **1.2** (or higher). For Azure SQL
    Database this is configured under
-   *SQL server → Security → Networking → Connectivity → Minimum TLS Version*.
+   _SQL server → Security → Networking → Connectivity → Minimum TLS Version_.
    See the official documentation for step-by-step instructions:
-
    - [Azure SQL Database – configure minimum TLS version](https://learn.microsoft.com/azure/azure-sql/database/connectivity-settings#configure-minimum-tls-version)
    - [Azure SQL Managed Instance – configure minimum TLS version](https://learn.microsoft.com/azure/azure-sql/managed-instance/minimal-tls-version-configure)
 
