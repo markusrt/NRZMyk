@@ -192,7 +192,7 @@ Notes:
 
 ### Browser tests
 
-`NRZMyk.BrowserTests` contains Gherkin scenarios (German, [Reqnroll](https://reqnroll.net/)) that drive the
+`NRZMyk.BrowserTests` contains Gherkin scenarios ([Reqnroll](https://reqnroll.net/)) that drive the
 app in Chromium with [Playwright](https://playwright.dev/dotnet/), including the real B2C sign-in. They run
 locally only: the project is not part of `NRZMyk.sln`, so `dotnet test NRZMyk.sln` skips it. CI only
 builds it (workflow `SonarBuild`), so a framework upgrade that breaks it is noticed.
@@ -282,7 +282,7 @@ dotnet test
 docker compose down   # frees port 8080 again
 ```
 
-Run a single role with `dotnet test --filter Category=admin` (tags: `anonym`, `guest`, `user`, `superuser`,
+Run a single role with `dotnet test --filter Category=admin` (tags: `anonymous`, `guest`, `user`, `superuser`,
 `admin`). For a visible browser, set `BrowserTests__Headed=true`. For a failed scenario, a screenshot and
 a Playwright trace (open with `pwsh bin/Debug/net8.0/playwright.ps1 show-trace <path>/trace.zip`) are kept
 in `NRZMyk.BrowserTests/TestResults`. The server's user secrets are found via `%APPDATA%` on Windows; on

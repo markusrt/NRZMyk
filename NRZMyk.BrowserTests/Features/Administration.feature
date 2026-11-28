@@ -1,22 +1,21 @@
-# language: de
 @admin
-Funktionalität: Administration
-  Ein Administrator sieht alle Benutzer mit ihren Rollen und ordnet sie einem Labor zu.
-  Die Rollen kommen aus dem Identitätsanbieter (Microsoft Graph), die Zuordnung aus der Datenbank.
+Feature: Administration
+  An administrator sees all users with their roles and assigns them to a laboratory.
+  The roles come from the identity provider (Microsoft Graph), the assignment from the database.
 
-  Grundlage:
-    Angenommen ich bin als "Admin" angemeldet
-    Und ich die Seite "admin" öffne
+  Background:
+    Given I am signed in as "Admin"
+    And I open the page "admin"
 
-  Szenario: Benutzerliste mit Rollen
-    Dann zeigt die Benutzerliste folgende Rollen:
-      | Testnutzer | Rolle     |
-      | Guest      | Guest     |
-      | User       | Guest     |
-      | SuperUser  | SuperUser |
-      | Admin      | Admin     |
+  Scenario: User list with roles
+    Then the user list shows the following roles:
+      | Test user | Role      |
+      | Guest     | Guest     |
+      | User      | Guest     |
+      | SuperUser | SuperUser |
+      | Admin     | Admin     |
 
-  Szenario: Gast einem Labor zuordnen
-    Wenn ich dem Testnutzer "Guest" die Organisation "Testlabor Süd" zuordne
-    Und ich die Seite "admin" öffne
-    Dann ist dem Testnutzer "Guest" die Organisation "Testlabor Süd" zugeordnet
+  Scenario: Assign a guest to a laboratory
+    When I assign the organization "Testlabor Süd" to the test user "Guest"
+    And I open the page "admin"
+    Then the test user "Guest" is assigned the organization "Testlabor Süd"

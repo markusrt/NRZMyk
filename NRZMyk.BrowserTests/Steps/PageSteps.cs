@@ -7,63 +7,63 @@ namespace NRZMyk.BrowserTests.Steps;
 
 /// <summary>Steps that work on any page: navigation, buttons, visible texts and form fields.</summary>
 [Binding]
-public class SeitenSteps
+public class PageSteps
 {
     private readonly BrowserSession _browser;
 
-    public SeitenSteps(BrowserSession browser)
+    public PageSteps(BrowserSession browser)
     {
         _browser = browser;
     }
 
     private IPage Page => _browser.Page;
 
-    [StepDefinition(@"ich die Seite {string} öffne")]
-    public async Task WennIchDieSeiteOeffne(string path)
+    [StepDefinition(@"I open the page {string}")]
+    public async Task WhenIOpenThePage(string path)
     {
         await Page.GotoAsync(path);
     }
 
-    [StepDefinition(@"ich auf {string} klicke")]
-    public async Task WennIchAufKlicke(string name)
+    [StepDefinition(@"I click {string}")]
+    public async Task WhenIClick(string name)
     {
         await Page.GetByRole(AriaRole.Button, new() { Name = name, Exact = true })
             .Or(Page.GetByRole(AriaRole.Link, new() { Name = name, Exact = true }))
             .First.ClickAsync();
     }
 
-    [Then(@"sehe ich den Text {string}")]
-    public async Task DannSeheIchDenText(string text)
+    [Then(@"I see the text {string}")]
+    public async Task ThenISeeTheText(string text)
     {
         await Expect(Page.GetByText(text).First).ToBeVisibleAsync();
     }
 
-    [Then(@"sehe ich die Texte:")]
-    public async Task DannSeheIchDieTexte(Table table)
+    [Then(@"I see the texts:")]
+    public async Task ThenISeeTheTexts(Table table)
     {
         foreach (var row in table.Rows)
         {
-            await DannSeheIchDenText(row[0]);
+            await ThenISeeTheText(row[0]);
         }
     }
 
-    [Then(@"sehe ich nicht den Text {string}")]
-    public async Task DannSeheIchNichtDenText(string text)
+    [Then(@"I do not see the text {string}")]
+    public async Task ThenIDoNotSeeTheText(string text)
     {
         await Expect(Page.GetByText(text)).ToHaveCountAsync(0);
     }
 
-    [When(@"ich folgende Werte eingebe:")]
-    public async Task WennIchFolgendeWerteEingebe(Table table)
+    [When(@"I enter the following values:")]
+    public async Task WhenIEnterTheFollowingValues(Table table)
     {
         foreach (var row in table.Rows)
         {
-            await FillAsync(Field(row["Feld"]), row["Wert"]);
+            await FillAsync(Field(row["Field"]), row["Value"]);
         }
     }
 
-    [Then(@"hat das Feld {string} den Wert {string}")]
-    public async Task DannHatDasFeldDenWert(string label, string value)
+    [Then(@"the field {string} has the value {string}")]
+    public async Task ThenTheFieldHasTheValue(string label, string value)
     {
         await Expect(Field(label)).ToHaveValueAsync(value);
     }
