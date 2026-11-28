@@ -202,8 +202,8 @@ SPA app registration for local use (`NRZMyk.Client/wwwroot/appsettings.{Environm
 production registration needs no localhost redirect URI. That registration lists
 `http://localhost:8080/authentication/login-callback`. Users of the tenant can sign in locally with their
 normal accounts as well. The container reads the Azure values from the user secrets of the server project (see
-[Server App](#server-app)), mounted read-only. Docker Compose overrides the e-mail key, the reminder job
-and Application Insights, so a test run sends no e-mails and no telemetry.
+[Server App](#server-app)), mounted read-only. Docker Compose overrides the email key, the reminder job
+and Application Insights, so a test run sends no emails and no telemetry.
 
 Before every scenario the test database is reset to fixed test data, so scenarios do not depend on each
 other: three organizations, the accounts of the four test users and sentinel entries for search, paging
@@ -213,7 +213,7 @@ role reuse the session.
 
 **One-time setup in Azure** (B2C tenant `nrcmycosis`, switch to it with "Switch directory" in the portal)
 
-1. User flow `B2C_1_SigninAndSignup_2`: check that **Role** is ticked under *Application claims* and that
+1. User flow `B2C_1_SigninAndSignup_2`: check that **Role** is ticked under _Application claims_ and that
    MFA is off. The data type of `Role` is `int`.
 2. Four test users (local accounts with email sign-in, not real people). The portal's "Create new user"
    creates internal users that cannot sign in through B2C; create them in
@@ -228,7 +228,7 @@ role reuse the session.
      "displayName": "Test Admin",
      "accountEnabled": true,
      "identities": [
-       { "signInType": "emailAddress", "issuer": "nrcmycosis.onmicrosoft.com", "issuerAssignedId": "<e-mail of the test user>" }
+       { "signInType": "emailAddress", "issuer": "nrcmycosis.onmicrosoft.com", "issuerAssignedId": "<email of the test user>" }
      ],
      "passwordProfile": { "password": "<password>", "forceChangePasswordNextSignIn": false },
      "passwordPolicies": "DisablePasswordExpiration",
@@ -237,15 +237,16 @@ role reuse the session.
    ```
 
    The `id` in the response is the object ID needed below.
+
 3. Separate SPA app registration for local use (client ID in
    `NRZMyk.Client/wwwroot/appsettings.BrowserTests.json` and `appsettings.Development.json`):
    - Account types "Any Entra ID Tenant + Personal Microsoft accounts" (the B2C option for user flows)
-   - Platform *Single-page application*, redirect URI `http://localhost:8080/authentication/login-callback`
+   - Platform _Single-page application_, redirect URI `http://localhost:8080/authentication/login-callback`
      plus the URIs used when starting the app from the IDE, e.g. `https://localhost:5001/authentication/login-callback`
    - API permissions: `openid`, `offline_access` and `API.Access` of the API registration (App ID URI ending
-     in `/nrzmyk-client`), then *Grant admin consent*
+     in `/nrzmyk-client`), then _Grant admin consent_
 4. Microsoft Graph for the role column of the admin page: on the server registration ("NRZMyk Server 5.0"),
-   create a client secret for local use under *Certificates & secrets* and check that the application
+   create a client secret for local use under _Certificates & secrets_ and check that the application
    permission `User.Read.All` is granted. Without a valid secret, the admin page silently shows "Guest" for
    everyone.
 
@@ -257,7 +258,7 @@ dotnet user-secrets set "AzureAdB2C:ClientSecret" (Read-Host "Graph client secre
 
 # Test users of the browser tests
 foreach ($role in 'Guest', 'User', 'SuperUser', 'Admin') {
-  dotnet user-secrets set "BrowserTests:Users:${role}:Email" (Read-Host "$role e-mail") --project NRZMyk.BrowserTests
+  dotnet user-secrets set "BrowserTests:Users:${role}:Email" (Read-Host "$role email") --project NRZMyk.BrowserTests
   dotnet user-secrets set "BrowserTests:Users:${role}:Password" (Read-Host "$role password") --project NRZMyk.BrowserTests
   dotnet user-secrets set "BrowserTests:Users:${role}:ObjectId" (Read-Host "$role object ID") --project NRZMyk.BrowserTests
 }
