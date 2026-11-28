@@ -8,7 +8,7 @@ namespace NRZMyk.BrowserTests.Support;
 /// </summary>
 public class TestSettings
 {
-    public string BaseUrl { get; set; } = "http://localhost:5080";
+    public string BaseUrl { get; set; } = "http://localhost:8080";
 
     public string ConnectionString { get; set; } =
         "Server=127.0.0.1,14330;Database=NRZMyk;User Id=sa;Password=BrowserTests#Local1;TrustServerCertificate=True";
