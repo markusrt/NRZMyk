@@ -197,8 +197,11 @@ app in Chromium with [Playwright](https://playwright.dev/dotnet/), including the
 locally only: the project is not part of `NRZMyk.sln`, so `dotnet test NRZMyk.sln` and CI skip it.
 
 The app runs as a container built from `NRZMyk.Server/Dockerfile` on `http://localhost:8080`, next to a
-SQL Server container. Port 8080 is used because its redirect URI is registered for the SPA app. The
-container reads the Azure values from the user secrets of the server project (see
+SQL Server container. In the environments `BrowserTests` and `Development`, the client uses a separate
+SPA app registration for local use (`NRZMyk.Client/wwwroot/appsettings.{Environment}.json`), so the
+production registration needs no localhost redirect URI. That registration lists
+`http://localhost:8080/authentication/login-callback`. Users of the tenant can sign in locally with their
+normal accounts as well. The container reads the Azure values from the user secrets of the server project (see
 [Server App](#server-app)), mounted read-only. Docker Compose overrides the e-mail key, the reminder job
 and Application Insights, so a test run sends no e-mails and no telemetry.
 
