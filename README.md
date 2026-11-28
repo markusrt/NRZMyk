@@ -190,6 +190,60 @@ Notes:
 - Some checks (for example spelling suggestions from `codespell`) are not always
   auto-fixable and may require a manual edit.
 
+### Browser tests
+
+`NRZMyk.BrowserTests` contains Gherkin scenarios (German, [Reqnroll](https://reqnroll.net/)) that drive the
+app in Chromium with [Playwright](https://playwright.dev/dotnet/), including the real B2C sign-in. They run
+locally only: the project is not part of `NRZMyk.sln`, so `dotnet test NRZMyk.sln` and CI skip it.
+
+The app runs as a container built from `NRZMyk.Server/Dockerfile` on `http://localhost:8080`, next to a
+SQL Server container. Port 8080 is used because its redirect URI is registered for the SPA app. The
+container reads the Azure values from the user secrets of the server project (see
+[Server App](#server-app)), mounted read-only. Docker Compose overrides the e-mail key, the reminder job
+and Application Insights, so a test run sends no e-mails and no telemetry.
+
+Before every run the test database is reset to fixed test data (organizations and accounts of the test
+users). Clinical breakpoints come from the app's own seeding.
+
+**One-time setup**
+
+1. Test users in the B2C tenant (local accounts, no MFA, not real people). Each must be able to sign in
+   without an extra page. `Role` is only set for SuperUser (`4`) and Admin (`8`). Guest and User get no
+   `Role`; the User role comes from the organization in the test data.
+2. User secrets of the test project, for each role `Guest`, `User`, `SuperUser` and `Admin`:
+
+   ```bash
+   cd NRZMyk.BrowserTests
+   dotnet user-secrets set "BrowserTests:Users:Admin:Email" "..."
+   dotnet user-secrets set "BrowserTests:Users:Admin:Password" "..."
+   dotnet user-secrets set "BrowserTests:Users:Admin:ObjectId" "..."  # object ID of the B2C user
+   ```
+
+3. Build once and install the browser:
+
+   ```bash
+   dotnet build
+   pwsh bin/Debug/net8.0/playwright.ps1 install chromium
+   ```
+
+**Run**
+
+```bash
+cd NRZMyk.BrowserTests
+docker compose up -d --build
+dotnet test
+docker compose down   # frees port 8080 again
+```
+
+Run a single role with `dotnet test --filter Category=admin` (tags: `anonym`, `guest`, `user`, `superuser`,
+`admin`). For a visible browser, set `BrowserTests__Headed=true`. For a failed scenario, a screenshot and
+a Playwright trace (open with `pwsh bin/Debug/net8.0/playwright.ps1 show-trace <path>/trace.zip`) are kept
+in `NRZMyk.BrowserTests/TestResults`. The server's user secrets are found via `%APPDATA%` on Windows; on
+other systems set `SERVER_USER_SECRETS` to the path of its `secrets.json`.
+
+While the environment is running, `http://localhost:8080` can also be used to try the app with login
+manually. Changes made there are discarded by the next test run.
+
 ## Reference to third party licenses
 
 - Used architectural patterns based on <https://github.com/dotnet-architecture/eShopOnWeb>
