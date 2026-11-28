@@ -190,6 +190,107 @@ Notes:
 - Some checks (for example spelling suggestions from `codespell`) are not always
   auto-fixable and may require a manual edit.
 
+### Browser tests
+
+`NRZMyk.BrowserTests` contains Gherkin scenarios ([Reqnroll](https://reqnroll.net/)) that drive the
+app in Chromium with [Playwright](https://playwright.dev/dotnet/), including the real B2C sign-in. They run
+locally only: the project is not part of `NRZMyk.sln`, so `dotnet test NRZMyk.sln` skips it. CI only
+builds it (workflow `SonarBuild`), so a framework upgrade that breaks it is noticed.
+
+The app runs as a container built from `NRZMyk.Server/Dockerfile` on `http://localhost:8080`, next to a
+SQL Server container. In the environments `BrowserTests` and `Development`, the client uses a separate
+SPA app registration for local use (`NRZMyk.Client/wwwroot/appsettings.{Environment}.json`), so the
+production registration needs no localhost redirect URI. That registration lists
+`http://localhost:8080/authentication/login-callback`. Users of the tenant can sign in locally with their
+normal accounts as well. The container reads the Azure values from the user secrets of the server project (see
+[Server App](#server-app)), mounted read-only. Docker Compose overrides the email key, the reminder job
+and Application Insights, so a test run sends no emails and no telemetry.
+
+Before every scenario the test database is reset to fixed test data, so scenarios do not depend on each
+other: three organizations, the accounts of the four test users and sentinel entries for search, paging
+and the cryo view (`NRZMyk.BrowserTests/Support/TestDatabase.cs`). Clinical breakpoints come from the
+app's own seeding. Each role signs in through the real sign-in page once per run; later scenarios of that
+role reuse the session.
+
+**One-time setup in Azure** (B2C tenant `nrcmycosis`, switch to it with "Switch directory" in the portal)
+
+1. User flow `B2C_1_SigninAndSignup_2`: check that **Role** is ticked under _Application claims_ and that
+   MFA is off. The data type of `Role` is `int`.
+2. Four test users (local accounts with email sign-in, not real people). The portal's "Create new user"
+   creates internal users that cannot sign in through B2C; create them in
+   [Graph Explorer](https://developer.microsoft.com/graph/graph-explorer?tenant=nrcmycosis.onmicrosoft.com)
+   instead, signed in as a B2C admin. `<ID>` is `AzureAdB2C:B2cExtensionAppClientId` from the server's user
+   secrets without dashes. `extension_<ID>_Role` is only set for SuperUser (`4`) and Admin (`8`); Guest and
+   User get no role, the User role comes from the organization in the test data.
+
+   ```http
+   POST https://graph.microsoft.com/v1.0/users
+   {
+     "displayName": "Test Admin",
+     "accountEnabled": true,
+     "identities": [
+       { "signInType": "emailAddress", "issuer": "nrcmycosis.onmicrosoft.com", "issuerAssignedId": "<email of the test user>" }
+     ],
+     "passwordProfile": { "password": "<password>", "forceChangePasswordNextSignIn": false },
+     "passwordPolicies": "DisablePasswordExpiration",
+     "extension_<ID>_Role": 8
+   }
+   ```
+
+   The `id` in the response is the object ID needed below.
+
+3. Separate SPA app registration for local use (client ID in
+   `NRZMyk.Client/wwwroot/appsettings.BrowserTests.json` and `appsettings.Development.json`):
+   - Account types "Any Entra ID Tenant + Personal Microsoft accounts" (the B2C option for user flows)
+   - Platform _Single-page application_, redirect URI `http://localhost:8080/authentication/login-callback`
+     plus the URIs used when starting the app from the IDE, e.g. `https://localhost:5001/authentication/login-callback`
+   - API permissions: `openid`, `offline_access` and `API.Access` of the API registration (App ID URI ending
+     in `/nrzmyk-client`), then _Grant admin consent_
+4. Microsoft Graph for the role column of the admin page: on the server registration ("NRZMyk Server 5.0"),
+   create a client secret for local use under _Certificates & secrets_ and check that the application
+   permission `User.Read.All` is granted. Without a valid secret, the admin page silently shows "Guest" for
+   everyone.
+
+**One-time setup on the machine** (PowerShell, from the repository root)
+
+```powershell
+# Azure values of the app container: user secrets of the server project (see "Server App")
+dotnet user-secrets set "AzureAdB2C:ClientSecret" (Read-Host "Graph client secret") --project NRZMyk.Server
+
+# Test users of the browser tests
+foreach ($role in 'Guest', 'User', 'SuperUser', 'Admin') {
+  dotnet user-secrets set "BrowserTests:Users:${role}:Email" (Read-Host "$role email") --project NRZMyk.BrowserTests
+  dotnet user-secrets set "BrowserTests:Users:${role}:Password" (Read-Host "$role password") --project NRZMyk.BrowserTests
+  dotnet user-secrets set "BrowserTests:Users:${role}:ObjectId" (Read-Host "$role object ID") --project NRZMyk.BrowserTests
+}
+
+# Build once and install the browser
+cd NRZMyk.BrowserTests
+dotnet build
+pwsh bin/Debug/net8.0/playwright.ps1 install chromium
+```
+
+Then start the environment (see below), open `http://localhost:8080` and sign in once with each test user
+by hand. Each must land in the app without an extra page (password change, consent).
+
+**Run**
+
+```bash
+cd NRZMyk.BrowserTests
+docker compose up -d --build
+dotnet test
+docker compose down   # frees port 8080 again
+```
+
+Run a single role with `dotnet test --filter Category=admin` (tags: `anonymous`, `guest`, `user`, `superuser`,
+`admin`). For a visible browser, set `BrowserTests__Headed=true`. For a failed scenario, a screenshot and
+a Playwright trace (open with `pwsh bin/Debug/net8.0/playwright.ps1 show-trace <path>/trace.zip`) are kept
+in `NRZMyk.BrowserTests/TestResults`. The server's user secrets are found via `%APPDATA%` on Windows; on
+other systems set `SERVER_USER_SECRETS` to the path of its `secrets.json`.
+
+While the environment is running, `http://localhost:8080` can also be used to try the app with login
+manually. Changes made there are discarded by the next test run.
+
 ## Reference to third party licenses
 
 - Used architectural patterns based on <https://github.com/dotnet-architecture/eShopOnWeb>

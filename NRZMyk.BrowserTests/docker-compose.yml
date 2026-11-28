@@ -1,0 +1,45 @@
+# Local environment for the browser tests (see README, section "Browser tests").
+# The app runs on http://localhost:8080, the localhost redirect URI registered in the B2C SPA registration.
+# The Azure values come from the user secrets of NRZMyk.Server, which are mounted read-only.
+name: nrzmyk-browsertests
+
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-BrowserTests#Local1}
+    ports:
+      - "127.0.0.1:${SQL_PORT:-14330}:1433"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          '/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  app:
+    build:
+      context: ..
+      dockerfile: NRZMyk.Server/Dockerfile
+    depends_on:
+      sql:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${APP_PORT:-8080}:8080"
+    volumes:
+      # Loaded by ASP.NET as appsettings.{Environment}.json; environment variables below take precedence
+      - ${SERVER_USER_SECRETS:-${APPDATA}/Microsoft/UserSecrets/aspnet-NRZMykServer-18B2E2D4-3174-4F74-B35E-876A891FBF01/secrets.json}:/app/appsettings.BrowserTests.json:ro
+    environment:
+      ASPNETCORE_ENVIRONMENT: "BrowserTests"
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__DefaultConnection: "Server=sql;Database=NRZMyk;User Id=sa;Password=${MSSQL_SA_PASSWORD:-BrowserTests#Local1};TrustServerCertificate=True"
+      # No external side effects, even though the mounted secrets contain real keys:
+      # reminder job off, invalid SendGrid key, server telemetry sent to an unreachable local endpoint
+      Application__SentinelReminderJob: "Disabled"
+      SendGrid__ApiKey: "disabled-in-browser-tests"
+      APPINSIGHTS__INSTRUMENTATIONKEY: "00000000-0000-0000-0000-000000000000"
+      APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=http://127.0.0.1:9/"
