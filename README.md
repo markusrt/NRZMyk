@@ -286,7 +286,9 @@ Run a single role with `dotnet test --filter Category=admin` (tags: `anonymous`,
 `admin`). For a visible browser, set `BrowserTests__Headed=true`. For a failed scenario, a screenshot and
 a Playwright trace (open with `pwsh bin/Debug/net8.0/playwright.ps1 show-trace <path>/trace.zip`) are kept
 in `NRZMyk.BrowserTests/TestResults`. The server's user secrets are found via `%APPDATA%` on Windows; on
-other systems set `SERVER_USER_SECRETS` to the path of its `secrets.json`.
+other systems set `SERVER_USER_SECRETS` to the path of its `secrets.json`. With rootless Docker on Linux, also
+set `APP_CONTAINER_USER=0`: the app's non-root container user maps to a foreign host UID and cannot read the
+`secrets.json` (mode 600), while container root maps to your own user.
 
 While the environment is running, `http://localhost:8080` can also be used to try the app with login
 manually. Changes made there are discarded by the next test run.
