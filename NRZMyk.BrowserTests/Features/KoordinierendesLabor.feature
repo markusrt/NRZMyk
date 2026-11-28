@@ -16,11 +16,11 @@ Funktionalität: Koordinierendes Labor
     Und ich beim Eintrag "SN-2025-0056" auf "In Cryobox einlagern" klicke
     Dann ist der Eintrag "SN-2025-0056" heute asserviert
 
-  Szenario: Zusätzliche Info in der Kryo-Ansicht speichern
+  Szenario: Diagnostische Besonderheit als zusätzliche Info speichern
     Wenn ich in der Kryo-Ansicht die Einsendungen von "Testlabor Nord" lade
-    Und ich beim Eintrag "SN-2025-0057" die zusätzliche Info "Box im Keller" speichere
+    Und ich beim Eintrag "SN-2025-0057" die zusätzliche Info "Mischkultur, zusätzlich Candida glabrata nachgewiesen" speichere
     Und ich in der Kryo-Ansicht die Einsendungen von "Testlabor Nord" lade
-    Dann hat der Eintrag "SN-2025-0057" die zusätzliche Info "Box im Keller"
+    Dann hat der Eintrag "SN-2025-0057" die zusätzliche Info "Mischkultur, zusätzlich Candida glabrata nachgewiesen"
 
   Szenario: Excel-Export herunterladen
     Wenn ich die Seite "sentinel-entries" öffne
