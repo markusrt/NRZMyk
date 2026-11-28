@@ -194,7 +194,8 @@ Notes:
 
 `NRZMyk.BrowserTests` contains Gherkin scenarios (German, [Reqnroll](https://reqnroll.net/)) that drive the
 app in Chromium with [Playwright](https://playwright.dev/dotnet/), including the real B2C sign-in. They run
-locally only: the project is not part of `NRZMyk.sln`, so `dotnet test NRZMyk.sln` and CI skip it.
+locally only: the project is not part of `NRZMyk.sln`, so `dotnet test NRZMyk.sln` skips it. CI only
+builds it (workflow `SonarBuild`), so a framework upgrade that breaks it is noticed.
 
 The app runs as a container built from `NRZMyk.Server/Dockerfile` on `http://localhost:8080`, next to a
 SQL Server container. In the environments `BrowserTests` and `Development`, the client uses a separate

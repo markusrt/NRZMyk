@@ -60,3 +60,6 @@ jobs:
         run: |
           dotnet test -c Release -p:CollectCoverage=true -p:CoverletOutputFormat=\"json,opencover\" -p:SkipAutoProps=true -p:MergeWith=./coverage.json -p:CoverletOutput=./coverage
           ./.sonar/scanner/dotnet-sonarscanner end -d:sonar.token="$SONAR_TOKEN"
+      # The browser tests need Docker and real test users, so CI only checks that they still compile
+      - name: Build browser tests
+        run: dotnet build -c Release NRZMyk.BrowserTests/NRZMyk.BrowserTests.csproj
