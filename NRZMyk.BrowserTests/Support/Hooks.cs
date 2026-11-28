@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Reqnroll;
 using Reqnroll.BoDi;
@@ -8,10 +8,6 @@ namespace NRZMyk.BrowserTests.Support;
 [Binding]
 public sealed class Hooks
 {
-    // Application Insights is configured in index.html; its requests must not leave the test machine
-    private static readonly Regex TelemetryHosts = new(
-        @"^https://([^/]*\.)?(vo\.msecnd\.net|monitor\.azure\.com|applicationinsights\.azure\.com|services\.visualstudio\.com)/");
-
     private static readonly string ResultsDirectory = Path.Combine(
         AppContext.BaseDirectory, "..", "..", "..", "TestResults");
 
@@ -20,8 +16,7 @@ public sealed class Hooks
 
     private readonly IObjectContainer _container;
     private readonly ScenarioContext _scenario;
-    private IBrowserContext? _context;
-    private IPage? _page;
+    private BrowserSession? _session;
 
     public Hooks(IObjectContainer container, ScenarioContext scenario)
     {
@@ -36,7 +31,6 @@ public sealed class Hooks
         testThreadContainer.RegisterInstanceAs(settings);
 
         await WaitForAppAsync(settings.BaseUrl);
-        await TestDatabase.ResetAsync(settings);
 
         _playwright = await Playwright.CreateAsync();
         _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = !settings.Headed });
@@ -55,44 +49,28 @@ public sealed class Hooks
     [BeforeScenario]
     public async Task BeforeScenario(TestSettings settings)
     {
-        _context = await _browser!.NewContextAsync(new()
-        {
-            BaseURL = settings.BaseUrl,
-            Locale = "de-DE",
-            AcceptDownloads = true
-        });
-        await _context.RouteAsync(TelemetryHosts, route => route.AbortAsync());
-        await _context.Tracing.StartAsync(new() { Screenshots = true, Snapshots = true, Sources = true });
+        await TestDatabase.ResetAsync(settings);
 
-        _page = await _context.NewPageAsync();
-        _container.RegisterInstanceAs(_context);
-        _container.RegisterInstanceAs(_page);
+        _session = new BrowserSession(_browser!, settings);
+        await _session.OpenAsync();
+        _container.RegisterInstanceAs(_session);
     }
 
     [AfterScenario]
     public async Task AfterScenario()
     {
-        if (_context == null || _page == null)
+        if (_session == null)
         {
             return;
         }
 
+        string? failureDirectory = null;
         if (_scenario.TestError != null)
         {
             var name = Regex.Replace(_scenario.ScenarioInfo.Title, @"[^\w\-]+", "_");
-            var directory = Path.GetFullPath(Path.Combine(ResultsDirectory, $"{DateTime.Now:yyyyMMdd-HHmmss}_{name}"));
-            Directory.CreateDirectory(directory);
-            await _page.ScreenshotAsync(new() { Path = Path.Combine(directory, "screenshot.png"), FullPage = true });
-            await _context.Tracing.StopAsync(new() { Path = Path.Combine(directory, "trace.zip") });
-            NUnit.Framework.TestContext.AddTestAttachment(Path.Combine(directory, "screenshot.png"));
-            NUnit.Framework.TestContext.AddTestAttachment(Path.Combine(directory, "trace.zip"));
+            failureDirectory = Path.GetFullPath(Path.Combine(ResultsDirectory, $"{DateTime.Now:yyyyMMdd-HHmmss}_{name}"));
         }
-        else
-        {
-            await _context.Tracing.StopAsync();
-        }
-
-        await _context.DisposeAsync();
+        await _session.CloseAsync(failureDirectory);
     }
 
     private static async Task WaitForAppAsync(string baseUrl)

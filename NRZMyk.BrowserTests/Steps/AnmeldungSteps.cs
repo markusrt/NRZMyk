@@ -9,22 +9,31 @@ namespace NRZMyk.BrowserTests.Steps;
 [Binding]
 public class AnmeldungSteps
 {
-    private readonly IPage _page;
+    private readonly BrowserSession _browser;
     private readonly SignInPage _signInPage;
     private readonly TestSettings _settings;
 
-    public AnmeldungSteps(IPage page, SignInPage signInPage, TestSettings settings)
+    public AnmeldungSteps(BrowserSession browser, SignInPage signInPage, TestSettings settings)
     {
-        _page = page;
+        _browser = browser;
         _signInPage = signInPage;
         _settings = settings;
     }
+
+    private IPage Page => _browser.Page;
+
+    [Given(@"ich bin als {string} angemeldet")]
+    public Task AngenommenIchBinAlsAngemeldet(string role) => _signInPage.EnsureSignedInAsync(role);
+
+    [Given(@"der Testnutzer {string} hat sich noch nie angemeldet")]
+    public Task AngenommenDerTestnutzerHatSichNochNieAngemeldet(string role) =>
+        TestDatabase.RemoveAccountAsync(_settings, role);
 
     [When(@"ich ohne Anmeldung die Seite {string} öffne")]
     public async Task WennIchOhneAnmeldungDieSeiteOeffne(string path)
     {
         _signInPage.ExpectSignIn();
-        await _page.GotoAsync(path);
+        await Page.GotoAsync(path);
     }
 
     [Then(@"werde ich zur Anmeldeseite weitergeleitet")]
@@ -34,16 +43,29 @@ public class AnmeldungSteps
     }
 
     [When(@"ich mich als {string} anmelde")]
-    public async Task WennIchMichAlsAnmelde(string role)
+    public Task WennIchMichAlsAnmelde(string role) => _signInPage.SignInAsync(role);
+
+    [When(@"ich in einem neuen Browserfenster als {string} angemeldet bin")]
+    public async Task WennIchInEinemNeuenBrowserfensterAlsAngemeldetBin(string role)
     {
-        await _signInPage.SignInAsync(_settings.User(role));
+        await _browser.OpenAsync();
+        await _signInPage.EnsureSignedInAsync(role);
     }
+
+    [When(@"ich mich abmelde")]
+    public Task WennIchMichAbmelde() => _signInPage.SignOutAsync();
 
     [Then(@"bin ich angemeldet")]
     public async Task DannBinIchAngemeldet()
     {
-        // Shown only after the app has resolved the roles, so the menu checks below see the final state
-        await Expect(_page.GetByText("Angemeldet als")).ToBeVisibleAsync(new() { Timeout = 30_000 });
+        await Expect(Page.GetByText("Angemeldet als")).ToBeVisibleAsync();
+    }
+
+    [Then(@"bin ich abgemeldet")]
+    public async Task DannBinIchAbgemeldet()
+    {
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Anmelden" })).ToBeVisibleAsync();
+        await Expect(Page.GetByText("Angemeldet als")).ToHaveCountAsync(0);
     }
 
     [Then(@"sehe ich im Menü {string}")]
@@ -53,11 +75,12 @@ public class AnmeldungSteps
     }
 
     [Then(@"nicht {string}")]
-    public async Task DannNicht(string item)
+    [Then(@"sehe ich im Menü nicht {string}")]
+    public async Task DannSeheIchImMenueNicht(string item)
     {
         await Expect(MenuItem(item)).ToHaveCountAsync(0);
     }
 
     private ILocator MenuItem(string name) =>
-        _page.Locator("nav").GetByRole(AriaRole.Link, new() { Name = name });
+        Page.Locator("nav").GetByRole(AriaRole.Link, new() { Name = name });
 }
